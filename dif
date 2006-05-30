@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# Select relevant version control client :
-
-if [ -d 'CVS' ] ; then
-	cvs diff $* | more
-else
-	svn diff $* | more
-fi
