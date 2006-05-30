@@ -1,0 +1,89 @@
+#!/bin/sh
+
+USAGE="$0 describes recursively from current directory what files are not in up-to-date state regarding the CVS repository."
+
+
+NON_UP_TO_DATE="Locally Modified|Locally Added|Locally Removed|Needs Checkout|Needs Patch|Needs Merge|Unresolved Conflict|File had conflicts on merge|?"
+
+#echo "NON_UP_TO_DATE = $NON_UP_TO_DATE"
+
+OUTPUT="$(cvs status 2>/dev/null | egrep "${NON_UP_TO_DATE}" )"
+
+#echo "OUTPUT = $OUTPUT"
+
+MODIFIED=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Locally Modified' | awk '{print $2}')
+ADDED=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Locally Added' | awk '{print $2}')
+REMOVED=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Locally Removed' | awk '{print $4}')
+TOCHECKOUT=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Needs Checkout' | awk '{print $2}')
+TOPATCH=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Needs Patch' | awk '{print $2}')
+TOMERGE=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Needs Merge' | awk '{print $2}')
+TORESOLVE=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'Unresolved Conflict' | awk '{print $2}')
+ONCONFLICT=$(echo ${OUTPUT} | sed 's|File:|\nFile:|g' | grep 'File had conflicts on merge' | awk '{print $2}')
+UNKNOWN=$(echo ${OUTPUT} | sed 's|?|\n?|g' | grep '?' | awk '{print $2}')
+
+
+#echo "MODIFIED = $MODIFIED"
+#echo "ADDED = $ADDED"
+#echo "REMOVED = $REMOVED"
+#echo "TOCHECKOUT = $TOCHECKOUT"
+#echo "TOPATCH = $TOPATCH"
+#echo "TOMERGE = $TOMERGE"
+#echo "TORESOLVE = $TORESOLVE"
+#echo "ONCONFLICT = $ONCONFLICT"
+#echo "UNKNOWN = $UNKNOWN"
+
+
+if [ -n "${MODIFIED}" ]; then
+	echo "-- Modified files :"
+	echo ${MODIFIED}
+	echo
+fi
+	
+if [ -n "${ADDED}" ]; then
+	echo "-- Added files :"
+	echo ${ADDED}
+	echo
+fi
+	
+if [ -n "${REMOVED}" ]; then
+	echo "-- Removed files :"
+	echo ${REMOVED}
+	echo
+fi
+
+if [ -n "${TOCHECKOUT}" ]; then
+	echo "-- Files needing update :"
+	echo ${TOCHECKOUT}
+	echo
+fi
+	
+if [ -n "${TOPATCH}" ]; then
+	echo "-- Files needing patch :"
+	echo ${TOPATCH}
+	echo
+fi
+	
+if [ -n "${TOMERGE}" ]; then
+	echo "-- Files needing merge :"
+	echo ${TOMERGE}
+	echo
+fi
+	
+if [ -n "${TORESOLVE}" ]; then
+	echo "-- Files having unresolved conflicts :"
+	echo ${TORESOLVE}
+	echo
+fi
+	
+if [ -n "${ONCONFLICT}" ]; then
+	echo "-- Conflicting files :"
+	echo ${ONCONFLICT}
+	echo
+fi
+	
+if [ -n "${UNKNOWN}" ]; then
+	echo "-- Files not known :"
+	echo ${UNKNOWN}
+	echo
+fi
+	

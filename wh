@@ -1,0 +1,58 @@
+#!/bin/bash
+
+
+USAGE="Usage : wh <filePattern> [<startingDirectory>]\n searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory"
+
+FIND_GNU="/logiciels/public/bin/find"
+
+VERBOSE=0
+
+if [ -x "$FIND_GNU" ]; then
+	FIND="$FIND_GNU"
+else
+	FIND=`which find 2>/dev/null | grep -v ridiculously`	
+fi	
+
+
+[ "$VERBOSE" -eq "0" ] || echo "FIND is $FIND"
+
+if [ $# != 1 ]; then
+	if [ $# != 2 ]; then
+		echo -e $USAGE
+		exit 1
+	fi
+fi
+
+if [ $# = 1 ]; then
+	startingDir=`pwd`
+fi
+
+if [ $# = 2 ]; then
+	startingDir=$2
+fi
+
+if [ ! -d "$startingDir" ]; then
+	echo
+	echo "No such directory : $startingDir" 
+	echo
+	echo -e $USAGE
+	exit 2
+fi
+
+
+
+targetPattern=$1
+
+echo
+echo "Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>"
+echo
+
+[ "$VERBOSE" -eq "0" ] || echo "Current directory is : `pwd`"
+[ "$VERBOSE" -eq "0" ] || echo "Command is : $FIND $startingDir -name $targetPattern -print 2>/dev/null | more"
+[ "$VERBOSE" -eq "0" ] || echo
+
+$FIND "$startingDir" -name "$targetPattern" -print 2>/dev/null | more
+
+
+echo
+echo "End of search"

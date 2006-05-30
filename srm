@@ -1,0 +1,27 @@
+#!/bin/bash
+
+USAGE="`basename $0` <files to delete securely> : secure rm, stores deleted files in a trash instead, to give one more chance of retrieving them if necessary. See : emptyTrash.sh"
+
+TRASH_DEFAULT="$HOME/tmp/Trash"
+
+if [ -z "$TRASH" ] ; then
+	echo "Warning : \$TRASH no defined, assuming trash is $TRASH_DEFAULT"
+	TRASH="$TRASH_DEFAULT"
+fi
+
+
+if [ ! -d "$TRASH" ] ; then	
+	echo "Warning : trash directory, $TRASH, does not exist. Creating it."
+	mkdir -p "$TRASH"
+fi
+
+echo
+
+if [ -n "$*" ] ; then
+	echo -e "Secure deleting (moving to trash $TRASH) :\n\t$*"
+	mv -f $* $TRASH && echo "Deleting finished"
+	echo
+else
+	echo "Error : no argument specified. Usage : $USAGE"
+	exit 1
+fi	

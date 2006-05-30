@@ -1,0 +1,178 @@
+#!/bin/bash
+
+NO_X_OPT="--noX"
+SHOW_OPT="--display"
+
+USAGE="Usage : "`basename $0`" [${NO_X_OPT}|${SHOW_OPT}] [-h|--help] file1 file2 ... : opens the set of specified files with the 'best' available editor. Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings."
+
+do_X="true"
+do_show="false"
+
+if [ "$1" == "${NO_X_OPT}" ]; then
+    do_X="false"
+    shift
+fi
+
+if [ "$1" == "${SHOW_OPT}" ]; then
+    do_show="true"
+    shift
+fi
+
+   
+if [ "$1" == "--help" ]; then
+    echo "${USAGE}"
+    exit 0   
+fi
+
+if [ "$1" == "-h" ]; then
+    echo "${USAGE}"
+    exit 0   
+fi
+   
+if [ "$1" == "" ]; then
+	if [ "${do_show}" == "false" ]; then
+	    echo "${USAGE}"
+    	exit 1   
+	fi	
+fi
+   
+      
+# Many names for nedit client/server : gentoo...
+NEDITC_GENTOO=`which neditc 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+# ...debian...
+NEDITC_DEBIAN=`which nedit-nc 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+# ...and others (nc can be netcat too)
+NC=`which nc 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+
+# Basic nedit, one full process by window :
+NEDIT=`which nedit 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+# nano, text-based user-friendly editor :
+NANO=`which nano 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+# vi improved :
+VIM=`which vim 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+# Raw vi :
+VI=`which vi 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+# Sets of X parameters common to all nedit members :
+NEDIT_FAMILY_OPT="-create -xrm nedit*text.background:black -xrm nedit*text.foreground:white -xrm nedit*text.lineNumForeground:red -xrm nedit*text.cursorForeground:white"
+
+NEDIT_NC_OPT="-noask" 
+
+displayEditors()
+{
+ echo
+ echo "NEDITC_GENTOO = ${NEDITC_GENTOO}"
+ echo "NEDITC_DEBIAN = ${NEDITC_DEBIAN}"
+ echo "NC            = ${NC}"
+ echo "NEDIT         = ${NEDIT}"
+ echo "NANO          = ${NANO}"
+ echo "VIM           = ${VIM}"
+ echo "VI            = ${VI}"
+ echo
+}
+
+if [ "$1" == "${SHOW_OPT}" ]; then
+    do_show="true"
+    shift
+fi
+
+if [ "${do_show}" == "true" ]; then
+	displayEditors
+fi
+
+# Take the best one (watch out the order !):
+
+EDITOR=""
+EDITOR_SHORT_NAME=""
+
+MULTI_WIN="false"
+
+if [ -x "${VI}" ]; then
+ EDITOR="${VI}"
+ EDITOR_SHORT_NAME="vi"
+ MULTI_WIN="false"
+fi
+
+if [ -x "${VIM}" ]; then
+ EDITOR="${VIM}"
+ EDITOR_SHORT_NAME="vim"
+ MULTI_WIN="false"
+fi
+
+if [ -x "${NANO}" ]; then
+ EDITOR="${NANO}"
+ EDITOR_SHORT_NAME="nano"
+ MULTI_WIN="false"
+fi
+
+
+if [ "${do_X}" == "true" ]; then
+
+    if [ -x "${NEDIT}" ]; then
+     EDITOR="${NEDIT} ${NEDIT_FAMILY_OPT}"
+     EDITOR_SHORT_NAME="nedit"
+     MULTI_WIN="true"
+    fi
+
+    if [ -x "${NC}" ]; then
+     if ${NC} -h 2>/dev/null; then
+		 # Not netcat :	 
+         EDITOR="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+         EDITOR_SHORT_NAME="nc"
+         MULTI_WIN="true"
+     # else : the nc being detected is netcat, not nedit tool : do nothing here.
+     fi
+    fi
+	
+    if [ -x "${NEDITC_GENTOO}" ]; then
+     EDITOR="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
+     EDITOR_SHORT_NAME="neditc"
+     MULTI_WIN="true"
+    fi
+	
+    if [ -x "${NEDITC_DEBIAN}" ]; then
+     EDITOR="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+     EDITOR_SHORT_NAME="nedit-nc"
+     MULTI_WIN="true"
+    fi
+	
+	
+fi
+
+if [ "${do_show}" == "true" ]; then
+	echo "Chosen editor : ${EDITOR_SHORT_NAME}"
+	echo "Complete editor command : ${EDITOR}"
+	echo "Multiwin : ${MULTI_WIN}"	
+	exit
+fi
+
+
+if [ -z "${EDITOR}" ] ; then
+ echo "None of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used." 1>&2
+ exit 1
+fi
+
+# Let's hope the display is OK.
+
+# Open the files in parallel or sequentially :
+for f in $*; do
+
+	if [ -z "${DISPLAY}" ]; then
+		echo "    Opening $f with ${EDITOR_SHORT_NAME} (no DISPLAY set)"
+	else
+		echo "    Opening $f with ${EDITOR_SHORT_NAME} (DISPLAY is <${DISPLAY}>)"
+	fi  
+	
+	if [ ${MULTI_WIN} == "true" ]; then
+	    ${EDITOR} "$f" 2>/dev/null &
+	else
+		${EDITOR} "$f" 2>/dev/null
+	fi
+
+done

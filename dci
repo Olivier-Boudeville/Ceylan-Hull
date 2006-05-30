@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Useful to check-in efficiently (fast) :
+
+
+# Select relevant version control client :
+TOOL="svn"
+
+if [ -d 'CVS' ] ; then
+	TOOL="cvs"
+fi
+
+	
+target=$*
+arrow="---------------------> "
+
+echo "$arrow Showing diff for <$target> :"
+if ${TOOL} diff $target ; then
+
+	echo "$arrow Committing-in <$target> :"
+	${TOOL} ci $target
+
+	echo "...done"
+
+else	
+	echo "Error, diff failed." 1>&2
+	exit 1
+fi
+

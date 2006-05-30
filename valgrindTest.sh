@@ -1,0 +1,86 @@
+#!/bin/bash
+
+SHELLS_LOCATION="../scripts/shell"
+
+if [ ! -f "${SHELLS_LOCATION}/defaultLocations.sh" ] ; then
+	PREVIOUS_LOCATION=${SHELLS_LOCATION}
+	SHELLS_LOCATION="${CEYLAN_ROOT}/src/code/scripts/shell"
+	if [ ! -f "${SHELLS_LOCATION}/defaultLocations.sh" ] ; then
+		echo "Error, unable to find defaultLocations helper script (searched in ${PREVIOUS_LOCATION} and in ${SHELLS_LOCATION})."
+		exit 1
+	fi	
+fi
+
+source "${SHELLS_LOCATION}/defaultLocations.sh"
+
+findSupplementaryShellTools
+
+setDebugMode on
+
+target="$1"
+
+valgrind=`which valgrind 2>/dev/null`
+
+
+showResult()
+{
+	printColor "Showing run result for $1 :" $cyan_text $blue_back
+	${MORE} ${log_file}
+	printColor "End of run result for $1." $cyan_text $blue_back
+	
+}
+
+
+
+USAGE="\nUsage : "`basename $0`" <executable to test> [<executable arguments>+] : uses Valgrind to perform quality test on executable target."
+
+
+
+if [ -z "$valgrind" ] ; then
+	ERROR "Valgrind executable not found."
+	exit 2	
+fi
+
+
+if [ ! -x "$valgrind" ] ; then
+	ERROR "${valgrind} is not an executable file."
+	exit 3	
+fi
+
+if [ -z "$target" ] ; then
+	ERROR "No test target specified. $USAGE"
+	exit 4
+fi
+
+if [ ! -x "$target" ] ; then
+	ERROR "${target} : file not found. $USAGE"
+	exit 5	
+fi
+
+
+if [ ! -x "$target" ] ; then
+	ERROR "${target} is not an executable file. $USAGE"
+	exit 6
+fi
+
+valgrind_options="--skin=memcheck --leak-check=yes --num-callers=6 --trace-children=yes --logfile=`basename $target`"
+valgrind_advanced_options="--verbose"
+
+echo "Testing ${target} thanks to valgrind."
+
+for f in `basename $target`.pid*; do
+	DEBUG "Removing old log file $f."
+	${RM} -f $f
+done
+
+
+
+DEBUG "Launching $valgrind $valgrind_options $*"
+
+$valgrind $valgrind_options $*
+
+log_file=`/bin/ls \`basename ${target}\`.pid*`
+
+DISPLAY "End of Valgrind test, output can be read in ${log_file}."
+
+showResult `basename ${target}`

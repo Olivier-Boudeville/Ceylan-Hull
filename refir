@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Launching firefox locally ($HOSTNAME) will avoid spawning another window on any remote firefox"
+
+firefox --no-xshm &
+

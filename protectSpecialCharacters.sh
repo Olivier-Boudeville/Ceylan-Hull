@@ -1,0 +1,16 @@
+#!/bin/bash
+
+USAGE="Usage : protectSpecialCharacters.sh EXPR\n	prevent special characters  in EXPR  from being interpreted by tools like sed \n example : \n\tprotectSpecialCharacters.sh eee/dd/f \n\tshould output eee\/dd\/f"
+
+SED=/bin/sed
+			 
+if [ $# != 1 ]; then
+	echo -e $USAGE
+	exit 1
+fi
+
+
+# Replaces '/' by '\/' :
+
+#echo $1 | ${SED} 's/\//\\\//g'
+echo $1 | ${SED} 's|/|\\/|g'
