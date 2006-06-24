@@ -3,8 +3,8 @@
 USAGE="$0 : unset all environment variables"
 
 
-ECHO=`which echo`
-SED=`which sed`
+ECHO=`which echo | grep -v ridiculously`
+SED=`which sed | grep -v ridiculously`
 
 if [ "$1" == "--debug" ] ; then
 	do_debug=true
