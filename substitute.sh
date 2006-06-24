@@ -3,7 +3,12 @@
 
 CP=/bin/cp
 CAT=/bin/cat
+
 SED=/bin/sed
+if [ ! -x "${SED}" ] ; then
+	SED=/usr/bin/sed
+fi
+	
 RM=/bin/rm
 
 USAGE="Usage : substitute.sh SOURCE TARGET FILE\n	replaces in FILE every symbol SOURCE by symbol TARGET \n example : \n\tsubstitute.sh wondrful wonderful myFile"
