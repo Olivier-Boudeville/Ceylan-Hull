@@ -1,19 +1,21 @@
 #!/bin/bash
 
-SHELLS_LOCATION="../scripts/shell"
+RM=/bin/rm
 
-if [ ! -f "${SHELLS_LOCATION}/defaultLocations.sh" ] ; then
+SHELLS_LOCATION=`dirname $0`
+
+if [ ! -f "${SHELLS_LOCATION}/termUtils.sh" ] ; then
 	PREVIOUS_LOCATION=${SHELLS_LOCATION}
 	SHELLS_LOCATION="${CEYLAN_ROOT}/src/code/scripts/shell"
-	if [ ! -f "${SHELLS_LOCATION}/defaultLocations.sh" ] ; then
+	if [ ! -f "${SHELLS_LOCATION}/termUtils.sh" ] ; then
 		echo "Error, unable to find defaultLocations helper script (searched in ${PREVIOUS_LOCATION} and in ${SHELLS_LOCATION})."
 		exit 1
 	fi	
 fi
 
-source "${SHELLS_LOCATION}/defaultLocations.sh"
+source "${SHELLS_LOCATION}/termUtils.sh"
 
-findSupplementaryShellTools
+#findSupplementaryShellTools
 
 setDebugMode on
 
@@ -63,8 +65,11 @@ if [ ! -x "$target" ] ; then
 	exit 6
 fi
 
-valgrind_options="--skin=memcheck --leak-check=yes --num-callers=6 --trace-children=yes --logfile=`basename $target`"
-valgrind_advanced_options="--verbose"
+#valgrind_options="--tool=memcheck --leak-check=summary --num-callers=6 --trace-children=yes --log-file=`basename $target`"
+valgrind_options=""
+
+#valgrind_advanced_options="--verbose"
+valgrind_advanced_options=""
 
 echo "Testing ${target} thanks to valgrind."
 
@@ -75,7 +80,9 @@ done
 
 
 
-DEBUG "Launching $valgrind $valgrind_options $*"
+DEBUG "Launching $valgrind $valgrind_options $valgrind_advanced_options $*"
+
+#echo $valgrind $valgrind_options $*
 
 $valgrind $valgrind_options $*
 
