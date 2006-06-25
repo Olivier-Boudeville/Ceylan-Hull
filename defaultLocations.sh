@@ -14,17 +14,17 @@
 
 PLATFORMDETECT="platformDetection.sh"
 
-if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
-	if [ ! -f "./${PLATFORMDETECT}" ] ; then
-		echo 1>&2
-		echo "    Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
-		exit 1
-	else
-		. ./${PLATFORMDETECT}
-	fi
-else
-	. "${SHELLS_LOCATION}/${PLATFORMDETECT}"
-fi
+#if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
+#	if [ ! -f "./${PLATFORMDETECT}" ] ; then
+#		echo 1>&2
+#		echo "    Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
+#		exit 1
+#	else
+#		. ./${PLATFORMDETECT}
+#	fi
+#else
+#	. "${SHELLS_LOCATION}/${PLATFORMDETECT}"
+#fi
 
 
 # Default locations for real basic commands:
