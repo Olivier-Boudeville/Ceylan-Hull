@@ -174,7 +174,7 @@ $iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 # Log some invalid connections :
-$iptables -A INPUT -m state --state INVALID -m limit --limit 2/ -j LOG --log-prefix "[#$rules_version : invalid input : ]"
+$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[#$rules_version : invalid input : ]"
 
 $iptables -A INPUT -m state --state INVALID -j DROP
 
@@ -191,7 +191,7 @@ $iptables -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
 
 
 # Avoid stealth TCP port scans if SYN is not set properly :
-$iptables -A INPUT -m state --state NEW,RELATED -p tcp --tcpflags ! ALL SYN -j DROP
+$iptables -A INPUT -m state --state NEW,RELATED -p tcp --tcp-flags ! ALL SYN -j DROP
 
 # Rejects directly 'auth/ident' obsolete requests :
 $iptables -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
