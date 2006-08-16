@@ -13,9 +13,9 @@
 # To debug this kind of firewall script, one may use :
 # sh -x /path/to/this/file
 
-# Useful with 'iptables --list' or 'iptables -L -n |more' to check 
-# whether rules are up-to-date :
-rules_version=1
+# Useful with 'iptables --list|grep '[v' or 'iptables -L -n |grep [v'
+# to check whether rules are up-to-date :
+version=2
 
 # Full path of the programs we need, change them to your needs :
 iptables=/sbin/iptables
@@ -26,7 +26,7 @@ rmmod=/sbin/rmmod
 
 LOG_FILE=/root/lastly-firewalled.touched
  
-$echo "Setting ADSL Gateway firewall rules"
+$echo "Setting ADSL Gateway firewall rules, version $version"
 touch $LOG_FILE 
 
 # Only needed for older distros that do load ipchains by default, 
@@ -174,7 +174,7 @@ $iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 # Log some invalid connections :
-$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[#$rules_version : invalid input : ]"
+$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v$version : invalid input : ]"
 
 $iptables -A INPUT -m state --state INVALID -j DROP
 
@@ -206,7 +206,7 @@ $iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 # fragments is very OS-dependent. 
 # We are not going to trust any fragments. 
 # Log fragments just to see if we get any, and deny them too. 
-$iptables -A INPUT -f -j LOG --log-prefix "[#$rules_version : iptables fragments ] : " 
+$iptables -A INPUT -f -j LOG --log-prefix "[v$version : iptables fragments ] : " 
 $iptables -A INPUT -f -j DROP 
 
 ## HTTP (web server) :
@@ -236,7 +236,7 @@ $iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACCEP
 # frequency of attempts coming from the Internet :
 
 # Logs too frequent attempts tagged with 'SSH' and drops them :
-$iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[#$rules_version : SSH brute-force ] : "
+$iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v$version : SSH brute-force ] : "
 $iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 # Tags too frequent SSH attempts with the name 'SSH' :
