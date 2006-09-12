@@ -77,7 +77,7 @@ SHELL_SCRIPTS_SET = \
 	remoz                        \
 	replaceLineStartingBy.sh     \
 	retrieve.sh                  \
-	rgrep                        \
+	regrep                       \
 	rmCVS.sh                     \
 	running.sh                   \
 	searchBrokenLinks.sh         \
