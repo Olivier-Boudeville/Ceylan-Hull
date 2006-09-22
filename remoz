@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Launching mozilla locally ($HOSTNAME) will avoid spawning another window on any remote mozilla"
 
-mozilla --no-xshm &
+echo mozilla --no-xshm $* &
 
