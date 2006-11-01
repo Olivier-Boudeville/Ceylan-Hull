@@ -160,7 +160,7 @@ setDebugMode()
 }
 
 
-color_enabled_terms="linux linux-c mach-color console con132x25 con132x30 con132x43 con132x60 con80x25 con80x28 con80x30 con80x43 con80x50 con80x60 xterm xterm-debian rxvt screen screen-w vt100"
+color_enabled_terms="linux linux-c mach-color console con132x25 con132x30 con132x43 con132x60 con80x25 con80x28 con80x30 con80x43 con80x50 con80x60 xterm xterm-debian rxvt screen screen-w vt100 cygwin"
 
 
 updateColorSupport()
