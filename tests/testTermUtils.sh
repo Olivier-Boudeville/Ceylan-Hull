@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-TEST_TARGET="termUtils.sh"
+TEST_TARGET="../termUtils.sh"
 
 USAGE="This script test the ${TEST_TARGET} script."
 
