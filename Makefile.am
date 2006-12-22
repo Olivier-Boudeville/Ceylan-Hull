@@ -1,5 +1,6 @@
 ARCHIVE_DIR  = @CEYLAN_ARCHIVE_DIR@/bin
-ARCHIVE_FILE = "$(ARCHIVE_DIR)/`date '+%Y%m%d'`-Full-archive-bin.tar.bz2" 
+ARCHIVE_FILE = \
+	"$(ARCHIVE_DIR)/`date '+%Y%m%d'`-Full-archive-Ceylan-bin.tar.bz2" 
 
 SUBDIRS = tests
 
@@ -7,7 +8,6 @@ SUBDIRS = tests
 DIST_SUBDIRS = $(SUBDIRS)
 
 SHELL_SCRIPTS_SET = \
-	CVS-to-webserver.crontab     \
 	automap.sh                   \
 	beep                         \
 	bong.sh                      \
@@ -28,7 +28,6 @@ SHELL_SCRIPTS_SET = \
 	displayUpsStatus.sh          \
 	emptyTrash.sh                \
 	errorHandler.sh              \
-	export-CVS-to-webserver.sh   \
 	extractCVS.sh                \
 	findMerges.sh                \
 	ftponly.sh                   \
@@ -122,6 +121,15 @@ SHELL_SCRIPTS_SET = \
 EXTRA_DIST = $(SHELL_SCRIPTS_SET)		 
                   
 all: 
+
+
+install-data-local:
+	@echo; echo "@CEYLAN_INSTALL_STYLE@    Installing shell scripts in\
+	$(srcdir) to [@CEYLAN_INSTALL_SHELL_DIR@]@CEYLAN_DEFAULT_STYLE@"
+	@mkdir -p @CEYLAN_INSTALL_SHELL_DIR@
+	@for f in $(SHELL_SCRIPTS_SET); do \
+	cp -f $(srcdir)/$$f @CEYLAN_INSTALL_SHELL_DIR@/$$f; done
+
 
 tar:
 	@mkdir -p $(ARCHIVE_DIR)
