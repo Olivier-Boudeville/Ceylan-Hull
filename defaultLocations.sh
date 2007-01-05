@@ -54,7 +54,7 @@ fi
 
 # For MD5 sum tool :
 
-if [ "$is_bsd" -eq 1 ] ; then
+if [ $is_bsd -eq 1 ] ; then
 
 	# Here we are not under a BSD-style OS :
 	if findTool md5sum ; then
@@ -91,11 +91,11 @@ be_strict="0"
 
 
 convertToWinPath()
-# Converts a specified absolute path into a valid Windows one thanks to a provided prefix,
-# and according to windows_prefix.
+# Converts a specified absolute path into a valid Windows one thanks to a
+# provided prefix, and according to windows_prefix.
 # Usage : convertToWinPath <a non-converted path> <a converted prefix>
-# Ex : convertToWinPath /home/sye/Projects/OSDL/OSDL-0.3/src installs\\cygwin returns 
-# in returnedString, with default settings : c:\\cygwin\\aaa\\bbb\\ccc
+# Ex : convertToWinPath /home/sye/Projects/OSDL/OSDL-0.3/src installs\\cygwin
+# returns in returnedString, with default settings : c:\\cygwin\\aaa\\bbb\\ccc
 {
 
 	if [ -z "$1" ] ; then
@@ -233,7 +233,7 @@ findBuildTools()
 # Usage : findBuildTools
 {
 
-	if [ "$is_bsd" -eq 0 ] ; then
+	if [ $is_bsd -eq 0 ] ; then
 		findTool gmake
 		MAKE=$returnedString
 	else
@@ -257,7 +257,7 @@ findBuildTools()
 	
 	# Special case for minGW :
 
-	if  [ "$is_mingw" -eq 0 ] ; then
+	if  [ $is_mingw -eq 0 ] ; then
 
 		# MINGW_ROOT has been set by 'platformDetection.sh' :
 	
@@ -388,8 +388,9 @@ findBuildTools()
 
 
 findMoreSpecificTools()
-# Will automatically look up tools that are specific enough not to be available by default on
-# some platforms. Requesting them from a portable script is therefore unsafe.
+# Will automatically look up tools that are specific enough not to be 
+# available by default on some platforms. Requesting them from a portable 
+# script is therefore unsafe.
 # Uses implicitly be_strict to step on errors or not.
 # Usage : findBuildTools
 {
@@ -405,9 +406,11 @@ findMoreSpecificTools()
 
 
 setBuildEnv()
-# Sets the environment so that the build goes smooth by selecting the correct files
+# Sets the environment so that the build goes smooth by selecting the
+# correct files.
 # Usage : setBuildEnv [--exportEnv] [command]
-# Exemple : setBuildEnv --exportEnv ./configure --prefix=${prefix}/binutils-${binutils_VERSION}
+# Exemple : setBuildEnv --exportEnv ./configure
+# --prefix=${prefix}/binutils-${binutils_VERSION}
 {
 
 	export_env=1
@@ -436,7 +439,7 @@ setBuildEnv()
 		current_ld_library_path=${GCC_ROOT}/lib:$current_ld_library_path
 	fi
 	
-	if [ "$is_mingw" -eq 0 ] ; then
+	if [ $is_mingw -eq 0 ] ; then
 		current_path=${MINGW_PATH}:$current_path
 		current_ld_library_path=${MINGW_LD_LIBRARY_PATH}:$current_ld_library_path
 	fi
@@ -444,7 +447,7 @@ setBuildEnv()
 	DEBUG "Command path will be : <$current_path>."
 	DEBUG "Command library path will be : <$current_ld_library_path>."
 
-	if [ "export_env" -eq 0 ] ; then     
+	if [ $export_env -eq 0 ] ; then     
 	   
 		PATH="${current_path}"
 		export PATH
@@ -459,7 +462,7 @@ setBuildEnv()
         
 	if [ -x "${C_COMPILER}" ] ; then
         
-		if [ "export_env" -eq 0 ] ; then        
+		if [ $export_env -eq 0 ] ; then        
 			CC=${C_COMPILER}
 			export CC
 		fi
@@ -468,7 +471,7 @@ setBuildEnv()
 		
 			DEBUG "C and C++ compilers available. $command_string"			
                         
-			if [ "export_env" -eq 0 ] ; then        
+			if [ $export_env -eq 0 ] ; then        
 				CXX=${CPP_COMPILER}
 				export CXX
 			fi
@@ -504,7 +507,7 @@ setBuildEnv()
 	
 			DEBUG "C++ compiler available, C not. $command_string"
                         
-			if [ "export_env" -eq 0 ] ; then        
+			if [ $export_env -eq 0 ] ; then        
 				CXX=${CPP_COMPILER}
 				export CXX
 			fi
@@ -533,7 +536,7 @@ setBuildEnv()
 	
 	fi
         
-    if [ "export_env" -eq 0 ] ; then  
+    if [ $export_env -eq 0 ] ; then  
 	
 		CC=$OLD_CC
 		export CC
