@@ -20,7 +20,7 @@ cd LOANI-repository
 
 #echo "In `pwd` :"
 
-for f in ${VAULT}/LOANI-repository/* ; do
+for f in ${VAULT}/* ; do
 	echo "    + linking $f"
 	ln -s $f 2>/dev/null
 done
