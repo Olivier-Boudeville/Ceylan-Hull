@@ -1,12 +1,12 @@
-# There is not need for the following two lines since this script is expected only 
-# to be sourced (not executed) :
+# There is not need for the following two lines since this script 
+# is expected only to be sourced (not executed) :
 
 #!/bin/sh
 #USAGE=". $0"
 
 # This script is made so that, when sourced (not executed), main UNIX tools
-# are defined with standard locations (i.e. find is to be found in /usr/bin/find
-# or nowhere, etc.)
+# are defined with standard locations (i.e. find is to be found in 
+# /usr/bin/find or nowhere, etc.)
 
 
 # Triggers termUtils.sh as well :
@@ -14,17 +14,17 @@
 
 PLATFORMDETECT="platformDetection.sh"
 
-#if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
-#	if [ ! -f "./${PLATFORMDETECT}" ] ; then
-#		echo 1>&2
-#		echo "    Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
-#		exit 1
-#	else
-#		. ./${PLATFORMDETECT}
-#	fi
-#else
-#	. "${SHELLS_LOCATION}/${PLATFORMDETECT}"
-#fi
+if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
+   if [ ! -f "./${PLATFORMDETECT}" ] ; then
+	   echo 1>&2
+	   echo "	 Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
+	   exit 1
+   else
+	   . ./${PLATFORMDETECT}
+   fi
+else
+   . "${SHELLS_LOCATION}/${PLATFORMDETECT}"
+fi
 
 
 # Default locations for real basic commands:
@@ -39,7 +39,7 @@ DU="/usr/bin/du"
 
 
 # For ping tool options :
-if  [ "$is_windows" -eq 0 ] ; then
+if [ "$is_windows" -eq 0 ] ; then
 	PING_OPT="-n"
 else
 	PING_OPT="-c"
@@ -48,7 +48,7 @@ fi
 
 # For MD5 sum tool :
 
-if  [ "$is_bsd" -eq 1 ] ; then
+if [ "$is_bsd" -eq 1 ] ; then
 
 	# Here we are not under a BSD-style OS :
 	if findTool md5sum ; then
