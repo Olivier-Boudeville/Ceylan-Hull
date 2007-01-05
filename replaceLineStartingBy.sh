@@ -12,9 +12,10 @@ if [ ! -f $3 ]; then
 	exit 1
 fi
 
+shell_dir=`dirname $0`
 
-SOURCE="^"`protectSpecialCharacters.sh "$1"`".*$"
-TARGET=`protectSpecialCharacters.sh "$2"`
+SOURCE="^"`${shell_dir}/protectSpecialCharacters.sh "$1"`".*$"
+TARGET=`${shell_dir}/protectSpecialCharacters.sh "$2"`
 
 #echo "SOURCE = $SOURCE"
 #echo "TARGET = $TARGET"
