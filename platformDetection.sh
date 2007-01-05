@@ -285,7 +285,7 @@ lookUpExec()
 	
 	# The ridiculous sentence is a bad idea from Solaris :
 	returnedString=`which $1 | grep -v 'Warning: ridiculously long PATH truncated' 2>/dev/null`	
-	if [ "$?" -eq 0 ] ; then
+	if [ $? -eq 0 ] ; then
 		PATH=$OLD_PATH
 		export PATH
 		DEBUG "<$1> is available in $returnedString."
@@ -314,9 +314,11 @@ findTool()
 #				...
 {
 
-	# ex : with 'grep', EXEC_VAR would be 'GREP'
-	exec_var=`echo "$1" | tr a-z A-Z`
-	#DEBUG "Variable name for tool $1 is $EXEC_VAR."
+	# ex : with 'grep', exec_var would be 'GREP'
+	# '+' is converted on 'x' as for example g++ would result in G++ which
+	# is not a valid name for a shell variable.
+	exec_var=`echo "$1" | tr a-z A-Z | tr + x`
+	DEBUG "Variable name for tool $1 is $exec_var."
 	eval var_name=\$$exec_var
 	if [ -n "${var_name}" ] ; then
 	
@@ -414,7 +416,7 @@ if [ "${ARCH}" != "Linux" ] ; then
 		             
 		if [ -d "$mingw_location" ] ; then
 
-			use_mingw=0
+			is_mingw=0
 			precise_platform_detected=0
 			
 			MINGW_ROOT="$mingw_location"
