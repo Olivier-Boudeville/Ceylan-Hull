@@ -370,11 +370,11 @@ findBuildTools()
 	if [ -x "$CPP_COMPILER" ] ; then
 		BUILD_LOCATIONS="CXX=$CPP_COMPILER ${BUILD_LOCATIONS}"
 	fi		
-	
-	# flex, bison and perl currently disabled since not used :
-			
-	#findTool flex
-	#FLEX=$returnedString
+		
+	findTool flex
+	FLEX=$returnedString
+
+	# bison and perl currently disabled since not used :
 	
 	#findTool bison
 	#BISON=$returnedString
@@ -408,8 +408,8 @@ findMoreSpecificTools()
 setBuildEnv()
 # Sets the environment so that the build goes smooth by selecting the
 # correct files.
-# Usage : setBuildEnv [--exportEnv] [command]
-# Exemple : setBuildEnv --exportEnv ./configure
+# Usage : setBuildEnv [--exportEnv] [--appendEnv] [command]
+# Exemple : setBuildEnv --exportEnv --appendEnv ./configure
 # --prefix=${prefix}/binutils-${binutils_VERSION}
 {
 
@@ -422,6 +422,15 @@ setBuildEnv()
 		OLD_CXX=$CXX
 		OLD_PATH=$PATH
 		OLD_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+		shift
+	fi
+
+	append_var=1
+	to_be_appended=""
+	
+	if [ "$1" = "--appendEnv" ] ; then  
+		DEBUG "Will append most command autotools-like variables."
+		append_var=0
 		shift
 	fi
         
@@ -462,12 +471,16 @@ setBuildEnv()
         
 	if [ -x "${C_COMPILER}" ] ; then
         
+		to_be_appended="${to_be_appended} CC=${C_COMPILER}"
+		
 		if [ $export_env -eq 0 ] ; then        
 			CC=${C_COMPILER}
 			export CC
 		fi
                 
 		if [ -x "${CPP_COMPILER}" ] ; then
+
+			to_be_appended="${to_be_appended} CXX=${CPP_COMPILER}"
 		
 			DEBUG "C and C++ compilers available. $command_string"			
                         
@@ -475,11 +488,15 @@ setBuildEnv()
 				CXX=${CPP_COMPILER}
 				export CXX
 			fi
+			
+			if [ $append_var -eq 1 ] ; then 
+				to_be_appended=""  
+			fi
                         
 			if [ -n "$*" ] ; then
                         
-				DEBUG "Actual command will be : " PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@"
-				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@"
+				DEBUG "Actual command will be : " PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@" $to_be_appended
+				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@" $to_be_appended
 				return $?
 			else
 				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command 
@@ -491,10 +508,10 @@ setBuildEnv()
 			DEBUG "C compiler available, C++ not. $command_string"
 
 			if [ -n "$*" ] ; then
-				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" $command "$@"
+				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" $command "$@" $to_be_appended
 				return $?
 			else
-				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" $command 
+				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" $command $to_be_appended 
 				return $?				
 			fi	
 					
@@ -506,17 +523,19 @@ setBuildEnv()
 		if [ -x "${CPP_COMPILER}" ] ; then
 	
 			DEBUG "C++ compiler available, C not. $command_string"
-                        
+ 
+ 			to_be_appended="${to_be_appended} CXX=${CPP_COMPILER}"
+                       
 			if [ $export_env -eq 0 ] ; then        
 				CXX=${CPP_COMPILER}
 				export CXX
 			fi
 
 			if [ -n "$*" ] ; then
-				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CXX="${CPP_COMPILER}" $command "$@"
+				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CXX="${CPP_COMPILER}" $command "$@" $to_be_appended
 				return $?
 			else
-				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CXX="${CPP_COMPILER}" $command 
+				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CXX="${CPP_COMPILER}" $command $to_be_appended
 				return $?				
 			fi	
 	
