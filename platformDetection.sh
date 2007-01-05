@@ -71,6 +71,9 @@
 #	- CEYLAN_ARCH_SMP, CEYLAN_PROC_NUMBER
 
 
+# Tells whether this script has already been sourced :
+platformdetection_sourced=0
+
 # Note : the termUtils.sh script must have sourced beforehand.
 
 if [ "${termutils_sourced}" != 0 ] ; then
@@ -172,84 +175,84 @@ displayPlatformFlags()
 	
 	PLATFORM=
 	
-	if [ "$is_posix" -eq 0 ] ; then
+	if [ $is_posix -eq 0 ] ; then
 		PLATFORM="${PLATFORM} POSIX"
 	fi
 
-	if [ "$is_unix" -eq 0 ] ; then
+	if [ $is_unix -eq 0 ] ; then
 		PLATFORM="${PLATFORM} UNIX"
 	fi
 
-	if [ "$is_windows" -eq 0 ] ; then
+	if [ $is_windows -eq 0 ] ; then
 		PLATFORM="${PLATFORM} Microsoft Windows"
 	fi
 
 
 
-	if [ "$is_systemv" -eq 0 ] ; then
+	if [ $is_systemv -eq 0 ] ; then
 		PLATFORM="${PLATFORM} System V"
 	fi
 
-	if [ "$is_linux" -eq 0 ] ; then
+	if [ $is_linux -eq 0 ] ; then
 		PLATFORM="${PLATFORM} GNU/Linux"
 	fi
 
-	if [ "$is_solaris" -eq 0 ] ; then
+	if [ $is_solaris -eq 0 ] ; then
 		PLATFORM="${PLATFORM} Sun Solaris"
 	fi
 
-	if [ "$is_aix" -eq 0 ] ; then
+	if [ $is_aix -eq 0 ] ; then
 		PLATFORM="${PLATFORM} IBM AIX"
 	fi
 
 
 
-	if [ "$is_bsd" -eq 0 ] ; then
+	if [ $is_bsd -eq 0 ] ; then
 		PLATFORM="${PLATFORM} BSD family"
 	fi
 
-	if [ "$is_freebsd" -eq 0 ] ; then
+	if [ $is_freebsd -eq 0 ] ; then
 		PLATFORM="${PLATFORM} FreeBSD"
 	fi
 
-	if [ "$is_netbsd" -eq 0 ] ; then
+	if [ $is_netbsd -eq 0 ] ; then
 		PLATFORM="${PLATFORM} NetBSD"
 	fi
 
-	if [ "$is_openbsd" -eq 0 ] ; then
+	if [ $is_openbsd -eq 0 ] ; then
 		PLATFORM="${PLATFORM} OpenBSD"
 	fi
 
-	if [ "$is_macosx" -eq 0 ] ; then
+	if [ $is_macosx -eq 0 ] ; then
 		PLATFORM="${PLATFORM} Mac OS X"
 	fi
 	
 
-	if [ "$is_windows2000" -eq 0 ] ; then
+	if [ $is_windows2000 -eq 0 ] ; then
 		PLATFORM="${PLATFORM} 2000"
 	fi
 
-	if [ "$is_windowsxp" -eq 0 ] ; then
+	if [ $is_windowsxp -eq 0 ] ; then
 		PLATFORM="${PLATFORM} XP"
 	fi
 
-	if [ "$is_windowsvista" -eq 0 ] ; then
+	if [ $is_windowsvista -eq 0 ] ; then
 		PLATFORM="${PLATFORM} Vista"
 	fi
 
-	if [ "$is_cygwin" -eq 0 ] ; then
+	if [ $is_cygwin -eq 0 ] ; then
 		PLATFORM="${PLATFORM} with Cywin runtime"
 	fi
 
-	if [ "$is_mingw" -eq 0 ] ; then
+	if [ $is_mingw -eq 0 ] ; then
 		PLATFORM="${PLATFORM} with minGW runtime"
 	fi
 
-	if [ "$use_cygwin" -eq 0 ] ; then
+	if [ $use_cygwin -eq 0 ] ; then
 		PLATFORM="${PLATFORM} using Cywin environment"
 	fi
 
-	if [ "$use_msys" -eq 0 ] ; then
+	if [ $use_msys -eq 0 ] ; then
 		PLATFORM="${PLATFORM} using MSYS environment"
 	fi
 	
