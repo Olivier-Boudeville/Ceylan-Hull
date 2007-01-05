@@ -158,6 +158,7 @@ resetPlatformFlags()
 		
 	##### Cygwin runtime (beware to the licence):
 	is_cygwin=1
+	is_pure_cygwin=1
 	
 	##### MinGW runtime :
 	is_mingw=1
@@ -165,7 +166,8 @@ resetPlatformFlags()
 	##### Build environments (not runtimes) :
 	use_cygwin=1
 	use_msys=1
-
+	is_cygwin_mingw=1
+	
 }
 
 
@@ -417,6 +419,7 @@ if [ "${ARCH}" != "Linux" ] ; then
 		if [ -d "$mingw_location" ] ; then
 
 			is_mingw=0
+			is_cygwin_mingw=0
 			precise_platform_detected=0
 			
 			MINGW_ROOT="$mingw_location"
@@ -439,7 +442,7 @@ if [ "${ARCH}" != "Linux" ] ; then
 		is_windows=0
 		platform_family_detected=0
 
-		is_msys=0
+		use_msys=0
 		precise_platform_detected=0
 	
 	elif ${UNAME} -s | ${GREP} -i darwin 1>/dev/null 2>&1 ; then
