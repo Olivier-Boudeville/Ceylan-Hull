@@ -25,6 +25,9 @@
 # Tells whether this script has already been sourced :
 termutils_sourced=0
 
+# This script does not depend on any helper script.
+
+
 # Not in debug mode by default (default : 1).
 do_debug=1
 
