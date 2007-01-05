@@ -1,14 +1,17 @@
-# There is not need for the following two lines since this script is expected only 
-# to be sourced (not executed) :
+# There is not need for the following two lines since this script is expected
+# only # to be sourced (not executed) :
 
 #!/bin/sh
 #USAGE=". $0"
 
-# This helper script provides platform-detection facilities, so that user scripts are freed from
-# UNIX particularisms, or at least can take them into account more easily.
+
+# This helper script provides platform-detection facilities, so that user
+# scripts are freed from UNIX particularisms, or at least can take them 
+# into account more easily.
 #
-# Beyond testing whether the specific platform has been detected, the user script can test
-# particular platform family (ex : if [ "$is_bsd" -eq 0 ] ; then ...) and/or particular
+# Beyond testing whether the specific platform has been detected, the user
+# script can test particular platform family 
+# (ex : if [ "$is_bsd" -eq 0 ] ; then ...) and/or particular
 # precise platform (ex : if [ "$is_netbsd" -eq 0 ] ; then ...)
 
 
@@ -16,8 +19,10 @@
 
 #	- UNIX (CEYLAN_ARCH_UNIX)
 #		+ System III and V (CEYLAN_ARCH_SYSTEM_5)
-# 			- Linux        (CEYLAN_ARCH_LINUX)  : for all kinds of GNU/Linux distributions
-# 			- Sun Solaris  (CEYLAN_ARCH_SOLARIS): for all various Solaris versions
+# 			- Linux        (CEYLAN_ARCH_LINUX)  : for all kinds of GNU/Linux
+# distributions
+# 			- Sun Solaris  (CEYLAN_ARCH_SOLARIS): for all various Solaris
+# versions
 #			- IBM AIX      (CEYLAN_ARCH_AIX) : for all various AIX versions
 #			- SGI IRIX     (CEYLAN_ARCH_IRIX) : for all various IRIX versions
 #			- HP UX        (CEYLAN_ARCH_HPUX) : for all various HP-UX versions
@@ -25,8 +30,10 @@
 #			- FreeBSD  (CEYLAN_ARCH_FREEBSD)
 #			- NetBSD   (CEYLAN_ARCH_NETBSD) 
 #			- OpenBSD  (CEYLAN_ARCH_OPENBSD) 
-# 			- Mac OS X (CEYLAN_ARCH_MACOSX) : for all versions, including Panther and Tiger (10.4)
-# 	- Windows (CEYLAN_ARCH_WINDOWS): for the various Windows systems, including  :
+# 			- Mac OS X (CEYLAN_ARCH_MACOSX) : for all versions, including
+# Panther and Tiger (10.4)
+# 	- Windows (CEYLAN_ARCH_WINDOWS): for the various Windows systems, 
+# including  :
 #		+ Windows NT    (CEYLAN_ARCH_WINNT)
 #		+ Windows 2000  (CEYLAN_ARCH_WIN2000)
 #		+ Windows XP    (CEYLAN_ARCH_WINXP)
@@ -34,8 +41,7 @@
 #		+ Cygwin        (CEYLAN_ARCH_CYGWIN) 
 # [see http://osdl.sf.net/OSDL-latest/documentation/OSDL/OSDL-generic/PortingGuide.html#cygwincase]
 #		+ MinGW         (CEYLAN_ARCH_MINGW)
-
-# 
+ 
 
 # Other available architecture variables are :
 #	- CEYLAN_ARCH_UNIX_ON_WINDOWS = CEYLAN_ARCH_CYGWIN and CEYLAN_ARCH_MINGW
@@ -47,288 +53,48 @@
 #	- CEYLAN_USES_THREADS, activated for CEYLAN_ARCH_UNIX only
 #	- CEYLAN_USES_PROCESS_MANAGEMENT, activated for CEYLAN_ARCH_UNIX only
 #
-# 
 
 
-ifeq ($(POSIX),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_POSIX
-FEATURES    += -DCEYLAN_USES_REGEX
-endif
-
-ifeq ($(UNIX),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_UNIX
-endif
-
-ifeq ($(LINUX),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_LINUX
-endif
-
-ifeq ($(BSD),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_BSD
-endif
-
-ifeq ($(FREEBSD),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_FREEBSD
-endif
-
-ifeq ($(NETBSD),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_NETBSD
-endif
-
-ifeq ($(WINDOWS),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_WINDOWS
-endif
-
-ifeq ($(WIN2000),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_WIN2000
-endif
-
-ifeq ($(WINXP),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_WINXP
-endif
-
-ifeq ($(WINVISTA),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_WINVISTA
-endif
-
-ifeq ($(CYGWIN),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_UNIX_ON_WINDOWS -DCEYLAN_ARCH_CYGWIN
-endif
-
-ifeq ($(MINGW),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_UNIX_ON_WINDOWS -DCEYLAN_ARCH_MINGW -mno-cygwin -mwindows
-endif
-
-ifeq ($(SOLARIS),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_SOLARIS
-endif
-
-ifeq ($(MACOSX),true)
-CFLAGS_PRIV += -DCEYLAN_ARCH_MACOSX
-endif
 
 
-# Architectures cannot be fully organized as a tree as, for example, POSIX compliance depends 
-# on the choice of Windows subplatforms. 
+
+# Architectures cannot be fully organized as a tree as, for example, POSIX
+# compliance depends on the choice of Windows subplatforms. 
 
 # Other platform-related variables are :
 #	- CEYLAN_USES_GNU
-#	- CEYLAN_ARCH_8_BIT, CEYLAN_ARCH_16_BIT, CEYLAN_ARCH_32_BIT, CEYLAN_ARCH_64_BIT
+#	- CEYLAN_ARCH_8_BIT, CEYLAN_ARCH_16_BIT, CEYLAN_ARCH_32_BIT,
+# CEYLAN_ARCH_64_BIT
 #	- CEYLAN_ENDIAN_LITTLE, CEYLAN_ENDIAN_BIG
-#	- CEYLAN_PROC_IA32 (x86),CEYLAN_PROC_IA64 (Itanium), CEYLAN_PROC_AMD64 (AMD), CEYLAN_PROC_POWERPC, CEYLAN_PROC_SPARC, CEYLAN_PROC_ALPHA
+#	- CEYLAN_PROC_IA32 (x86),CEYLAN_PROC_IA64 (Itanium), CEYLAN_PROC_AMD64
+# (AMD), CEYLAN_PROC_POWERPC, CEYLAN_PROC_SPARC, CEYLAN_PROC_ALPHA
 #	- CEYLAN_ARCH_SMP, CEYLAN_PROC_NUMBER
 
-#PROCS = 1
-# ifneq ($(PROCS),1)
-#SMPJOBS=-j $(PROCS)
-# endif
 
+# Note : the termUtils.sh script must have sourced beforehand.
 
-# Compilers section.
+if [ "${termutils_sourced}" != 0 ] ; then
 
+	TERMUTILS="termUtils.sh"
 
-# Basic compiler type is defined by COMPILER_FAMILY (ex : gcc or icpc, i.e. Intel compiler)
-# COMPILER_FAMILY variable is useful to select options available for an entire compiler family
-# Precise compiler version will be defined in CPP_COMPILER for effective compiler use.
-
-# COMPILER_FAMILY known values are :
-# - gcc : for the GNU compiler collection, including minGW
-# - icpc : Intel's C++ compiler
-# - visualcpp : Microsoft's Visual C++ compiler
-
-# Selected compiler family :
-COMPILER_FAMILY = gcc
-
-# gcc family.
-
-# One may update its GCC root accordingly to his installation, to select the compiler to be used :
-GCC_ROOT := $(TOP)/../../../gcc-$(gcc_VERSION)
-GPP      := $(shell PATH=$(GCC_ROOT)/bin:$$PATH which g++ 2>/dev/null)
-GPP_LIB  := `[ ! -d "$(GCC_ROOT)" ] || echo "-L$(GCC_ROOT)/lib -lgcc_s -lstdc++"`
-
-GDB_ROOT := $(TOP)/../../../gdb-$(gdb_VERSION)
-GDB      := $(shell PATH=$(GDB_ROOT)/bin:$$PATH which gdb 2>/dev/null)
-
-# Intel's icpc family.
-
-ICPC        = $(ICPC_7.1)
-INTEL_ROOT  = /opt/intel
-#INTEL_ROOT = /logiciels/public/intelC++_7.0
-ICPC_7.1    = $(INTEL_ROOT)/compiler70/ia32/bin/icpc
-
-
-# Stripping utility.
-STRIP      = `which strip 2>/dev/null`
-STRIP_OPT  = "--strip-all"
-
-
-# Build flags and dependencies.
-
-CCMAKE	   = $(CPP_COMPILER)
-
-# Build options.
-# Use : 'make <target> SILENT=' to disable silent mode.
-SILENT = "--silent"
-
-
-# libtool handles it for gcc only :
-PICFLAGS   = -fPIC
-DSOFLAGS   = -shared
-LD_DSO     = $(CCC)
-AR	       = ar cr
-
-DEPFLAGS    = -MM
-DEPFILTER  = cat
-
-
-ifeq ($(OPTIMIZE_LEVEL),debug)
-DFLAGS_PRIV += -g
-endif 
-
-CFLAGS_PRIV += $(DFLAGS_PRIV)
-
-
-						     #     #
-						     #        ###  #  #
-						     #     #  #  # #  # #   #
-						     #    ##  #  # #  #  # #
-						     #     #  #  # #  #   #
-						     #  #  #  #  # #  #  # #
-						     #### ### #  #  ### #   #
-
-
-ifeq ($(ARCH),Linux)
-
-
-
-
-
-  ##     ##
- #   ## #####
-    ## #     
- #  #  ##  ##
-  ##     ### # 
-        ## 
-      #######
-     #       
-     #      #
-      #     
-        ## 
-      #######
-     #       
-     #      #
-      #     
-
-
-ifeq ($(COMPILER_FAMILY),gcc)
-
-
-CPP_COMPILER = $(GPP)
-OPT_PRIV    := $(OPT_PRIV) -Wall -ansi $(DEBUG_OPT)
-DEPFILTER    = awk '{ for(f=1;f<=NF;f++)  if($$f != "\\\\") print $$f " \\\\" }'
-
-# No += to keep control of the link order, that matters !
-LDFLAGS_PRIV := $(LDFLAGS_PRIV) -lpthread $(GPP_LIB)
-
-
-ifeq ($(VERBOSE_LEVEL),low)
-OPT_PRIV := $(OPT_PRIV) 
-else 
-# high (default)
-OPT_PRIV := $(OPT_PRIV) -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings   \
-	-Wconversion -Wredundant-decls -Woverloaded-virtual -Winline -fno-common  
-# disabled : -Waggregate-return	
-endif # Verbose level
-
-ifeq ($(OPTIMIZE_LEVEL),release)
-OPT_PRIV := $(OPT_PRIV) -O3 -s -funroll-loops -fexpensive-optimizations -fdelayed-branch \
-	-fschedule-insns -finline-functions -fkeep-inline-functions -fcaller-saves    \
-	-fstrength-reduce -ffast-math"
-# warning : -fomit-frame-pointer often hinders debugging	
-else 
-# debug (default)
-OPT_PRIV := $(OPT_PRIV) -g -ggdb -O0 -fno-inline
-endif # Optimize level
-
-
-endif # if compiler family is gcc
-
-
-
-							###	  #	   #
-							 #  ###   #   ##  ##
-							 #  #  # ### #  #  #
-							 #  #  #  #  #  #  #
-							 #  #  #  #  ####  #
-							 #  #  #  #  #     #
-							### #  #   #  ###   #
-							
-ifeq ($(COMPILER_FAMILY),icpc)
-
-CPP_COMPILER = $(ICPC)
-
-ifeq ($(VERBOSE_LEVEL),low)
-# Disable remarks : 
-OPT_PRIV := $(OPT_PRIV) -Wall  -ansi -w1
-else 
-# high (default)
-# Enable remarks  : 
-OPT_PRIV := $(OPT_PRIV) -Wall -ansi -mp -w2 -opt_report
-endif # Verbose level
-
-ifeq ($(OPTIMIZE_LEVEL),release)
-OPT_PRIV := $(OPT_PRIV) -O3 -unroll 
-else 
-# debug (default)
-OPT_PRIV := $(OPT_PRIV) -g -O0
-endif # Optimize level
-
-
-Comment : DEPFLAGS, DEPFLAGS_PRIV, DEPFILTER 
-# Useful since libtool only handles the gcc compiler :
-
-DEPFLAGS       = -M
-DEPFILTER     = grep -v /usr/ | grep -v $(INTEL_ROOT)
-CFLAGS_PRIV  += -Tused -DCEYLAN_ARCH_LINUX -wd411
-LDFLAGS_PRIV += -lpthread 
-PICFLAGS      = -KPIC
-
-endif # if compiler family is icpc
-
-endif # if arch is Linux
-
-
-ifeq ($(ARCH),Cygwin)
-
-
-PTHREADS_ROOT := $(TOP)/../../../pthreads-win32
-INC_PRIV      += -I$(PTHREADS_ROOT)/include
-LDFLAGS_PRIV  += -L$(PTHREADS_ROOT)/lib -lpthreadGCE
-
-endif # if arch is Cygwin
-# This script uses termUtils.sh for its output. 
-
-# Use SHELLS_LOCATION to provide an alternate path for helper script :	
-	
-TERMUTILS="termUtils.sh"
-
-if [ ! -f "${SHELLS_LOCATION}/${TERMUTILS}" ] ; then
-	if [ ! -f "./${TERMUTILS}" ] ; then
-		echo 1>&2
-		echo "    Error, helper script for terminal management not found (${TERMUTILS})." 1>&2
-		exit 1
+	if [ ! -f "${SHELLS_LOCATION}/${TERMUTILS}" ] ; then
+		if [ ! -f "./${TERMUTILS}" ] ; then
+			echo 1>&2
+			echo "	 Error, helper script for platform detection not found (${TERMUTILS})." 1>&2
+			exit 1
+		else
+			. ./${TERMUTILS}
+		fi
 	else
-		. ./${TERMUTILS}
+		. "${SHELLS_LOCATION}/${TERMUTILS}"
 	fi
-else
-	. "${SHELLS_LOCATION}/${TERMUTILS}"
+
 fi
 
 
-
-
 resetPlatformFlags()
-# Allows to be sure no two different platform flags are set to true (0) incorrectly.
+# Allows to be sure no two different platform flags are set to true (0)
+# incorrectly.
 # Hence by default all of them are set to false (1).
 {
 
@@ -488,7 +254,7 @@ displayPlatformFlags()
 	fi
 	
 	if [ -z "${PLATFORM}" ] ; then
-		ERROR "Platform detection failed."
+		ERROR "Platform detection failed, none found."
 	else
 		DISPLAY "Detected platform :${PLATFORM}."
 	fi
@@ -496,50 +262,6 @@ displayPlatformFlags()
 }
 
 
-deprecatedDisplayPlatformFlags()
-# (deprecated) Output the value of all platform flags.
-{
-
-
-	if [ "$is_linux" -eq 0 ] ; then
-	
-		DISPLAY "GNU/Linux platform detected."
-		
-	elif [ "$is_bsd" -eq 0 ] ; then
-	
-		if [ "$is_freebsd" -eq 0 ] ; then
-			DISPLAY "FreeBSD platform detected."
-		elif [ "$is_netbsd" -eq 0 ] ; then
-			DISPLAY "NetBSD platform detected."
-		elif [ "$is_openbsd" -eq 0 ] ; then
-			DISPLAY "OpenBSD platform detected."
-		else
-			DISPLAY "Unknown BSD platform detected."		
-		fi
-		
-	elif [ "$is_windows" -eq 0 ] ; then
-	
-		if [ "$use_mingw" -eq 0 ] ; then
-			add_mingw=""
-		else
-			add_mingw=" not"
-		fi
-		
-		if [ "$is_pure_cygwin" -eq 0 ] ; then
-			DISPLAY "Pure Cygwin platform detected,$(add_mingw) using minGW."
-		elif [ "$is_msys" -eq 0 ] ; then
-			DISPLAY "Pure MSYS platform detected,$(add_mingw) using minGW."
-		else
-			DISPLAY "Unknown Windows platform detected,$(add_mingw) using minGW."
-		fi
-		
-	elif [ "$is_macosx" -eq 0 ] ; then
-		DISPLAY "Mac OS X platform detected."
-	else
-		DISPLAY "Detection failed, unknown platform."
-	fi
-	
-}
 
 
 # lookUpExec and findTool are defined here so that 'uname' can be found 
@@ -660,17 +382,20 @@ msys_location="${windows_drive}\\msys\\1.0\\"
 resetPlatformFlags
 
 findTool uname
-UNAME=$returnedString
+UNAME=${returnedString}
 
-ARCH=$(${UNAME} -s)
-NODE=$(${UNAME} -n)
+ARCH=`${UNAME} -s`
+NODE=`${UNAME} -n`
 
 
-# 'precise_platform_detected' left to 1 only when deemed to matter.
+# 'platform_family_detected' is false (1) by defaut.
+platform_family_detected=1
+
+# 'precise_platform_detected' is false (1) by defaut.
 precise_platform_detected=1
 
 
-if [ ! "${ARCH}" == "Linux" ] ; then
+if [ "${ARCH}" != "Linux" ] ; then
 
 	GREP="/bin/grep"
 	findTool grep
@@ -680,8 +405,10 @@ if [ ! "${ARCH}" == "Linux" ] ; then
 	
 		DEBUG "Windows OS detected."                
 		is_windows=0
+		platform_family_detected=0
+
 		use_cygwin=0
-				               
+		             
 		if [ -d "$mingw_location" ] ; then
 
 			use_mingw=0
@@ -704,12 +431,18 @@ if [ ! "${ARCH}" == "Linux" ] ; then
 		
 	elif ${UNAME} -s | ${GREP} -i mingw 1>/dev/null 2>&1 ; then
 		DEBUG "Windows MSYS/mingw detected."
+		is_windows=0
+		platform_family_detected=0
+
 		is_msys=0
 		precise_platform_detected=0
 	
 	elif ${UNAME} -s | ${GREP} -i darwin 1>/dev/null 2>&1 ; then
 	
 		DEBUG "MacOS X OS detected."
+		is_bsd=0		
+		platform_family_detected=0
+
 		is_macosx=0		
 		precise_platform_detected=0
 		
@@ -717,6 +450,7 @@ if [ ! "${ARCH}" == "Linux" ] ; then
 
 		DEBUG "BSD-style OS detected."
 		is_bsd=0		
+		platform_family_detected=0
 		
 		if ${UNAME} -s | ${GREP} -i NetBSD 1>/dev/null 2>&1 ; then
 			is_netbsd=0
@@ -747,7 +481,10 @@ else
 	is_posix=0
 	is_unix=0
 	is_systemv=0
+	platform_family_detected=0
+	
 	is_linux=0        
+	precise_platform_detected=0
 	
 fi
 
@@ -755,5 +492,66 @@ fi
 #TRACE "Per-platform adaptation performed."
 
 
-displayPlatformFlags
-#deprecatedDisplayPlatformFlags
+#displayPlatformFlags
+
+
+
+
+# Cubbyhole section (mostly deprecated).
+
+# Compilers section.
+
+
+# Basic compiler type is defined by COMPILER_FAMILY (ex : gcc or icpc, i.e.
+# Intel compiler)
+# COMPILER_FAMILY variable is useful to select options available for an 
+# entire compiler family
+# Precise compiler version will be defined in CPP_COMPILER for effective
+# compiler use.
+
+# COMPILER_FAMILY known values are :
+# - gcc : for the GNU compiler collection, including minGW
+# - icpc : Intel's C++ compiler
+# - visualcpp : Microsoft's Visual C++ compiler
+
+# Selected compiler family :
+COMPILER_FAMILY=gcc
+
+# gcc family.
+
+# One may update its GCC root accordingly to his installation, to select 
+# the compiler to be used :
+GCC_ROOT=FIXME/gcc-${gcc_VERSION}
+GPP=`PATH=${GCC_ROOT}/bin:$PATH which g++ 2>/dev/null`
+GPP_LIB="-L${GCC_ROOT}/lib -lgcc_s -lstdc++"
+
+GDB_ROOT=FIXME/gdb-${gdb_VERSION}
+GDB=`PATH=${GDB_ROOT}/bin:$$PATH which gdb 2>/dev/null`
+
+
+# Intel's icpc family.
+
+INTEL_ROOT=/opt/intel
+ICPC_7_1=${INTEL_ROOT}/compiler70/ia32/bin/icpc
+ICPC=${ICPC_7_1}
+
+
+# Stripping utility.
+STRIP=`which strip 2>/dev/null`
+STRIP_OPT="--strip-all"
+
+
+# Build flags and dependencies.
+
+CCMAKE=${CPP_COMPILER}
+
+
+
+# libtool handles it for gcc only :
+PICFLAGS=-fPIC
+DSOFLAGS=-shared
+LD_DSO=${CCC}
+AR="ar cr"
+
+DEPFLAGS=-MM
+DEPFILTER=cat
