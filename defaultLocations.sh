@@ -8,22 +8,28 @@
 # are defined with standard locations (i.e. find is to be found in 
 # /usr/bin/find or nowhere, etc.)
 
+# Tells whether this script has already been sourced :
+defaultlocations_sourced=0
 
 # Triggers termUtils.sh as well :
 # Note : defaultLocations.sh depends on platformDetection.sh, not the contrary.
 
-PLATFORMDETECT="platformDetection.sh"
+if [ "$platformdetection_sourced" != 0 ] ; then
 
-if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
-   if [ ! -f "./${PLATFORMDETECT}" ] ; then
-	   echo 1>&2
-	   echo "	 Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
-	   exit 1
-   else
-	   . ./${PLATFORMDETECT}
-   fi
-else
-   . "${SHELLS_LOCATION}/${PLATFORMDETECT}"
+	PLATFORMDETECT="platformDetection.sh"
+
+	if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
+		if [ ! -f "./${PLATFORMDETECT}" ] ; then
+		   echo 1>&2
+		   echo "	 Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
+		   exit 1
+	   else
+		   . ./${PLATFORMDETECT}
+	   fi
+	else
+	   . "${SHELLS_LOCATION}/${PLATFORMDETECT}"
+	fi
+	
 fi
 
 
@@ -209,10 +215,13 @@ findSupplementaryShellTools()
 	findTool cvs
 	CVS=$returnedString
 		
+	findTool svn
+	SVN=$returnedString
+		
 	findTool sleep
 	SLEEP=$returnedString
 	
-	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, UNZIP = $UNZIP, PING = $PING, CVS = $CVS, MORE = $MORE, SLEEP = $SLEEP"
+	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, UNZIP = $UNZIP, PING = $PING, CVS = $CVS, SVN = $SVN, MORE = $MORE, SLEEP = $SLEEP"
 	
 }
 
@@ -248,7 +257,7 @@ findBuildTools()
 	
 	# Special case for minGW :
 
-	if  [ "$use_mingw" -eq 0 ] ; then
+	if  [ "$is_mingw" -eq 0 ] ; then
 
 		# MINGW_ROOT has been set by 'platformDetection.sh' :
 	
@@ -420,13 +429,14 @@ setBuildEnv()
 	current_path=$PATH
 	current_ld_library_path=$LD_LIBRARY_PATH
 	
-	# So that tools ignoring CC and CXX have a chance to catch them nevertheless :
+	# So that tools ignoring CC and CXX have a chance to catch them 
+	# nevertheless :
 	if [ -d "${GCC_ROOT}" ] ; then
 		current_path=${GCC_ROOT}/bin:$current_path
 		current_ld_library_path=${GCC_ROOT}/lib:$current_ld_library_path
 	fi
 	
-	if [ "$use_mingw" -eq 0 ] ; then
+	if [ "$is_mingw" -eq 0 ] ; then
 		current_path=${MINGW_PATH}:$current_path
 		current_ld_library_path=${MINGW_LD_LIBRARY_PATH}:$current_ld_library_path
 	fi
