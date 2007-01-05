@@ -22,6 +22,8 @@
 
 # Source : dircolors -p
 
+# Tells whether this script has already been sourced :
+termutils_sourced=0
 
 # Not in debug mode by default (default : 1).
 do_debug=1
@@ -170,7 +172,7 @@ updateColorSupport()
 {
  
  	which printf 1>/dev/null 2>&1
-	if [ "$?" -eq 0 ] ; then
+	if [ $? -eq 0 ] ; then
 		printf_available=0		
 		DEBUG "printf is available."
 	else
