@@ -8,8 +8,12 @@
 # are defined with standard locations (i.e. find is to be found in 
 # /usr/bin/find or nowhere, etc.)
 
-# Tells whether this script has already been sourced :
+
+#echo "Trace : begin of defaultLocations.sh"
+
+# Tells whether this script has already been sourced :
 defaultlocations_sourced=0
+
 
 # Triggers termUtils.sh as well :
 # Note : defaultLocations.sh depends on platformDetection.sh, not the contrary.
@@ -18,6 +22,8 @@ if [ "$platformdetection_sourced" != 0 ] ; then
 
 	PLATFORMDETECT="platformDetection.sh"
 
+	#echo "Trace : will source platformDetection.sh"
+	
 	if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
 		if [ ! -f "./${PLATFORMDETECT}" ] ; then
 		   echo 1>&2
@@ -32,6 +38,7 @@ if [ "$platformdetection_sourced" != 0 ] ; then
 	
 fi
 
+#echo "Trace : body of defaultLocations.sh"
 
 # Default locations for real basic commands:
 
@@ -67,7 +74,7 @@ else
 	
 	# BSD does not use the same name :
 	if findTool cksum ; then
-		MD5SUM="$returnedString -5"
+		MD5SUM="$returnedString -a MD5 -n"
 	else
 		ERROR "No md5sum tool found (cksum), it is necessary in order to check file integrity."	
 	fi
@@ -211,17 +218,11 @@ findSupplementaryShellTools()
 	
 	findTool ping
 	PING=$returnedString
-	
-	findTool cvs
-	CVS=$returnedString
-		
-	findTool svn
-	SVN=$returnedString
-		
+			
 	findTool sleep
 	SLEEP=$returnedString
 	
-	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, UNZIP = $UNZIP, PING = $PING, CVS = $CVS, SVN = $SVN, MORE = $MORE, SLEEP = $SLEEP"
+	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, PING = $PING, SLEEP = $SLEEP"
 	
 }
 
@@ -389,10 +390,10 @@ findBuildTools()
 
 findMoreSpecificTools()
 # Will automatically look up tools that are specific enough not to be 
-# available by default on some platforms. Requesting them from a portable 
+# available by default on some platforms. Requesting them from a portable 
 # script is therefore unsafe.
 # Uses implicitly be_strict to step on errors or not.
-# Usage : findBuildTools
+# Usage : findMoreSpecificTools
 {
 
 	# Not available under NetBSD default installs : 
@@ -402,6 +403,14 @@ findMoreSpecificTools()
 	findTool more
 	MORE=$returnedString
 
+	findTool cvs
+	CVS=$returnedString
+		
+	findTool svn
+	SVN=$returnedString
+
+	DEBUG "UNZIP=$UNZIP, MORE=$MORE, CVS = $CVS, SVN = $SVN"
+	
 }
 
 
@@ -409,7 +418,7 @@ setBuildEnv()
 # Sets the environment so that the build goes smooth by selecting the
 # correct files.
 # Usage : setBuildEnv [--exportEnv] [--appendEnv] [command]
-# Exemple : setBuildEnv --exportEnv --appendEnv ./configure
+# Example : setBuildEnv --exportEnv --appendEnv ./configure
 # --prefix=${prefix}/binutils-${binutils_VERSION}
 {
 
@@ -574,6 +583,9 @@ setBuildEnv()
 }
 
 
+#echo "Trace : auto-run of defaultLocations.sh"
 
 # Auto-run on source to have basic commands :
 findBasicShellTools
+
+#echo "Trace : end of defaultLocations.sh"
