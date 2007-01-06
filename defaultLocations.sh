@@ -235,20 +235,23 @@ findBuildTools()
 {
 
 	if [ $is_bsd -eq 0 ] ; then
+		
+		findTool make
+		NATIVE_MAKE=$returnedString
+		
 		findTool gmake
-		MAKE=$returnedString
+		GMAKE=$returnedString
+		
+		# We prefer here non-GNU 'make' to GNU 'gmake' on *BSD :
+		MAKE=$NATIVE_MAKE
+		
 	else
 		findTool make
 		MAKE=$returnedString
 	fi
 	
-	if ! `${MAKE} -v | grep GNU 1>/dev/null 2>&1` ; then		
-		if [ $be_strict -eq 0 ] ; then
-				ERROR "Tool look-up for make failed : this make does not seem to be GNU make."
-				exit 1
-			else
-				WARNING "This make tool does not seem to be GNU make."
-			fi
+	if ! `( ${MAKE} -v | grep GNU ) 1>/dev/null 2>&1` ; then		
+		WARNING "The make tool (${MAKE}) does not seem to be GNU make."
 	else
 		DEBUG "make GNU detected."		
 	fi
