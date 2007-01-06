@@ -11,7 +11,7 @@
 #
 # Beyond testing whether the specific platform has been detected, the user
 # script can test particular platform family 
-# (ex : if [ "$is_bsd" -eq 0 ] ; then ...) and/or particular
+# (ex : if [ "$is_bsd" -eq 0 ] ; then ...) and/or particular
 # precise platform (ex : if [ "$is_netbsd" -eq 0 ] ; then ...)
 
 
@@ -70,8 +70,14 @@
 # (AMD), CEYLAN_PROC_POWERPC, CEYLAN_PROC_SPARC, CEYLAN_PROC_ALPHA
 #	- CEYLAN_ARCH_SMP, CEYLAN_PROC_NUMBER
 
+#echo "Trace : begin of platformDetection.sh"
 
-# Tells whether this script has already been sourced :
+if [ -z "$be_strict_on_location" ] ; then
+	be_strict_on_location=1
+fi
+
+
+# Tells whether this script has already been sourced :
 platformdetection_sourced=0
 
 # Note : the termUtils.sh script must have sourced beforehand.
@@ -79,6 +85,8 @@ platformdetection_sourced=0
 if [ "${termutils_sourced}" != 0 ] ; then
 
 	TERMUTILS="termUtils.sh"
+
+	#echo "Trace : will source termUtils.sh"
 
 	if [ ! -f "${SHELLS_LOCATION}/${TERMUTILS}" ] ; then
 		if [ ! -f "./${TERMUTILS}" ] ; then
@@ -92,6 +100,12 @@ if [ "${termutils_sourced}" != 0 ] ; then
 		. "${SHELLS_LOCATION}/${TERMUTILS}"
 	fi
 
+fi
+
+#echo "Trace : body of platformDetection.sh"
+
+if [ -z "$must_find_tool" ] ; then
+	must_find_tool=1
 fi
 
 
@@ -331,7 +345,7 @@ findTool()
 			returnedString=${var_name}
 			return 0
 		else
-			if [ "$be_strict_on_location" -eq 0 ] ; then
+			if [ $be_strict_on_location -eq 0 ] ; then
 				ERROR "Tool look-up for <$1> : <${var_name}> is not a valid executable, and strict location checking mode is set."
 				exit 2
 			else
@@ -348,7 +362,7 @@ findTool()
 		DEBUG "Selecting looked-up executable, $returnedString."
 		return 0
 	else
-		if [ "$must_find_tool" -eq 0 ] ; then
+		if [ $must_find_tool -eq 0 ] ; then
 			ERROR "Tool look-up for <$1> failed, nothing found."
 			exit 3
 		else
@@ -404,7 +418,12 @@ precise_platform_detected=1
 
 if [ "${ARCH}" != "Linux" ] ; then
 
-	GREP="/bin/grep"
+	if [ "${ARCH}" = "NetBSD" ] ; then
+		GREP="/usr/bin/grep"
+	else	
+		GREP="/bin/grep"
+	fi
+		
 	findTool grep
 	GREP=$returnedString
 
@@ -528,13 +547,13 @@ COMPILER_FAMILY=gcc
 # gcc family.
 
 # One may update its GCC root accordingly to his installation, to select 
-# the compiler to be used :
+# the compiler to be used :
 GCC_ROOT=FIXME/gcc-${gcc_VERSION}
 GPP=`PATH=${GCC_ROOT}/bin:$PATH which g++ 2>/dev/null`
 GPP_LIB="-L${GCC_ROOT}/lib -lgcc_s -lstdc++"
 
 GDB_ROOT=FIXME/gdb-${gdb_VERSION}
-GDB=`PATH=${GDB_ROOT}/bin:$$PATH which gdb 2>/dev/null`
+GDB=`PATH=${GDB_ROOT}/bin:$PATH which gdb 2>/dev/null`
 
 
 # Intel's icpc family.
