@@ -22,16 +22,16 @@
 
 # Source : dircolors -p
 
-# Tells whether this script has already been sourced :
+# Tells whether this script has already been sourced :
 termutils_sourced=0
 
-# This script does not depend on any helper script.
+# This script does not depend on any helper script.
 
 
 # Not in debug mode by default (default : 1).
 do_debug=1
 
-# Debug informations go to file by default.
+# Debug informations go to file by default (default : 0).
 do_debug_in_file=0
 
 # Default debug filename :
