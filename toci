@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE=`basename $0`" describes recursively from current directory what files are not in up-to-date state regarding a CVS or SVN repository."
 
@@ -15,7 +15,7 @@ if [ -d ".svn" ] ; then
 elif [ -d "CVS" ] ; then	
 
 	#echo "CVS detected"
-	if [ ! -x `which toci-cvs | grep -v ridiculously 2>/dev/null` ] ; then
+	if [ ! -x `which toci-cvs | grep -v ridiculously 2>/dev/null` ] ; then
 		echo "Error, no executable toci-cvs script found." 1>&2
 		exit 2
 	fi	

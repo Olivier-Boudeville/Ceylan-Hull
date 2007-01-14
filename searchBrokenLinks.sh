@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Consider using W3C link checker
 # (http://validator.w3.org/checklink)

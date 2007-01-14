@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="Usage : "`basename $0`" [<file>+] : retrieves at least one file already stored in vault by creating link towards it, from current directory. No previous file with the same name should exist."
 

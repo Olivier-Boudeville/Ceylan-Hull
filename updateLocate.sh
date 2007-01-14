@@ -3,7 +3,7 @@
 SLOCATE_EXE=/usr/bin/slocate
 SLOCATE_CONF=/etc/updatedb.conf
 
-if [ ! `id -u` == "0" ] ; then
+if [ ! `id -u` = "0" ] ; then
 	echo "Error, only root can do that."
 	exit
 fi 

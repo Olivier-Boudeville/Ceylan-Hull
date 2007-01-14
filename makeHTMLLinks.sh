@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script makes the shortcut links to pre-made html script :
 
@@ -65,7 +65,7 @@ echo "element_count = $element_count"
 
 index=0
 
-while [ "$index" -lt "$element_count" ]; do
+while [ $index -lt $element_count ]; do
 
   # List all the elements in the array.
 

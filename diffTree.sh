@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 
 # diffTree.sh performs a recursive comparison on directory elements.
@@ -47,31 +47,31 @@ shift
 shift
 args_to_propagate="$*"
 
-while [ "$#" -gt "0" ] ; do
+while [ $# -gt 0 ] ; do
 	token_eaten=1
 	
-	if [ "$1" == "-v" ] ; then
+	if [ "$1" = "-v" ] ; then
 		be_verbose=0
 		token_eaten=0
 	fi
 	
-	if [ "$1" == "-q" ] ; then
+	if [ "$1" = "-q" ] ; then
 		be_quiet=0
 		token_eaten=0
 	fi
 
-	if [ "$1" == "-a" ] ; then
+	if [ "$1" = "-a" ] ; then
 		auto_edit=0
 		token_eaten=0
 	fi
 	
-	if [ "$1" == "-h" ] ; then
+	if [ "$1" = "-h" ] ; then
 		echo -e "$USAGE"
 		exit
 		token_eaten=0
 	fi
 
-	if [ "$token_eaten" == "1" ] ; then
+	if [ $token_eaten -eq 1 ] ; then
 		echo "Error, unknown argument ($1)." 1>&2
 		exit 4
 	fi	
@@ -89,7 +89,7 @@ cd $old_path
 
 for d in $DIRS ; do
 
-	if [ "$be_quiet" == "1" ] ; then
+	if [ $be_quiet -eq 1 ] ; then
 		echo `basename $0`" examining $firstDir/$d and $secondDir/$d"
 	fi
 		

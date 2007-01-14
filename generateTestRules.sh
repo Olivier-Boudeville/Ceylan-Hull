@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 
 USAGE=`basename $0`" : generates automake-specific rules to specify the sources of test programs, based on their name, from current directory."

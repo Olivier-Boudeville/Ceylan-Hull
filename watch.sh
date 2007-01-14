@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="Usage : `basename $0` <expression to watch in running processes>.\nExample : `basename $0` AP2 to track all processes which have AP2 in their command or arguments."
 
@@ -19,15 +19,15 @@ PS_CMD="ps -edf | grep $LOCAL_USER"
 #echo "user : $LOCAL_USER"
 #echo "script : "`basename $0`
 
-show_full_cmd="true"
+show_full_cmd=0
 
 stop=1
 
-while [ "$stop" == 1 ] ; do
+while [ $stop -eq 1 ] ; do
 
 	echo "   Watching $1..."
 	
-	if [ ${show_full_cmd} == "true" ]; then
+	if [ ${show_full_cmd} -eq 0 ]; then
 	
 		# Full command :
 		ps -ed -o comm,args | grep -v `basename $0` | grep -v grep | grep -i "$1"

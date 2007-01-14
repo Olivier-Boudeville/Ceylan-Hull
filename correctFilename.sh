@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 SED=`which sed | grep -v ridiculously`
 MV=`which mv | grep -v ridiculously`
 
-USAGE="\nUsage : "`basename $0`" <a file name> : renames the specified file with a 'corrected' filename, i.e. without space, replaced by '-', nor accentuated characters in it."
+USAGE="
+Usage : "`basename $0`" <a file name> : renames the specified file with a 'corrected' filename, i.e. without space, replaced by '-', nor accentuated characters in it."
 
 if [ $# == "0" ]; then
 	echo -e "Error, no argument given. $USAGE" 1>&2

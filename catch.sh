@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE=`basename $0`" : stores a file in a vault directory and makes a symbolic link to it, so that if current tree is erased, this file will be kept."
 
@@ -7,7 +7,7 @@ USAGE=`basename $0`" : stores a file in a vault directory and makes a symbolic l
 DATA_VAULT_DEFAULT="$HOME/Vault"
 
 
-if [ ! "$#" == "1" ] ; then
+if [ ! "$#" = "1" ] ; then
 	echo "Error, not exactly one argument provided. $USAGE"
 	exit 1
 fi	
@@ -31,6 +31,3 @@ echo "Catching $target ..."
 
 mv -f "$target" $DATA_VAULT && ln -s $DATA_VAULT/`basename $target` $target && echo "... done"
 
-
-
-	 

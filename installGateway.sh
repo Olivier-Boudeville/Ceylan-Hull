@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script is made to be executed in a fresh installation of Debian 3.0, with settings chosen
 # according to Installation-setpByStep.txt, on aranor.
@@ -8,7 +8,7 @@
 # Author : Olivier Boudeville (olivier.boudeville@online.fr)
 # Created : 2003, June, 21
 
-if [ `id -ru ` != 0 ]; then
+if [ `id -ru ` != "0" ] ; then
 	echo "This script must be executed by root"
 	exit
 fi

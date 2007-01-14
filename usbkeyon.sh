@@ -41,7 +41,7 @@ if [ -z "${ACTUAL_MOUNT_POINT}" ]; then
 fi
 
 # Only root can use modprobe :
-if [ `id -u` -eq "0" ]; then
+if [ `id -u` = "0" ]; then
 	${MODPROBE} usb_storage 1>/dev/null 2>&1 
 fi
 

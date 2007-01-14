@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="$0 <web root> : generates an html map from the available pages in <web root>"
 

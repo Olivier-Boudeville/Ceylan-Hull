@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="Usage : "`basename $0`". Makes a bong sound."
 

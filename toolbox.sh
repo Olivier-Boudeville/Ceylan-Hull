@@ -36,7 +36,8 @@ askText()
 #		myVariable=$value
 #	else
 #		echo "Cancel"
-#	You should set after that call your target variable with the variable named "value"
+#	You should set after that call your target variable with the variable
+# named "value"
 #   
 {
 	read -e -p " + $1 [$2] : " value
@@ -80,7 +81,8 @@ testAskGDIALOG()
 isXRunning()
 # Usage : if isXRunning; then
 #      
-# This test should be improved, I do not know which is the reliable way to test whether X is running.
+# This test should be improved, I do not know which is the reliable 
+# way to test whether X is running.
 {  
  if [ `ps -edf | grep "/etc/X11/X " | grep -v grep 1>/dev/null` ]; then
   return 0 

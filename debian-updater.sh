@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="Usage: "`basename $0`" : script to be placed in a cron directory (ex : /etc/cron.weekly/) so that the system is regularly updated."
 

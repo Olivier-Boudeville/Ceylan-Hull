@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-# diffDir.sh operates only on the direct entries of a directory.
+# diffDir.sh operates only on the direct entries of a directory.
 # See diffTree.sh for a recursive comparison.
 
 
@@ -49,35 +49,35 @@ shift
 while [ "$#" -gt "0" ] ; do
 	token_eaten=1
 	
-	if [ "$1" == "-v" ] ; then
+	if [ "$1" = "-v" ] ; then
 		be_verbose=0
 		token_eaten=0
 	fi
 
-	if [ "$1" == "-q" ] ; then
+	if [ "$1" = "-q" ] ; then
 		be_quiet=0
 		token_eaten=0
 	fi
 
-	if [ "$1" == "-a" ] ; then
+	if [ "$1" = "-a" ] ; then
 		auto_edit=0
 		token_eaten=0
 	fi
 	
-	if [ "$1" == "-h" ] ; then
+	if [ "$1" = "-h" ] ; then
 		echo -e "$USAGE"
 		exit
 		token_eaten=0
 	fi
 
-	if [ "$token_eaten" == "1" ] ; then
+	if [ "$token_eaten" = "1" ] ; then
 		echo "Error, unknown argument ($1)." 1>&2
 		exit 4
 	fi	
 	shift
 done
 
-if [ "$auto_edit" == "0" ] ; then
+if [ "$auto_edit" = "0" ] ; then
 	if [ ! -x "$MERGE_TOOL" ] ; then
 		echo "Error, no executable merge tool found ($MERGE_TOOL), automatic diff editing disabled." 1>&2
 		auto_edit=1
@@ -91,11 +91,11 @@ if [ "$auto_edit" == "0" ] ; then
 	
 fi
 
-# To tell a new directory is scanned :
+# To tell a new directory is scanned :
 echo
 
 
-if [ "$be_quiet" == "1" ] ; then
+if [ "$be_quiet" = "1" ] ; then
 	echo "Comparing files in $firstDir and $secondDir :"
 	echo
 fi
@@ -108,10 +108,10 @@ for f in `/bin/ls $firstDir`; do
 		if [ ! -d "$firstDir/$f" ] ; then
 		
 			if diff "$firstDir/$f" "$secondDir/$f" 1>/dev/null 2>&1 ; then
-				[ "$be_verbose" == "1" ] || echo "${PREFIX_IDEN}($f identical in the two directories)${DEFAULT_TEXT}"
+				[ "$be_verbose" = "1" ] || echo "${PREFIX_IDEN}($f identical in the two directories)${DEFAULT_TEXT}"
 			else
 				echo "${PREFIX_DIFF} $f differs !${DEFAULT_TEXT}"
-				if [ "$auto_edit" == "0" ]; then 
+				if [ "$auto_edit" = "0" ]; then 
 					$MERGE_TOOL "$firstDir/$f" "$secondDir/$f" &
 					$EDITOR_TOOL "$firstDir/$f"
 				fi	

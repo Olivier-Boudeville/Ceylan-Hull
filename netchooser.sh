@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 LANConfigScript="/etc/init.d/setLANBox.sh"
 GatewayConfigScript="/etc/init.d/setGatewayBox.sh"
@@ -13,7 +13,7 @@ dialog --title "Sye's configuration" --menu "Choose Debian aranor's role :" 15 5
 
 
 # Default : gateway 
-if [ `cat $TMP_FILE` -eq "2" ]; then
+if [ `cat $TMP_FILE` = "2" ]; then
 
 	if [ -x "$LANConfigScript" ]; then
 		$LANConfigScript

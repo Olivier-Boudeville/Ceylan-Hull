@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo "Configuring $HOSTNAME as an ADSL gateway"
 
 if [ ! -e  /etc/ppp/ppp_on_boot ]; then

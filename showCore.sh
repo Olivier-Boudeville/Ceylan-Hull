@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo
 echo -e "\tShowing all core dumps starting from `pwd` :"

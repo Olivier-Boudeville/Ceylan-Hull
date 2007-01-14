@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 export SCRIPT_DIR="/etc/init.d"
 

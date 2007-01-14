@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="\nUsage : `basename $0` <directory> : updates all files in specified directory from their vault counterparts."
 

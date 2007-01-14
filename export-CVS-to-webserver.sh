@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Created by Olivier Boudeville (olivier.boudeville@online.fr)
 # 2004, January 9.

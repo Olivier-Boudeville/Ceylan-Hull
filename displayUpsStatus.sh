@@ -1,3 +1,6 @@
 #!/bin/sh
 
-upsc monBelkin@aranor
+UPS_NAME="monBelkin"
+UPS_SERVER="aranor"
+
+upsc ${UPS_NAME}@${UPS_SERVER}

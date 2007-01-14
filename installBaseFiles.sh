@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script is made to be executed in a fresh installation of Debian 3.0
 # It will copy relevant files.

@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 
-USAGE="Usage : wh <filePattern> [<startingDirectory>]\n searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory"
+USAGE="
+Usage : wh <filePattern> [<startingDirectory>]
+	searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory"
+
 
 FIND_GNU="/logiciels/public/bin/find"
 
@@ -14,7 +17,7 @@ else
 fi	
 
 
-[ "$VERBOSE" -eq "0" ] || echo "FIND is $FIND"
+[ $VERBOSE -eq 0 ] || echo "FIND is $FIND"
 
 if [ $# != 1 ]; then
 	if [ $# != 2 ]; then
@@ -47,9 +50,9 @@ echo
 echo "Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>"
 echo
 
-[ "$VERBOSE" -eq "0" ] || echo "Current directory is : `pwd`"
-[ "$VERBOSE" -eq "0" ] || echo "Command is : $FIND $startingDir -name $targetPattern -print 2>/dev/null | more"
-[ "$VERBOSE" -eq "0" ] || echo
+[ $VERBOSE -eq 0 ] || echo "Current directory is : `pwd`"
+[ $VERBOSE -eq 0 ] || echo "Command is : $FIND $startingDir -name $targetPattern -print 2>/dev/null | more"
+[ $VERBOSE -eq 0 ] || echo
 
 $FIND "$startingDir" -name "$targetPattern" -print 2>/dev/null | more
 

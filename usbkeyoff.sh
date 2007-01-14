@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 MOUNT_POINT_1=/mnt/usbkey/
 MOUNT_POINT_2=/usbkey

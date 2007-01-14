@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Adapted from script 'iptables.rules' by Olivier Boudeville, 2003, June 22.
 

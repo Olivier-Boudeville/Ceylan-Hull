@@ -1,4 +1,4 @@
-#/bin/bash
+#/bin/sh
 
 USAGE="Usage : `basename $0` [<startingDirectory>]\n applies style transformation (as done by `basename $STYLE_CONVERTER`) to specified files searched from <starting directory> if defined, otherwise current directory"
 
@@ -7,18 +7,18 @@ PATTERN_ONE='*.cc'
 PATTERN_TWO='*.C'
 
 
-if [ $# != 0 ]; then
-        if [ $# != 1 ]; then
+if [ $# -ne 0 ]; then
+        if [ $# -ne 1 ]; then
                 echo -e $USAGE
                 exit 1
         fi
 fi
 
-if [ $# = 0 ]; then
+if [ $# -eq 0 ]; then
         target=`pwd`
 fi
 
-if [ $# = 1 ]; then
+if [ $# -eq 1 ]; then
         target=$1
 fi
 

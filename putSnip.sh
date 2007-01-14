@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "<center>"
 echo "    <table summary=\"Code\" style=\"border : none\">"

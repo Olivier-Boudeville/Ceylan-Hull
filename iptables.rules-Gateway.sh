@@ -11,7 +11,7 @@
 # (article written by Christophe Grenier, grenier@cgsecurity.org)
 
 # To debug this kind of firewall script, one may use :
-# sh -x /path/to/this/file
+# sh -x /path/to/this/file
 
 # Useful with 'iptables --list|grep '[v' or 'iptables -L -n |grep [v'
 # to check whether rules are up-to-date :
@@ -232,14 +232,14 @@ $iptables -A INPUT -p tcp --dport 51000:51999 -m state --state NEW,ESTABLISHED,R
 # Unlimited logging from LAN :
 $iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACCEPT
 
-# This rules allow to prevent brute-force SSH attacks by limiting the
+# This rules allow to prevent brute-force SSH attacks by limiting the
 # frequency of attempts coming from the Internet :
 
 # Logs too frequent attempts tagged with 'SSH' and drops them :
 $iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v$version : SSH brute-force ] : "
 $iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
-# Tags too frequent SSH attempts with the name 'SSH' :
+# Tags too frequent SSH attempts with the name 'SSH' :
 $iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --set --name SSH
 
 # Accepts nevertheless normal SSH logins :
@@ -260,7 +260,7 @@ $iptables -A INPUT -i ${LAN_IF} -p tcp --dport 53 -m state --state NEW -j ACCEPT
 $iptables -A INPUT -i ${LAN_IF} -p udp --dport 53 -m state --state NEW -j ACCEPT
 
 
-# NUT, for UPS monitoring :
+# NUT, for UPS monitoring :
 $iptables -A INPUT -i ${LAN_IF} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
 $iptables -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j ACCEPT
 

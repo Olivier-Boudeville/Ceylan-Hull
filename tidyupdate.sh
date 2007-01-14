@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="$0 <my html file> : tidies the html code in chosen file"
 

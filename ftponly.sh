@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-# ftponly shell : used to hinder users to log when used in /etc/passwd as a shell executable.
+# ftponly shell : used to hinder users to log when used in /etc/passwd as 
+# a shell executable.
 # The problem is that it seems to prevent them from logging, too !
 # Putting /bin/false does the trick.
 #

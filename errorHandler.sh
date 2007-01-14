@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Script made to handle error from a log file.
 
@@ -33,7 +33,9 @@ touch $ERROR_LOG
 CURRENT_ERROR=`cat $ERROR_LOG`
 LAST_ERROR=$CURRENT_ERROR
 
-while [ "true" ]; do
+dont_stop=0
+
+while [ $dont_stop -eq 0 ]; do
 	LAST_ERROR=`cat $ERROR_LOG`
 	if [ "$CURRENT_ERROR" != "$LAST_ERROR" ]; then	
 		echo -e "\n\t\tError spotted : `tail -1 $ERROR_LOG`\n"

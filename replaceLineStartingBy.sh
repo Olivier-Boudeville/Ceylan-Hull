@@ -1,6 +1,10 @@
-#/bin/bash
+#/bin/sh
 
-USAGE="Usage : replaceLineStartingBy.sh START TARGET FILE\n	replaces in FILE every line starting by START by line TARGET\n example : \n\t replaceLineStartingBy.sh "MAKE=" "MAKE=/usr/bin/make" myFile"
+USAGE="
+Usage : replaceLineStartingBy.sh START TARGET FILE
+	replaces in FILE every line starting by START by line TARGET
+	example : 
+		replaceLineStartingBy.sh 'MAKE=' 'MAKE=/usr/bin/make' myFile"
 
 if [ $# != 3 ]; then
 	echo -e $USAGE

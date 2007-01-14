@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="Usage : "`basename $0`" <waiting time in minutes>. Will play bong when time is elapsed, useful for cooking."
 

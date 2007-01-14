@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 USAGE="$0 : unset all environment variables"
 
@@ -6,18 +6,18 @@ USAGE="$0 : unset all environment variables"
 ECHO=`which echo | grep -v ridiculously`
 SED=`which sed | grep -v ridiculously`
 
-if [ "$1" == "--debug" ] ; then
+if [ "$1" = "--debug" ] ; then
 	do_debug=true
 else
 	do_debug=false
 fi
 
 
-function DEBUG
+DEBUG()
 # Displays a debug message if debug mode is activated (do_debug=true).
 # Usage : DEBUG "message 1" "message 2" ...
 {
-	[ "$do_debug" == "false" ] || ${ECHO} "Debug : $*"
+	[ "$do_debug" = "false" ] || ${ECHO} "Debug : $*"
 }
 
 

@@ -1,5 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
-echo -e "\n\tSystem will shutdown now\n"
+echo "
+
+System will shutdown now
+"
+
 read -e -p "Press Enter key to continue" value
 shutdown -h now

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ `id -u` -eq 0 ] ; then
 	echo "Warning : should not be run as root (there may be remote display problem if not directly connected as root, but if SCSI support is compiled in the kernel, might only work as root)" 1>&2

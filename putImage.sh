@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "<center>"
 echo "    <img src=\"../../images/\" alt=\"Image\"></img>"
