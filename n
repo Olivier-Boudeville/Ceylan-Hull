@@ -1,36 +1,41 @@
-#!/bin/bash
+#!/bin/sh
 
 NO_X_OPT="--noX"
 SHOW_OPT="--display"
 
-USAGE="Usage : "`basename $0`" [${NO_X_OPT}|${SHOW_OPT}] [-h|--help] file1 file2 ... : opens the set of specified files with the 'best' available editor. Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings."
+USAGE="
+
+Usage : "`basename $0`" [${NO_X_OPT}|${SHOW_OPT}] [-h|--help] file1 file2 ... :
+
+	Opens the set of specified files with the 'best' available editor. 
+	Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings."
 
 do_X="true"
 do_show="false"
 
-if [ "$1" == "${NO_X_OPT}" ]; then
+if [ "$1" = "${NO_X_OPT}" ] ; then
     do_X="false"
     shift
 fi
 
-if [ "$1" == "${SHOW_OPT}" ]; then
+if [ "$1" = "${SHOW_OPT}" ] ; then
     do_show="true"
     shift
 fi
 
    
-if [ "$1" == "--help" ]; then
+if [ "$1" = "--help" ] ; then
     echo "${USAGE}"
     exit 0   
 fi
 
-if [ "$1" == "-h" ]; then
+if [ "$1" = "-h" ] ; then
     echo "${USAGE}"
     exit 0   
 fi
    
-if [ "$1" == "" ]; then
-	if [ "${do_show}" == "false" ]; then
+if [ "$1" = "" ] ; then
+	if [ "${do_show}" = "false" ] ; then
 	    echo "${USAGE}"
     	exit 1   
 	fi	
@@ -77,12 +82,12 @@ displayEditors()
  echo
 }
 
-if [ "$1" == "${SHOW_OPT}" ]; then
+if [ "$1" = "${SHOW_OPT}" ] ; then
     do_show="true"
     shift
 fi
 
-if [ "${do_show}" == "true" ]; then
+if [ "${do_show}" = "true" ] ; then
 	displayEditors
 fi
 
@@ -93,34 +98,34 @@ EDITOR_SHORT_NAME=""
 
 MULTI_WIN="false"
 
-if [ -x "${VI}" ]; then
+if [ -x "${VI}" ] ; then
  EDITOR="${VI}"
  EDITOR_SHORT_NAME="vi"
  MULTI_WIN="false"
 fi
 
-if [ -x "${VIM}" ]; then
+if [ -x "${VIM}" ] ; then
  EDITOR="${VIM}"
  EDITOR_SHORT_NAME="vim"
  MULTI_WIN="false"
 fi
 
-if [ -x "${NANO}" ]; then
+if [ -x "${NANO}" ] ; then
  EDITOR="${NANO}"
  EDITOR_SHORT_NAME="nano"
  MULTI_WIN="false"
 fi
 
 
-if [ "${do_X}" == "true" ]; then
+if [ "${do_X}" = "true" ] ; then
 
-    if [ -x "${NEDIT}" ]; then
+    if [ -x "${NEDIT}" ] ; then
      EDITOR="${NEDIT} ${NEDIT_FAMILY_OPT}"
      EDITOR_SHORT_NAME="nedit"
      MULTI_WIN="true"
     fi
 
-    if [ -x "${NC}" ]; then
+    if [ -x "${NC}" ] ; then
      if ${NC} -h 2>/dev/null; then
 		 # Not netcat :	 
          EDITOR="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
@@ -130,13 +135,13 @@ if [ "${do_X}" == "true" ]; then
      fi
     fi
 	
-    if [ -x "${NEDITC_GENTOO}" ]; then
+    if [ -x "${NEDITC_GENTOO}" ] ; then
      EDITOR="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
      EDITOR_SHORT_NAME="neditc"
      MULTI_WIN="true"
     fi
 	
-    if [ -x "${NEDITC_DEBIAN}" ]; then
+    if [ -x "${NEDITC_DEBIAN}" ] ; then
      EDITOR="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
      EDITOR_SHORT_NAME="nedit-nc"
      MULTI_WIN="true"
@@ -145,7 +150,7 @@ if [ "${do_X}" == "true" ]; then
 	
 fi
 
-if [ "${do_show}" == "true" ]; then
+if [ "${do_show}" = "true" ] ; then
 	echo "Chosen editor : ${EDITOR_SHORT_NAME}"
 	echo "Complete editor command : ${EDITOR}"
 	echo "Multiwin : ${MULTI_WIN}"	
@@ -154,7 +159,7 @@ fi
 
 
 if [ -z "${EDITOR}" ] ; then
- echo "None of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used." 1>&2
+ echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
  exit 1
 fi
 
@@ -163,14 +168,14 @@ fi
 # Open the files in parallel or sequentially :
 for f in $*; do
 
-	if [ -z "${DISPLAY}" ]; then
+	if [ -z "${DISPLAY}" ] ; then
 		echo "    Opening $f with ${EDITOR_SHORT_NAME} (no DISPLAY set)"
 	else
 		echo "    Opening $f with ${EDITOR_SHORT_NAME} (DISPLAY is <${DISPLAY}>)"
 	fi  
 	
-	if [ ${MULTI_WIN} == "true" ]; then
-	    ${EDITOR} "$f" 2>/dev/null &
+	if [ ${MULTI_WIN} = "true" ] ; then
+	    ${EDITOR} $f &
 	else
 		${EDITOR} "$f" 2>/dev/null
 	fi
