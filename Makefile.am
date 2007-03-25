@@ -124,7 +124,7 @@ all:
 
 
 install-data-local:
-	@echo; echo "@CEYLAN_INSTALL_STYLE@    Installing shell scripts in\
+	@echo; echo "@CEYLAN_INSTALL_STYLE@    Installing shell scripts in \
 	$(srcdir) to [@CEYLAN_INSTALL_SHELL_DIR@]@CEYLAN_DEFAULT_STYLE@"
 	@mkdir -p @CEYLAN_INSTALL_SHELL_DIR@
 	@for f in $(SHELL_SCRIPTS_SET); do \
@@ -134,4 +134,5 @@ install-data-local:
 tar:
 	@mkdir -p $(ARCHIVE_DIR)
 	@tar -cvf - * 2>/dev/null | bzip2 > $(ARCHIVE_FILE)
-	@echo "All bin scripts have been saved in $(ARCHIVE_FILE)"
+	@echo "@CEYLAN_INSTALL_STYLE@    All bin scripts have been saved in \
+	$(ARCHIVE_FILE)."
