@@ -125,10 +125,10 @@ all:
 
 install-data-local:
 	@echo; echo "@CEYLAN_INSTALL_STYLE@    Installing shell scripts in \
-	$(srcdir) to [@CEYLAN_INSTALL_SHELL_DIR@]@CEYLAN_DEFAULT_STYLE@"
-	@mkdir -p @CEYLAN_INSTALL_SHELL_DIR@
+	$(srcdir) to $(DESTDIR)@CEYLAN_INSTALL_SHELL_DIR@ @CEYLAN_DEFAULT_STYLE@"
+	@mkdir -p $(DESTDIR)@CEYLAN_INSTALL_SHELL_DIR@
 	@for f in $(SHELL_SCRIPTS_SET); do \
-	cp -f $(srcdir)/$$f @CEYLAN_INSTALL_SHELL_DIR@/$$f; done
+	cp -f $(srcdir)/$$f $(DESTDIR)@CEYLAN_INSTALL_SHELL_DIR@/$$f; done
 
 
 tar:
