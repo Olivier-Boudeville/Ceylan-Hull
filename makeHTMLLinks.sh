@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script makes the shortcut links to pre-made html script :
 
