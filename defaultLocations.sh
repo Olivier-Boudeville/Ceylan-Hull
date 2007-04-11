@@ -52,7 +52,7 @@ DU="/usr/bin/du"
 
 
 # For ping tool options :
-if [ "$is_windows" -eq 0 ] ; then
+if [ $is_windows -eq 0 ] ; then
 	PING_OPT="-n"
 else
 	PING_OPT="-c"
@@ -64,12 +64,13 @@ fi
 if [ $is_bsd -eq 1 ] ; then
 
 	# Here we are not under a BSD-style OS :
+  # (works with cygwin as well)
 	if findTool md5sum ; then
 		MD5SUM=$returnedString
 	else
-		ERROR "No md5sum tool found, it is necessary in order to check file integrity."	
+		ERROR "No md5sum tool found, it is necessary in order to check file integrity."
 	fi
-	
+
 else
 	
 	# BSD does not use the same name :
@@ -233,6 +234,27 @@ findBuildTools()
 # Uses implicitly be_strict to step on errors or not.
 # Usage : findBuildTools
 {
+
+  if [ $is_windows -eq 0 ] ; then
+
+    # Default settings for Visual Express 2005 :
+    VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 8\Common7\IDE"
+
+    if [ ! -d "${VISUAL_ROOT}" ] ; then
+      ERROR "Unable to find Visual Express installation directory (searched for ${VISUAL_ROOT})."
+      exit 3
+    fi
+
+    VISUAL_CMD="VCExpress.exe"
+
+    if [ ! -x "${VISUAL_ROOT}/${VISUAL_CMD}" ] ; then
+      ERROR "Unable to find Visual Express executable (searched for ${VISUAL_ROOT}/${VISUAL_CMD})."
+      exit 4
+    fi
+
+    return
+    
+  fi
 
 	if [ $is_bsd -eq 0 ] ; then
 		
