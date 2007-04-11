@@ -48,16 +48,6 @@
 #	- CEYLAN_ARCH_POSIX = CEYLAN_ARCH_UNIX and CEYLAN_ARCH_UNIX_ON_WINDOWS
 # Feature activation section (to integrate in configure).
 
-# Known feature list :
-#	- CEYLAN_USES_REGEX, activated for CEYLAN_ARCH_UNIX only
-#	- CEYLAN_USES_THREADS, activated for CEYLAN_ARCH_UNIX only
-#	- CEYLAN_USES_PROCESS_MANAGEMENT, activated for CEYLAN_ARCH_UNIX only
-#
-
-
-
-
-
 # Architectures cannot be fully organized as a tree as, for example, POSIX
 # compliance depends on the choice of Windows subplatforms. 
 
