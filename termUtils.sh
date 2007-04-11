@@ -374,7 +374,7 @@ display_color=$white_text
 
 DISPLAY()
 # Displays normal messages in standard channel.
-# Usage : WARNING [<message>+]
+# Usage : DISPLAY [<message>+]
 {
 	printColor "$*" $display_color
 }
