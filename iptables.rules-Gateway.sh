@@ -15,7 +15,7 @@
 
 # Useful with 'iptables --list|grep '[v' or 'iptables -L -n |grep [v'
 # to check whether rules are up-to-date :
-version=2
+version=3
 
 # Full path of the programs we need, change them to your needs :
 iptables=/sbin/iptables
@@ -24,7 +24,7 @@ echo=/bin/echo
 lsmod=/sbin/lsmod 
 rmmod=/sbin/rmmod 
 
-LOG_FILE=/root/lastly-firewalled.touched
+LOG_FILE=/root/lastly-gateway-firewalled.touched
  
 $echo "Setting ADSL Gateway firewall rules, version $version"
 touch $LOG_FILE 
@@ -237,6 +237,7 @@ $iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACCEP
 
 # Logs too frequent attempts tagged with 'SSH' and drops them :
 $iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v$version : SSH brute-force ] : "
+
 $iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 # Tags too frequent SSH attempts with the name 'SSH' :
