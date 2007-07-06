@@ -21,7 +21,7 @@ fi
 
 if [ $# != 1 ]; then
 	if [ $# != 2 ]; then
-		echo -e $USAGE
+		echo $USAGE
 		exit 1
 	fi
 fi
@@ -38,7 +38,7 @@ if [ ! -d "$startingDir" ]; then
 	echo
 	echo "No such directory : $startingDir" 
 	echo
-	echo -e $USAGE
+	echo $USAGE
 	exit 2
 fi
 
