@@ -62,12 +62,12 @@ $echo "0" > /proc/sys/net/ipv4/ip_forward
 # ever rerun on the fly. 
 # We want to remove all rules and pre-exisiting user defined chains and 
 # zero the counters before we implement new rules : 
-$iptables -F 
-$iptables -X 
-$iptables -Z 
-$iptables -F -t nat
-$iptables -Z -t nat
-$iptables -X -t nat
+${iptables} -F 
+${iptables} -X 
+${iptables} -Z 
+${iptables} -F -t nat
+${iptables} -Z -t nat
+${iptables} -X -t nat
 
 
 # Set up a default DROP policy for the built-in chains. 
@@ -75,9 +75,9 @@ $iptables -X -t nat
 # a default DROP policy), what happens is that there is a small time period
 # when packets are denied until the new rules are back in place.
 # There is no period, however small, when packets we do not want are allowed. 
-$iptables -P INPUT DROP 
-$iptables -P FORWARD DROP 
-$iptables -P OUTPUT DROP 
+${iptables} -P INPUT DROP 
+${iptables} -P FORWARD DROP 
+${iptables} -P OUTPUT DROP 
 
 
 ## ============================================================ 
@@ -135,68 +135,68 @@ $echo "1" > /proc/sys/net/ipv4/ip_forward
 # ----------------  FORWARD ---------------------
 
 ## We are masquerading :
-$iptables -t nat -A POSTROUTING -o ${NET_IF} -s 192.168.0.0/24 -j MASQUERADE
+${iptables} -t nat -A POSTROUTING -o ${NET_IF} -s 192.168.0.0/24 -j MASQUERADE
 
 # With ADSL connections, NAT reduces the MTU, counter-measure :
-$iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS -o ${NET_IF} --clamp-mss-to-pmtu
+${iptables} -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS -o ${NET_IF} --clamp-mss-to-pmtu
 
 # Only forward that stuff from one interface to the other, and do that with
 # connection tracking :
 
 # Everything from the LAN to the Internet is forwarded :
-$iptables -A FORWARD -i ${LAN_IF} -o ${NET_IF} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 # Packets from the Internet to the LAN must not be new unknown connections :
-$iptables -A FORWARD -o ${LAN_IF} -i ${NET_IF} -m state --state     ESTABLISHED,RELATED -j ACCEPT
+${iptables} -A FORWARD -o ${LAN_IF} -i ${NET_IF} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 AD_FILTER_PORT=3129
 ## Transparent proxy
 # Redirects http traffic to port $AD_FILTER_PORT where our ad filter is 
 # running. Normal squid port is 3128.
-#$iptables -t nat -A PREROUTING -i ${LAN_IF} -p tcp --dport 80 -j REDIRECT --to-port $AD_FILTER_PORT
+#${iptables} -t nat -A PREROUTING -i ${LAN_IF} -p tcp --dport 80 -j REDIRECT --to-port $AD_FILTER_PORT
 
 
 # ----------------  OUTPUT ---------------------
 
 # No unroutable (private) adddress should be output by the gateway :
-$iptables -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
-$iptables -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT 
-$iptables -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT 
-$iptables -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT 
+${iptables} -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
+${iptables} -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT 
+${iptables} -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT 
+${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT 
 
 
 # Second rule is to let packets through which belong to established or 
 # related connections and we let all traffic out, as we trust ourself :
-$iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+${iptables} -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 # ----------------  INPUT ---------------------
 
 
 # Log some invalid connections :
-$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v$version : invalid input : ]"
+${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v$version : invalid input ] :  "
 
-$iptables -A INPUT -m state --state INVALID -j DROP
+${iptables} -A INPUT -m state --state INVALID -j DROP
 
 # Filter out broadcasts :
-$iptables -A INPUT -m pkttype --pkt-type broadcast -j DROP
+${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 
 # Drops directly connections coming from the Internet with unroutable
 # (private) addresses :
-$iptables -A INPUT -i ${NET_IF} -s 10.0.0.0/8     -j DROP
-$iptables -A INPUT -i ${NET_IF} -s 127.0.0.0/8    -j DROP
-$iptables -A INPUT -i ${NET_IF} -s 172.16.0.0/12  -j DROP
-$iptables -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
+${iptables} -A INPUT -i ${NET_IF} -s 10.0.0.0/8     -j DROP
+${iptables} -A INPUT -i ${NET_IF} -s 127.0.0.0/8    -j DROP
+${iptables} -A INPUT -i ${NET_IF} -s 172.16.0.0/12  -j DROP
+${iptables} -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
 
 
 # Avoid stealth TCP port scans if SYN is not set properly :
-$iptables -A INPUT -m state --state NEW,RELATED -p tcp --tcp-flags ! ALL SYN -j DROP
+${iptables} -A INPUT -m state --state NEW,RELATED -p tcp --tcp-flags ! ALL SYN -j DROP
 
 # Rejects directly 'auth/ident' obsolete requests :
-$iptables -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
+${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
 
-$iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 
 ## FRAGMENTS 
@@ -206,100 +206,100 @@ $iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 # fragments is very OS-dependent. 
 # We are not going to trust any fragments. 
 # Log fragments just to see if we get any, and deny them too. 
-$iptables -A INPUT -f -j LOG --log-prefix "[v$version : iptables fragments ] : " 
-$iptables -A INPUT -f -j DROP 
+${iptables} -A INPUT -f -j LOG --log-prefix "[v$version : iptables fragments ] : " 
+${iptables} -A INPUT -f -j DROP 
 
 ## HTTP (web server) :
-$iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
 
 # HTTPS :
-#$iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
 
 ## ident, if we drop these packets we may need to wait for the timeouts
 # e.g. on ftp servers
-$iptables -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
+${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 ## FTP :
-$iptables -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
-$iptables -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
 
 # For passive FTP :
-$iptables -A INPUT -p tcp --dport 51000:51999 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+${iptables} -A INPUT -p tcp --dport 51000:51999 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 ## SSH :
 
 # Unlimited logging from LAN :
-$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACCEPT
 
 # This rules allow to prevent brute-force SSH attacks by limiting the
 # frequency of attempts coming from the Internet :
 
 # Logs too frequent attempts tagged with 'SSH' and drops them :
-$iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v$version : SSH brute-force ] : "
+${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v$version : SSH brute-force ] : "
 
-$iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 # Tags too frequent SSH attempts with the name 'SSH' :
-$iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --set --name SSH
+${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --set --name SSH
 
 # Accepts nevertheless normal SSH logins :
-$iptables -A INPUT -i ${NET_IF} -p tcp --dport ssh -j ACCEPT
+${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -j ACCEPT
 
  
 
 ## Mail stuff :
-#$iptables -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
-#$iptables -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
-#$iptables -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
-#$iptables -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
-#$iptables -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
 
 # Allow UDP & TCP packets to the DNS server from LAN clients.
 # (only needed if this gateway is a LAN DNS server)
-$iptables -A INPUT -i ${LAN_IF} -p tcp --dport 53 -m state --state NEW -j ACCEPT
-$iptables -A INPUT -i ${LAN_IF} -p udp --dport 53 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 53 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 53 -m state --state NEW -j ACCEPT
 
 
 # NUT, for UPS monitoring :
-$iptables -A INPUT -i ${LAN_IF} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
-$iptables -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j ACCEPT
 
 
 # Squid (only local)
-#$iptables -A INPUT -p tcp -i ${LAN_IF} --dport 3128:3129 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -p tcp -i ${LAN_IF} --dport 3128:3129 -m state --state NEW -j ACCEPT
 
 # Allow the smb stuff (only local)
-#$iptables -A INPUT -i ${LAN_IF} -p udp --dport 137:139 -m state --state NEW -j ACCEPT
-#$iptables -A INPUT -i ${LAN_IF} -p tcp --dport 137:139 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 137:139 -m state --state NEW -j ACCEPT
+#${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 137:139 -m state --state NEW -j ACCEPT
 
 # GnomeMeeting :
-#$iptables -A INPUT -p tcp --dport 30000:33000 -j ACCEPT
-#$iptables -A INPUT -p tcp --dport 1720 -j ACCEPT
-#$iptables -A INPUT -p udp --dport 5000:5006 -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 30000:33000 -j ACCEPT
+#${iptables} -A INPUT -p tcp --dport 1720 -j ACCEPT
+#${iptables} -A INPUT -p udp --dport 5000:5006 -j ACCEPT
 
 ## LOOPBACK
 # Allow unlimited traffic on the loopback interface, .
 # e.g. needed for KDE, Gnome, etc. :
-$iptables -A INPUT  -i lo -j ACCEPT
-$iptables -A OUTPUT -o lo -j ACCEPT
+${iptables} -A INPUT  -i lo -j ACCEPT
+${iptables} -A OUTPUT -o lo -j ACCEPT
 
 
 # ---------------- ICMP ---------------------
 
 # Everybody from the LAN can ping me :
 # Remove that line if no one should be able to ping you
-$iptables -A INPUT -i ${LAN_IF} -p icmp --icmp-type ping -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p icmp --icmp-type ping -j ACCEPT
 
 # ---------------- NTP ---------------------
 
 # Local clients can ask for gateway-synchronized time :
-$iptables -A INPUT -i ${LAN_IF} -p udp --dport 123 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 123 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 # ---------------- LOGGING -------------------
 
 # log every thing else, up to 5 pings per min
-#$iptables -A INPUT -m limit --limit 5/minute -j LOG
+#${iptables} -A INPUT -m limit --limit 5/minute -j LOG
 
 
