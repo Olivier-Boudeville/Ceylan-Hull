@@ -26,6 +26,6 @@ echo "        </tr>"
 echo "      </table>"
 echo "</center>"
 echo "<!--"
-echo "<br><p><center>[<a href=\"#maintoc\">Back to the table of contents</a>]</center></p><br><br>"
+echo "<p><center>[<a href=\"#maintoc\">Back to the table of contents</a>]</center></p><br><br>"
 echo "-->"
 echo 
