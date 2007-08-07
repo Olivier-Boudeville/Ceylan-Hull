@@ -3,9 +3,10 @@
 
 echo "<ul>"
 echo
-echo "<!--"
-echo "	<li><b></b> : </li>"
-echo "-->"
+echo "	<li><b></b>: </li>"
 echo 
-echo "	<li><b></b> : </li>"
+echo "<!--"
+echo "	<li><b></b>: </li>"
+echo "-->"
+echo
 echo "</ul>"
