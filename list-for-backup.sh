@@ -8,12 +8,15 @@ echo $USAGE
 
 echo "
 
-	Listing archive content : 
+	Listing archive content (by Ceylan's list-for-backup.sh script) : 
 	
 
 " > $LISTING_FILE
 
-for f in * ; do
+
+FILES=`find . -type f`
+
+for f in ${FILES} ; do
 
 	MD5=`md5sum $f | awk '{ print $1 }'`
 	SIZE=`du -sh $f | awk '{ print $1 }'`
