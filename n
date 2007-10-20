@@ -176,6 +176,7 @@ for f in $*; do
 	
 	if [ ${MULTI_WIN} = "true" ] ; then
 	    ${EDITOR} $f &
+		sleep 1
 	else
 		${EDITOR} "$f" 2>/dev/null
 	fi
