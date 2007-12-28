@@ -33,7 +33,7 @@ if ping -c 2 ${GATEWAY_IP} 1>/dev/null 2>&1; then
 			
 		else
 		
-			echo "Reliable internet server IP (${RELIABLE_INTERNET_SERVER_IP})) not responding, external network connectivy ko ?"	
+			echo "Reliable internet server IP (${RELIABLE_INTERNET_SERVER_IP}) not responding, external network connectivy ko ?"	
 			exit 3
 			
 		fi
