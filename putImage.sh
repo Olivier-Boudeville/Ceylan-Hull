@@ -1,5 +1,5 @@
 #!/bin/sh
 
 echo "<center>"
-echo "    <img src=\"../../images/\" alt=\"Image\"></img>"
+echo "    <img src=\"\" alt=\"Image\"></img>"
 echo "</center>"
