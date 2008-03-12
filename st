@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# Select relevant version control client :
+# Select relevant version control client:
 
 if [ -d 'CVS' ] ; then
 	cvs update -d $*
 else
-	svn status $*
+	svn status $* -v
 fi
 
