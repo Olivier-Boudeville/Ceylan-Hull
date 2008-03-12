@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# To run directly from the command-line:
+# /usr/sbin/smartctl -a -i /dev/sdc 
+
 TEMP_MAIL="$HOME/.smart-disk-reporter.txt"
 
 # Save the mail body from SMART :
