@@ -45,8 +45,8 @@ if [ "${ORIGINAL_NAME}" != "${CORRECTED_NAME}" ]; then
 		exit 3
 	fi
 
-	echo "  <${ORIGINAL_NAME}> renamed to <${CORRECTED_NAME}>"
+	echo "  '${ORIGINAL_NAME}' renamed to '${CORRECTED_NAME}'"
 	${MV} -f "${ORIGINAL_NAME}" "${CORRECTED_NAME}"
-else
-	echo "  (<${ORIGINAL_NAME}> left unchanged)"
+#else
+#	echo "  (<${ORIGINAL_NAME}> left unchanged)"
 fi	
