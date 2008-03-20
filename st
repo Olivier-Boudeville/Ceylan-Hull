@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# -s: short.
+# -f: full.
 
 # Select relevant version control client:
 
@@ -8,11 +8,11 @@ if [ -d 'CVS' ] ; then
 	cvs update -d $*
 else
 
-	if [ $1 = "-s" ]; then
+	if [ "$1" = "-f" ]; then
 		shift
-		svn status $*
-	else
 		svn status $* -v
+	else
+		svn status $*
 	fi	
 		
 fi
