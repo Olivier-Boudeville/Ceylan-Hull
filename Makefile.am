@@ -110,6 +110,7 @@ SHELL_SCRIPTS_SET = \
 	updateBootSequence.sh        \
 	updateDirectoryFromVault.sh  \
 	updateLocate.sh              \
+	update-txt2tags.sh           \
 	usbkeyoff.sh                 \
 	usbkeyon.sh                  \
 	valgrindTest.sh              \
