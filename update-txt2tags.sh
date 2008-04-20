@@ -1,20 +1,47 @@
 #!/bin/sh
 
-USAGE="Usage : `basename $0` <path to CSS file to be used, ex: web/common/css/XXX.css>
+# Note: docutils has been finally preferred to txt2tags.
+# See update-docutils.sh.
 
-Updates html files from more recent txt2tags files (*.t2t).
+
+USAGE="Usage : `basename $0` [ --pdf | <path to CSS file to be used, ex: common/css/XXX.css> ]
+
+Updates generated files from more recent txt2tags files (*.t2t).
+If '--pdf' is specified, a PDF will be created, otherwise HTML files will be generated, using any specified CSS file. 
 "
+
 
 # Using makefiles for that was far too tedious.
 # Meant to be run from 'trunk/src/doc'.
-echo "Updating html files from web directory thanks to txt2tags..."
+echo "Updating txt2tags files from web directory..."
 
-CSS_FILE="$1"
-# echo "Using CSS file ${CSS_FILE}."
+TXT2TAGS_HTML_OPT="--target=html --encoding=iso-8859-1 --css-sugar --mask-email --toc --no-rc"
 
-# Not kept: --enum-title
-TXT2TAGS_OPT="--target=html --encoding=iso-8859-1 --css-sugar --mask-email --toc  --no-rc"
+TXT2TAGS_PDF_OPT="--target=tex --encoding=iso-8859-1 --enum-title --toc --no-rc"
 
+
+# By default, generate HTML and not PDF:
+do_generate_html=0
+do_generate_pdf=1
+
+
+TXT2TAGS_OPT="${TXT2TAGS_HTML_OPT}"
+
+if [ -n "$1" ] ; then
+
+	if [ "$1" = "--pdf" ] ; then
+		do_generate_pdf=0
+		do_generate_html=1
+		TXT2TAGS_OPT=${TXT2TAGS_PDF_OPT}
+		
+	else
+	
+		CSS_FILE="$1"
+		# echo "Using CSS file ${CSS_FILE}."
+	
+	fi
+
+fi
 
 TXT2TAGS=`which txt2tags 2>/dev/null`
 
@@ -52,8 +79,9 @@ if [ ! -x "${TXT2TAGS}" ] ; then
 	exit 5
 fi
 	
-
-T2T_FILES=`find web -name '*.t2t' -a -type f`
+	
+cd web
+T2T_FILES=`find . -name '*.t2t' -a -type f`
 #echo $T2T_FILES
 
 
