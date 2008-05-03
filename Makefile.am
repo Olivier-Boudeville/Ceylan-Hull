@@ -81,6 +81,7 @@ SHELL_SCRIPTS_SET = \
 	running.sh                   \
 	searchBrokenLinks.sh         \
 	setAutoRepeat.sh             \
+	setConsoles.sh               \
 	setDisplay.sh                \
 	setGatewayBox.sh             \
 	setLANBox.sh                 \
@@ -110,6 +111,7 @@ SHELL_SCRIPTS_SET = \
 	updateBootSequence.sh        \
 	updateDirectoryFromVault.sh  \
 	updateLocate.sh              \
+	update-docutils.sh           \
 	update-txt2tags.sh           \
 	usbkeyoff.sh                 \
 	usbkeyon.sh                  \
