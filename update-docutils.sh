@@ -2,10 +2,10 @@
 
 # Note: docutils has been finally preferred to txrstags.
 
-USAGE="Usage : `basename $0` [ --pdf | <path to CSS file to be used, ex: common/css/XXX.css> ]
+USAGE="Usage : `basename $0` [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
 
 Updates generated files from more recent docutils files (*.rst).
-If '--pdf' is specified, a PDF will be created, otherwise HTML files will be generated, using any specified CSS file. 
+If '--pdf' is specified, a PDF will be created, if '--all' is specified, all output formats (i.e. HTML and PDF) will be created, otherwise HTML files only will be generated, using any specified CSS file. 
 "
 
 
@@ -13,12 +13,14 @@ If '--pdf' is specified, a PDF will be created, otherwise HTML files will be gen
 # Meant to be run from 'trunk/src/doc'.
 echo "Updating docutils files from web directory..."
 
+# Left out: --warnings=rst-warnings.txt --traceback --verbose  --debug
+DOCUTILS_COMMON_OPT="--report=error --no-generator --date --no-source-link --quiet --tab-width=4 --strip-comments"
 
-DOCUTILS_COMMON_OPT="--no-generator --time --no-source-link --quiet --tab-width=4"
-
-DOCUTILS_HTML_OPT="${DOCUTILS_COMMON_OPT} --cloak-email-addresses --link-stylesheet"
+DOCUTILS_HTML_OPT="${DOCUTILS_COMMON_OPT} --cloak-email-addresses --link-stylesheet --no-section-numbering"
 
 DOCUTILS_PDF_OPT="${DOCUTILS_COMMON_OPT}"
+
+LATEX_TO_PDF_OPT="-interaction nonstopmode"
 
 
 # By default, generate HTML and not PDF:
@@ -34,15 +36,29 @@ DOCUTILS_HTML=`which rst2html 2>/dev/null`
 if [ -n "$1" ] ; then
 
 	if [ "$1" = "--pdf" ] ; then
+	
 		do_generate_html=1
 		do_generate_pdf=0
-
+		shift
+		
+	elif [ "$1" = "--all" ] ; then
+	
+		do_generate_html=0
+		do_generate_pdf=0
+		shift
+		
+		CSS_FILE="$1"
+		# echo "Using CSS file ${CSS_FILE}."
+	
+		DOCUTILS_HTML_OPT="${DOCUTILS_HTML_OPT} --stylesheet-path=${CSS_FILE} "
+		
 	else
 	
 		CSS_FILE="$1"
 		# echo "Using CSS file ${CSS_FILE}."
 	
 		DOCUTILS_HTML_OPT="${DOCUTILS_HTML_OPT} --stylesheet-path=${CSS_FILE} "
+
 	fi
 
 fi
@@ -104,11 +120,12 @@ manage_rst_to_html()
 	# Useless with docutils: back_path=`dirname "$back_path"`/$CSS_FILE
 	#echo "Back path to CSS file is $back_path"
 	
-	#${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
+	#${DOCUTILS_HTML} $SOURCE $TARGET
 
-	${DOCUTILS_HTML} $SOURCE $TARGET
+	${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
+
 	if [ ! $? -eq 0 ] ; then
-		echo "Error, HTML generation failed for $SOURCE." 1>&2
+		echo "Error, HTML generation with ${DOCUTILS_HTML} failed for $SOURCE." 1>&2
 		exit 5
 	fi	
 		
@@ -133,11 +150,14 @@ manage_rst_to_pdf()
 		echo "Error, LateX generation failed for $SOURCE." 1>&2
 		exit 6
 	fi
+	
 		
 	# Run thrice on purpose, to fix links:
-	${LATEX_TO_PDF} ${TEX_FILE}
-	${LATEX_TO_PDF} ${TEX_FILE}
-	${LATEX_TO_PDF} ${TEX_FILE}
+	echo "LateX command: ${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE}"
+	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE} && \
+	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE} && \
+	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE}
+	
 	if [ ! $? -eq 0 ] ; then
 		echo "Error, PDF generation failed for $SOURCE." 1>&2
 		exit 7
@@ -145,7 +165,7 @@ manage_rst_to_pdf()
 	
 }
 	
-cd web
+
 RST_FILES=`find . -name '*.rst' -a -type f`
 #echo $RST_FILES
 
@@ -176,7 +196,19 @@ for f in ${RST_FILES}; do
 	
 		# If target does not exist or if source is newer, rebuilds:
 		if [ ! -f "${TARGET_PDF_FILE}" -o "$f" -nt "${TARGET_PDF_FILE}" ] ; then
-			manage_rst_to_pdf $f ${TARGET_PDF_FILE}
+			
+			# PDF generator will not find includes (ex: images) if not already
+			# in target dir:
+			CURRENT_DIR=`pwd`
+			TARGET_DIR=`dirname ${TARGET_PDF_FILE}`
+			
+			SOURCE_FILE=`basename ${f}`
+			TARGET_FILE=`basename ${TARGET_PDF_FILE}`
+			
+			cd ${TARGET_DIR}
+			manage_rst_to_pdf ${SOURCE_FILE} ${TARGET_FILE}
+			cd ${CURRENT_DIR}
+			
 		fi
 		
 	fi
