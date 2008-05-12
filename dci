@@ -15,15 +15,29 @@ target=$*
 arrow="---------------------> "
 
 echo "$arrow Showing diff for <$target> :"
-if ${TOOL} diff $target ; then
 
+# CVS diff returns 1 whereas ok:
+if [ ${TOOL} = "cvs" ] ; then
+
+	${TOOL} diff $target
 	echo "$arrow Committing-in <$target> :"
 	${TOOL} ci $target
 
 	echo "...done"
+	
+else
 
-else	
-	echo "Error, diff failed." 1>&2
-	exit 1
+	if ${TOOL} diff $target ; then
+
+		echo "$arrow Committing-in <$target> :"
+		${TOOL} ci $target
+
+		echo "...done"
+
+	else	
+		echo "Error, diff failed." 1>&2
+		exit 1
+	fi
+
 fi
 
