@@ -59,6 +59,9 @@ LINKS[17]="fuda"
 SCRIPTS[18]="putNewsDate.sh"
 LINKS[18]="newda"
 
+SCRIPTS[19]="putRstImage.sh"
+LINKS[19]="imgr"
+
 
 element_count=${#SCRIPTS[@]}
 echo "element_count = $element_count"
