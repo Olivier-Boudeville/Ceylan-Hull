@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Note: docutils has been finally preferred to txrstags.
+# Note: docutils has been finally preferred to txt2tags.
 
 USAGE="Usage : `basename $0` [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
 
@@ -108,21 +108,22 @@ manage_rst_to_html()
 	
 	echo "----> rebuilding HTML target $TARGET from more recent source"
 
-	start=$SOURCE
-	back_path=""
+	#start=$SOURCE
+	#back_path=""
 	
-	while [ "$start" != "." ] ; do
-		start=`dirname $start`
-		back_path="../$back_path"
-		#echo "new start = $start"
-	done
+	#while [ "$start" != "." ] ; do
+	#	start=`dirname $start`
+	#	back_path="../$back_path"
+	#	#echo "new start = $start"
+	#done
 	
 	# Useless with docutils: back_path=`dirname "$back_path"`/$CSS_FILE
 	#echo "Back path to CSS file is $back_path"
+	# So '--stylesheet-path=$CSS_FILE' has been removed.
 	
 	#${DOCUTILS_HTML} $SOURCE $TARGET
 
-	${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
+	${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} $SOURCE $TARGET
 
 	if [ ! $? -eq 0 ] ; then
 		echo "Error, HTML generation with ${DOCUTILS_HTML} failed for $SOURCE." 1>&2
