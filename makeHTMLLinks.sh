@@ -62,6 +62,9 @@ LINKS[18]="newda"
 SCRIPTS[19]="putRstImage.sh"
 LINKS[19]="imgr"
 
+SCRIPTS[20]="putRstLink.sh"
+LINKS[20]="lnkr"
+
 
 element_count=${#SCRIPTS[@]}
 echo "element_count = $element_count"
