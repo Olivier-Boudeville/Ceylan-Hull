@@ -20,7 +20,8 @@ DOCUTILS_HTML_OPT="${DOCUTILS_COMMON_OPT} --cloak-email-addresses --link-stylesh
 
 DOCUTILS_PDF_OPT="${DOCUTILS_COMMON_OPT}"
 
-LATEX_TO_PDF_OPT="-interaction nonstopmode"
+# Left out: --use-latex-footnotes
+LATEX_TO_PDF_OPT="-interaction nonstopmode "
 
 
 # By default, generate HTML and not PDF:
