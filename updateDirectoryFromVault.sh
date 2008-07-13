@@ -1,13 +1,13 @@
 #!/bin/sh
 
-USAGE="\nUsage : `basename $0` <directory> : updates all files in specified directory from their vault counterparts."
+USAGE="\nUsage: `basename $0` <directory>: updates all files in specified directory from their vault counterparts."
 
-# See : retrieve.sh, catch.sh
+# See: retrieve.sh, catch.sh
 
 DATA_VAULT_DEFAULT="$HOME/Vault"
 
 if [ -z "$DATA_VAULT" ] ; then
-	echo "Warning : no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
+	echo "Warning: no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
 	DATA_VAULT="${DATA_VAULT_DEFAULT}"
 fi
 
