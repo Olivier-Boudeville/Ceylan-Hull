@@ -19,6 +19,7 @@ DOCUTILS_PDF_OPT="${DOCUTILS_COMMON_OPT}"
 
 LATEX_TO_PDF_OPT="-interaction nonstopmode"
 
+BEGIN_MARKER="---->"
 
 # By default, generate HTML and not PDF:
 do_generate_html=0
@@ -75,7 +76,7 @@ if [ -e "${RST_FILE}" ] ; then
 
 else
 
-	echo "Error: file $1 not found. $USAGE" 1>&2
+	echo "${BEGIN_MARKER} Error: file $1 not found. $USAGE" 1>&2
 	exit 2
 
 fi
@@ -86,7 +87,7 @@ if [ $do_generate_html -eq 0 ] ; then
 	DOCUTILS_HTML=`which rst2html 2>/dev/null`
 	if [ -z "${DOCUTILS_HTML}" ] ; then
 		
-		echo "Error: unable to find an executable tool to convert docutils files to HTML (rst2html)." 1>&2
+		echo "${BEGIN_MARKER} Error: unable to find an executable tool to convert docutils files to HTML (rst2html)." 1>&2
 		exit 10
 			
 	fi
@@ -98,7 +99,7 @@ if [ $do_generate_pdf -eq 0 ] ; then
 	DOCUTILS_LATEX=`which rst2latex 2>/dev/null`
 	if [ -z "${DOCUTILS_LATEX}" ] ; then
 		
-		echo "Error: unable to find an executable tool to convert docutils files to LateX (rst2latex)." 1>&2
+		echo "${BEGIN_MARKER} Error: unable to find an executable tool to convert docutils files to LateX (rst2latex)." 1>&2
 		exit 11
 			
 	fi
@@ -106,7 +107,7 @@ if [ $do_generate_pdf -eq 0 ] ; then
 	LATEX_TO_PDF=`which pdflatex 2>/dev/null`
 	if [ -z "${LATEX_TO_PDF}" ] ; then
 		
-		echo "Error: unable to find an executable tool to convert LateX files to PDF (pdflatex)." 1>&2
+		echo "${BEGIN_MARKER} Error: unable to find an executable tool to convert LateX files to PDF (pdflatex)." 1>&2
 		exit 12
 			
 	fi
@@ -123,14 +124,14 @@ manage_rst_to_html()
 	SOURCE=$1
 	TARGET=$2
 	
-	echo "----> building HTML target $TARGET from source"
+	echo "${BEGIN_MARKER} building HTML target $TARGET from source"
 	
 	#${DOCUTILS_HTML} $SOURCE $TARGET
 
 	echo ${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
 
 	if [ ! $? -eq 0 ] ; then
-		echo "Error: HTML generation with ${DOCUTILS_HTML} failed for $SOURCE." 1>&2
+		echo "${BEGIN_MARKER} Error: HTML generation with ${DOCUTILS_HTML} failed for $SOURCE." 1>&2
 		exit 5
 	fi	
 		
@@ -146,7 +147,7 @@ manage_rst_to_pdf()
 	SOURCE=$1
 	TARGET=$2
 	
-	echo "----> building PDF target corresponding to source $SOURCE"
+	echo "${BEGIN_MARKER} building PDF target corresponding to source $SOURCE"
 
 	TEX_FILE=`echo $SOURCE|sed 's|.rst$|.tex|1'`
 	
@@ -158,9 +159,9 @@ manage_rst_to_pdf()
 	if [ ! ${RES} -eq 0 ] ; then
 	
 		if [ ${RES} -eq 1 ] ; then
-			echo "Warning: LateX generation returned code 1 for $SOURCE." 1>&2
+			echo "${BEGIN_MARKER} Warning: LateX generation returned code 1 for $SOURCE." 1>&2
 		else
-			echo "Error: LateX generation failed for $SOURCE." 1>&2
+			echo "${BEGIN_MARKER} Error: LateX generation failed for $SOURCE." 1>&2
 			exit 6
 		fi
 			
@@ -178,10 +179,17 @@ manage_rst_to_pdf()
 	
 	if [ ! $RES -eq 0 ] ; then
 
-		if [ ${RES} -eq 1 ] ; then
-			echo "Warning: PDF generation returned code 1 for $SOURCE." 1>&2
+		#if [ ${RES} -eq 1 ] ; then
+		#	echo "${BEGIN_MARKER} Warning: PDF generation returned code 1 for $SOURCE." 1>&2
+		#else
+		#	echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
+		#	exit 7
+		#fi
+		
+		if [ ${RES} -eq 0 ] ; then
+			echo "${BEGIN_MARKER}PDF generation succeeded for $SOURCE." 1>&2
 		else
-			echo "Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
+			echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
 			exit 7
 		fi
 
