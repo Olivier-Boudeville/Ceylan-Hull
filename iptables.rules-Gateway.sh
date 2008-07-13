@@ -15,7 +15,7 @@
 
 # Useful with 'iptables --list|grep '[v' or 'iptables -L -n |grep [v'
 # to check whether rules are up-to-date :
-version=3
+version=5
 
 # Full path of the programs we need, change them to your needs :
 iptables=/sbin/iptables
@@ -223,8 +223,22 @@ ${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 ${iptables} -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
 ${iptables} -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
 
-# For passive FTP :
+
+# Orge section:
+
+# For Erlang epmd daemon:
+${iptables} -A INPUT -p tcp --dport 4369 -m state --state NEW -j ACCEPT
+
+# For the listening socket of TCP Orge server:
+${iptables} -A INPUT -p tcp --dport 9512 -m state --state NEW -j ACCEPT
+
+
+# For passive FTP and client TCP Orge server sockets:
 ${iptables} -A INPUT -p tcp --dport 51000:51999 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+
+# For main UDP Orge server socket:
+${iptables} -A INPUT -p udp --dport 9512 -m state --state NEW -j ACCEPT
 
 
 ## SSH :
