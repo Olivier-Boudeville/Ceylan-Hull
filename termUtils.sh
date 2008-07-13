@@ -4,53 +4,53 @@
 # This script is made to be used by other scripts, so that be a simple
 # ". termUtils.sh" should define all text facilities.
 
-# This term helper script contains :
+# This term helper script contains:
 # 	- text style handling functions
 #	- all-purpose terminal functions
 
 # This is ISO-6429 color code.
 
-# Use this script as a state-machine :
+# Use this script as a state-machine:
 # change current_text and/or current_back and/or current_att
-# (ex : current_back=${green_back})
-# then call :
+# (ex: current_back=${green_back})
+# then call:
 # updateTermState
 #
 
 # Created 2003, December 21
 # by Olivier Boudeville (olivier.boudeville@online.fr)
 
-# Source : dircolors -p
+# Source: dircolors -p
 
-# Tells whether this script has already been sourced :
+# Tells whether this script has already been sourced:
 termutils_sourced=0
 
 # This script does not depend on any helper script.
 
 
-# Not in debug mode by default (default : 1).
+# Not in debug mode by default (default: 1).
 do_debug=1
 
-# Debug informations go to file by default (default : 0).
+# Debug informations go to file by default (default: 0).
 do_debug_in_file=0
 
-# Default debug filename :
+# Default debug filename:
 debug_file="debug.txt"
 
-# Do not output debug to screen by default (default : 1). :
+# Do not output debug to screen by default (default: 1).:
 do_debug_to_screen=1
 
 
 # Flag set to 0 (true) when printf (echo counterpart) is available 
-# (default : 1). 
+# (default: 1). 
 printf_available=1
 
 
-# Flag set to 0 (true) when color is supported (default : 1).
+# Flag set to 0 (true) when color is supported (default: 1).
 term_support_color=1
 
 
-# Text color codes :
+# Text color codes:
 
 text_color_list="black_text red_text green_text yellow_text blue_text magenta_text cyan_text white_text"
 
@@ -64,7 +64,7 @@ cyan_text=36
 white_text=37
 
 
-# Background color codes :
+# Background color codes:
 
 back_color_list="black_back red_back green_back yellow_back blue_back magenta_back cyan_back white_back"
 
@@ -78,7 +78,7 @@ cyan_back=46
 white_back=47
 
 
-# Attributes :
+# Attributes:
 
 text_att_list="none_att bold_att underscore_att blink_att reverse_att concealed_att"
 
@@ -90,41 +90,41 @@ reverse_att=07
 concealed_att=08
 
 
-# Default settings :
+# Default settings:
 
 default_text_color=${white_text}
 default_back_color=${black_back}
 default_att=${none_att}
 
 
-# State for term setting : 
+# State for term setting: 
 
 current_text=${default_text_color}
 current_back=${default_back_color}
 current_att=${default_att}
 
 
-# Memory initial settings :
+# Memory initial settings:
 
 save_text_color=${default_text_color}
 save_back_color=${default_back_color}
 save_att_color=${default_att}
 
 
-# Default offset for printing text :
+# Default offset for printing text:
 term_offset="   "
 
-# Section marker to emphasize on titles :
+# Section marker to emphasize on titles:
 term_primary_marker="+    "
 
-# Section marker to emphasize on subtitles :
+# Section marker to emphasize on subtitles:
 term_secondary_marker="${term_offset}.    "
 
 
 setText()
-# Changes the text settings : text color, maybe back color and/or text
+# Changes the text settings: text color, maybe back color and/or text
 # attribute.
-# Usage : setText <text color> [<back color>] [<attribute>]
+# Usage: setText <text color> [<back color>] [<attribute>]
 {
 	current_text=${1}
 	#DEBUG "current_text is now $current_text"
@@ -146,7 +146,7 @@ setText()
 
 setDebugMode()
 # Set the debug mode.
-# Usage : setDebugMode [ on | off ]
+# Usage: setDebugMode [ on | off ]
 {
 	if [ -z "$1" ] ; then
 		do_debug=0
@@ -158,7 +158,7 @@ setDebugMode()
 		do_debug=0
 		DEBUG "Debug mode activated"
 	else
-		# Anything, but on, leads to off :
+		# Anything, but on, leads to off:
 		DEBUG "Debug mode deactivated"
 		do_debug=1
 	fi
@@ -171,7 +171,7 @@ color_enabled_terms="linux linux-c mach-color console con132x25 con132x30 con132
 updateColorSupport()
 # Sets term_support_color to true (0) if this terminal supports colors,
 # otherwise returns false (1), if not in list.
-# Usage : updateColorSupport
+# Usage: updateColorSupport
 {
  
  	which printf 1>/dev/null 2>&1
@@ -204,7 +204,7 @@ updateColorSupport()
 
 updateTermState()
 # Updates the state machine with current settings.
-# Usage : updateTermState
+# Usage: updateTermState
 {
 	if [ "$term_support_color" -eq 0 ] ; then
 	
@@ -221,7 +221,7 @@ updateTermState()
 
 saveTermSettings()
 # Stores current term state for future recovery with loadTermSettings() 
-# Usage : saveTermSettings
+# Usage: saveTermSettings
 {
 	save_text_color=${current_text}
 	save_back_color=${current_back}
@@ -232,7 +232,7 @@ saveTermSettings()
 loadTermSettings()
 # Retrieves last saved term state (with saveTermSettings()) and 
 # updates term state. 
-# Usage : loadTermSettings
+# Usage: loadTermSettings
 {
 	setText ${save_text_color} ${save_back_color} ${save_att_color}
 }
@@ -240,7 +240,7 @@ loadTermSettings()
 
 printColor()
 # Prints a one-line message in defined style (color, backcolor, attribute).
-# Usage : printColor <message> [<color> [<back color> [<attribute>]]] 
+# Usage: printColor <message> [<color> [<back color> [<attribute>]]] 
 {
 
 	saveTermSettings
@@ -263,7 +263,7 @@ printColor()
 printColorAtomic()
 # Prints a message in defined style (color, backcolor, attribute) atomatically,
 # i.e. without,if possible, inserting a new line afterwards.
-# Usage : printColor <message> [<color> [<back color> [<attribute>]]] 
+# Usage: printColor <message> [<color> [<back color> [<attribute>]]] 
 {
 
 	saveTermSettings
@@ -284,15 +284,15 @@ printColorAtomic()
 
 printBeginList()
 # Prints text corresponding to the end of list whose name is provided.
-# Usage : printBeginList <list name>
+# Usage: printBeginList <list name>
 {
-	printColorAtomic "      ----> $1 : "
+	printColorAtomic "      ----> $1: "
 }
 
 
 printItem()
 # Prints a list item according to the color-enabled style, with a leading space.
-# Usage : printItem [<message>+]
+# Usage: printItem [<message>+]
 {
 	if [ "$term_support_color" -eq 0 ] ; then	
 		printColorAtomic "$* "
@@ -312,7 +312,7 @@ printEndList()
 
 printOK()
 # Prints a colorful [OK], with a leading space. 
-# Usage : printOK
+# Usage: printOK
 {
 	
 	if [ "$term_support_color" -eq 0 ] ; then
@@ -327,7 +327,7 @@ printOK()
 
 printFailed()
 # Prints a colorful [Failed], with a leading space. 
-# Usage : printFailed
+# Usage: printFailed
 {
 	
 	if [ "$term_support_color" -eq 0 ] ; then
@@ -342,7 +342,7 @@ printFailed()
 
 printNA()
 # Prints a colorful [N/A], with a leading space.
-# Usage : printNA
+# Usage: printNA
 {
 	
 	if [ "$term_support_color" -eq 0 ] ; then
@@ -357,7 +357,7 @@ printNA()
 
 printNonImplemented()
 # Prints a colorful [Not implemented], with a leading space.
-# Usage : printNonImplemented
+# Usage: printNonImplemented
 {
 	
 	if [ "$term_support_color" -eq 0 ] ; then
@@ -374,7 +374,7 @@ display_color=$white_text
 
 DISPLAY()
 # Displays normal messages in standard channel.
-# Usage : DISPLAY [<message>+]
+# Usage: DISPLAY [<message>+]
 {
 	printColor "$*" $display_color
 }
@@ -385,7 +385,7 @@ debug_color=$cyan_text
 DEBUG()
 # Displays provideds message in standard channel, if in DEBUG mode
 # (do_debug set to "0").
-# Usage : DEBUG [<message>+]
+# Usage: DEBUG [<message>+]
 {
 
 	if [ $do_debug -eq 0 ] ; then
@@ -395,7 +395,7 @@ DEBUG()
 			if [ "$term_support_color" -eq 0 ] ; then
 				saveTermSettings
 				setText $debug_color
-				echo "Debug : $*"
+				echo "Debug: $*"
 				loadTermSettings
 			else
 				echo $*
@@ -403,7 +403,7 @@ DEBUG()
 		fi		
 		
 		if [ $do_debug_in_file -eq 0 ] ; then
-			echo "Debug : $*" >> $debug_file
+			echo "Debug: $*" >> $debug_file
 		fi
 				
 	fi
@@ -413,31 +413,31 @@ DEBUG()
 
 TRACE()
 # Displays trace messages in standard error channel.
-# Usage : TRACE [<message>+]
+# Usage: TRACE [<message>+]
 {
-	printColor "Trace : $*" $magenta_text 1>&2
+	printColor "Trace: $*" $magenta_text 1>&2
 }
 
 
 WARNING()
 # Displays warning messages in standard error channel.
-# Usage : WARNING [<message>+]
+# Usage: WARNING [<message>+]
 {
-	printColor "Warning : $*" $yellow_text 1>&2
+	printColor "Warning: $*" $yellow_text 1>&2
 }
 
 
 ERROR()
 # Display error messages in standard error channel.
-# Usage : ERROR [<message>+]
+# Usage: ERROR [<message>+]
 {
-	printColor "Error : $*" $white_text $red_back 1>&2
+	printColor "Error: $*" $white_text $red_back 1>&2
 }
 
 
 setDefaultTerm()
 # Restores defaults.
-# Usage : setDefaultTerm
+# Usage: setDefaultTerm
 {
 	setText ${default_text_color} ${default_back_color} ${default_att}
 }
@@ -449,11 +449,11 @@ default_wait_for_key_message="< Press any key >"
 waitForKey()
 # Displays the specified message (if any, otherwise the default one)
 # and waits for any key to be pressed.
-# Usage : waitForKey [prompt message]
+# Usage: waitForKey [prompt message]
 { 
 
 	if [ -z "$1" ] ; then
-		# The '-s -n1' options are not supported everywhere :
+		# The '-s -n1' options are not supported everywhere:
 		read -p "$default_wait_for_key_message" utils_key_pressed
 	else
 		read -p "$*" utils_key_pressed
@@ -468,7 +468,7 @@ beep_util="/usr/bin/beep"
 
 beep()
 # Makes your computer make, if available, an unpleasant noise. 
-# Usage : beep
+# Usage: beep
 {
 
 	if [ -x "$beep_util" ] ; then
@@ -484,7 +484,7 @@ beep()
 askDefaultYes()
 # Let the user choose between a yes/no alternative, yes being the default.
 # Returns 0 if yes, 1 otherwise.
-# Usage : if askDefaultYes "Do you want to exit ?" ; then ...
+# Usage: if askDefaultYes "Do you want to exit ?" ; then ...
 {
 	unset returnedChar
 	read -p "$1 (y/n) [y] " returnedChar
@@ -500,7 +500,7 @@ askDefaultYes()
 askDefaultNo()
 # Let the user choose between a yes/no alternative, no being the default.
 # Returns 0 if yes, 1 otherwise.
-# Usage : if askDefaultNo "Do you want to exit ?" ; then ...
+# Usage: if askDefaultNo "Do you want to exit ?" ; then ...
 {
 	unset returnedChar
 	read -p "$1 (y/n) [n] " returnedChar 
@@ -516,7 +516,7 @@ askDefaultNo()
 askString()
 # Let the user enter a string after the provided prompt.
 # Returns the entered string.
-# Usage : askString "Enter your credit card number :"
+# Usage: askString "Enter your credit card number:"
 #	  echo $returnedString
 {
 
@@ -529,7 +529,7 @@ askNonVoidString()
 # Let the user enter a non-void string after the provided prompt.
 # Loops until something is entered.
 # Returns the entered string.
-# Usage : askNonVoidString "Enter your credit card number :"
+# Usage: askNonVoidString "Enter your credit card number:"
 #	  echo $returnedString
 {
 	returnedString=""
@@ -540,5 +540,5 @@ askNonVoidString()
 }
 
 
-# Auto-run when sourced, to set color flag :
+# Auto-run when sourced, to set color flag:
 updateColorSupport
