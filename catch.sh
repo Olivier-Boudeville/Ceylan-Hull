@@ -1,8 +1,8 @@
 #!/bin/sh
 
-USAGE=`basename $0`" : stores a file in a vault directory and makes a symbolic link to it, so that if current tree is erased, this file will be kept."
+USAGE=`basename $0`": stores a file in a vault directory and makes a symbolic link to it, so that if current tree is erased, this file will be kept."
 
-# See : retrieve.sh, updateDirectoryFromVault.sh
+# See: retrieve.sh, updateDirectoryFromVault.sh
 
 DATA_VAULT_DEFAULT="$HOME/Vault"
 
@@ -13,7 +13,7 @@ if [ ! "$#" = "1" ] ; then
 fi	
 
 if [ -z "$DATA_VAULT" ] ; then
-	echo "Warning : no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
+	echo "Warning: no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
 	DATA_VAULT="${DATA_VAULT_DEFAULT}"
 fi
 
