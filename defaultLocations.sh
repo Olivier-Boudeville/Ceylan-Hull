@@ -1,5 +1,5 @@
 # There is not need for the following two lines since this script 
-# is expected only to be sourced (not executed) :
+# is expected only to be sourced (not executed):
 
 #!/bin/sh
 #USAGE=". $0"
@@ -9,20 +9,20 @@
 # /usr/bin/find or nowhere, etc.)
 
 
-#echo "Trace : begin of defaultLocations.sh"
+#echo "Trace: begin of defaultLocations.sh"
 
-# Tells whether this script has already been sourced :
+# Tells whether this script has already been sourced:
 defaultlocations_sourced=0
 
 
-# Triggers termUtils.sh as well :
-# Note : defaultLocations.sh depends on platformDetection.sh, not the contrary.
+# Triggers termUtils.sh as well:
+# Note: defaultLocations.sh depends on platformDetection.sh, not the contrary.
 
 if [ "$platformdetection_sourced" != 0 ] ; then
 
 	PLATFORMDETECT="platformDetection.sh"
 
-	#echo "Trace : will source platformDetection.sh"
+	#echo "Trace: will source platformDetection.sh"
 	
 	if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
 		if [ ! -f "./${PLATFORMDETECT}" ] ; then
@@ -38,7 +38,7 @@ if [ "$platformdetection_sourced" != 0 ] ; then
 	
 fi
 
-#echo "Trace : body of defaultLocations.sh"
+#echo "Trace: body of defaultLocations.sh"
 
 # Default locations for real basic commands:
 
@@ -51,7 +51,7 @@ FIND="/usr/bin/find"
 DU="/usr/bin/du"
 
 
-# For ping tool options :
+# For ping tool options:
 if [ $is_windows -eq 0 ] ; then
 	PING_OPT="-n"
 else
@@ -59,11 +59,11 @@ else
 fi
 
 
-# For MD5 sum tool :
+# For MD5 sum tool:
 
 if [ $is_bsd -eq 1 ] ; then
 
-	# Here we are not under a BSD-style OS :
+	# Here we are not under a BSD-style OS:
   # (works with cygwin as well)
 	if findTool md5sum ; then
 		MD5SUM=$returnedString
@@ -73,7 +73,7 @@ if [ $is_bsd -eq 1 ] ; then
 
 else
 	
-	# BSD does not use the same name :
+	# BSD does not use the same name:
 	if findTool cksum ; then
 		MD5SUM="$returnedString -a MD5 -n"
 	else
@@ -86,12 +86,12 @@ fi
 
 
 # This flag indicates whether this script should warn if a basic tool is not
-# found in its standard (usual) location [default : true (0)]. 
+# found in its standard (usual) location [default: true (0)]. 
 do_warn="0"
 
 
 # This flag indicates whether this script should ensure that only registered 
-# executables are used [default : true (0)]. 
+# executables are used [default: true (0)]. 
 be_strict="0"
 
 # lookUpExec and findTool are to be found in platformDetection.sh
@@ -101,9 +101,9 @@ be_strict="0"
 convertToWinPath()
 # Converts a specified absolute path into a valid Windows one thanks to a
 # provided prefix, and according to windows_prefix.
-# Usage : convertToWinPath <a non-converted path> <a converted prefix>
-# Ex : convertToWinPath /home/sye/Projects/OSDL/OSDL-0.3/src installs\\cygwin
-# returns in returnedString, with default settings : c:\\cygwin\\aaa\\bbb\\ccc
+# Usage: convertToWinPath <a non-converted path> <a converted prefix>
+# Ex: convertToWinPath /home/sye/Projects/OSDL/OSDL-0.3/src installs\\cygwin
+# returns in returnedString, with default settings: c:\\cygwin\\aaa\\bbb\\ccc
 {
 
 	if [ -z "$1" ] ; then
@@ -118,7 +118,7 @@ convertToWinPath()
 	
 	returnedString=`${ECHO} "$1" | ${SED} 's|/|\\\\|g'`
 	
-	# No escaping for already converted prefix :
+	# No escaping for already converted prefix:
 	returnedString="$2${returnedString}"
 }
 
@@ -128,7 +128,7 @@ convertToWinPath()
 findBasicShellTools()
 # Will automatically look up main basic UNIX tools.
 # Uses implicitly be_strict to step on errors or not.
-# Usage : findBasicShellTools
+# Usage: findBasicShellTools
 {
 
 	findTool echo
@@ -149,7 +149,7 @@ findBasicShellTools()
 	findTool mkdir
 	MKDIR=$returnedString
 
-	# In some cases already found by 'platformDetection.sh' :
+	# In some cases already found by 'platformDetection.sh':
 	findTool grep
 	GREP=$returnedString
 	
@@ -162,7 +162,7 @@ findBasicShellTools()
 	findTool df
 	DF=$returnedString
 	
-	# Usually already found by 'platformDetection.sh' :
+	# Usually already found by 'platformDetection.sh':
 	findTool uname
 	UNAME=$returnedString
 	
@@ -202,7 +202,7 @@ findBasicShellTools()
 findSupplementaryShellTools()
 # Will automatically look up less basic UNIX tools.
 # Uses implicitly be_strict to step on errors or not.
-# Usage : findBinaryTools
+# Usage: findBinaryTools
 {
 
 	findTool awk
@@ -232,13 +232,16 @@ findSupplementaryShellTools()
 findBuildTools()
 # Will automatically look up build tools.
 # Uses implicitly be_strict to step on errors or not.
-# Usage : findBuildTools
+# Usage: findBuildTools
 {
 
   if [ $is_windows -eq 0 ] ; then
 
-    # Default settings for Visual Express 2005 :
-    VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 8\Common7\IDE"
+    # Default settings for Visual Express 2005:
+    #VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 8\Common7\IDE"
+
+    # Default settings for Visual Express 2008:
+    VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE"
 
     if [ ! -d "${VISUAL_ROOT}" ] ; then
       ERROR "Unable to find Visual Express installation directory (searched for ${VISUAL_ROOT})."
@@ -264,7 +267,7 @@ findBuildTools()
 		findTool gmake
 		GMAKE=$returnedString
 		
-		# We prefer here non-GNU 'make' to GNU 'gmake' on *BSD :
+		# We prefer here non-GNU 'make' to GNU 'gmake' on *BSD:
 		MAKE=$NATIVE_MAKE
 		
 	else
@@ -281,11 +284,11 @@ findBuildTools()
 	
 	# Selecting C and C++ compilers.
 	
-	# Special case for minGW :
+	# Special case for minGW:
 
 	if  [ $is_mingw -eq 0 ] ; then
 
-		# MINGW_ROOT has been set by 'platformDetection.sh' :
+		# MINGW_ROOT has been set by 'platformDetection.sh':
 	
 		MINGW_PATH=${MINGW_ROOT}/bin
 		export MINGW_PATH
@@ -329,7 +332,7 @@ findBuildTools()
 	# Look for a C compiler, not a C++ compiler (for example, gcc, not g++).
 	
 	if [ -x "${C_COMPILER}" ] ; then
-		DEBUG "C compiler taken from the C_COMPILER environment variable : ${C_COMPILER}."
+		DEBUG "C compiler taken from the C_COMPILER environment variable: ${C_COMPILER}."
 	else
 		findTool gcc
 		GCC=$returnedString
@@ -347,7 +350,7 @@ findBuildTools()
 	# Look for a C++ compiler, not a C compiler (for example, g++, not gcc).
 
 	if [ -x "${CPP_COMPILER}" ] ; then
-		DEBUG "C++ compiler taken from the CPP_COMPILER environment variable : ${CPP_COMPILER}."
+		DEBUG "C++ compiler taken from the CPP_COMPILER environment variable: ${CPP_COMPILER}."
 	else
 		findTool g++
 		GPP=$returnedString
@@ -377,7 +380,7 @@ findBuildTools()
 		
 	fi
 	
-	# Useful to have make tool use our compiler choices :
+	# Useful to have make tool use our compiler choices:
 
 	unset BUILD_LOCATIONS
 	
@@ -400,7 +403,7 @@ findBuildTools()
 	findTool flex
 	FLEX=$returnedString
 
-	# bison and perl currently disabled since not used :
+	# bison and perl currently disabled since not used:
 	
 	#findTool bison
 	#BISON=$returnedString
@@ -418,10 +421,10 @@ findMoreSpecificTools()
 # available by default on some platforms. Requesting them from a portable 
 # script is therefore unsafe.
 # Uses implicitly be_strict to step on errors or not.
-# Usage : findMoreSpecificTools
+# Usage: findMoreSpecificTools
 {
 
-	# Not available under NetBSD default installs : 
+	# Not available under NetBSD default installs: 
 	findTool unzip
 	UNZIP=$returnedString
 
@@ -442,8 +445,8 @@ findMoreSpecificTools()
 setBuildEnv()
 # Sets the environment so that the build goes smooth by selecting the
 # correct files.
-# Usage : setBuildEnv [--exportEnv] [--appendEnv] [command]
-# Example : setBuildEnv --exportEnv --appendEnv ./configure
+# Usage: setBuildEnv [--exportEnv] [--appendEnv] [command]
+# Example: setBuildEnv --exportEnv --appendEnv ./configure
 # --prefix=${prefix}/binutils-${binutils_VERSION}
 {
 
@@ -470,13 +473,13 @@ setBuildEnv()
         
 	command=$1
 	shift
-	command_string=" Command is : <$command $@>."
+	command_string=" Command is: <$command $@>."
 	
 	current_path=$PATH
 	current_ld_library_path=$LD_LIBRARY_PATH
 	
 	# So that tools ignoring CC and CXX have a chance to catch them 
-	# nevertheless :
+	# nevertheless:
 	if [ -d "${GCC_ROOT}" ] ; then
 		current_path=${GCC_ROOT}/bin:$current_path
 		current_ld_library_path=${GCC_ROOT}/lib:$current_ld_library_path
@@ -487,8 +490,8 @@ setBuildEnv()
 		current_ld_library_path=${MINGW_LD_LIBRARY_PATH}:$current_ld_library_path
 	fi
 
-	DEBUG "Command path will be : <$current_path>."
-	DEBUG "Command library path will be : <$current_ld_library_path>."
+	DEBUG "Command path will be: <$current_path>."
+	DEBUG "Command library path will be: <$current_ld_library_path>."
 
 	if [ $export_env -eq 0 ] ; then     
 	   
@@ -529,7 +532,7 @@ setBuildEnv()
                         
 			if [ -n "$*" ] ; then
                         
-				DEBUG "Actual command will be : " PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@" $to_be_appended
+				DEBUG "Actual command will be: " PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@" $to_be_appended
 				PATH="${current_path}" LD_LIBRARY_PATH="${current_ld_library_path}" CC="${C_COMPILER}" CXX="${CPP_COMPILER}" $command "$@" $to_be_appended
 				return $?
 			else
@@ -608,9 +611,9 @@ setBuildEnv()
 }
 
 
-#echo "Trace : auto-run of defaultLocations.sh"
+#echo "Trace: auto-run of defaultLocations.sh"
 
-# Auto-run on source to have basic commands :
+# Auto-run on source to have basic commands:
 findBasicShellTools
 
-#echo "Trace : end of defaultLocations.sh"
+#echo "Trace: end of defaultLocations.sh"
