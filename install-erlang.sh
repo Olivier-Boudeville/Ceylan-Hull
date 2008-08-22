@@ -42,7 +42,13 @@ cd otp_src_${ERLANG_VERSION}
 # http://www.erlang-consulting.com/thesis/tcp_optimisation/tcp_optimisation.html
 # for feature impact on performances.
 
-CONFIGURE_OPT="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
+# SSL by default is not supposed to be available. Hence for example the crypto
+# module will not be available. 
+# Add for example '--with-ssl=/usr/bin' to activate it.
+# crypto could be still disabled due to:
+# 'OpenSSL is configured for kerberos but no krb5.h found'.
+BUILD_OPT="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
+
 
 echo "  Building Erlang environment..." && ./configure ${CONFIGURE_OPT} --prefix=${prefix} && make && make install && echo "  ...Erlang successfully built"
 
