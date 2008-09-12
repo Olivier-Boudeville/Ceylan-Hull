@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USAGE="`basename $0` : recursive grep for the ones that lack it.\n\tUsage : `basename $0` <Expression to be found in files> [<Filter on files>] [--verbose]\n\tExample: `basename $0` 'little red rooster' '*.txt'"
+USAGE="`basename $0`: recursive grep for the ones that lack it.\n\tUsage: `basename $0` [--verbose] [--quiet] <Expression to be found in files> [<Filter on files>] \n\tExample: `basename $0` 'little red rooster' '*.txt'"
 
 FIND=`which find | grep -v ridiculously 2>/dev/null`
 GREP=`which grep | grep -v ridiculously 2>/dev/null`
@@ -10,16 +10,19 @@ GREP=`which grep | grep -v ridiculously 2>/dev/null`
 
 
 if [ ! -x "${GREP}" ]; then
-   echo "Error, no executable grep found." 1>&2
-   exit 5
+	echo "Error, no executable grep found." 1>&2
+	exit 5
 fi
 
 if [ ! -x "${FIND}" ]; then
-   echo "Error, no executable find found." 1>&2
-   exit 6
+	echo "Error, no executable find found." 1>&2
+	exit 6
 fi
 
-verbose=no
+# Both are false by default:
+verbose=1
+quiet=1
+
 
 # An useless file to ensure grep always has multiple files to scan.
 # Done to force grep to display the filename (otherwise it won't)
@@ -27,39 +30,59 @@ verbose=no
 FORCE_MULTI_FILES="$HOME/.rgrep.toDelete.tmp"
 
 if [ $# -eq 0 ]; then
-   echo -e $USAGE
-   exit
+	echo -e $USAGE
+	exit 1
 fi
 
 
 if [ $# -ge 4 ]; then
-   echo -e $USAGE
-   exit
+	echo -e $USAGE
+	exit 2
 fi
 
-for arg in $*; do
-   if [ "$arg" = "--verbose" -o "$arg" = "-v" ]; then
-       verbose=yes
-       echo "Verbose mode activated"
-       break
-   fi   done
 
-if [ $verbose = yes ]; then
-     echo "Will search in following files :"
-   if [ -z "$2" ]; then
-       $FIND . -exec ls '{}' 2>/dev/null
-   else
-       $FIND . -name ls '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
-   fi  
+if [ "$1" = "--verbose" ]; then
+
+	verbose=0
+	echo "Verbose mode activated."
+	shift
+       
+elif [ "$1" = "--quiet" ]; then
+
+	quiet=0
+	#echo "Quiet mode activated."
+	shift
+       
+fi
+
+
+if [ $verbose -eq 0 ]; then
+
+	echo "Will search in following files:"
+	if [ -z "$2" ]; then
+		$FIND . -exec /bin/ls '{}' ';' 2>/dev/null
+	else
+		$FIND . -exec /bin/ls '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
+	fi  
 
 fi
 
 
 if [ -z "$2" ]; then
-   echo -e "Recursive grep for expression <$1> in all files :\n"
+
+   [ $quiet -eq 0 ] || echo "Recursive grep for expression <$1> in all files:
+   "
    $FIND . -exec $GREP "$1" '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
+   
 else
-   echo -e "Recursive grep for expression <$1> on files matching <$2> :\n"
+
+   [ $quiet -eq 0 ] || echo "Recursive grep for expression <$1> in all files matching <$2>:
+   "
    $FIND . -name "$2" -exec $GREP "$1" '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
+   
 fi  
+
+
+[ $quiet -eq 0 ] || echo "
+End of search."
 

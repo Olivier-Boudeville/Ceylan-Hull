@@ -2,13 +2,39 @@
 
 
 USAGE="
-Usage : wh <filePattern> [<startingDirectory>]
+Usage: wh [--verbose] [--quiet] [--no-path] <filePattern> [<startingDirectory>]
 	searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory"
 
 
 FIND_GNU="/logiciels/public/bin/find"
 
-VERBOSE=0
+verbose=1
+quiet=1
+no_path=1
+
+if [ "$1" = "--verbose" ]; then
+
+	verbose=0
+	echo "Verbose mode activated."
+	shift
+       
+elif [ "$1" = "--quiet" ]; then
+
+	quiet=0
+	#echo "Quiet mode activated."
+	shift
+       
+fi
+
+
+if [ "$1" = "--no-path" ]; then
+
+	no_path=0
+	[ $quiet -eq 0 ] || echo "Only filenames without paths will be output."
+	shift
+    
+fi
+
 
 if [ -x "$FIND_GNU" ]; then
 	FIND="$FIND_GNU"
@@ -17,26 +43,29 @@ else
 fi	
 
 
-[ $VERBOSE -eq 0 ] || echo "FIND is $FIND"
+[ $verbose -eq 1 ] || echo "FIND is $FIND"
 
-if [ $# != 1 ]; then
-	if [ $# != 2 ]; then
+if [ ! $# -eq 1 ]; then
+	if [ ! $# -eq 2 ]; then
 		echo $USAGE
 		exit 1
 	fi
 fi
 
-if [ $# = 1 ]; then
+
+if [ $# -eq 1 ]; then
 	startingDir=`pwd`
 fi
 
-if [ $# = 2 ]; then
+
+if [ $# -eq 2 ]; then
 	startingDir=$2
 fi
 
+
 if [ ! -d "$startingDir" ]; then
 	echo
-	echo "No such directory : $startingDir" 
+	echo "No such directory: $startingDir" 
 	echo
 	echo $USAGE
 	exit 2
@@ -46,16 +75,19 @@ fi
 
 targetPattern=$1
 
-echo
-echo "Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>"
-echo
+[ $quiet -eq 0 ] || echo "
+Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>
+"
 
-[ $VERBOSE -eq 0 ] || echo "Current directory is : `pwd`"
-[ $VERBOSE -eq 0 ] || echo "Command is : $FIND $startingDir -name $targetPattern -print 2>/dev/null | more"
-[ $VERBOSE -eq 0 ] || echo
+[ $verbose -eq 1 ] || echo "Current directory is: `pwd`"
+[ $verbose -eq 1 ] || echo "Command is: $FIND $startingDir -name $targetPattern -print 2>/dev/null | more"
+[ $verbose -eq 1 ] || echo
 
-$FIND "$startingDir" -name "$targetPattern" -print 2>/dev/null | more
+if [ $no_path -eq 0 ] ; then
+	$FIND "$startingDir" -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+else    
+	$FIND "$startingDir" -name "$targetPattern" -print 2>/dev/null | more
+fi
 
-
-echo
-echo "End of search"
+[ $quiet -eq 0 ] || echo "
+End of search"
