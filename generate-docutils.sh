@@ -167,6 +167,11 @@ manage_rst_to_pdf()
 			
 	fi
 	
+    if [ ! -e "${TEX_FILE}" ] ; then
+		echo "${BEGIN_MARKER} Error: generated TeX file '${TEX_FILE}' could not be found, probably due to RST errors." 1>&2
+		exit 8
+    
+    fi
 		
 	# Run thrice on purpose, to fix links:
 	echo "LateX command: ${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE}"
@@ -190,7 +195,7 @@ manage_rst_to_pdf()
 			echo "${BEGIN_MARKER}PDF generation succeeded for $SOURCE." 1>&2
 		else
 			echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
-			exit 7
+			exit 10
 		fi
 
 	fi
