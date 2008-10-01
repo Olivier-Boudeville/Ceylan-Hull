@@ -19,7 +19,8 @@ for f in ${SOURCES}; do
 	count=`grep "include:: $f" ${INCLUDE_LIST} | wc -l`
     
     if [ "$count" = "1" ] ; then
-    	echo "(source $f referenced one time as expected.)"
+    	res=`grep "include:: $f" ${INCLUDE_LIST} | sed 's|:...*||1' | xargs basename` 
+    	echo "(source $f referenced one time as expected, in ${res})"
     elif [ "$count" = "0" ] ; then
     	echo "######## [KO] Source $f never referenced."
         echo
