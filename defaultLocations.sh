@@ -235,29 +235,32 @@ findBuildTools()
 # Usage: findBuildTools
 {
 
-  if [ $is_windows -eq 0 ] ; then
+	if [ $is_windows -eq 0 ] ; then
 
-    # Default settings for Visual Express 2005:
-    #VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 8\Common7\IDE"
+		# Default settings for Visual Express 2005:
+		#VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 8\Common7\IDE"
 
-    # Default settings for Visual Express 2008:
-    VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE"
+		# Default settings for Visual Express 2008:
+		VISUAL_ROOT="C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE"
 
-    if [ ! -d "${VISUAL_ROOT}" ] ; then
-      ERROR "Unable to find Visual Express installation directory (searched for ${VISUAL_ROOT})."
-      exit 3
-    fi
+		if [ ! -d "${VISUAL_ROOT}" ] ; then
+			ERROR "Unable to find Visual Express installation directory (searched for ${VISUAL_ROOT})."
+			exit 3
+		fi
 
-    VISUAL_CMD="VCExpress.exe"
+		VISUAL_CMD="VCExpress.exe"
 
-    if [ ! -x "${VISUAL_ROOT}/${VISUAL_CMD}" ] ; then
-      ERROR "Unable to find Visual Express executable (searched for ${VISUAL_ROOT}/${VISUAL_CMD})."
-      exit 4
-    fi
+		if [ ! -x "${VISUAL_ROOT}/${VISUAL_CMD}" ] ; then
+		
+        	ERROR "Unable to find Visual Express executable (searched for ${VISUAL_ROOT}/${VISUAL_CMD})."
+			exit 4
+            
+		fi
 
-    return
+		return
     
-  fi
+	fi
+
 
 	if [ $is_bsd -eq 0 ] ; then
 		
@@ -275,6 +278,7 @@ findBuildTools()
 		MAKE=$returnedString
 	fi
 	
+    
 	if ! `( ${MAKE} -v | grep GNU ) 1>/dev/null 2>&1` ; then		
 		WARNING "The make tool (${MAKE}) does not seem to be GNU make."
 	else
@@ -411,7 +415,13 @@ findBuildTools()
 	#findTool perl
 	#PERL=$returnedString
 	
-	DEBUG "MAKE = $MAKE, GCC = $GCC, CC = $CC, FLEX = $FLEX, BISON = $BISON, PERL = $PERL"
+    findTool cmake
+	CMAKE=$returnedString
+    
+    findTool ccmake
+	CCMAKE=$returnedString
+    
+	DEBUG "MAKE = $MAKE, GCC = $GCC, CC = $CC, FLEX = $FLEX, BISON = $BISON, PERL = $PERL, CMAKE = $CMAKE, CCMAKE = $CCMAKE"
 	
 }
 
