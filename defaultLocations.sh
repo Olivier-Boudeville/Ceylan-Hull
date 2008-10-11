@@ -223,7 +223,10 @@ findSupplementaryShellTools()
 	findTool sleep
 	SLEEP=$returnedString
 	
-	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, PING = $PING, SLEEP = $SLEEP"
+	findTool patch
+	PATCH=$returnedString
+	
+	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, PING = $PING, SLEEP = $SLEEP, PATCH = $PATCH"
 	
 }
 
