@@ -494,8 +494,18 @@ setBuildEnv()
 	# So that tools ignoring CC and CXX have a chance to catch them 
 	# nevertheless:
 	if [ -d "${GCC_ROOT}" ] ; then
-		current_path=${GCC_ROOT}/bin:$current_path
-		current_ld_library_path=${GCC_ROOT}/lib:$current_ld_library_path
+    	
+        # Avoid adding system path in PATH (moreover not at its beginning),
+        # as otherwise it might lead to select system files instead of files
+        # meant to be found in prefixed directories thanks to a user-specified
+        # PATH (which would be eclipsed by this leading system path):
+        if [ "${GCC_ROOT}" != "/usr" ] ; then
+        
+			current_path=${GCC_ROOT}/bin:$current_path
+			current_ld_library_path=${GCC_ROOT}/lib:$current_ld_library_path
+            
+		fi
+                    
 	fi
 	
 	if [ $is_mingw -eq 0 ] ; then
