@@ -190,7 +190,7 @@ findBasicShellTools()
 	findTool which
 	WHICH=$returnedString
 	
-	findTool tr
+    findTool tr
 	TR=$returnedString	
 	
 	DEBUG "ECHO = $ECHO, CP = $CP, MV = $MV, LN = $LN, RM = $RM, MKDIR = $MKDIR, GREP = $GREP, FIND = $FIND, DU = $DU, DF = $DF, UNAME = $UNAME, ID = $ID, PS = $PS, WC = $WC, TAIL = $TAIL, SED = $SED, CHMOD = $CHMOD, CAT = $CAT, WHICH = $WHICH, TR = $TR"
@@ -287,6 +287,7 @@ findBuildTools()
 	else
 		DEBUG "make GNU detected."		
 	fi
+
 	
 	
 	# Selecting C and C++ compilers.
@@ -455,6 +456,23 @@ findMoreSpecificTools()
 }
 
 
+findAutoTools()
+# Will automatically look up the Autotools .
+# Uses implicitly be_strict to step on errors or not.
+# Usage: findAutoTools
+{
+
+	findTool automake
+	AUTOMAKE=$returnedString
+
+	findTool autoconf
+	AUTOCONF=$returnedString
+
+	DEBUG "AUTOMAKE=$AUTOMAKE, AUTOCONF=$AUTOCONF"
+	
+}
+
+
 setBuildEnv()
 # Sets the environment so that the build goes smooth by selecting the
 # correct files.
@@ -498,7 +516,7 @@ setBuildEnv()
         # Avoid adding system path in PATH (moreover not at its beginning),
         # as otherwise it might lead to select system files instead of files
         # meant to be found in prefixed directories thanks to a user-specified
-        # PATH (which would be eclipsed by this leading system path):
+        # PATH (which would be eclipsed by this leading system path):
         if [ "${GCC_ROOT}" != "/usr" ] ; then
         
 			current_path=${GCC_ROOT}/bin:$current_path
