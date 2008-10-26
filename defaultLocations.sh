@@ -64,7 +64,7 @@ fi
 if [ $is_bsd -eq 1 ] ; then
 
 	# Here we are not under a BSD-style OS:
-  # (works with cygwin as well)
+	# (works with cygwin as well)
 	if findTool md5sum ; then
 		MD5SUM=$returnedString
 	else
@@ -128,69 +128,69 @@ convertToWinPath()
 findBasicShellTools()
 # Will automatically look up main basic UNIX tools.
 # Uses implicitly be_strict to step on errors or not.
-# Usage: findBasicShellTools
+# Usage: findBasicShellTools [<message in case of failure>]
 {
 
-	findTool echo
+	findTool echo $1
 	ECHO=$returnedString
 	
-	findTool cp
+	findTool cp $1
 	CP=$returnedString
 
-	findTool mv
+	findTool mv $1
 	MV=$returnedString
 	
-	findTool ln
+	findTool ln $1
 	LN=$returnedString
 	
-	findTool rm
+	findTool rm $1
 	RM=$returnedString
 		
-	findTool mkdir
+	findTool mkdir $1
 	MKDIR=$returnedString
 
 	# In some cases already found by 'platformDetection.sh':
-	findTool grep
+	findTool grep $1
 	GREP=$returnedString
 	
-	findTool find
+	findTool find $1
 	FIND=$returnedString
 	
-	findTool du
+	findTool du $1
 	DU=$returnedString
 	
-	findTool df
+	findTool df $1
 	DF=$returnedString
 	
 	# Usually already found by 'platformDetection.sh':
-	findTool uname
+	findTool uname $1
 	UNAME=$returnedString
 	
-	findTool id
+	findTool id $1
 	ID=$returnedString
 	
-	findTool ps
+	findTool ps $1
 	PS=$returnedString
 	
-	findTool wc
+	findTool wc $1
 	WC=$returnedString
 	
-	findTool tail
+	findTool tail $1
 	TAIL=$returnedString
 	
-	findTool sed
+	findTool sed $1
 	SED=$returnedString
 	
-	findTool chmod
+	findTool chmod $1
 	CHMOD=$returnedString
 	
-	findTool cat
+	findTool cat $1
 	CAT=$returnedString
 	
-	findTool which
+	findTool which $1
 	WHICH=$returnedString
 	
-    findTool tr
+    findTool tr $1
 	TR=$returnedString	
 	
 	DEBUG "ECHO = $ECHO, CP = $CP, MV = $MV, LN = $LN, RM = $RM, MKDIR = $MKDIR, GREP = $GREP, FIND = $FIND, DU = $DU, DF = $DF, UNAME = $UNAME, ID = $ID, PS = $PS, WC = $WC, TAIL = $TAIL, SED = $SED, CHMOD = $CHMOD, CAT = $CAT, WHICH = $WHICH, TR = $TR"
@@ -202,28 +202,28 @@ findBasicShellTools()
 findSupplementaryShellTools()
 # Will automatically look up less basic UNIX tools.
 # Uses implicitly be_strict to step on errors or not.
-# Usage: findBinaryTools
+# Usage: findBinaryTools [<message in case of failure>]
 {
 
-	findTool awk
+	findTool awk $1
 	AWK=$returnedString
 
-	findTool tar
+	findTool tar $1
 	TAR=$returnedString
 	
-	findTool gunzip
+	findTool gunzip $1
 	GUNZIP=$returnedString
 	
-	findTool bunzip2
+	findTool bunzip2 $1
 	BUNZIP2=$returnedString
 	
-	findTool ping
+	findTool ping $1
 	PING=$returnedString
 			
-	findTool sleep
+	findTool sleep $1
 	SLEEP=$returnedString
 	
-	findTool patch
+	findTool patch $1
 	PATCH=$returnedString
 	
 	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, PING = $PING, SLEEP = $SLEEP, PATCH = $PATCH"
@@ -235,7 +235,7 @@ findSupplementaryShellTools()
 findBuildTools()
 # Will automatically look up build tools.
 # Uses implicitly be_strict to step on errors or not.
-# Usage: findBuildTools
+# Usage: findBuildTools [<message in case of failure>]
 {
 
 	if [ $is_windows -eq 0 ] ; then
@@ -267,17 +267,17 @@ findBuildTools()
 
 	if [ $is_bsd -eq 0 ] ; then
 		
-		findTool make
+		findTool make $1
 		NATIVE_MAKE=$returnedString
 		
-		findTool gmake
+		findTool gmake $1
 		GMAKE=$returnedString
 		
 		# We prefer here non-GNU 'make' to GNU 'gmake' on *BSD:
 		MAKE=$NATIVE_MAKE
 		
 	else
-		findTool make
+		findTool make $1
 		MAKE=$returnedString
 	fi
 	
@@ -342,7 +342,7 @@ findBuildTools()
 	if [ -x "${C_COMPILER}" ] ; then
 		DEBUG "C compiler taken from the C_COMPILER environment variable: ${C_COMPILER}."
 	else
-		findTool gcc
+		findTool gcc $1
 		GCC=$returnedString
 		if [ ! -x ${GCC} ] ; then
 			DEBUG "C compiler not found, defaulting to CC environment variable."
@@ -360,7 +360,7 @@ findBuildTools()
 	if [ -x "${CPP_COMPILER}" ] ; then
 		DEBUG "C++ compiler taken from the CPP_COMPILER environment variable: ${CPP_COMPILER}."
 	else
-		findTool g++
+		findTool g++ $1
 		GPP=$returnedString
 		if [ ! -x ${GPP} ] ; then
 			DEBUG "C++ compiler not found, defaulting to CC environment variable."
@@ -408,21 +408,21 @@ findBuildTools()
 		BUILD_LOCATIONS="CXX=$CPP_COMPILER ${BUILD_LOCATIONS}"
 	fi		
 		
-	findTool flex
+	findTool flex $1
 	FLEX=$returnedString
 
 	# bison and perl currently disabled since not used:
 	
-	#findTool bison
+	#findTool bison $1
 	#BISON=$returnedString
 	
-	#findTool perl
+	#findTool perl $1
 	#PERL=$returnedString
 	
-    findTool cmake
+    findTool cmake $1
 	CMAKE=$returnedString
     
-    findTool ccmake
+    findTool ccmake $1
 	CCMAKE=$returnedString
     
 	DEBUG "MAKE = $MAKE, GCC = $GCC, CC = $CC, FLEX = $FLEX, BISON = $BISON, PERL = $PERL, CMAKE = $CMAKE, CCMAKE = $CCMAKE"
@@ -435,20 +435,20 @@ findMoreSpecificTools()
 # available by default on some platforms. Requesting them from a portable 
 # script is therefore unsafe.
 # Uses implicitly be_strict to step on errors or not.
-# Usage: findMoreSpecificTools
+# Usage: findMoreSpecificTools [<message in case of failure>]
 {
 
 	# Not available under NetBSD default installs: 
-	findTool unzip
+	findTool unzip $1
 	UNZIP=$returnedString
 
-	findTool more
+	findTool more $1
 	MORE=$returnedString
 
-	findTool cvs
+	findTool cvs $1
 	CVS=$returnedString
 		
-	findTool svn
+	findTool svn $1
 	SVN=$returnedString
 
 	DEBUG "UNZIP=$UNZIP, MORE=$MORE, CVS = $CVS, SVN = $SVN"
@@ -459,13 +459,13 @@ findMoreSpecificTools()
 findAutoTools()
 # Will automatically look up the Autotools .
 # Uses implicitly be_strict to step on errors or not.
-# Usage: findAutoTools
+# Usage: findAutoTools [<message in case of failure>]
 {
 
-	findTool automake
+	findTool automake $1
 	AUTOMAKE=$returnedString
 
-	findTool autoconf
+	findTool autoconf $1
 	AUTOCONF=$returnedString
 
 	DEBUG "AUTOMAKE=$AUTOMAKE, AUTOCONF=$AUTOCONF"
