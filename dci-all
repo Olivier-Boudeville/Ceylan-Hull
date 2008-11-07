@@ -7,7 +7,7 @@ if [ -d ".svn" ] ; then
 
 	TOOL="svn"
 	
-	# Removes any pending lock :
+	# Removes any pending lock:
 	svn cleanup
 	
 	OUTPUT=`svn status --no-ignore 2>/dev/null`
@@ -33,7 +33,7 @@ elif [ -d "CVS" ] ; then
 else
 
 	echo "Error, no CVS nor SVN repository found in current directory." 1>&2
-	echo "Usage : $USAGE" 1>&2
+	echo "Usage: $USAGE" 1>&2
 	exit 10
 	
 fi
@@ -41,11 +41,11 @@ fi
 if [ -n "${ADDED}" ] ; then
 
 	echo
-	echo "####### Added file(s) : ${ADDED}" 
+	echo "####### Added file(s): ${ADDED}" 
 
 	for f in ${ADDED} ; do
 		echo
-		echo " + content of $f : "
+		echo " + content of $f: "
 		echo
 		more $f
 		${TOOL} ci $f
@@ -56,17 +56,17 @@ fi
 if [ -n "${MODIFIED}" ] ; then
 
 	echo
-	echo "####### Modified file(s) : ${MODIFIED}" 
+	echo "####### Modified file(s): ${MODIFIED}" 
 	for f in ${MODIFIED} ; do
 		echo
-		echo " + diff for $f : "
+		echo " + diff for $f: "
 		dci $f
 		echo
 	done	
 
 fi
 
-echo "Full commit done, status for files is now :"
+echo "Full commit done, status for files is now:"
 toci
 
 
