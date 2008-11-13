@@ -1,15 +1,15 @@
 #!/bin/sh
 
-# Note: docutils has been finally preferred to txt2tags.
+# Note: docutils has been finally preferred to txt2tags.
 
-USAGE="Usage : `basename $0` <target rst file> [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
+USAGE="Usage : `basename $0` <target rst file> [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
 
 Updates specified file from more recent docutils source (*.rst).
 If '--pdf' is specified, a PDF will be created, if '--all' is specified, all output formats (i.e. HTML and PDF) will be created, otherwise HTML files only will be generated, using any specified CSS file. 
 "
 
 
-# Left out: --warnings=rst-warnings.txt --traceback --verbose  --debug
+# Left out: --warnings=rst-warnings.txt --traceback --verbose  --debug
 # Can be removed for debugging: --quiet
 DOCUTILS_COMMON_OPT="--report=error --no-generator --date --no-source-link --tab-width=4 --strip-comments"
 
@@ -21,7 +21,7 @@ LATEX_TO_PDF_OPT="-interaction nonstopmode"
 
 BEGIN_MARKER="---->"
 
-# By default, generate HTML and not PDF:
+# By default, generate HTML and not PDF:
 do_generate_html=0
 do_generate_pdf=1
 
@@ -173,7 +173,7 @@ manage_rst_to_pdf()
     
     fi
 		
-	# Run thrice on purpose, to fix links:
+	# Run thrice on purpose, to fix links:
 	echo "LateX command: ${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE}"
 	
 	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE} && \
@@ -220,8 +220,8 @@ if [ ${do_generate_pdf} -eq 0 ] ; then
 	TARGET_PDF_FILE=`echo $RST_FILE|sed 's|.rst$|.pdf|1'`
 	#echo "TARGET_PDF_FILE = $TARGET_PDF_FILE"
 		
-	# PDF generator will not find includes (ex: images) if not already
-	# in target dir:
+	# PDF generator will not find includes (ex: images) if not already
+	# in target dir:
 	CURRENT_DIR=`pwd`
 	TARGET_DIR=`dirname ${TARGET_PDF_FILE}`
 	
