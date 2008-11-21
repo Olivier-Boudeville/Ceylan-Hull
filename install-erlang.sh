@@ -6,25 +6,25 @@ LANG=C; export LANG
 USAGE="Usage: "`dirname $0`" [<install directory>]: downloads, builds and installs a fresh Erlang version in specified directory (if any), or in default directory."
 
 
-ERLANG_VERSION="R12B-3"
+ERLANG_VERSION="R12B-5"
 ERLANG_ARCHIVE="otp_src_${ERLANG_VERSION}.tar.gz"
 ERLANG_DOWNLOAD_LOCATION="http://erlang.org/download"
-ERLANG_MD5="c2e7f0ad54b8fadebde2d94106608d97"
+ERLANG_MD5="3751ea3fea669d2b25c67eeb883734bb"
 
 
-INSTALL_DIR="$1"
+install_dir="$1"
 
-if [ -z "${INSTALL_DIR}" ] ; then
-	INSTALL_DIR=$HOME/software/Erlang-${ERLANG_VERSION}
+if [ -z "${install_dir}" ] ; then
+	install_dir=$HOME/Software/Erlang-${ERLANG_VERSION}
 fi
 
-echo "Erlang will be installed in ${INSTALL_DIR}."
-mkdir -p ${INSTALL_DIR}
+echo "Erlang will be installed in ${install_dir}."
+mkdir -p ${install_dir}
 
 
 ERLANG_TARGET_FILE="${ERLANG_DOWNLOAD_LOCATION}/${ERLANG_ARCHIVE}"
 
-#wget ${ERLANG_TARGET_FILE}
+wget ${ERLANG_TARGET_FILE}
 
 tar xvzf ${ERLANG_ARCHIVE} 
 if [ ! $? -eq 0 ] ; then
@@ -32,7 +32,7 @@ if [ ! $? -eq 0 ] ; then
 	exit 5
 fi	
 
-prefix=${INSTALL_DIR}
+prefix=${install_dir}
 mkdir -p ${prefix}
 
 cd otp_src_${ERLANG_VERSION}
