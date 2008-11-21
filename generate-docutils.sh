@@ -184,20 +184,13 @@ manage_rst_to_pdf()
 	
 	if [ ! $RES -eq 0 ] ; then
 
-		#if [ ${RES} -eq 1 ] ; then
-		#	echo "${BEGIN_MARKER} Warning: PDF generation returned code 1 for $SOURCE." 1>&2
-		#else
-		#	echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
-		#	exit 7
-		#fi
-		
-		if [ ${RES} -eq 0 ] ; then
-			echo "${BEGIN_MARKER}PDF generation succeeded for $SOURCE." 1>&2
+		if [ ${RES} -eq 1 ] ; then
+		   echo "${BEGIN_MARKER} Warning: PDF generation returned code 1 for $SOURCE." 1>&2
 		else
-			echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
-			exit 10
+		   echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
+		   exit 7
 		fi
-
+		
 	fi
 	
 }
