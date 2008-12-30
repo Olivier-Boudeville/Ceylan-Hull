@@ -4,7 +4,11 @@
 # diffTree.sh performs a recursive comparison on directory elements.
 
 
-USAGE="\nUsage : `basename $0` <first path (main one)> <second path (to be integrated into first one)> [ -v ] [ -a ] [ -h ] : compares thanks to diff all files which are present both in first and second trees, and warns if they are not identical. Warns too if some files are in one directory but not in the other.\n\t The -v option stands for verbose mode, where identical files are notified too.\n\t The -q option stands for quiet mode, where only actual differences are displayed, without specifiyng which directories are traversed\n\t The -a option stands for automatic diff editing : a merge tool (default : tkdiff) is triggered whenever a difference is detected, and an editor (default : $EDITOR, otherwise nedit) is triggered to modify the corresponding file being on the first path.\n\t The -h option gives this help."
+USAGE="Usage: `basename $0` <first path (main one)> <second path (to be integrated into first one)> [ -v ] [ -a ] [ -h ]: compares thanks to diff all files which are present both in first and second trees, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
+  The -v option stands for verbose mode, where identical files are notified too.
+  The -q option stands for quiet mode, where only actual differences are displayed, without specifiyng which directories are traversed
+  The -a option stands for automatic diff editing: a merge tool (default: tkdiff) is triggered whenever a difference is detected, and an editor (default: $EDITOR, otherwise nedit) is triggered to modify the corresponding file being on the first path.
+  The -h option gives this help."
 
 DEFAULT_TEXT="[00;37;40m"
 PREFIX_IDEN="     "
@@ -14,7 +18,7 @@ PREFIX_NOEX="[00;37;41m#### "
 DIFF_DIR=`which diffDir.sh | grep -v ridiculously 2>/dev/null`
 
 if [ ! -x "$DIFF_DIR" ] ; then
-	echo -e "Error, no diff tool for directories found ($DIFF_DIR). $USAGE" 1>&2
+	echo "Error, no diff tool for directories found ($DIFF_DIR). $USAGE" 1>&2
 	exit 10
 fi
 
@@ -25,17 +29,19 @@ firstDir="$1"
 secondDir="$2"
 
 if [ -z "$2" ] ; then
-	echo -e "Error, not enough arguments specified. $USAGE" 1>&2
+	echo "Error, not enough arguments specified. $USAGE" 1>&2
 	exit 1
 fi
 
+
 if [ ! -d "$firstDir" ] ; then
-	echo -e "Error, first directory specified ($firstDir) does not exist. $USAGE"
+	echo "Error, first directory specified ($firstDir) does not exist. $USAGE" 1>&2
 	exit 2
 fi
 
+
 if [ ! -d "$secondDir" ] ; then
-	echo -e "Error, second directory specified ($secondDir) does not exist. $USAGE"
+	echo "Error, second directory specified ($secondDir) does not exist. $USAGE" 1>&2
 	exit 3
 fi
 
@@ -45,7 +51,9 @@ auto_edit=1
 
 shift
 shift
-args_to_propagate="$*"
+
+# -r for recursive:
+args_to_propagate="$* -r"
 
 while [ $# -gt 0 ] ; do
 	token_eaten=1
@@ -66,7 +74,7 @@ while [ $# -gt 0 ] ; do
 	fi
 	
 	if [ "$1" = "-h" ] ; then
-		echo -e "$USAGE"
+		echo "$USAGE"
 		exit
 		token_eaten=0
 	fi
@@ -101,7 +109,7 @@ for d in $DIRS ; do
 	
 done
 
-# Only thing to check then : there could be directories in second path
+# Only thing to check then: there could be directories in second path
 # not in first path.
 cd $secondDir
 DIRS=`$FIND . -type d`
