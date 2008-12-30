@@ -12,10 +12,17 @@ ERLANG_DOWNLOAD_LOCATION="http://erlang.org/download"
 ERLANG_MD5="3751ea3fea669d2b25c67eeb883734bb"
 
 
+if [ ! -e "/usr/include/ncurses.h" ] ; then
+	echo "  Error, the libncurses headers cannot be found, whereas they are needed for the build. 
+Use for instance 'apt-get install libncurses5-dev'." 1>&2
+	exit 5
+fi
+
+
 install_dir="$1"
 
 if [ -z "${install_dir}" ] ; then
-	install_dir=$HOME/Software/Erlang-${ERLANG_VERSION}
+	install_dir=$HOME/Software/Erlang/Erlang-${ERLANG_VERSION}
 fi
 
 echo "Erlang will be installed in ${install_dir}."
@@ -50,5 +57,18 @@ cd otp_src_${ERLANG_VERSION}
 BUILD_OPT="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
 
 
-echo "  Building Erlang environment..." && ./configure ${CONFIGURE_OPT} --prefix=${prefix} && make && make install && echo "  ...Erlang successfully built"
+echo "  Building Erlang environment..." && ./configure ${CONFIGURE_OPT} --prefix=${prefix} && make && make install
+
+
+if [ $? -eq 0 ] ; then
+
+	echo "  Erlang successfully built and installed in ${prefix}. 
+The build tree, in the otp_src_${ERLANG_VERSION} directory, can be safely removed."
+
+else
+
+	echo "  Error, the Erlang build failed." 1>&2
+	exit 10
+	
+fi
 
