@@ -1,84 +1,175 @@
-#!/bin/bash
+#!/bin/sh
 
-USAGE="`basename $0`: recursive grep for the ones that lack it.\n\tUsage: `basename $0` [--verbose] [--quiet] <Expression to be found in files> [<Filter on files>] \n\tExample: `basename $0` 'little red rooster' '*.txt'"
+USAGE="
+`basename $0`: recursive grep for the ones that lack it.
+  Usage: `basename $0` [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+  Options:
+    -v or --verbose: be specifically verbose
+    -q or --quiet: be specifically quiet
+    -i or --insensitive: perform case-insensitive searches
+    -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+  Example: `basename $0` -i 'little red rooster' '*.txt'"
 
-FIND=`which find | grep -v ridiculously 2>/dev/null`
-GREP=`which grep | grep -v ridiculously 2>/dev/null`
 
-#echo "GREP = ${GREP}"
-#echo "FIND = ${FIND}"
+find=`which find | grep -v ridiculously 2>/dev/null`
+grep=`which grep | grep -v ridiculously 2>/dev/null`
+
+#echo "grep = ${grep}"
+#echo "find = ${find}"
 
 
-if [ ! -x "${GREP}" ]; then
+if [ ! -x "${grep}" ] ; then
 	echo "Error, no executable grep found." 1>&2
 	exit 5
 fi
 
-if [ ! -x "${FIND}" ]; then
+
+if [ ! -x "${find}" ] ; then
 	echo "Error, no executable find found." 1>&2
 	exit 6
 fi
 
+
 # Both are false by default:
 verbose=1
 quiet=1
+insensitive_opt=""
+restructured_mode=1
 
 
-# An useless file to ensure grep always has multiple files to scan.
-# Done to force grep to display the filename (otherwise it won't)
+# A useless file to ensure grep always has multiple files to scan.
+# Done to force grep to display the filename (otherwise it will not)
 # No need to create it, however.
-FORCE_MULTI_FILES="$HOME/.rgrep.toDelete.tmp"
+force_multi_files="$HOME/.rgrep.toDelete.tmp"
 
-if [ $# -eq 0 ]; then
-	echo -e $USAGE
+if [ $# -eq 0 ] ; then
+	echo "Error, too few parameters. $USAGE" 1>&2
 	exit 1
 fi
 
 
-if [ $# -ge 4 ]; then
-	echo -e $USAGE
+if [ $# -ge 7 ] ; then
+	echo "Error, too many parameters ($*). $USAGE" 1>&2
 	exit 2
 fi
 
 
-if [ "$1" = "--verbose" ]; then
 
-	verbose=0
-	echo "Verbose mode activated."
-	shift
-       
-elif [ "$1" = "--quiet" ]; then
+# Read all known options:
 
-	quiet=0
-	#echo "Quiet mode activated."
-	shift
+token_eaten=0
+
+while [ $token_eaten -eq 0 ] ; do
+
+	read_parameter="$1"
+	#echo "read_parameter = $read_parameter"
+	
+	token_eaten=1
+
+	if [ "$read_parameter" = "--verbose" -o "$read_parameter" = "-v" ] ; then
+		verbose=0
+		quiet=1
+		echo "Verbose mode activated."
+		token_eaten=0
+	fi
+	
+	
+	if [ "$read_parameter" = "--quiet" -o "$read_parameter" = "-q" ] ; then
+		verbose=1
+		quiet=0
+		#echo "Quiet mode activated."
+		token_eaten=0
+	fi
+	
+	
+	if [ "$read_parameter" = "--insensitive" -o "$read_parameter" = "-i" ] ;
+	then
+		insensitive_opt="-i"
+		echo "Case-insensitive mode activated."
+		token_eaten=0
+	fi
+	
+	
+	if [ "$read_parameter" = "--restructured" -o "$read_parameter" = "-r" ] ;
+	then
+		restructured_mode=0
+		echo "ReStructured text mode activated."
+		token_eaten=0
+	fi
+	
+	
+	if [ -n "$read_parameter" ] ; then
+		shift
+	fi
+	
+done
+
+
+# Then check one or two parameters remain indeed:
        
+if [ -z "$read_parameter" ] ; then
+	echo "Error, too few parameters. $USAGE" 1>&2
+	exit 3
 fi
 
 
-if [ $verbose -eq 0 ]; then
+if [ $# -ge 3 ] ; then
+	echo "Error, too many parameters ($*). $USAGE" 1>&2
+	exit 4
+fi
+
+
+searched_expression="$read_parameter"
+#echo "searched_expression = $searched_expression"
+
+filter_on_file="$1"
+#echo "filter_on_file = $filter_on_file"
+
+
+if [ $verbose -eq 0 ] ; then
 
 	echo "Will search in following files:"
-	if [ -z "$2" ]; then
-		$FIND . -exec /bin/ls '{}' ';' 2>/dev/null
+	if [ -z "$filter_on_file" ] ; then
+		$find . -exec /bin/ls '{}' ';' 2>/dev/null
 	else
-		$FIND . -exec /bin/ls '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
+		$find . -exec /bin/ls '{}' $force_multi_files ';' 2>/dev/null
 	fi  
 
 fi
 
 
-if [ -z "$2" ]; then
+if [ -z "$filter_on_file" ] ; then
 
-   [ $quiet -eq 0 ] || echo "Recursive grep for expression <$1> in all files:
-   "
-   $FIND . -exec $GREP "$1" '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
+	[ $quiet -eq 0 ] || echo "
+	Recursive grep for expression <$searched_expression> in all files:
+	"
    
+	if [ $restructured_mode -eq 1 ] ; then
+   
+		$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+   
+	else
+	
+		# Note filter specified, using '*.rst':
+		$find . -name tmp-rst -prune -o -name '*.rst' -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+ 	
+	fi
+
 else
 
-   [ $quiet -eq 0 ] || echo "Recursive grep for expression <$1> in all files matching <$2>:
-   "
-   $FIND . -name "$2" -exec $GREP "$1" '{}' $FORCE_MULTI_FILES ';' 2>/dev/null
+	[ $quiet -eq 0 ] || echo "
+	Recursive grep for expression <$searched_expression> in all files matching <$filter_on_file>:
+	"
+
+	if [ $restructured_mode -eq 1 ] ; then
+		
+		$find . -name "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+
+	else
+
+		$find . -name tmp-rst -prune -o -name "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+   
+   fi
    
 fi  
 
