@@ -6,11 +6,14 @@ USAGE="
   Example: `basename $0` osdl"
 
 
-crypt_tool="crypt.sh"
+crypt_name="crypt.sh"
+
+crypt_tool=`which ${crypt_name} 2>/dev/null`
+
 
 if [ ! -x "$crypt_tool" ] ; then
 
-	echo "Error, no executable crypt tool ($crypt_tool) found." 1>&2
+	echo "Error, no executable crypt tool ($crypt_name) found." 1>&2
 	exit 4
 
 fi
