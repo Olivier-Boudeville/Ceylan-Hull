@@ -2,38 +2,85 @@
 
 
 USAGE="
-Usage: wh [--verbose] [--quiet] [--no-path] <filePattern> [<startingDirectory>]
-	searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory"
+ Usage: wh [--verbose] [--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
+ Searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory
+   Options:
+	 --no-path: returns the filenames with any leading path
+	 --exclude: excludes a directory from search"
 
 
-FIND_GNU="/logiciels/public/bin/find"
+FIND_GNU="/usr/bin/find"
 
 verbose=1
 quiet=1
 no_path=1
 
-if [ "$1" = "--verbose" ]; then
+exclude_command=""
 
-	verbose=0
-	echo "Verbose mode activated."
-	shift
-       
-elif [ "$1" = "--quiet" ]; then
+token_eaten=0
 
-	quiet=0
-	#echo "Quiet mode activated."
-	shift
+while [ $token_eaten -eq 0 ] ; do
+
+	if [ "$1" = "--verbose" ]; then
+
+		verbose=0
+		echo "Verbose mode activated."
+		shift
        
+	elif [ "$1" = "--quiet" ]; then
+
+		quiet=0
+		#echo "Quiet mode activated."
+		shift
+       
+	elif [ "$1" = "--no-path" ]; then
+
+		no_path=0
+		[ $quiet -eq 0 ] || echo "Only filenames without paths will be output."
+		shift
+		
+	elif [ "$1" = "--exclude-path" ]; then
+
+		to_exclude="$2"
+		exclude_command="${exclude_command} ( -name $to_exclude -prune -o -type f ) -a "
+		[ $quiet -eq 0 ] || echo "Directory $to_exclude will be excluded."
+		#echo "exclude_command = $exclude_command"
+		
+		shift
+		shift
+
+	else
+		token_eaten=1
+    fi
+
+done
+
+# Here in $1 $2 etc. are the unrecognized commands.
+
+#echo "Remaining parameters: $*"
+
+
+if [ $# -eq 1 ]; then
+
+	startingDir=`pwd`
+	
+elif [ $# -eq 2 ]; then
+
+	startingDir=$2
+	
+else
+	echo " Error, too many parameters specified: $*.$USAGE
+	" 1>&2
+	exit 2	
 fi
 
 
-if [ "$1" = "--no-path" ]; then
-
-	no_path=0
-	[ $quiet -eq 0 ] || echo "Only filenames without paths will be output."
-	shift
-    
+if [ ! -d "$startingDir" ]; then
+	echo " Error, no such directory: $startingDir.$USAGE
+	" 1>&2
+	exit 3
 fi
+
 
 
 if [ -x "$FIND_GNU" ]; then
@@ -42,34 +89,7 @@ else
 	FIND=`which find 2>/dev/null | grep -v ridiculously`	
 fi	
 
-
 [ $verbose -eq 1 ] || echo "FIND is $FIND"
-
-if [ ! $# -eq 1 ]; then
-	if [ ! $# -eq 2 ]; then
-		echo $USAGE
-		exit 1
-	fi
-fi
-
-
-if [ $# -eq 1 ]; then
-	startingDir=`pwd`
-fi
-
-
-if [ $# -eq 2 ]; then
-	startingDir=$2
-fi
-
-
-if [ ! -d "$startingDir" ]; then
-	echo
-	echo "No such directory: $startingDir" 
-	echo
-	echo $USAGE
-	exit 2
-fi
 
 
 
@@ -80,14 +100,21 @@ Looking for all files and directories matching <$targetPattern>, starting from d
 "
 
 [ $verbose -eq 1 ] || echo "Current directory is: `pwd`"
-[ $verbose -eq 1 ] || echo "Command is: $FIND $startingDir -name $targetPattern -print 2>/dev/null | more"
-[ $verbose -eq 1 ] || echo
 
 if [ $no_path -eq 0 ] ; then
-	$FIND "$startingDir" -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+
+	[ $verbose -eq 1 ] || echo "No path case: command is: "	$FIND "$startingDir" $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	
+	$FIND "$startingDir" $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	
 else    
-	$FIND "$startingDir" -name "$targetPattern" -print 2>/dev/null | more
+
+	#[ $verbose -eq 1 ] || echo "With path case: command is: " $FIND $startingDir $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	
+	$FIND "$startingDir" $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	
 fi
 
 [ $quiet -eq 0 ] || echo "
 End of search"
+
