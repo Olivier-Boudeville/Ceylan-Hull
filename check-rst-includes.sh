@@ -4,29 +4,50 @@
 echo "Checking that all RST files are included once and only once."
 echo "(to be executed from the root of document sources, ex: trunk/src/doc)"
 
-INCLUDE_LIST=list-includes.txt
+WH=`which wh`
 
-SOURCES=`wh --quiet --no-path \*rst`
+if [ ! -x "$WH" ] ; then
 
-regrep --quiet 'include::' \*rst > ${INCLUDE_LIST}
+	echo "Error, wh script not found." 1>&2
+	exit 10
+	
+fi
 
-echo "For each RST source file, there must be exactly one include in ${INCLUDE_LIST}"
+REGREP=`which regrep`
+
+if [ ! -x "$WH" ] ; then
+
+	echo "Error, regrep script not found." 1>&2
+	exit 11
+	
+fi
+ 
+include_list_file="list-includes.txt"
+
+sources=`$WH --quiet --exclude-path tmp-rst --no-path \*.rst`
+
+#echo "Source RST files: ${sources}"
+
+
+$REGREP -r --quiet 'include::' > ${include_list_file}
+
+#echo "Each RST source file should be included exactly once."
 echo
 
 
-for f in ${SOURCES}; do
+for f in ${sources}; do
     
-	count=`grep "include:: $f" ${INCLUDE_LIST} | wc -l`
+	count=`grep "include:: $f" ${include_list_file} | wc -l`
     
     if [ "$count" = "1" ] ; then
-    	res=`grep "include:: $f" ${INCLUDE_LIST} | sed 's|:...*||1' | xargs basename` 
+    	res=`grep "include:: $f" ${include_list_file} | sed 's|:...*||1' | xargs basename` 
     	echo "(source $f referenced one time as expected, in ${res})"
     elif [ "$count" = "0" ] ; then
     	echo "######## [KO] Source $f never referenced."
         echo
     else
     	echo "######## [KO] Source $f referenced $count times, in:"
-        grep "include:: $f" ${INCLUDE_LIST} | sed 's|:...*||1'
+        grep "include:: $f" ${include_list_file} | sed 's|:...*||1'
         echo
     fi
     
@@ -35,4 +56,5 @@ done
 echo "
 End of reference checking."
 
-rm -f ${INCLUDE_LIST}
+/bin/rm -f ${include_list_file}
+
