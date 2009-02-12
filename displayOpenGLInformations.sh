@@ -7,6 +7,7 @@ echo
 DISPLAY=:0 
 
 echo "  * Hardware-accelerated rendering:"
+glxinfo | egrep "direct rendering"
 glxinfo | egrep "OpenGL .* string"
 echo
 
