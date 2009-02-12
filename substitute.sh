@@ -12,6 +12,7 @@ CP=/bin/cp
 CAT=/bin/cat
 
 SED=/bin/sed
+
 if [ ! -x "${SED}" ] ; then
 	SED=/usr/bin/sed
 fi
@@ -20,16 +21,20 @@ RM=/bin/rm
 
 			 
 if [ $# != 3 ]; then
-	echo $USAGE
-	echo "Provided parameters were: $*"
+
+	echo "Error, three parameters needed, whereas provided ones were: $*.
+$USAGE" 1>&2
 	exit 1
+
 fi
 
 
-if [ ! -f $3 ]; then
-	echo "
-	Cannot operate on '$3' which is not a regular file"
+if [ ! -f "$3" ]; then
+
+	echo "Error, cannot operate on '$3' which is not a regular file.
+$USAGE" 1>&2
 	exit 2
+
 fi
 
 
@@ -40,7 +45,7 @@ PROTECT_SCRIPT=`dirname $0`/protectSpecialCharacters.sh
 
 if [ ! -x "${PROTECT_SCRIPT}" ]; then
 	echo "
-	Cannot find an executable protect script (${PROTECT_SCRIPT}) in "`pwd`
+	Error, cannot find an executable protect script (${PROTECT_SCRIPT}) in "`pwd` 1>&2
 	exit 3
 fi	
 
@@ -55,8 +60,8 @@ TARGET=`${PROTECT_SCRIPT} "$2"`
 
 ${CP} -f $3 tempSubstitute
 
-${CAT} tempSubstitute | ${SED} -e "s/${SOURCE}/${TARGET}/g" > $3
-#${CAT} tempSubstitute | ${SED} -e "s|${SOURCE}|${TARGET}|g" > $3
+#${CAT} tempSubstitute | ${SED} -e "s/${SOURCE}/${TARGET}/g" > $3
+${CAT} tempSubstitute | ${SED} -e "s|${SOURCE}|${TARGET}|g" > $3
 
 ${RM} -f tempSubstitute
 
