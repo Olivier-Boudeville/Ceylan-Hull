@@ -51,7 +51,5 @@ if [ ! $? -eq 0 ] ; then
 	
 fi
 	
-$crypt_tool "$archive_name"
-
-echo "Snapshot file $archive_name.gpg is ready!"
+$crypt_tool "$archive_name" && echo "Snapshot file $archive_name.gpg is ready!"
 
