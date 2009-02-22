@@ -1,6 +1,6 @@
 #/bin/sh
 
-echo "Disabling temporary ALL iptables rules (beware!)"
+echo "Disabling temporarily ALL iptables rules (beware, all traffic accepted!)"
 
 iptables -X
 iptables -t nat -F
@@ -11,13 +11,13 @@ iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
 
-SLEEP_DURATION=1000
-echo "Sleeping for $SLEEP_DURATION seconds..."
-sleep 1000
+sleep_duration=1000
+echo "Sleeping for $sleep_duration seconds..."
+sleep $sleep_duration
 
-FIREWALL_SCRIPT="/etc/init.d/iptables.rules-Gateway.sh"
+firewall_script="/etc/init.d/iptables.rules-Gateway.sh"
 
-echo "...awoken, reseting rules from $FIREWALL_SCRIPT..."
+echo "...awoken, reseting rules with $firewall_script..."
 
-${FIREWALL_SCRIPT} && echo "... done!"
+${firewall_script} && echo "... done!"
 
