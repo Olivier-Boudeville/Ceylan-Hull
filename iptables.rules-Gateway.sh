@@ -13,9 +13,10 @@
 # To debug this kind of firewall script, one may use:
 # sh -x /path/to/this/file
 
-# Useful with 'iptables --list|grep '[v' or 'iptables -L -n |grep [v'
+# Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date:
-version=6
+# s is for server (log prefix must be shorter than 29 characters):
+version="s-7"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -26,7 +27,7 @@ rmmod=/sbin/rmmod
 
 LOG_FILE=/root/lastly-gateway-firewalled.touched
  
-$echo "Setting ADSL Gateway firewall rules, version $version"
+$echo "Setting Gateway firewall rules, version $version."
 touch $LOG_FILE 
 
 # Only needed for older distros that do load ipchains by default, 
@@ -36,6 +37,7 @@ if $lsmod  2>/dev/null | grep -q ipchains ; then
 fi 
 
 # Local (LAN) interface:
+# (note: for sonata it is eth1)
 LAN_IF=eth0
 
 
@@ -45,6 +47,7 @@ LAN_IF=eth0
 #NET_IF=ppp0
 
 # For direct connection to a set-top box from your provider:
+# (note: for sonata it is eth0)
 NET_IF=eth1
 
 
@@ -117,7 +120,7 @@ $echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
 # you to a host take a different path than packets from that host to you), 
 # or if you operate a non-routing host which has several IP addresses on
 # different interfaces. 
-# Note : if you turn on IP forwarding, you will also get this: 
+# Note: if you turn on IP forwarding, you will also get this: 
 for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do 
    $echo "1" > ${interface} 
 done 
@@ -174,7 +177,7 @@ ${iptables} -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 # Log some invalid connections:
-${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v$version: invalid input ]:  "
+${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
 
 ${iptables} -A INPUT -m state --state INVALID -j DROP
 
@@ -206,7 +209,7 @@ ${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 # fragments is very OS-dependent. 
 # We are not going to trust any fragments. 
 # Log fragments just to see if we get any, and deny them too. 
-${iptables} -A INPUT -f -j LOG --log-prefix "[v$version: iptables fragments ]: " 
+${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: iptables fragments] " 
 ${iptables} -A INPUT -f -j DROP 
 
 ## HTTP (web server):
@@ -250,7 +253,7 @@ ${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACC
 # frequency of attempts coming from the Internet:
 
 # Logs too frequent attempts tagged with 'SSH' and drops them:
-${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v$version: SSH brute-force ]: "
+${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
 ${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
@@ -293,7 +296,7 @@ ${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j AC
 #${iptables} -A INPUT -p udp --dport 5000:5006 -j ACCEPT
 
 ## LOOPBACK
-# Allow unlimited traffic on the loopback interface, .
+# Allow unlimited traffic on the loopback interface,
 # e.g. needed for KDE, Gnome, etc.:
 ${iptables} -A INPUT  -i lo -j ACCEPT
 ${iptables} -A OUTPUT -o lo -j ACCEPT
@@ -313,7 +316,6 @@ ${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 123 -m state --state NEW,ESTABL
 
 # ---------------- LOGGING -------------------
 
-# log every thing else, up to 5 pings per min
-#${iptables} -A INPUT -m limit --limit 5/minute -j LOG
-
+# Log everything else, up to 2 pings per min
+${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
