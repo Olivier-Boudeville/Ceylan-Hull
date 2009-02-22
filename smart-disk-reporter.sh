@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# This script is to be called automatically by smartmontools whenever the 
+# state of a disk changes: a mail will then be sent to notify it.
+
 # SMART must be enabled.
 # Should be referenced from /etc/SMARTD.conf with an enabled daemon.
 
