@@ -34,5 +34,6 @@ if [ ! $res -eq 0 ] ; then
 
 fi
 
-/bin/rm -f ${log_file}
+# Let the log_file file to know the date and content of latest update:
+#/bin/rm -f ${log_file}
 
