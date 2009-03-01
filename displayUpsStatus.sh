@@ -1,6 +1,10 @@
 #!/bin/sh
 
-UPS_NAME="monBelkin"
+
+UPS_NAME="myBelkin"
 UPS_SERVER="aranor"
 
-upsc ${UPS_NAME}@${UPS_SERVER}
+
+echo "Displaying state of UPS ${UPS_NAME}@${UPS_SERVER}: "
+/bin/upsc ${UPS_NAME}@${UPS_SERVER}
+
