@@ -37,18 +37,16 @@ if $lsmod  2>/dev/null | grep -q ipchains ; then
 fi 
 
 # Local (LAN) interface:
-# (note: for sonata it is eth1)
-LAN_IF=eth0
+LAN_IF=eth1
 
 
 # Internet interface:
 
-# For PPP ADSL connection:
+# For PPP ADSL connections:
 #NET_IF=ppp0
 
 # For direct connection to a set-top box from your provider:
-# (note: for sonata it is eth0)
-NET_IF=eth1
+NET_IF=eth0
 
 
 # Load appropriate modules: 
@@ -316,6 +314,8 @@ ${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 123 -m state --state NEW,ESTABL
 
 # ---------------- LOGGING -------------------
 
-# Log everything else, up to 2 pings per min
-${iptables} -A INPUT -m limit --limit 2/minute -j LOG
+# Log everything else, up to 2 pings per min:
+# (should be disabled if connected to the Internet, as far too verbose
+# in system logs, might hide other important events)
+#${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
