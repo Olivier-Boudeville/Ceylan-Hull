@@ -37,8 +37,10 @@ if [ "$value" = "y" ] ; then
 		echo "... successfully done"
 	
 	else
-		echo "Error, operation failed (code: $res)." 1>&2
+	
+		echo "Warning, error code returned ($res)." 1>&2
 		exit 5
+		
 	fi
 	
 else
