@@ -1,19 +1,24 @@
 #/bin/sh
 
 USAGE="
-Usage : replaceLineStartingBy.sh START TARGET FILE
+Usage: replaceLineStartingBy.sh START TARGET FILE
 	replaces in FILE every line starting by START by line TARGET
-	example : 
-		replaceLineStartingBy.sh 'MAKE=' 'MAKE=/usr/bin/make' myFile"
+
+Example: 
+	replaceLineStartingBy.sh 'MAKE=' 'MAKE=/usr/bin/make' myFile"
+
 
 if [ $# != 3 ]; then
-	echo -e $USAGE
+	echo "$USAGE" 1>&2
 	exit 1
 fi
 
-if [ ! -f $3 ]; then
-	echo -e "Cannot operate on $3 which is not a regular file"
-	exit 1
+
+target_file="$3"
+
+if [ ! -f "${target_file}" ]; then
+	echo "Cannot operate on ${target_file}, which is not a regular file." 1>&2
+	exit 2
 fi
 
 shell_dir=`dirname $0`
@@ -25,6 +30,11 @@ TARGET=`${shell_dir}/protectSpecialCharacters.sh "$2"`
 #echo "TARGET = $TARGET"
 #echo "FILE   = $3"
 
-cp $3 tempSubstituteReplace
-cat tempSubstituteReplace | sed -e "s/$SOURCE/$TARGET/g" >$3
-rm tempSubstituteReplace
+temp_file=".replaceLineStartingBy.tmp"
+
+/bin/cp -f ${target_file} ${temp_file}
+
+/bin/cat ${temp_file} | sed -e "s|$SOURCE|$TARGET|g" > ${target_file}
+
+/bin/rm -f ${temp_file}
+
