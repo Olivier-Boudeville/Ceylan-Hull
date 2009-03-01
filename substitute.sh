@@ -1,10 +1,11 @@
 #!/bin/sh
 
+
 USAGE="
-  Usage: substitute.sh SOURCE TARGET FILE
-    Replaces in file FILE every symbol SOURCE by symbol TARGET
-	Example:
-		substitute.sh wondrful wonderful myFile.txt
+Usage: substitute.sh SOURCE TARGET FILE
+  Replaces in file FILE every symbol SOURCE by symbol TARGET.
+Example:
+  substitute.sh wondrful wonderful myFile.txt
 "
 
 
@@ -28,10 +29,11 @@ $USAGE" 1>&2
 
 fi
 
+target_file="$3"
 
-if [ ! -f "$3" ]; then
+if [ ! -f "${target_file}" ]; then
 
-	echo "Error, cannot operate on '$3' which is not a regular file.
+	echo "Error, cannot operate on '${target_file}' which is not a regular file.
 $USAGE" 1>&2
 	exit 2
 
@@ -58,10 +60,12 @@ TARGET=`${PROTECT_SCRIPT} "$2"`
 
 #echo "SOURCE = $SOURCE" && echo "TARGET = $TARGET" && echo "FILE   = $3" && exit
 
-${CP} -f $3 tempSubstitute
+temp_file=".substitute.tmp"
 
-#${CAT} tempSubstitute | ${SED} -e "s/${SOURCE}/${TARGET}/g" > $3
-${CAT} tempSubstitute | ${SED} -e "s|${SOURCE}|${TARGET}|g" > $3
+${CP} -f ${target_file} ${temp_file}
 
-${RM} -f tempSubstitute
+#${CAT} ${temp_file} | ${SED} -e "s/${SOURCE}/${TARGET}/g" > ${target_file}
+${CAT} ${temp_file} | ${SED} -e "s|${SOURCE}|${TARGET}|g" > ${target_file}
+
+${RM} -f ${temp_file}
 
