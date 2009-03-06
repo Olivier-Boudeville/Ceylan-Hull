@@ -44,12 +44,12 @@ for f in $* ; do
 		
 		if [ $res -eq 0 ] ; then
 		
-			echo "$res_file successfully generated."
+			echo "$res_file successfully generated, file $f removed."
 			${rm} "$f"
 			
 		else
 
-			echo "Error, encryption failed (code: $res), stopping." 1>&2
+			echo "Error, encryption failed (code: $res), stopping, file $f left as is." 1>&2
 			exit 10
 			
 		fi 
