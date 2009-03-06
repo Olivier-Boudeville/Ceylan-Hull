@@ -45,7 +45,7 @@ for f in $* ; do
 		if [ $res -eq 0 ] ; then
 		
 			
-			echo "$decrypted_file successfully decrypted."
+			echo "$decrypted_file successfully decrypted (file $f still available)."
 			
 		else
 
