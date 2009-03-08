@@ -1,9 +1,12 @@
 #!/bin/sh
 
+script_name=`basename $0`
+
 USAGE="
-Usage: "`basename $0`" --target-sample-rate FREQUENCY AUDIO_FILENAME
+Usage: ${script_name} --target-sample-rate FREQUENCY AUDIO_FILENAME
   Resamples the target audio file to the specified frequency, keeping the same bitdepth.
-"
+Example: ${script_name} --target-sample-rate 22050 mySound.wav"
+
 
 if [ ! $# -eq 3 ] ; then
 
