@@ -7,6 +7,9 @@ SUBDIRS = tests
 # These are the subdirectories which will be distributed with 'make dist' :
 DIST_SUBDIRS = $(SUBDIRS)
 
+
+# TO-DO: update set from actual script listing (/bin/ls -1):
+
 SHELL_SCRIPTS_SET = \
 	automap.sh                   \
 	beep                         \
@@ -139,3 +142,9 @@ tar:
 	@tar -cvf - * 2>/dev/null | bzip2 > $(ARCHIVE_FILE)
 	@echo "@CEYLAN_INSTALL_STYLE@    All bin scripts have been saved in \
 	$(ARCHIVE_FILE)."
+
+
+clean-local:
+	@rm -f *.wav *.ogg
+	
+		
