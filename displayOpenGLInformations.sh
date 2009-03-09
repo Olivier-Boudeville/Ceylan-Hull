@@ -21,11 +21,8 @@ echo "  * Installed GL libraries:"
 echo
 
 echo "  * AIGLX status: "
-grep AIGLX /var/log/Xorg.0.log
+grep AIGLX /var/log/Xorg.0.log | grep -v '(WW)'
 echo
 
-
 echo "..done"
-
-# rainbow without hardware support: 2598 frames in 5.0 seconds = 517.594 FPS
 
