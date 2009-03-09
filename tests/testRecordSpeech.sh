@@ -2,26 +2,37 @@
 
 tested_script="record-speech.sh"
 
-# See Asset-Indexing/audio/speech-synthesis/Voice-index.rst:
-max_voice_count=37
+cd `dirname $0`
+
 	
-echo "Testing ${tested_script} with ${max_voice_count} different voices."
+echo "Testing ${tested_script} with ${voice_index_max} different voices."
 
 /bin/rm -f testRecordSpeech-*.wav
 
 cd ..
 
-voice_count=1
 
-while [ $voice_count -le $max_voice_count ] ; do
+voice_index_min=1
 
-	message="Testing now the voice number $voice_count."
+# See Asset-Indexing/audio/speech-synthesis/Voice-index.rst:
+voice_index_max=37
+
+
+while [ $voice_index_min -le $voice_index_max ] ; do
+
+	if [ -n "${1}" ] ; then
+		message="${1}"
+	else
+		message="Testing now the voice number $voice_index_min."
+	fi
 	
-	echo "  + testing voice #$voice_count with '${message}'"
+	echo "  + testing voice #$voice_index_min with '${message}'"
 	
-	${tested_script} --voice-id $voice_count --speech-prefix "tests/testRecordSpeech-$voice_count" --message "${message}"
+	${tested_script} --voice-id $voice_index_min --speech-prefix "tests/testRecordSpeech-$voice_index_min" --message "${message}"
 	
-    voice_count=$(($voice_count+1))
+	echo 
+	
+    voice_index_min=$(($voice_index_min+1))
 	
 done
 
