@@ -4,7 +4,7 @@ script_name=`basename $0`
 
 USAGE="
 Usage: ${script_name} --target-sample-rate FREQUENCY AUDIO_FILENAME
-  Resamples the target audio file to the specified frequency, keeping the same bitdepth.
+  Resamples the target audio file to the specified frequency, keeping the same bitdepth. Advances settings are chosen, and gain is finely tuned if necessary, to avoid clipping.
 Example: ${script_name} --target-sample-rate 22050 mySound.wav"
 
 
@@ -119,18 +119,48 @@ else
 	dither_opt=""
 fi
 
+
+
 tmp_file=".resample.tmp.wav"
 
 # Note: a temporary file *must* be used, otherwise: 
 # "Premature EOF on .wav input file"...
 
 # Newer syntax used:
-#echo ${sox_tool} "${target_file}" --bits ${target_bit_depth} "${tmp_file}" rate ${quality_opt} ${phase_opt} ${target_frequency} ${dither_opt}
 
-${sox_tool} "${target_file}" --bits ${target_bit_depth} "${tmp_file}" rate ${quality_opt} ${phase_opt} ${target_frequency} ${dither_opt}
- 
+# Tries to resample first without attenuation:
+attenuation_factor=0
+attenuation_opt=""
 
-if [ $? -eq 0 ] ; then
+log_file=".resample.txt"
+
+clipped=0
+
+# Decreases the volume as long as samples had to be clipped:
+while [ $clipped -eq 0 ] ; do
+
+	${sox_tool} "${target_file}" --bits ${target_bit_depth} --comment "" "${tmp_file}" ${attenuation_opt} rate ${quality_opt} ${phase_opt} ${target_frequency} ${dither_opt} 2>${log_file}
+	
+	res=$?
+	
+	if grep 'rate clipped' ${log_file} 1>/dev/null 2>&1; then
+	 
+		attenuation_factor=$(($attenuation_factor+1))
+		echo "Resampler had to perform clipping, decreasing volume: attenuation is now $attenuation_factor."
+		attenuation_opt="gain -${attenuation_factor}"
+		
+	else
+	
+		echo "No clipping detected."
+		clipped=1
+		
+	fi
+	
+done
+
+/bin/rm -f ${log_file}
+
+if [ $res -eq 0 ] ; then
 
 	/bin/mv -f "${tmp_file}" "${target_file}" && echo "File ${target_file} successfully resampled: "`file ${target_file}`
 	
