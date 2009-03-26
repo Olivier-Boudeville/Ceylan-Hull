@@ -36,7 +36,7 @@ if [ -z "$1" ] ; then
 	exit 1
 fi
 
-RST_FILE=$1
+RST_FILE="$1"
 
 if [ -e "${RST_FILE}" ] ; then
 
@@ -57,7 +57,7 @@ if [ -e "${RST_FILE}" ] ; then
 		CSS_FILE="$1"
 		
 		if [ -n "${CSS_FILE}" ] ; then
-			# echo "Using CSS file ${CSS_FILE}."
+			#echo "Using CSS file ${CSS_FILE}."
 			CSS_OPT="--stylesheet-path=${CSS_FILE}"
 		fi	
 			
@@ -65,8 +65,10 @@ if [ -e "${RST_FILE}" ] ; then
 		
 	else
 	
+		CSS_FILE="$1"
+		
 		if [ -n "${CSS_FILE}" ] ; then
-			# echo "Using CSS file ${CSS_FILE}."
+			#echo "Using CSS file ${CSS_FILE}."
 			CSS_OPT="--stylesheet-path=${CSS_FILE}"
 		fi	
 			
@@ -126,9 +128,15 @@ manage_rst_to_html()
 	
 	echo "${BEGIN_MARKER} building HTML target $TARGET from source"
 	
-	#${DOCUTILS_HTML} $SOURCE $TARGET
+	if [ -f "$CSS_FILE" ] ; then
+	
+		${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
+		
+	else
 
-	echo ${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
+		${DOCUTILS_HTML} $SOURCE $TARGET
+	
+	fi	
 
 	if [ ! $? -eq 0 ] ; then
 		echo "${BEGIN_MARKER} Error: HTML generation with ${DOCUTILS_HTML} failed for $SOURCE." 1>&2
