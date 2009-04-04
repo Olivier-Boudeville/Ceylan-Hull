@@ -23,7 +23,7 @@ fi
 
 target_dir=`pwd`
 
-echo "Spell checking targegt RST files from ${target_dir}"
+echo "Spell checking target RST files from ${target_dir}"
 
 echo "Use shift-F7 to trigger spellchecker..."
 
@@ -37,11 +37,34 @@ if [ ! -x "${checker_tool}" ] ; then
 	
 fi
 
-#language="english"
-language="french"
 
+target_files=`find ${target_dir} -name "$searched_pattern"`
 
-find ${target_dir} -name "$searched_pattern" -exec $checker_tool '{}' 2>/dev/null ';'
+for f in ${target_files} ; do
+
+	echo "  - opening $f"
+	$checker_tool $f 2>/dev/null 
+	
+done
+
 
 echo "...done"
+
+
+backup_files=`find . -name '*~'`
+
+if [ -n "${backup_files}" ] ; then
+
+	echo "Back-up files are: ${backup_files}."
+	
+	read -p "Remove following backup files? (y/n) [n] " value
+	
+	if [ "$value" = "y" ] ; then  
+		/bin/rm -f ${backup_files}
+		echo "Files removed."
+	else
+		echo "No file removed."
+	fi
+	
+fi
 
