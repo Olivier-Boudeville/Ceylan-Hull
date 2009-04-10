@@ -6,6 +6,7 @@ USAGE="
   Options:
     -v or --verbose: be specifically verbose
     -q or --quiet: be specifically quiet
+    -f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
     -i or --insensitive: perform case-insensitive searches
     -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
   Example: `basename $0` -i 'little red rooster' '*.txt'"
@@ -33,14 +34,18 @@ fi
 # Both are false by default:
 verbose=1
 quiet=1
+
 insensitive_opt=""
 restructured_mode=1
+filenames_only=1
 
 
 # A useless file to ensure grep always has multiple files to scan.
 # Done to force grep to display the filename (otherwise it will not)
 # No need to create it, however.
-force_multi_files="$HOME/.rgrep.toDelete.tmp"
+force_multi_files="$HOME/.regrep.toDelete.tmp"
+
+name_opt="-name"
 
 if [ $# -eq 0 ] ; then
 	echo "Error, too few parameters. $USAGE" 1>&2
@@ -81,11 +86,20 @@ while [ $token_eaten -eq 0 ] ; do
 		token_eaten=0
 	fi
 	
+	if [ "$read_parameter" = "--filenames-only" -o "$read_parameter" = "-f" ] ; then
+		verbose=1
+		quiet=0
+		filenames_only=0
+		[ $quiet -eq 0 ] || echo "Only filenames will be written, not found patterns."
+		token_eaten=0
+	fi
+	
 	
 	if [ "$read_parameter" = "--insensitive" -o "$read_parameter" = "-i" ] ;
 	then
 		insensitive_opt="-i"
-		echo "Case-insensitive mode activated."
+		name_opt="-iname"
+		[ $quiet -eq 0 ] || echo "Case-insensitive mode activated."
 		token_eaten=0
 	fi
 	
@@ -93,7 +107,7 @@ while [ $token_eaten -eq 0 ] ; do
 	if [ "$read_parameter" = "--restructured" -o "$read_parameter" = "-r" ] ;
 	then
 		restructured_mode=0
-		echo "ReStructured text mode activated."
+		[ $quiet -eq 0 ] || echo "ReStructured text mode activated."
 		token_eaten=0
 	fi
 	
@@ -113,7 +127,7 @@ if [ -z "$read_parameter" ] ; then
 fi
 
 
-if [ $# -ge 3 ] ; then
+if [ $# -ge 2 ] ; then
 	echo "Error, too many parameters ($*). $USAGE" 1>&2
 	exit 4
 fi
@@ -145,13 +159,21 @@ if [ -z "$filter_on_file" ] ; then
 	"
    
 	if [ $restructured_mode -eq 1 ] ; then
+
+		if [ $filenames_only -eq 1 ] ; then
+		
+			$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
    
-		$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
-   
+   		else
+		
+			$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+		
+		fi
+		
 	else
 	
 		# Note filter specified, using '*.rst':
-		$find . -name tmp-rst -prune -o -name '*.rst' -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+		$find . -name tmp-rst -prune -o ${name_opt} '*.rst' -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
  	
 	fi
 
@@ -163,11 +185,26 @@ else
 
 	if [ $restructured_mode -eq 1 ] ; then
 		
-		$find . -name "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+		if [ $filenames_only -eq 1 ] ; then
+		
+			$find . ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
+		else
+			$find . ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			
+		fi
+		
 	else
 
-		$find . -name tmp-rst -prune -o -name "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+		if [ $filenames_only -eq 1 ] ; then
+
+			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+   	
+		else
+		
+			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+		
+		fi	
    
    fi
    
