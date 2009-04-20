@@ -1,16 +1,22 @@
 #!/bin/sh
 
 USAGE="
-  Usage: "`basename $0`" HEADER_FILE EXTENSION
-  Adds text header specified in HEADER_FILE at the beginning of all files whose extension is EXTENSION found from current directory.
-  Example: "`basename $0`" myHeader.txt .cc
+  Usage: "`basename $0`" <header file> { <file extension> | <file names> }
+  Adds text header specified in <header file> at the beginning of all files specified in the command line, or whose extension is <file extension>, found from current directory.
+  Example: 
+    "`basename $0`" myHeader.txt first.txt second.h third.cc
+    "`basename $0`" myHeader.txt .cc
 "
 
 echo
 
-if [ ! $# -eq 2 ] ; then
+# By default will recurse (based on extension):
+do_recurse=0
 
-	echo "Error, two parameters expected. $USAGE" 1>&2
+# At least two parameters required:
+if [ $# -le 1 ] ; then
+
+	echo "Error, not enough parameters specified. $USAGE" 1>&2
 	exit 5
 	
 fi
@@ -20,28 +26,50 @@ header_file="$1"
 
 if [ ! -f "${header_file}" ] ; then
 
-	echo "Error, file '${header_file}' not found. $USAGE" 1>&2
+	echo "Error, header file '${header_file}' not found. $USAGE" 1>&2
 	exit 10
 	
 fi
 
+shift 
 
-extension="$2"
+if [ ! $# -eq 1 ] ; then
 
+	# More than one remaining parameter: we have a list of files.
+	do_recurse=1
+	target_files="$*"
+	
+else
 
-target_files=`find . -name "*${extension}" -a -type f`
+	#echo "Remaining parameters: $*"
+	
+	# Second parameter is either a single file or an extension:
+	if [ -f "$1" ] ; then
 
-if [ -z "${target_files}" ] ; then
+		# File exists, not an extension, thus this is a list with one element:
+		target_files="$1"
+		do_recurse=1
+		
+	else
+	
+		extension="$1"	
+		echo "Will select files whose extension is '$extension' from current directory ("`pwd`")"
+		target_files=`find . -name "*${extension}" -a -type f`
 
-	echo "Error, no target file with extension '${extension}' found. $USAGE" 1>&2
-	exit 15
+		if [ -z "${target_files}" ] ; then
 
+			echo "Error, no target file with extension '${extension}' found. $USAGE" 1>&2
+			exit 15
+
+		fi
+		
+	fi
+	
 fi
 
 
-echo "  Adding header specified in file '${header_file}' at the beginning of all files whose extension is '${extension}' found from current directory ("`pwd`")."
 
-echo "Target files would be: 
+echo "  Adding the header specified in file '${header_file}' at the beginning of following files: 
 ${target_files}"
 
 tmp_file=".add-header-to-files.tmp"
