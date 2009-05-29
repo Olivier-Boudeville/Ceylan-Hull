@@ -3,15 +3,20 @@
 LANG=C; export LANG
 
 
-USAGE="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n | --no-download] [<install directory>]: downloads, builds and installs a fresh Erlang version in specified directory (if any), or in default directory, and add a symbolic link pointing to it.
-To be run preferably from a location like ~/Software/Erlang.
+USAGE="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
+This script should be run preferably from a location like ~/Software/Erlang.
 
 Options:
     -c or --cutting-edge: use, instead of the latest stable Erlang version, the latest beta version, if any  
     -d or --doc-install: download and install the corresponding documentation as well
     -n or --no-download: do not attempt to download anything, expect that needed files are already available (useful if not having a direct access to the Internet)
 
-Example: install-erlang.sh --cutting-edge --doc-install --no-download
+Example: 
+  install-erlang.sh --cutting-edge --doc-install --no-download
+    will install latest available version of Erlang, with its documentation, in the ~/Software/Erlang directory, without downloading anything,  
+      - or -
+  install-erlang.sh --doc-install ~/my-directory
+    will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang base directory, by downloading Erlang archives from the Internet 
 "
 
 # By default, will download files:
@@ -24,10 +29,10 @@ do_manage_doc=1
 ERLANG_DOWNLOAD_LOCATION="http://erlang.org/download"
 
 
-ERLANG_VERSION="R12B-5"
+ERLANG_VERSION="R13B"
 
 # MD5 codes are not used currently:
-ERLANG_MD5="3751ea3fea669d2b25c67eeb883734bb"
+ERLANG_MD5="6d8c256468a198458b9f08ba6aa1a384"
 
 
 
@@ -53,9 +58,11 @@ while [ $token_eaten -eq 0 ] ; do
 
 	if [ "$1" = "-c" -o "$1" = "--cutting-edge" ] ; then
 
-		echo "Warning: using latest beta (unstable) version of Erlang."
-		ERLANG_VERSION="R13A"
-		ERLANG_MD5="76804ff9c18710184cf0c0230a0443fc"
+		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
+		
+		#echo "Warning: using latest beta (unstable) version of Erlang."
+		#ERLANG_VERSION="R13A"
+		#ERLANG_MD5="76804ff9c18710184cf0c0230a0443fc"
 		token_eaten=0
 	
 	fi
@@ -98,7 +105,7 @@ if [ -z "$read_parameter" ] ; then
 
 else
 
-	install_dir="$read_parameter"
+	install_dir="$read_parameter/Erlang/Erlang-${ERLANG_VERSION}"
 	echo "Using '$install_dir' as installation directory."
 	
 fi
@@ -207,6 +214,11 @@ fi
 prefix=${install_dir}
 mkdir -p ${prefix}
 
+
+initial_path=`pwd`
+
+# Starting from the source tree:
+
 cd otp_src_${ERLANG_VERSION}
 
 
@@ -240,8 +252,23 @@ fi
 cd ..
 
 
+# Go to the build (not source) tree:
+
+
+cd ${install_dir}/..
+
+# Ex: we are in $HOME/Software/Erlang now.
+
+
 # Sets as current:
-ln -sf otp_src_${ERLANG_VERSION} Erlang-current-install
+if [ -e Erlang-current-install ] ; then
+
+	/bin/rm -f Erlang-current-install
+
+fi
+	
+/bin/ln -sf ${ERLANG_VERSION} Erlang-current-install
+
 
 
 if [ $do_manage_doc -eq 0 ] ; then
@@ -258,7 +285,8 @@ if [ $do_manage_doc -eq 0 ] ; then
 	
 	cd "${ERLANG_DOC_ROOT}"
 	
-	tar xvzf ../${ERLANG_DOC_ARCHIVE}
+	tar xvzf ${initial_path}/${ERLANG_DOC_ARCHIVE}
+ 
  
 	if [ ! $? -eq 0 ] ; then
 		echo "  Error while extracting ${ERLANG_DOC_ARCHIVE}, quitting." 1>&2
@@ -268,8 +296,15 @@ if [ $do_manage_doc -eq 0 ] ; then
 	cd .. 
 	
 	# Sets as current:
+	if [ -e Erlang-current-install ] ; then
+
+		/bin/rm -f Erlang-current-documentation
+
+	fi
+	
 	ln -sf ${ERLANG_DOC_ROOT} Erlang-current-documentation
 
+	echo "Erlang documentation installed."
+	
 fi
-
 
