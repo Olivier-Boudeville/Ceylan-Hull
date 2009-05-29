@@ -267,7 +267,7 @@ if [ -e Erlang-current-install ] ; then
 
 fi
 	
-/bin/ln -sf ${ERLANG_VERSION} Erlang-current-install
+/bin/ln -sf Erlang-${ERLANG_VERSION} Erlang-current-install
 
 
 
