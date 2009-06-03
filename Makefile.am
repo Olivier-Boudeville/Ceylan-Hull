@@ -145,6 +145,5 @@ tar:
 
 
 clean-local:
-	@rm -f *.wav *.ogg
+	@/bin/rm -f *.wav *.ogg
 	
-		
