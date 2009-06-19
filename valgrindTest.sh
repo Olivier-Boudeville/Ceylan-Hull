@@ -2,18 +2,18 @@
 
 RM=/bin/rm
 
-SHELLS_LOCATION=`dirname $0`
+shell_location=`dirname $0`
 
-if [ ! -f "${SHELLS_LOCATION}/termUtils.sh" ] ; then
-	PREVIOUS_LOCATION=${SHELLS_LOCATION}
-	SHELLS_LOCATION="${CEYLAN_ROOT}/src/code/scripts/shell"
-	if [ ! -f "${SHELLS_LOCATION}/termUtils.sh" ] ; then
-		echo "Error, unable to find defaultLocations helper script (searched in ${PREVIOUS_LOCATION} and in ${SHELLS_LOCATION})."
+if [ ! -f "${shell_location}/termUtils.sh" ] ; then
+	previous_location=${shell_location}
+	shell_location="${CEYLAN_ROOT}/src/code/scripts/shell"
+	if [ ! -f "${shell_location}/termUtils.sh" ] ; then
+		echo "Error, unable to find defaultLocations helper script (searched in ${previous_location} and in ${shell_location})."
 		exit 1
 	fi	
 fi
 
-source "${SHELLS_LOCATION}/termUtils.sh"
+source "${shell_location}/termUtils.sh"
 
 #findSupplementaryShellTools
 
