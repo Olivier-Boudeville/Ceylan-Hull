@@ -18,22 +18,23 @@ defaultlocations_sourced=0
 # Triggers termUtils.sh as well:
 # Note: defaultLocations.sh depends on platformDetection.sh, not the contrary.
 
-if [ "$platformdetection_sourced" != 0 ] ; then
+# Comparison made on strings on purpose, as may not be defined at all:
+if [ ! "$platformdetection_sourced" = "0" ] ; then
 
-	PLATFORMDETECT="platformDetection.sh"
+	platform_detect="platformDetection.sh"
 
 	#echo "Trace: will source platformDetection.sh"
 	
-	if [ ! -f "${SHELLS_LOCATION}/${PLATFORMDETECT}" ] ; then
-		if [ ! -f "./${PLATFORMDETECT}" ] ; then
+	if [ ! -f "${shell_location}/${platform_detect}" ] ; then
+		if [ ! -f "./${platform_detect}" ] ; then
 		   echo 1>&2
-		   echo "	 Error, helper script for platform detection not found (${PLATFORMDETECT})." 1>&2
+		   echo "	 Error, helper script for platform detection not found (${platform_detect})." 1>&2
 		   exit 1
 	   else
-		   . ./${PLATFORMDETECT}
+		   . ./${platform_detect}
 	   fi
 	else
-	   . "${SHELLS_LOCATION}/${PLATFORMDETECT}"
+	   . "${shell_location}/${platform_detect}"
 	fi
 	
 fi
