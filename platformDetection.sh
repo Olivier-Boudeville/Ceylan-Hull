@@ -85,7 +85,7 @@ if [ "${termutils_sourced}" != 0 ] ; then
 
 	#echo "Trace: will source termUtils.sh"
 
-	if [ ! -f "${SHELLS_LOCATION}/${TERMUTILS}" ] ; then
+	if [ ! -f "${shell_location}/${TERMUTILS}" ] ; then
 		if [ ! -f "./${TERMUTILS}" ] ; then
 			echo 1>&2
 			echo "	 Error, helper script for platform detection not found (${TERMUTILS})." 1>&2
@@ -94,7 +94,7 @@ if [ "${termutils_sourced}" != 0 ] ; then
 			. ./${TERMUTILS}
 		fi
 	else
-		. "${SHELLS_LOCATION}/${TERMUTILS}"
+		. "${shell_location}/${TERMUTILS}"
 	fi
 
 fi
