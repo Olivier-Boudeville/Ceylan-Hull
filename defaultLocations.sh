@@ -659,3 +659,4 @@ setBuildEnv()
 findBasicShellTools
 
 #echo "Trace: end of defaultLocations.sh"
+
