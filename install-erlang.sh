@@ -3,7 +3,7 @@
 LANG=C; export LANG
 
 
-USAGE="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
+usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
 This script should be run preferably from a location like ~/Software/Erlang.
 
 Options:
@@ -14,7 +14,7 @@ Options:
 Example: 
   install-erlang.sh --cutting-edge --doc-install --no-download
     will install latest available version of Erlang, with its documentation, in the ~/Software/Erlang directory, without downloading anything,  
-      - or -
+          - or -
   install-erlang.sh --doc-install ~/my-directory
     will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang base directory, by downloading Erlang archives from the Internet 
 "
@@ -26,13 +26,13 @@ do_download=0
 do_manage_doc=1
 
 
-ERLANG_DOWNLOAD_LOCATION="http://erlang.org/download"
+erlang_download_location="http://erlang.org/download"
 
 
-ERLANG_VERSION="R13B"
+erlang_version="R13B01"
 
-# MD5 codes are not used currently:
-ERLANG_MD5="6d8c256468a198458b9f08ba6aa1a384"
+
+erlang_md5="b3db581de6c13e1ec93d74e54a7b4231"
 
 
 
@@ -49,7 +49,7 @@ while [ $token_eaten -eq 0 ] ; do
 
 	if [ "$1" = "-h" -o "$1" = "--help" ] ; then
 
-		echo "$USAGE"
+		echo "$usage"
 		exit
 	
 	fi
@@ -61,8 +61,8 @@ while [ $token_eaten -eq 0 ] ; do
 		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
 		
 		#echo "Warning: using latest beta (unstable) version of Erlang."
-		#ERLANG_VERSION="R13A"
-		#ERLANG_MD5="76804ff9c18710184cf0c0230a0443fc"
+		#erlang_version="R13A"
+		#erlang_md5="76804ff9c18710184cf0c0230a0443fc"
 		token_eaten=0
 	
 	fi
@@ -100,12 +100,12 @@ done
 
 if [ -z "$read_parameter" ] ; then
 
-	install_dir="$HOME/Software/Erlang/Erlang-${ERLANG_VERSION}"
+	install_dir="$HOME/Software/Erlang/Erlang-${erlang_version}"
 	echo "Using default installation directory '$install_dir'."
 
 else
 
-	install_dir="$read_parameter/Erlang/Erlang-${ERLANG_VERSION}"
+	install_dir="$read_parameter/Erlang/Erlang-${erlang_version}"
 	echo "Using '$install_dir' as installation directory."
 	
 fi
@@ -116,12 +116,12 @@ fi
 
 
 
-ERLANG_SRC_PREFIX="otp_src_${ERLANG_VERSION}"
-ERLANG_SRC_ARCHIVE="${ERLANG_SRC_PREFIX}.tar.gz"
+erlang_src_prefix="otp_src_${erlang_version}"
+erlang_src_archive="${erlang_src_prefix}.tar.gz"
 
 
-ERLANG_DOC_PREFIX="otp_doc_html_${ERLANG_VERSION}"
-ERLANG_DOC_ARCHIVE="${ERLANG_DOC_PREFIX}.tar.gz"
+erlang_doc_prefix="otp_doc_html_${erlang_version}"
+erlang_doc_archive="${erlang_doc_prefix}.tar.gz"
 
 
 if [ ! -e "/usr/include/ncurses.h" ] ; then
@@ -133,14 +133,10 @@ Use for instance 'apt-get install libncurses5-dev'." 1>&2
 fi
 
 
-echo "Erlang version ${ERLANG_VERSION} will be installed in ${install_dir}."
-mkdir -p ${install_dir}
-
-
 
 if [ $do_download -eq 0 ] ; then
 
-	ERLANG_TARGET_SRC_URL="${ERLANG_DOWNLOAD_LOCATION}/${ERLANG_SRC_ARCHIVE}"
+	erlang_target_src_url="${erlang_download_location}/${erlang_src_archive}"
 		
 	wget=`which wget`
 	
@@ -151,25 +147,25 @@ if [ $do_download -eq 0 ] ; then
 	
 	fi
 
-	echo "Downloading now ${ERLANG_TARGET_SRC_URL}"
-	${wget} ${ERLANG_TARGET_SRC_URL} 1>/dev/null 2>&1
+	echo "Downloading now ${erlang_target_src_url}"
+	${wget} ${erlang_target_src_url} 1>/dev/null 2>&1
 	
 	if [ ! $? -eq 0 ] ; then
-		echo "  Error while downloading ${ERLANG_TARGET_SRC_URL}, quitting." 1>&2
+		echo "  Error while downloading ${erlang_target_src_url}, quitting." 1>&2
 		exit 15
 	fi	
 
 
-	ERLANG_TARGET_DOC_URL="${ERLANG_DOWNLOAD_LOCATION}/${ERLANG_DOC_ARCHIVE}"
+	erlang_target_doc_url="${erlang_download_location}/${erlang_doc_archive}"
 
 	if [ $do_manage_doc -eq 0 ] ; then
 	
 		
-		echo "Downloading now ${ERLANG_TARGET_DOC_URL}"
-		${wget} ${ERLANG_TARGET_DOC_URL} 1>/dev/null 2>&1
+		echo "Downloading now ${erlang_target_doc_url}"
+		${wget} ${erlang_target_doc_url} 1>/dev/null 2>&1
 	
 		if [ ! $? -eq 0 ] ; then
-			echo "  Error while downloading ${ERLANG_TARGET_DOC_URL}, quitting." 1>&2
+			echo "  Error while downloading ${erlang_target_doc_url}, quitting." 1>&2
 			exit 16
 		fi	
 	
@@ -178,9 +174,9 @@ if [ $do_download -eq 0 ] ; then
 
 else
 
-	if [ ! -f "${ERLANG_SRC_ARCHIVE}" ] ; then
+	if [ ! -f "${erlang_src_archive}" ] ; then
 	
-		echo "  Error, Erlang source archive (${ERLANG_SRC_ARCHIVE}) could not be found, and no download was requested." 1>&2
+		echo "  Error, Erlang source archive (${erlang_src_archive}) could not be found from current directory ('"`pwd`"'), and no download was requested." 1>&2
 		exit 20
 		
 	fi
@@ -188,9 +184,9 @@ else
 
 	if [ $do_manage_doc -eq 0 ] ; then
 
-		if [ ! -f "${ERLANG_DOC_ARCHIVE}" ] ; then
+		if [ ! -f "${erlang_doc_archive}" ] ; then
 	
-			echo "  Error, Erlang documentation archive (${ERLANG_DOC_ARCHIVE}) could not be found, and no download was requested." 1>&2
+			echo "  Error, Erlang documentation archive (${erlang_doc_archive}) could not be found, and no download was requested." 1>&2
 			exit 21
 		
 		fi
@@ -198,16 +194,45 @@ else
 	
 fi
 
-if [ -e "${ERLANG_SRC_PREFIX}" ] ; then
 
-	/bin/rm -rf "${ERLANG_SRC_PREFIX}"
+md5sum=`which md5sum`
+
+if [ ! -x "${md5sum}" ] ; then
+
+	echo "  Warning: no md5sum tool found, therefore MD5 code will not be checked."
+
+else	
+
+	md5_res=`${md5sum} ${erlang_src_archive}`
+		
+	computed_md5=`echo ${md5_res}| awk '{printf $1}'`
+		
+	if [ "${computed_md5}" = "${erlang_md5}" ] ; then
+		echo "MD5 sum for Erlang source archive matches."
+	else
+		echo "Error, MD5 sums not matching for Erlang source archive: expected '${erlang_md5}', computed '${computed_md5}'." 1>&2
+		exit 25		
+	fi	
+
+fi
+
+
+echo "Erlang version ${erlang_version} will be installed in ${install_dir}."
+mkdir -p ${install_dir}
+
+
+
+if [ -e "${erlang_src_prefix}" ] ; then
+
+	/bin/rm -rf "${erlang_src_prefix}"
 	
 fi
 
-tar xvzf ${ERLANG_SRC_ARCHIVE}
+
+tar xvzf ${erlang_src_archive}
  
 if [ ! $? -eq 0 ] ; then
-	echo "  Error while extracting ${ERLANG_SRC_ARCHIVE}, quitting." 1>&2
+	echo "  Error while extracting ${erlang_src_archive}, quitting." 1>&2
 	exit 50
 fi	
 
@@ -219,7 +244,7 @@ initial_path=`pwd`
 
 # Starting from the source tree:
 
-cd otp_src_${ERLANG_VERSION}
+cd otp_src_${erlang_version}
 
 
 # See also:
@@ -231,16 +256,16 @@ cd otp_src_${ERLANG_VERSION}
 # Add for example '--with-ssl=/usr/bin' to activate it.
 # crypto could be still disabled due to:
 # 'OpenSSL is configured for kerberos but no krb5.h found'.
-BUILD_OPT="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
+configure_opt="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
 
 
-echo "  Building Erlang environment..." && ./configure ${CONFIGURE_OPT} --prefix=${prefix} && make && make install
+echo "  Building Erlang environment..." && ./configure ${configure_opt} --prefix=${prefix} && make && make install
 
 
 if [ $? -eq 0 ] ; then
 
 	echo "  Erlang successfully built and installed in ${prefix}. 
-The build tree, in the otp_src_${ERLANG_VERSION} directory, can be safely removed."
+The build tree, in the otp_src_${erlang_version} directory, can be safely removed."
 
 else
 
@@ -267,29 +292,29 @@ if [ -e Erlang-current-install ] ; then
 
 fi
 	
-/bin/ln -sf Erlang-${ERLANG_VERSION} Erlang-current-install
+/bin/ln -sf Erlang-${erlang_version} Erlang-current-install
 
 
 
 if [ $do_manage_doc -eq 0 ] ; then
 
-	ERLANG_DOC_ROOT="Erlang-${ERLANG_VERSION}-documentation"
+	erlang_doc_root="Erlang-${erlang_version}-documentation"
 	
-	if [ -e "${ERLANG_DOC_ROOT}" ] ; then
+	if [ -e "${erlang_doc_root}" ] ; then
 
-		/bin/rm -rf "${ERLANG_DOC_ROOT}"
+		/bin/rm -rf "${erlang_doc_root}"
 	
 	fi
 
-	mkdir "${ERLANG_DOC_ROOT}" 
+	mkdir "${erlang_doc_root}" 
 	
-	cd "${ERLANG_DOC_ROOT}"
+	cd "${erlang_doc_root}"
 	
-	tar xvzf ${initial_path}/${ERLANG_DOC_ARCHIVE}
+	tar xvzf ${initial_path}/${erlang_doc_archive}
  
  
 	if [ ! $? -eq 0 ] ; then
-		echo "  Error while extracting ${ERLANG_DOC_ARCHIVE}, quitting." 1>&2
+		echo "  Error while extracting ${erlang_doc_archive}, quitting." 1>&2
 		exit 70
 	fi	
 
@@ -302,9 +327,14 @@ if [ $do_manage_doc -eq 0 ] ; then
 
 	fi
 	
-	ln -sf ${ERLANG_DOC_ROOT} Erlang-current-documentation
+	ln -sf ${erlang_doc_root} Erlang-current-documentation
 
-	echo "Erlang documentation installed."
+	echo "Erlang documentation successfully installed."
 	
 fi
+
+
+echo
+echo "The Erlang environment was successfully installed in ${prefix}."
+echo "(the otp_src_${erlang_version} build directory can be safely removed if wanted)."
 
