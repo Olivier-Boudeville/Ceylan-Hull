@@ -3,7 +3,12 @@
 LANG=C; export LANG
 
 
-usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
+erlang_version="R13B01"
+
+erlang_md5="b3db581de6c13e1ec93d74e54a7b4231"
+
+
+usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
 This script should be run preferably from a location like ~/Software/Erlang.
 
 Options:
@@ -16,23 +21,24 @@ Example:
     will install latest available version of Erlang, with its documentation, in the ~/Software/Erlang directory, without downloading anything,  
           - or -
   install-erlang.sh --doc-install ~/my-directory
-    will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang base directory, by downloading Erlang archives from the Internet 
+    will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang/Erlang-${erlang_version} base directory, by downloading Erlang archives from the Internet
+	
+For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev libssl-dev'
 "
 
 # By default, will download files:
 do_download=0
 
+
 # By default, will not manage the documentation:
 do_manage_doc=1
 
 
+# By default, the Erlang build tree will be removed:
+do_remove_build_tree=0
+
+
 erlang_download_location="http://erlang.org/download"
-
-
-erlang_version="R13B01"
-
-
-erlang_md5="b3db581de6c13e1ec93d74e54a7b4231"
 
 
 
@@ -334,7 +340,20 @@ if [ $do_manage_doc -eq 0 ] ; then
 fi
 
 
+
+if [ $do_remove_build_tree -eq 0 ] ; then
+	
+	/bin/rm -rf ${initial_path}/otp_src_${erlang_version}
+	
+else
+	
+	echo "(the otp_src_${erlang_version} build directory can be safely removed if wanted)."
+	
+fi
+
+
 echo
 echo "The Erlang environment was successfully installed in ${prefix}."
-echo "(the otp_src_${erlang_version} build directory can be safely removed if wanted)."
+
+
 
