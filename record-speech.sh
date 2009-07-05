@@ -33,6 +33,8 @@ trim_silences=0
 verbose=1
 
 playback_tool="play-sounds.sh"
+playback_tool_exec=`which $playback_tool`
+
 encoder_tool="oggenc"
 
 
@@ -183,7 +185,7 @@ fi
 
 if [ $play_back -eq 0 ] ; then
 
-	if [ ! -x "${playback_tool}" ] ; then
+	if [ ! -x "${playback_tool_exec}" ] ; then
 	
     	echo "Error, playback tool not found (${playback_tool})." 1>&2
 		exit 15
