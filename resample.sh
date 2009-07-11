@@ -92,6 +92,7 @@ else
 	phase_opt="-L"
 fi 
 
+
 # Quality setting: using the same bit depth as the one of the input file:
 target_bit_depth=`LANG= soxi ${target_file}|grep Precision|sed 's|^Precision      : ||1' | sed 's|-bit$||1'`
 
@@ -136,36 +137,74 @@ log_file=".resample.txt"
 
 clipped=0
 
+
+
+# We want to resample with clipping, various options exist:
+
+used_solution=1
+
+
+# Solution 1: first to be used, working but maybe a bit too heavy.
 # Decreases the volume as long as samples had to be clipped:
-while [ $clipped -eq 0 ] ; do
+if [ $used_solution -eq 1 ] ; then
 
-	${sox_tool} "${target_file}" --bits ${target_bit_depth} --comment "" "${tmp_file}" ${attenuation_opt} rate ${quality_opt} ${phase_opt} ${target_frequency} ${dither_opt} 2>${log_file}
-	
-	res=$?
-	
-	if grep 'rate clipped' ${log_file} 1>/dev/null 2>&1; then
-	 
-		attenuation_factor=$(($attenuation_factor+1))
-		echo "Resampler had to perform clipping, decreasing volume: attenuation is now $attenuation_factor."
-		attenuation_opt="gain -${attenuation_factor}"
-		
-	else
-	
-		echo "No clipping detected."
-		clipped=1
-		
-	fi
-	
-done
+	while [ $clipped -eq 0 ] ; do
 
-/bin/rm -f ${log_file}
+	   ${sox_tool} "${target_file}" --bits ${target_bit_depth} --comment "" "${tmp_file}" ${attenuation_opt} rate ${quality_opt} ${phase_opt} ${target_frequency} ${dither_opt} 2>${log_file}
+
+	   res=$?
+
+	   if grep 'rate clipped' ${log_file} 1>/dev/null 2>&1; then
+	
+		   attenuation_factor=$(($attenuation_factor+1))
+		   echo "Resampler had to perform clipping, decreasing volume: attenuation is now $attenuation_factor."
+		   attenuation_opt="gain -${attenuation_factor}"
+	
+	   else
+
+		   echo "No clipping detected."
+		   clipped=1
+	
+	   fi
+
+	done
+
+	/bin/rm -f ${log_file}
+
+
+elif [ $used_solution -eq 2 ] ; then
+
+
+# Solution 2: simpler but unfortunately fails with some files 
+# (with "FAIL gain: can't reclaim headroom"):
+
+# Use gain -h / gain -r to perform the appropriate attenuation, based on
+# headroom (attenuates only if necessary to prevent clipping):
+
+	${sox_tool} "${target_file}" --bits ${target_bit_depth} --comment "" "${tmp_file}" gain -h rate ${quality_opt} ${phase_opt} ${target_frequency} gain -r ${dither_opt} 
+
+
+elif [ $used_solution -eq 3 ] ; then
+
+# Solution 3: quite simple again (not working, not resampling) :
+
+	loudest_clippless_volume=`${sox_tool} "${target_file}" -n stat -v`
+
+	${sox_tool} "${target_file}" "${tmp_file}" vol ${loudest_clippless_volume}
+
+fi
+
+
+res=$?
 
 if [ $res -eq 0 ] ; then
 
 	/bin/mv -f "${tmp_file}" "${target_file}" && echo "File ${target_file} successfully resampled: "`file ${target_file}`
 	
 else
-	echo "Error, resampling of ${target_file} failed." 1>&2
+
+	echo "Error, resampling of ${target_file} failed ($res)." 1>&2
 	exit 20
+
 fi		
 
