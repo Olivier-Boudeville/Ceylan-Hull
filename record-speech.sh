@@ -14,6 +14,8 @@ USAGE="  Usage: "`basename $0`" --voice-id <voice identifier> --speech-prefix <s
 
 # See also: Asset-Indexing/audio/speech-synthesis/Speech-Synthesis.rst
 
+# We could/should use http://www.speex.org/ instead of OggVorbis, for voices.
+ 
 # All sound produced as WAV have the following format:
 # RIFF (little-endian) data, WAVE audio, Microsoft PCM, 16 bit, mono 22050 Hz
 
@@ -36,6 +38,7 @@ playback_tool="play-sounds.sh"
 playback_tool_exec=`which $playback_tool`
 
 encoder_tool="oggenc"
+encoder_tool_exec=`which $encoder_tool`
 
 
 voice_id=0
@@ -96,6 +99,10 @@ while [ $# -gt 0 ] ; do
 done
 
 
+
+# Checkings:
+
+
 if [ $voice_id -eq 0 ] ; then
 	
 	echo "Error, no voice identifier specified." 1>&2
@@ -123,36 +130,10 @@ if [ -z "$message" ] ; then
 fi
 
 
-if [ $verbose -eq 0 ] ; then
-
-	if [ $play_back -eq 0 ] ; then
-    	echo " - play-back selected"
-	else
-    	echo " - play-back not selected"
-	fi
-    
-            
-	if [ $ogg_encoding -eq 0 ] ; then
-    	echo " - OggVorbis encoding selected"
-	else
-    	echo " - OggVorbis encoding not selected"
-	fi
-    
-	if [ $trim_silences -eq 0 ] ; then
-    	echo " - silences will be trimmed"
-	else
-    	echo " - no trimming of silences performed"
-	fi
-    
-    echo " - voice identifier: $voice_id"
-    
-    echo " - speech prefix: $speech_prefix"
-    
-    echo " - message: $message"
-
-fi
 
 
+# Almost always interesting, as sox is used, thus correcting any malformed
+# input sound file:
 if [ $trim_silences -eq 0 ] ; then
 
 	trimmer_tool="trimSilence.sh"
@@ -168,6 +149,7 @@ if [ $trim_silences -eq 0 ] ; then
 fi
 
 
+# Based on Sox:
 if [ $resample -eq 0 ] ; then
 
 	resample_tool="resample.sh"
@@ -183,12 +165,24 @@ if [ $resample -eq 0 ] ; then
 fi
 
 
+if [ $ogg_encoding -eq 0 ] ; then
+	
+	if [ ! -x "${encoder_tool_exec}" ] ; then
+	
+		echo "Error, no OggVorbis encoding tool found (${encoder_tool})." 1>&2
+		exit 15
+	
+	fi
+		
+fi
+
+
 if [ $play_back -eq 0 ] ; then
 
 	if [ ! -x "${playback_tool_exec}" ] ; then
 	
     	echo "Error, playback tool not found (${playback_tool})." 1>&2
-		exit 15
+		exit 16
         
     fi
     
@@ -395,6 +389,49 @@ esac
 target_wav="$speech_prefix.wav"
 
 
+
+if [ $verbose -eq 0 ] ; then
+    
+	if [ $trim_silences -eq 0 ] ; then
+    	echo " - silences will be trimmed"
+	else
+    	echo " - no trimming of silences performed"
+	fi
+
+	if [ $resample -eq 0 ] ; then
+    	echo " - resampling to ${target_frequency} Hz will be performed"
+	else
+    	echo " - no resampling performed"
+	fi
+
+            
+	if [ $ogg_encoding -eq 0 ] ; then
+    	echo " - OggVorbis encoding selected"
+	else
+    	echo " - OggVorbis encoding not selected"
+	fi
+
+	if [ $play_back -eq 0 ] ; then
+    	echo " - play-back selected"
+	else
+    	echo " - play-back not selected"
+	fi
+    
+
+    echo " - voice identifier: $voice_id"
+    
+    echo " - speech prefix: $speech_prefix"
+    
+    echo " - message: $message"
+
+fi
+
+
+
+
+# Actual operations:
+
+
 if [ "$tool" = "espeak" ] ; then
 
 	# Default amplitude, pitch and speed left as default:
@@ -470,7 +507,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 	target_ogg="$speech_prefix.ogg"
     
 	# Quality ranges between -1 (very low) and 10 (very high),
-	# 3 is the encoder default (we suppose it is VBR indeed):
+	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
 	${encoder_tool} "$target_wav" --discard-comments --quality=3 --output="$target_ogg" 1>/dev/null 2>&1
 	
     if [ ! $? -eq 0 ] ; then
