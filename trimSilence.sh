@@ -34,6 +34,7 @@ if [ ! -x "${sox_tool}" ] ; then
 
 fi
 
+#echo "sox_tool = ${sox_tool}"
 
 echo "Trimming beginning and ending silences from ${target_file}"
 
@@ -48,7 +49,7 @@ ${sox_tool} ${target_file} ${tmp_file} silence 1 0:0:0.01 ${decibel_threshold}d 
 if [ $? -eq 0 ] ; then
 	echo "${target_file} successfully generated."
 else
-	echo "Error, trimming of ${target_file} failed." 1>&2
+	echo "Error, the trimming of ${target_file} failed." 1>&2
 	exit 20
 fi		
 
