@@ -11,24 +11,24 @@ If '--pdf' is specified, a PDF will be created, if '--all' is specified, all out
 
 # Left out: --warnings=rst-warnings.txt --traceback --verbose  --debug
 # Can be removed for debugging: --quiet
-DOCUTILS_COMMON_OPT="--report=error --no-generator --date --no-source-link --tab-width=4 --strip-comments"
+docutils_common_opt="--report=error --no-generator --date --no-source-link --tab-width=4 --strip-comments"
 
-DOCUTILS_HTML_OPT="${DOCUTILS_COMMON_OPT} --cloak-email-addresses --link-stylesheet --no-section-numbering"
+docutils_html_opt="${docutils_common_opt} --cloak-email-addresses --link-stylesheet --no-section-numbering"
 
-DOCUTILS_PDF_OPT="${DOCUTILS_COMMON_OPT}"
+docutils_pdf_opt="${docutils_common_opt}"
 
-LATEX_TO_PDF_OPT="-interaction nonstopmode"
+latex_to_pdf_opt="-interaction nonstopmode"
 
-BEGIN_MARKER="---->"
+begin_marker="---->"
 
 # By default, generate HTML and not PDF:
 do_generate_html=0
 do_generate_pdf=1
 
 
-DOCUTILS_OPT="${DOCUTILS_HTML_OPT}"
+docutils_opt="${docutils_html_opt}"
 
-DOCUTILS_HTML=`which rst2html 2>/dev/null`
+docutils_html=`which rst2html 2>/dev/null`
 
 
 if [ -z "$1" ] ; then
@@ -36,9 +36,9 @@ if [ -z "$1" ] ; then
 	exit 1
 fi
 
-RST_FILE="$1"
+rst_file="$1"
 
-if [ -e "${RST_FILE}" ] ; then
+if [ -e "${rst_file}" ] ; then
 
 	shift 
 	
@@ -54,31 +54,31 @@ if [ -e "${RST_FILE}" ] ; then
 		do_generate_pdf=0
 		shift
 		
-		CSS_FILE="$1"
+		css_file="$1"
 		
-		if [ -n "${CSS_FILE}" ] ; then
-			#echo "Using CSS file ${CSS_FILE}."
-			CSS_OPT="--stylesheet-path=${CSS_FILE}"
+		if [ -n "${css_file}" ] ; then
+			#echo "Using CSS file ${css_file}."
+			css_opt="--stylesheet-path=${css_file}"
 		fi	
 			
-		DOCUTILS_HTML_OPT="${DOCUTILS_HTML_OPT} ${CSS_OPT}"
+		docutils_html_opt="${docutils_html_opt} ${css_opt}"
 		
 	else
 	
-		CSS_FILE="$1"
+		css_file="$1"
 		
-		if [ -n "${CSS_FILE}" ] ; then
-			#echo "Using CSS file ${CSS_FILE}."
-			CSS_OPT="--stylesheet-path=${CSS_FILE}"
+		if [ -n "${css_file}" ] ; then
+			#echo "Using CSS file ${css_file}."
+			css_opt="--stylesheet-path=${css_file}"
 		fi	
 			
-		DOCUTILS_HTML_OPT="${DOCUTILS_HTML_OPT} ${CSS_OPT}"
+		docutils_html_opt="${docutils_html_opt} ${css_opt}"
 
 	fi
 
 else
 
-	echo "${BEGIN_MARKER} Error: file $1 not found. $USAGE" 1>&2
+	echo "${begin_marker} Error: file $1 not found. $USAGE" 1>&2
 	exit 2
 
 fi
@@ -86,10 +86,10 @@ fi
 
 if [ $do_generate_html -eq 0 ] ; then
 
-	DOCUTILS_HTML=`which rst2html 2>/dev/null`
-	if [ -z "${DOCUTILS_HTML}" ] ; then
+	docutils_html=`which rst2html 2>/dev/null`
+	if [ -z "${docutils_html}" ] ; then
 		
-		echo "${BEGIN_MARKER} Error: unable to find an executable tool to convert docutils files to HTML (rst2html)." 1>&2
+		echo "${begin_marker} Error: unable to find an executable tool to convert docutils files to HTML (rst2html)." 1>&2
 		exit 10
 			
 	fi
@@ -98,18 +98,18 @@ fi
 
 if [ $do_generate_pdf -eq 0 ] ; then
 
-	DOCUTILS_LATEX=`which rst2latex 2>/dev/null`
-	if [ -z "${DOCUTILS_LATEX}" ] ; then
+	docutils_latex=`which rst2latex 2>/dev/null`
+	if [ -z "${docutils_latex}" ] ; then
 		
-		echo "${BEGIN_MARKER} Error: unable to find an executable tool to convert docutils files to LateX (rst2latex)." 1>&2
+		echo "${begin_marker} Error: unable to find an executable tool to convert docutils files to LateX (rst2latex)." 1>&2
 		exit 11
 			
 	fi
 	
-	LATEX_TO_PDF=`which pdflatex 2>/dev/null`
-	if [ -z "${LATEX_TO_PDF}" ] ; then
+	latex_to_pdf=`which pdflatex 2>/dev/null`
+	if [ -z "${latex_to_pdf}" ] ; then
 		
-		echo "${BEGIN_MARKER} Error: unable to find an executable tool to convert LateX files to PDF (pdflatex)." 1>&2
+		echo "${begin_marker} Error: unable to find an executable tool to convert LateX files to PDF (pdflatex)." 1>&2
 		exit 12
 			
 	fi
@@ -123,23 +123,23 @@ manage_rst_to_html()
 # $1: name of the .rst file to convert to HTML.
 {
 
-	SOURCE=$1
-	TARGET=$2
+	source=$1
+	target=$2
 	
-	echo "${BEGIN_MARKER} building HTML target $TARGET from source"
+	echo "${begin_marker} building HTML target $target from source"
 	
-	if [ -f "$CSS_FILE" ] ; then
+	if [ -f "$css_file" ] ; then
 	
-		${DOCUTILS_HTML} ${DOCUTILS_HTML_OPT} --stylesheet-path=$CSS_FILE $SOURCE $TARGET
+		${docutils_html} ${docutils_html_opt} --stylesheet-path=$css_file $source $target
 		
 	else
 
-		${DOCUTILS_HTML} $SOURCE $TARGET
+		${docutils_html} $source $target
 	
 	fi	
 
 	if [ ! $? -eq 0 ] ; then
-		echo "${BEGIN_MARKER} Error: HTML generation with ${DOCUTILS_HTML} failed for $SOURCE." 1>&2
+		echo "${begin_marker} Error: HTML generation with ${docutils_html} failed for $source." 1>&2
 		exit 5
 	fi	
 		
@@ -152,50 +152,51 @@ manage_rst_to_pdf()
 # $1: name of the .rst file to convert to PDF.
 {
 
-	SOURCE=$1
-	TARGET=$2
+	source=$1
+	target=$2
 	
-	echo "${BEGIN_MARKER} building PDF target corresponding to source $SOURCE"
+	echo "${begin_marker} building PDF target corresponding to source $source"
 
-	TEX_FILE=`echo $SOURCE|sed 's|.rst$|.tex|1'`
+	# Input extension is generally '.rst':
+	tex_file=`echo $source|sed 's|\..*$|.tex|1'`
+		
+	#echo "Docutils command: ${docutils_latex} ${docutils_pdf_opt} $source $tex_file
 	
-	#echo "Docutils command: ${DOCUTILS_LATEX} ${DOCUTILS_PDF_OPT} $SOURCE $TEX_FILE
+	${docutils_latex} ${docutils_pdf_opt} $source $tex_file
+	res=$?
 	
-	${DOCUTILS_LATEX} ${DOCUTILS_PDF_OPT} $SOURCE $TEX_FILE
-	RES=$?
+	if [ ! ${res} -eq 0 ] ; then
 	
-	if [ ! ${RES} -eq 0 ] ; then
-	
-		if [ ${RES} -eq 1 ] ; then
-			echo "${BEGIN_MARKER} Warning: LateX generation returned code 1 for $SOURCE." 1>&2
+		if [ ${res} -eq 1 ] ; then
+			echo "${begin_marker} Warning: LateX generation returned code 1 for $source." 1>&2
 		else
-			echo "${BEGIN_MARKER} Error: LateX generation failed for $SOURCE." 1>&2
+			echo "${begin_marker} Error: LateX generation failed for $source." 1>&2
 			exit 6
 		fi
 			
 	fi
 	
-    if [ ! -e "${TEX_FILE}" ] ; then
-		echo "${BEGIN_MARKER} Error: generated TeX file '${TEX_FILE}' could not be found, probably due to RST errors." 1>&2
+    if [ ! -e "${tex_file}" ] ; then
+		echo "${begin_marker} Error: generated TeX file '${tex_file}' could not be found, probably due to RST errors." 1>&2
 		exit 8
     
     fi
 		
 	# Run thrice on purpose, to fix links:
-	echo "LateX command: ${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE}"
+	echo "LateX command: ${latex_to_pdf} ${latex_to_pdf_opt} ${tex_file}"
 	
-	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE} && \
-	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE} && \
-	${LATEX_TO_PDF} ${LATEX_TO_PDF_OPT} ${TEX_FILE}
+	${latex_to_pdf} ${latex_to_pdf_opt} ${tex_file} && \
+	${latex_to_pdf} ${latex_to_pdf_opt} ${tex_file} && \
+	${latex_to_pdf} ${latex_to_pdf_opt} ${tex_file}
 	
-	RES=$?
+	res=$?
 	
-	if [ ! $RES -eq 0 ] ; then
+	if [ ! $res -eq 0 ] ; then
 
-		if [ ${RES} -eq 1 ] ; then
-		   echo "${BEGIN_MARKER} Warning: PDF generation returned code 1 for $SOURCE." 1>&2
+		if [ ${res} -eq 1 ] ; then
+		   echo "${begin_marker} Warning: PDF generation returned code 1 for $source." 1>&2
 		else
-		   echo "${BEGIN_MARKER} Error: PDF generation failed for $SOURCE (error code: $RES)." 1>&2
+		   echo "${begin_marker} Error: PDF generation failed for $source (error code: $res)." 1>&2
 		   exit 7
 		fi
 		
@@ -208,30 +209,30 @@ manage_rst_to_pdf()
 
 if [ ${do_generate_html} -eq 0 ] ; then
 
-	TARGET_HTML_FILE=`echo $RST_FILE|sed 's|.rst$|.html|1'`
-	#echo "TARGET_HTML_FILE = $TARGET_HTML_FILE"
+	target_html_file=`echo $rst_file|sed 's|.rst$|.html|1'`
+	#echo "target_html_file = $target_html_file"
 
-	manage_rst_to_html $RST_FILE ${TARGET_HTML_FILE}
+	manage_rst_to_html $rst_file ${target_html_file}
 	
 fi
 
 
 if [ ${do_generate_pdf} -eq 0 ] ; then
 
-	TARGET_PDF_FILE=`echo $RST_FILE|sed 's|.rst$|.pdf|1'`
-	#echo "TARGET_PDF_FILE = $TARGET_PDF_FILE"
+	target_pdf_file=`echo $rst_file|sed 's|.rst$|.pdf|1'`
+	#echo "target_pdf_file = $target_pdf_file"
 		
 	# PDF generator will not find includes (ex: images) if not already
 	# in target dir:
-	CURRENT_DIR=`pwd`
-	TARGET_DIR=`dirname ${TARGET_PDF_FILE}`
+	current_dir=`pwd`
+	target_dir=`dirname ${target_pdf_file}`
 	
-	SOURCE_FILE=`basename ${RST_FILE}`
-	TARGET_FILE=`basename ${TARGET_PDF_FILE}`
+	source_file=`basename ${rst_file}`
+	target_file=`basename ${target_pdf_file}`
 	
-	cd ${TARGET_DIR}
-	manage_rst_to_pdf ${SOURCE_FILE} ${TARGET_FILE}
-	cd ${CURRENT_DIR}	
+	cd ${target_dir}
+	manage_rst_to_pdf ${source_file} ${target_file}
+	cd ${current_dir}	
 	
 fi
 
