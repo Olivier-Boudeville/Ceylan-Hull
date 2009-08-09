@@ -3,97 +3,153 @@
 USAGE="$0 describes recursively from current directory what files are not in up-to-date state regarding the SVN repository."
 
 
-OUTPUT=`svn status --no-ignore 2>/dev/null`
+# When having something like 'A  +   my-file.txt', breaks the structure:
+OUTPUT=`svn status --no-ignore 2>/dev/null|sed 's|+| |1'`
 
 #echo "OUTPUT = $OUTPUT"
 
-# To rebuild a corretly formatted output (newlines are eaten), 
-# multiple sed must be used.
+# To show that newlines disappeared:
+#TEST=$(echo ${OUTPUT})
+#echo "TEST = $TEST"
+ 
+ 
+# To rebuild a correctly formatted output (since newlines are eaten when
+# re-reading the variable), multiple sed must be used:
 
 
-ADDED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^A' | awk '{print $2}')
+ADDED=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^A' | awk '{print $2}')
 
-ONCONFLICT=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^C' | awk '{print $2}')
+#echo "ADDED = $ADDED"
+#exit
 
-REMOVED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^D' | awk '{print $2}')
 
-MODIFIED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep  '^M' | awk '{print $2}')
+ONCONFLICT=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^C' | awk '{print $2}')
 
-REPLACED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep  '^R' | awk '{print $2}')
 
-EXTERNALDEF=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep  '^X' | awk '{print $2}')
+REMOVED=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^D' | awk '{print $2}')
 
-UNKNOWN=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^?' | awk '{print $2}')
 
-INCOMPLETE=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^!' | awk '{print $2}')
+MODIFIED=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^M' | awk '{print $2}')
 
-MISMATCH=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^~' | awk '{print $2}')
 
-IGNORED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^I' | awk '{print $2}')
+REPLACED=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^R' | awk '{print $2}')
 
+
+EXTERNALDEF=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^X' | awk '{print $2}')
+
+
+UNKNOWN=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^?' | awk '{print $2}')
+
+
+INCOMPLETE=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^!' | awk '{print $2}')
+
+
+MISMATCH=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^~' | awk '{print $2}')
+
+
+IGNORED=$(echo ${OUTPUT} | sed 's| A |\nA |g' | sed 's| C |\nC |g' | sed 's| D |\nD |g' | sed 's| M |\nM |g' | sed 's| R |\nR |g' | sed 's| X |\nX |g' | sed 's| ? |\n? |g' | sed 's| ! |\n! |g' | sed 's| ~ |\n~ |g' | sed 's| I |\nI |g' | sed 's|  n |\n? |g' | sed 's| ^n |\n? |g' | grep '^I' | awk '{print $2}')
+
+
+
+# Most interesting last, to be obvious in a terminal print-out:
 
 
 if [ -n "${ADDED}" ]; then
-	echo "-- Added elements :"
-	echo ${ADDED}
+	echo "* Added elements:"
+	for f in ${ADDED} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
-
-if [ -n "${ONCONFLICT}" ]; then
-	echo "-- Files with conficts :"
-	echo ${ONCONFLICT}
-	echo
-fi
+	
 	
 if [ -n "${REMOVED}" ]; then
-	echo "-- Elements scheduled for deletion :"
-	echo ${REMOVED}
+	echo "* Elements scheduled for deletion:"
+	for f in ${REMOVED} ; do
+		echo " - $f"
+	done
 	
 	echo
 fi
 
+
 if [ -n "${MODIFIED}" ]; then
-	echo "-- Modified files :"
-	echo ${MODIFIED}
+	echo "* Modified files:"
+	for f in ${MODIFIED} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
 	
 	
 if [ -n "${REPLACED}" ]; then
-	echo "-- Elements scheduled for replacement :"
-	echo ${REPLACED}
+	echo "* Elements scheduled for replacement:"
+	for f in ${REPLACED} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
+
 
 if [ -n "${EXTERNALDEF}" ]; then
-	echo "-- Elements unversioned, but related to a svn externals definition :"
-	echo ${EXTERNALDEF}
+	echo "* Elements unversioned, but related to a svn externals definition:"
+	for f in ${EXTERNALDEF} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
+
 
 if [ -n "${UNKNOWN}" ]; then
-	echo "-- Elements not versioned :"
-	echo ${UNKNOWN}
+	echo "* Elements not versioned:"
+	for f in ${UNKNOWN} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
+
 
 if [ -n "${INCOMPLETE}" ]; then
-	echo "-- Elements incomplete :"
-	echo ${INCOMPLETE}
+	echo "* Elements incomplete:"
+	for f in ${INCOMPLETE} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
+
 
 if [ -n "${MISMATCH}" ]; then
-	echo "-- Elements mismatched :"
-	echo ${MISMATCH}
+	echo "* Elements mismatched:"
+	for f in ${MISMATCH} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
+
 
 if [ -n "${IGNORED}" ]; then
-	echo "-- Elements ignored :"
-	echo ${IGNORED}
+	echo "* Elements ignored:"
+	for f in ${IGNORED} ; do
+		echo " - $f"
+	done
+	
+	echo
+fi
+	
+	
+if [ -n "${ONCONFLICT}" ]; then
+	echo "* Files with conficts:"
+	for f in ${ONCONFLICT} ; do
+		echo " - $f"
+	done
+	
 	echo
 fi
 
-
-	
