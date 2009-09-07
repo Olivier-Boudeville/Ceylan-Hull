@@ -278,8 +278,10 @@ findBuildTools()
 		MAKE=$NATIVE_MAKE
 		
 	else
+	
 		findTool make $1
 		MAKE=$returnedString
+		
 	fi
 	
     
@@ -350,8 +352,8 @@ findBuildTools()
 		else
 			DEBUG "C compiler found in ${GCC}."
 			C_COMPILER=${GCC}
-			GCC_BASE=`dirname ${C_COMPILER}`
-			GCC_ROOT=`dirname ${GCC_BASE}`
+			GCC_BASE=`dirname ${C_COMPILER} 2>/dev/null`
+			GCC_ROOT=`dirname ${GCC_BASE} 2>/dev/null`
 		fi
 	fi
 	
@@ -368,14 +370,14 @@ findBuildTools()
 		else
 			DEBUG "C++ compiler found in ${GPP}."
 			CPP_COMPILER=${GPP}
-			GCC_BASE=`dirname ${CPP_COMPILER}`
-			GCC_ROOT=`dirname ${GCC_BASE}`
+			GCC_BASE=`dirname ${CPP_COMPILER} 2>/dev/null`
+			GCC_ROOT=`dirname ${GCC_BASE} 2>/dev/null`
 
 		fi
 	fi
 	
 		
-	if [ "$be_strict" -eq 0 ] ; then
+	if [ $be_strict -eq 0 ] ; then
 	
 		if [ ! -x "$C_COMPILER" ] ; then
 			ERROR "No C compiler found, please update C_COMPILER environment variable and/or PATH."
