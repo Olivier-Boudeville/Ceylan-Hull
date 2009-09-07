@@ -312,6 +312,7 @@ lookUpExec()
 	
 }
 	
+	
 
 findTool()
 # Finds an available tool, searching the default location or trying
@@ -361,12 +362,21 @@ findTool()
 		DEBUG "Selecting looked-up executable, $returnedString."
 		return 0
 	else
+	
+		tool=$1
+		shift
+		full_message=$*
+		
 		if [ $must_find_tool -eq 0 ] ; then
-			ERROR "Tool look-up for '$1' failed, nothing found. $2"
+		
+			ERROR "Tool look-up for '$tool' failed, nothing found. $full_message"
 			exit 3
+			
 		else
-			WARNING "Tool look-up for '$1' failed, nothing found. $2"
+		
+			WARNING "Tool look-up for '$tool' failed, nothing found. $full_message"
 			return 1
+			
 		fi
 	fi		
 	
