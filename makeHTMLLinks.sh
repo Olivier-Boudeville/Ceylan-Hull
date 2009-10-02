@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# This script makes the shortcut links to pre-made html script :
+
+# This script makes the shortcut links to pre-made html script:
+
 
 SCRIPTS[0]="putTOC.sh"
 LINKS[0]="toc"
@@ -71,9 +73,9 @@ echo "element_count = $element_count"
 
 index=0
 
-while [ $index -lt $element_count ]; do
+while [ $index -lt $element_count ] ; do
 
-  # List all the elements in the array.
+  # Lists all the elements in the array:
 
   echo "    Making new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
   ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
@@ -81,3 +83,4 @@ while [ $index -lt $element_count ]; do
   let "index = $index + 1"
   
 done
+
