@@ -3,9 +3,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R13B01"
+erlang_version="R13B02-1"
 
-erlang_md5="b3db581de6c13e1ec93d74e54a7b4231"
+erlang_md5="2593b9312eb1b15bf23a968743138c52"
 
 
 usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
@@ -23,7 +23,7 @@ Example:
   install-erlang.sh --doc-install ~/my-directory
     will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang/Erlang-${erlang_version} base directory, by downloading Erlang archives from the Internet
 	
-For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev libssl-dev'
+For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev openssl libssl-dev'
 "
 
 # By default, will download files:
@@ -259,11 +259,10 @@ cd otp_src_${erlang_version}
 
 # SSL by default is not supposed to be available. Hence for example the crypto
 # module will not be available. 
-# Add for example '--with-ssl=/usr/bin' to activate it.
+# Add below for example '--with-ssl=/usr/bin' to activate it.
 # crypto could be still disabled due to:
 # 'OpenSSL is configured for kerberos but no krb5.h found'.
 configure_opt="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
-
 
 echo "  Building Erlang environment..." && ./configure ${configure_opt} --prefix=${prefix} && make && make install
 
