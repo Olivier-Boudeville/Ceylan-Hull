@@ -272,8 +272,8 @@ if [ $adjust_volume -eq 0 ] ; then
 	
 	ajusted_version="adjusted-${effective_target}"
 	
-	# 'contrast' effect not used, sound would be too distorted and do not wanting
-	# to change the dynamic range.
+	# 'contrast' effect not used, sound would be too distorted, and we do not
+	# want to change the dynamic range.
 	# We just want the volume to be reasonably high: not too low, so that the
 	# playback can be as loud as wanted, not too high, otherwise mixing with
 	# other sounds would induce clipping.
