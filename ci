@@ -1,9 +1,10 @@
 #!/bin/sh
 
-# Select relevant version control client :
+# Select relevant version control client:
 
 if [ -d 'CVS' ] ; then
 	cvs ci $*
 else
 	svn ci $*	
 fi
+

@@ -18,13 +18,14 @@ if [ -x "${LESS}" ]; then
     VIEWER="${LESS}"
 fi
 
+
 if [ -x "${MORE}" ]; then
     VIEWER="${MORE}"
 fi
 
 
-if [ "${VIEWER}" == "${MORE}" ]; then
-    # Only the first file is checked :
+if [ "${VIEWER}" = "${MORE}" ]; then
+    # Only the first file is checked:
     FILE_TYPE=`file $1 | awk '{print $2}'`
     if [ "${FILE_TYPE}" == "data" ]; then
         echo "$1 contains binary data (hence not printed)."
@@ -32,4 +33,6 @@ if [ "${VIEWER}" == "${MORE}" ]; then
     fi   
 fi
 
+
 ${VIEWER} $*
+

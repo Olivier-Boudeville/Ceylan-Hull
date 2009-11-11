@@ -1,7 +1,9 @@
 #!/bin/sh
 
+
 NO_X_OPT="--noX"
 SHOW_OPT="--display"
+
 
 USAGE="
 
@@ -242,17 +244,22 @@ fi
 autoSelectEditor
 
 if [ ${do_show} -eq 0 ] ; then
+
 	echo "Chosen editor: ${EDITOR_SHORT_NAME}"
 	echo "Complete editor command: ${EDITOR}"
 	echo "Multiwin: ${MULTI_WIN}"	
 	exit
+	
 fi
 
 
 if [ -z "${EDITOR}" ] ; then
- echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
- exit 1
+
+	echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
+	exit 1
+	
 fi
 
 
 applyEditor
+

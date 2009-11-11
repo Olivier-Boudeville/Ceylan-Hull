@@ -34,55 +34,55 @@ UNKNOWN=$(echo ${OUTPUT} | sed 's|?|\n?|g' | grep '?' | awk '{print $2}')
 
 
 if [ -n "${MODIFIED}" ]; then
-	echo "-- Modified files :"
+	echo "-- Modified files:"
 	echo ${MODIFIED}
 	echo
 fi
 	
 if [ -n "${ADDED}" ]; then
-	echo "-- Added files :"
+	echo "-- Added files:"
 	echo ${ADDED}
 	echo
 fi
 	
 if [ -n "${REMOVED}" ]; then
-	echo "-- Removed files :"
+	echo "-- Removed files:"
 	echo ${REMOVED}
 	echo
 fi
 
 if [ -n "${TOCHECKOUT}" ]; then
-	echo "-- Files needing update :"
+	echo "-- Files needing update:"
 	echo ${TOCHECKOUT}
 	echo
 fi
 	
 if [ -n "${TOPATCH}" ]; then
-	echo "-- Files needing patch :"
+	echo "-- Files needing patch:"
 	echo ${TOPATCH}
 	echo
 fi
 	
 if [ -n "${TOMERGE}" ]; then
-	echo "-- Files needing merge :"
+	echo "-- Files needing merge:"
 	echo ${TOMERGE}
 	echo
 fi
 	
 if [ -n "${TORESOLVE}" ]; then
-	echo "-- Files having unresolved conflicts :"
+	echo "-- Files having unresolved conflicts:"
 	echo ${TORESOLVE}
 	echo
 fi
 	
 if [ -n "${ONCONFLICT}" ]; then
-	echo "-- Conflicting files :"
+	echo "-- Conflicting files:"
 	echo ${ONCONFLICT}
 	echo
 fi
 	
 if [ -n "${UNKNOWN}" ]; then
-	echo "-- Files not known :"
+	echo "-- Files not known:"
 	echo ${UNKNOWN}
 	echo
 fi

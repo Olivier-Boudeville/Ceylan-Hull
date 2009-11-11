@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Select relevant version control client :
+# Select relevant version control client:
+
 TOOL="svn"
 
 if [ -d 'CVS' ] ; then
@@ -9,3 +10,4 @@ fi
 
 
 ${TOOL} co
+
