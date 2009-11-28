@@ -4,6 +4,8 @@ USAGE="Usage: "`basename $0`": script to be placed in a cron directory (ex: /etc
 and automatically updated. Some regular maintenance by hand is to be performed though, in the case some packages require special 
 settings, and for dist-upgrade. Ensure you have a local mirror in /etc/apt/sources.list, not to load too much main servers."
 
+# PATH can apparently be garbled by cron:
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 log_dir="/root/monitoring"
 
