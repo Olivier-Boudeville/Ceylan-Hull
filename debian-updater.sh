@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# To be preferably declared in root crontab (crontab -e), as from
+# /etc/cron.weekly it does not seem to be executed.
+
+# Ex:
+# Each Tuesday (2), at 3:17 AM (in the night), update the distro:
+# 17 3  * * 2 /root/debian-updater.sh
+
+
+
 USAGE="Usage: "`basename $0`": script to be placed in a cron directory (ex: /etc/cron.weekly/), so that the system is regularly 
 and automatically updated. Some regular maintenance by hand is to be performed though, in the case some packages require special 
 settings, and for dist-upgrade. Ensure you have a local mirror in /etc/apt/sources.list, not to load too much main servers."
