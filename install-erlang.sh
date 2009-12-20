@@ -3,9 +3,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R13B02-1"
+erlang_version="R13B03"
 
-erlang_md5="2593b9312eb1b15bf23a968743138c52"
+erlang_md5="411fcb29f0819973f71e28f6b56d9948"
 
 
 usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and add a symbolic link pointing to it from its parent directory.
@@ -353,6 +353,4 @@ fi
 
 echo
 echo "The Erlang environment was successfully installed in ${prefix}."
-
-
 
