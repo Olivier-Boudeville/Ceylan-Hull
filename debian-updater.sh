@@ -30,7 +30,7 @@ date=`LANG= date`
 
 {
 
-	apt-get $apt_opt update && apt-get $apt_opt upgrade
+	apt-get $apt_opt update && apt-get clean && apt-get $apt_opt upgrade
 	res=$?
 
 } 1>$log_file 2>&1
