@@ -23,7 +23,7 @@ Example:
   install-erlang.sh --doc-install ~/my-directory
     will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang/Erlang-${erlang_version} base directory, by downloading Erlang archives from the Internet
 	
-For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev openssl libssl-dev'
+For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev openssl libssl-dev', otherwise for example the crypto module might not be available.
 "
 
 # By default, will download files:
