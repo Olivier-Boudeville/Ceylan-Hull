@@ -309,7 +309,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 	target_ogg=`echo "$input_file" | sed 's|\..*$|.ogg|1'`
     
 	# Quality ranges between -1 (very low) and 10 (very high),
-	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
+	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
 	${encoder_tool} "$effective_target" --discard-comments --quality=${ogg_quality} --output="$target_ogg" 1>/dev/null 2>&1
 	
     if [ ! $? -eq 0 ] ; then

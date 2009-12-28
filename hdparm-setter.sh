@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Actually the setting cannot be performed reliably by script.
-# One just has to determine once the correct settings and specify them
+# One just has to determine once the correct settings and specify them
 # one time for all in /etc/hdparm.conf
 
 # Procedure:

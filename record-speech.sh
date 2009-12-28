@@ -17,7 +17,7 @@ USAGE="  Usage: "`basename $0`" --voice-id <voice identifier> --speech-prefix <s
 # We could/should use http://www.speex.org/ instead of OggVorbis, for voices.
  
 # All sound produced as WAV have the following format:
-# RIFF (little-endian) data, WAVE audio, Microsoft PCM, 16 bit, mono 22050 Hz
+# RIFF (little-endian) data, WAVE audio, Microsoft PCM, 16 bit, mono 22050 Hz
 
 
 # Defaults:
@@ -507,7 +507,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 	target_ogg="$speech_prefix.ogg"
     
 	# Quality ranges between -1 (very low) and 10 (very high),
-	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
+	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
 	${encoder_tool} "$target_wav" --discard-comments --quality=3 --output="$target_ogg" 1>/dev/null 2>&1
 	
     if [ ! $? -eq 0 ] ; then
