@@ -4,13 +4,14 @@
 NO_X_OPT="--noX"
 SHOW_OPT="--display"
 
-
 USAGE="
 
 Usage: "`basename $0`" [${NO_X_OPT}|${SHOW_OPT}] [-h|--help] file1 file2 ...:
 
 	Opens the set of specified files with the 'best' available editor.
-	Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings."
+	Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings.
+	Use '-e' or '--emacs' to prefer emacs over nedit
+	"
 
 
 
@@ -45,6 +46,9 @@ NEDIT_NC_OPT="-noask"
 
 XEMACS=`which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null`
 EMACS=`which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null`
+
+
+prefer_nedit_to_emacs=0
 
 
 
@@ -138,8 +142,6 @@ chooseEmacs()
 
 	fi
 
-
-
 }
 
 
@@ -152,25 +154,40 @@ autoSelectEditor()
     EDITOR_SHORT_NAME=""
 
     MULTI_WIN=1
-
+	
+	
     if [ "${do_X}" -eq 0 ] ; then
 
-		chooseEmacs
+		if [ $prefer_nedit_to_emacs -eq 0 ] ; then
 
-		if [ -z "$EDITOR" ] ; then
-			chooseXemacs
+			if [ -z "$EDITOR" ] ; then
+				chooseNedit
+			fi
+
+			if [ -z "$EDITOR" ] ; then
+				chooseEmacs
+			fi
+
+			if [ -z "$EDITOR" ] ; then
+				chooseXemacs
+			fi
+		
+		else
+		
+			chooseEmacs
+
+			if [ -z "$EDITOR" ] ; then
+				chooseXemacs
+			fi
+
+			if [ -z "$EDITOR" ] ; then
+				chooseNedit
+			fi
+			
 		fi
-
-		if [ -z "$EDITOR" ] ; then
-			chooseNedit
-		fi
-
-		if [ -z "$EDITOR" ] ; then
-			chooseJedit
-		fi
-
-    fi
-
+	
+ 	fi
+	
     if [ -n "$EDITOR" ] ; then
 		return
     fi
@@ -251,8 +268,6 @@ displayEditors()
 
 # Main section.
 
-PARAMETERS="$*"
-
 
 do_X=0
 do_show=1
@@ -267,6 +282,13 @@ fi
 
 if [ "$1" = "${SHOW_OPT}" ] ; then
     do_show=0
+    shift
+fi
+
+
+if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
+    prefer_nedit_to_emacs=1
+	echo "(requested to prefer emacs over nedit)"
     shift
 fi
 
@@ -306,6 +328,8 @@ fi
 #	exit 0
 #
 #fi
+
+PARAMETERS="$*"
 
 
 autoSelectEditor
