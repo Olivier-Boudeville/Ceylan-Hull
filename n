@@ -4,17 +4,18 @@
 NO_X_OPT="--noX"
 SHOW_OPT="--display"
 
+
 USAGE="
+Usage: "`basename $0`" [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-s|--standalone] [-s|--standalone] file1 file2 ...:
 
-Usage: "`basename $0`" [${NO_X_OPT}|${SHOW_OPT}] [-h|--help] file1 file2 ...:
+  Opens the set of specified files with the 'best' available editor.
 
-	Opens the set of specified files with the 'best' available editor.
-	Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings.
-	Use:
-	  - '-e' or '--emacs' to prefer emacs over all other editors (the default)
-	  - '-n' or '--nedit' to prefer nedit over all other editors
-	"
-
+  Options are:
+      '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display
+      '${SHOW_OPT}' to display only the chosen settings (not executing them)
+      '-e' or '--emacs' to prefer emacs over all other editors (the default)
+      '-n' or '--nedit' to prefer nedit over all other editors
+      '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)"
 
 
 # Many names for nedit client/server: gentoo...
@@ -54,6 +55,8 @@ EMACS=`which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null`
 prefer_emacs=0
 prefer_nedit=1
 
+# Tells whether we want to launch a standalone editor (default: no):
+standalone=1
 
 
 # Function section.
@@ -137,13 +140,18 @@ chooseEmacs()
     if [ -x "${EMACS}" ] ; then
 
 		ALTERNATE_EDITOR="emacs --geometry=83x60"
-		VISUAL=$EDITOR
 
-		EDITOR="emacsclient --alternate-editor=emacs"
+		if [ $standalone -eq 1 ] ; then
+			EDITOR="emacsclient --alternate-editor=emacs"
+		else
+			EDITOR="emacs"
+		fi
+
+		VISUAL=$EDITOR
 		EDITOR_SHORT_NAME="emacs"
 
 		MULTI_WIN=0
-
+		
 	fi
 
 }
@@ -272,7 +280,9 @@ applyEditor()
 			fi
 
 		else
-			${EDITOR} "$f" ${final_command}
+		
+			${EDITOR} "$f" 2>/dev/null
+			
 		fi
 
     done
@@ -335,6 +345,13 @@ if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
 fi
 
 
+if [ "$1" = "-s" ] || [ "$1" = "--standalone" ] ; then
+	standalone=0
+	echo "(standalone mode activated)"
+	shift
+fi
+
+
 if [ "$1" = "--help" ] ; then
     echo "${USAGE}"
     exit 0
@@ -371,6 +388,7 @@ fi
 #
 #fi
 
+# Assigned only here to take into account the previous shifts:
 PARAMETERS="$*"
 
 
