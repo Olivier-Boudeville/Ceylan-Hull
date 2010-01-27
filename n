@@ -10,7 +10,9 @@ Usage: "`basename $0`" [${NO_X_OPT}|${SHOW_OPT}] [-h|--help] file1 file2 ...:
 
 	Opens the set of specified files with the 'best' available editor.
 	Use '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display, or use '${SHOW_OPT}' to display only the chosen settings.
-	Use '-e' or '--emacs' to prefer emacs over nedit
+	Use:
+	  - '-e' or '--emacs' to prefer emacs over all other editors (the default)
+	  - '-n' or '--nedit' to prefer nedit over all other editors
 	"
 
 
@@ -48,7 +50,9 @@ XEMACS=`which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null`
 EMACS=`which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null`
 
 
-prefer_nedit_to_emacs=0
+# Defaults:
+prefer_emacs=0
+prefer_nedit=1
 
 
 
@@ -154,15 +158,11 @@ autoSelectEditor()
     EDITOR_SHORT_NAME=""
 
     MULTI_WIN=1
-	
-	
+
+
     if [ "${do_X}" -eq 0 ] ; then
 
-		if [ $prefer_nedit_to_emacs -eq 0 ] ; then
-
-			if [ -z "$EDITOR" ] ; then
-				chooseNedit
-			fi
+		if [ $prefer_emacs -eq 0 ] ; then
 
 			if [ -z "$EDITOR" ] ; then
 				chooseEmacs
@@ -171,23 +171,45 @@ autoSelectEditor()
 			if [ -z "$EDITOR" ] ; then
 				chooseXemacs
 			fi
-		
-		else
-		
-			chooseEmacs
-
-			if [ -z "$EDITOR" ] ; then
-				chooseXemacs
-			fi
 
 			if [ -z "$EDITOR" ] ; then
 				chooseNedit
 			fi
-			
+
+		else
+
+			if [ $prefer_nedit -eq 0 ] ; then
+
+				if [ -z "$EDITOR" ] ; then
+					chooseNedit
+				fi
+
+				if [ -z "$EDITOR" ] ; then
+					chooseEmacs
+				fi
+
+				if [ -z "$EDITOR" ] ; then
+					chooseXemacs
+				fi
+
+			else
+
+				chooseEmacs
+
+				if [ -z "$EDITOR" ] ; then
+					chooseXemacs
+				fi
+
+				if [ -z "$EDITOR" ] ; then
+					chooseNedit
+				fi
+
+			fi
+
 		fi
-	
- 	fi
-	
+
+	fi
+
     if [ -n "$EDITOR" ] ; then
 		return
     fi
@@ -234,12 +256,23 @@ applyEditor()
 		fi
 
 		if [ ${MULTI_WIN} -eq 0 ] ; then
-			${EDITOR} $f &
+
+			if [ "${EDITOR_SHORT_NAME}" = "emacs" ] ; then
+				# To get rid of silly message:
+				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
+				# multiple times"
+				${EDITOR} $f 1>/dev/null 2>&1 &
+			else
+				${EDITOR} $f 2>/dev/null &
+
+			fi
+
 			if [ "{EDITOR_SHORT_NAME}" = "nedit" ] ; then
 				sleep 1
 			fi
+
 		else
-			${EDITOR} "$f" 2>/dev/null
+			${EDITOR} "$f" ${final_command}
 		fi
 
     done
@@ -287,8 +320,17 @@ fi
 
 
 if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
-    prefer_nedit_to_emacs=1
-	echo "(requested to prefer emacs over nedit)"
+    prefer_emacs=1
+	prefer_nedit=0
+	echo "(requested to prefer emacs over other editors)"
+    shift
+fi
+
+
+if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
+    prefer_emacs=0
+    prefer_nedit=1
+	echo "(requested to prefer nedit over other editors)"
     shift
 fi
 
