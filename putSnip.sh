@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "<center>"
-echo "    <table summary=\"Code\" style=\"border : none\">"
+echo "    <table summary=\"Code\" style=\"border: none\">"
 echo "        <tr>"
 echo "          <td>"
 echo "            <div class=\"box\">"

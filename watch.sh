@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE="Usage : `basename $0` <expression to watch in running processes>.\nExample : `basename $0` AP2 to track all processes which have AP2 in their command or arguments."
+USAGE="Usage: `basename $0` <expression to watch in running processes>.\nExample: `basename $0` AP2 to track all processes which have AP2 in their command or arguments."
 
 if [ -z "$1" ] ; then
 	echo -e "\nError, no expression to watch.\n\t$USAGE."
@@ -15,9 +15,9 @@ LOCAL_USER=`whoami`
 PS_CMD="ps -edf | grep $LOCAL_USER"
 #PS_CMD="ps -ed -o comm"
 
-#echo "search expression : $1"
-#echo "user : $LOCAL_USER"
-#echo "script : "`basename $0`
+#echo "search expression: $1"
+#echo "user: $LOCAL_USER"
+#echo "script: "`basename $0`
 
 show_full_cmd=0
 
@@ -29,11 +29,11 @@ while [ $stop -eq 1 ] ; do
 	
 	if [ ${show_full_cmd} -eq 0 ]; then
 	
-		# Full command :
+		# Full command:
 		ps -ed -o comm,args | grep -v `basename $0` | grep -v grep | grep -i "$1"
 	else
 	
-		# Command filtered by user :
+		# Command filtered by user:
 		ps -edf | grep "$LOCAL_USER" | grep -v `basename $0` | grep -v grep | grep -i "$1"
 	fi
 	

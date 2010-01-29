@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Will make so that all files from current directory ("`pwd`") are not executable, namely :"
+echo "Will make so that all files from current directory ("`pwd`") are not executable, namely:"
 
 find . -type f -exec echo '{}' ';'
 

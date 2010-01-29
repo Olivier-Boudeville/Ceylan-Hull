@@ -26,7 +26,7 @@ valgrind=`which valgrind 2>/dev/null`
 
 showResult()
 {
-	printColor "Showing run result for $1 :" $cyan_text $blue_back
+	printColor "Showing run result for $1:" $cyan_text $blue_back
 	${MORE} ${log_file}
 	printColor "End of run result for $1." $cyan_text $blue_back
 	
@@ -34,7 +34,7 @@ showResult()
 
 
 
-USAGE="\nUsage : "`basename $0`" <executable to test> [<executable arguments>+] : uses Valgrind to perform quality test on executable target."
+USAGE="\nUsage: "`basename $0`" <executable to test> [<executable arguments>+]: uses Valgrind to perform quality test on executable target."
 
 
 
@@ -55,7 +55,7 @@ if [ -z "$target" ] ; then
 fi
 
 if [ ! -x "$target" ] ; then
-	ERROR "${target} : file not found. $USAGE"
+	ERROR "${target}: file not found. $USAGE"
 	exit 5	
 fi
 

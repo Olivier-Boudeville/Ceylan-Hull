@@ -22,7 +22,7 @@ echo "Managing interfaces"
 echo -e "\t+ Adding loopback interface"
 $IFCONFIG lo 127.0.0.1
 
-echo -e "\t+ Adding LAN access : interface $ETH_LAN set to IP $MY_IP"
+echo -e "\t+ Adding LAN access: interface $ETH_LAN set to IP $MY_IP"
 $IFCONFIG $ETH_LAN $MY_IP
 
 echo -e "\t+ Disabling interface $ETH_INTERNET"

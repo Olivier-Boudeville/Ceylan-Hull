@@ -1,6 +1,6 @@
 #/bin/sh
 
-USAGE="Usage : `basename $0` [<startingDirectory>]\n applies style transformation (as done by `basename $STYLE_CONVERTER`) to specified files searched from <starting directory> if defined, otherwise current directory"
+USAGE="Usage: `basename $0` [<startingDirectory>]\n applies style transformation (as done by `basename $STYLE_CONVERTER`) to specified files searched from <starting directory> if defined, otherwise current directory"
 
 STYLE_CONVERTER="styleConverter.sh"
 PATTERN_ONE='*.cc'

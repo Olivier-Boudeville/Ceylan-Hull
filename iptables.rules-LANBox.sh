@@ -101,7 +101,7 @@ $echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
 # you to a host take a different path than packets from that host to you), 
 # or if you operate a non-routing host which has several IP addresses on
 # different interfaces. 
-# Note : if you turn on IP forwarding, you will also get this: 
+# Note: if you turn on IP forwarding, you will also get this: 
 for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do 
    $echo "1" > ${interface} 
 done 

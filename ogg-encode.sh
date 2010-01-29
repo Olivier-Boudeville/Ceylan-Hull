@@ -305,7 +305,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 
 	echo "Encoding with ${encoder_tool}, with quality ${ogg_quality}"
 	
-	# Replaces extension by '.ogg' :
+	# Replaces extension by '.ogg':
 	target_ogg=`echo "$input_file" | sed 's|\..*$|.ogg|1'`
     
 	# Quality ranges between -1 (very low) and 10 (very high),

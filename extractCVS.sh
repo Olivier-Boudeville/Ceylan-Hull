@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE="`basename $0` <absolute path to CVSROOT> : extracts data from a CVS repository thanks to an export."
+USAGE="`basename $0` <absolute path to CVSROOT>: extracts data from a CVS repository thanks to an export."
 
 if [ -z "$1" ] ; then
 	echo "Error, no repository specified. $USAGE"

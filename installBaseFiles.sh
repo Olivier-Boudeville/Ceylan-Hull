@@ -3,8 +3,8 @@
 # This script is made to be executed in a fresh installation of Debian 3.0
 # It will copy relevant files.
 
-# Author : Olivier Boudeville (olivier.boudeville@online.fr)
-# Created : 2003, June, 21
+# Author: Olivier Boudeville (olivier.boudeville@online.fr)
+# Created: 2003, June, 21
 
 HOME_DIR="/home/$USER"
 

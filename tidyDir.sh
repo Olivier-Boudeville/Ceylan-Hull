@@ -1,9 +1,9 @@
 #!/bin/sh
 
 
-USAGE="Usage : "`basename $0`" [<directory to html tidy>] : will apply tidy on each file of the specified directory. If none is specified, will operate in current working directory."
+USAGE="Usage: "`basename $0`" [<directory to html tidy>]: will apply tidy on each file of the specified directory. If none is specified, will operate in current working directory."
 
-# See : http://tidy.sourceforge.net/
+# See: http://tidy.sourceforge.net/
 
 DIR="."
 

@@ -2,7 +2,7 @@
 
 # Note: docutils has been finally preferred to txt2tags.
 
-USAGE="Usage : `basename $0` [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
+USAGE="Usage: `basename $0` [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
 
 Updates generated files from more recent docutils files (*.rst).
 If '--pdf' is specified, a PDF will be created, if '--all' is specified, all output formats (i.e. HTML and PDF) will be created, otherwise HTML files only will be generated, using any specified CSS file. 

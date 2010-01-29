@@ -1,8 +1,8 @@
 # This helper script provides a useful toolbox.
 # Meant to be sourced.
 
-# Creation date : 2004, February 22.
-# Author : Olivier Boudeville (olivier.boudeville@online.fr)
+# Creation date: 2004, February 22.
+# Author: Olivier Boudeville (olivier.boudeville@online.fr)
 
 
 
@@ -15,13 +15,13 @@ testAsk()
 
 
 askTextold() 
-# Usage : 
+# Usage: 
 #	askText "my prompt" "my default value"
 #	myVariable=$value
 #	Affect after that call your target variable with the variable named "value"
 {
 	unset value
-	read -e -p " + $1 [$2] : " value
+	read -e -p " + $1 [$2]: " value
 	if [ -z $value ]; then
             value=$2
 	fi
@@ -31,7 +31,7 @@ askTextold()
 
 
 askText() 
-# Usage : 
+# Usage: 
 #	if [ askText "my prompt" "my default value" ]; then
 #		myVariable=$value
 #	else
@@ -40,7 +40,7 @@ askText()
 # named "value"
 #   
 {
-	read -e -p " + $1 [$2] : " value
+	read -e -p " + $1 [$2]: " value
 	if [ -z $value ]; then
             value=$2
 	fi
@@ -58,7 +58,7 @@ testAskText()
 
 
 askGDIALOG() 
-# Usage : 
+# Usage: 
 #	askGDIALOG "my title" "my prompt" "my default value"
 #	myVariable=$value
 #	Affect after that call your target variable with the variable named "value"
@@ -79,7 +79,7 @@ testAskGDIALOG()
 }
 
 isXRunning()
-# Usage : if isXRunning; then
+# Usage: if isXRunning; then
 #      
 # This test should be improved, I do not know which is the reliable 
 # way to test whether X is running.
@@ -98,7 +98,7 @@ setGUIFunctions()
 
 
 detectGUI()
-# Usage :
+# Usage:
 #       detectGUI
 # prefers gdialog to kdialog (both if X running) to dialog to whiptail
 # to text only (which is always available default)    
@@ -163,7 +163,7 @@ rm $SDL_ARCHIVE
 fi
 
 
-echo -e "\nFollowing the download step is the compilation step : SDL, Ceylan and OSDL will be compiled, er, successfully."
+echo -e "\nFollowing the download step is the compilation step: SDL, Ceylan and OSDL will be compiled, er, successfully."
 
 echo -e "\nCompiling SDL ..."
 cd $ROOT_INSTALL/SDL-$SDL_VERSION
@@ -185,7 +185,7 @@ echo -e "\nThen they will all work their gentle way."
 cd $ROOT_INSTALL/$OSDL_ROOT/src/code/tests
 ./playTests.sh
 
-#echo "Please insert your credit card and enter its expiration date, followed by the pound sign :"
+#echo "Please insert your credit card and enter its expiration date, followed by the pound sign:"
 
 echo -e "\n\n\tHave fun with OSDL !"
 }

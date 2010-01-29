@@ -5,8 +5,8 @@
 
 # It will configure it according to my will.
 
-# Author : Olivier Boudeville (olivier.boudeville@online.fr)
-# Created : 2003, June, 21
+# Author: Olivier Boudeville (olivier.boudeville@online.fr)
+# Created: 2003, June, 21
 
 if [ `id -ru ` != "0" ] ; then
 	echo "This script must be executed by root"

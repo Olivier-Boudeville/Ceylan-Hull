@@ -2,7 +2,7 @@
 
 MAP_FILE="Map.html"
 
-USAGE="$0 <web root> : generates an html map from the available pages in <web root>, and generates a $MAP_FILE file in the current directory."
+USAGE="$0 <web root>: generates an html map from the available pages in <web root>, and generates a $MAP_FILE file in the current directory."
 
 WEB_ROOT=$1
 
@@ -14,12 +14,12 @@ if [ -f "$MAP_FILE" ] ; then
 fi
 
 if [ -z "$WEB_ROOT" ] ; then
-	echo "$USAGE : error, not enough parameters"
+	echo "$USAGE: error, not enough parameters"
 	exit 2
 fi
 
 if [ ! -d "$WEB_ROOT" ] ; then
-	echo "$USAGE : error, $1 is not a directory"
+	echo "$USAGE: error, $1 is not a directory"
 	exit 3
 fi
 
@@ -29,12 +29,12 @@ MAP_FOOTER="$WEB_ROOT/../common/Map-footer.html"
 
 
 if [ ! -f "$MAP_HEADER" ] ; then
-	echo "$USAGE : error for map header, file <$MAP_HEADER> does not exist"
+	echo "$USAGE: error for map header, file <$MAP_HEADER> does not exist"
 	exit 4
 fi
 
 if [ ! -f "$MAP_FOOTER" ] ; then
-	echo "$USAGE : error for map header, file <$MAP_FOOTER> does not exist"
+	echo "$USAGE: error for map header, file <$MAP_FOOTER> does not exist"
 	exit 5
 fi
 

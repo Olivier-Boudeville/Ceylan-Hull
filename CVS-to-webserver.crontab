@@ -5,7 +5,7 @@ MAILTO=wondersye
 
 
 # Updates Ceylan's website in OSDL's webserver at SourceForge from Ceylan doc CVS repository 
-# every 4 hours, at the minute number 10 :
+# every 4 hours, at the minute number 10:
 
 HOME_USER=/home/users/w/wo/wondersye
 TARGET_SCRIPT=export-CVS-to-webserver.sh
@@ -13,10 +13,10 @@ TARGET_SCRIPT=export-CVS-to-webserver.sh
 10 */4 * * *  $HOME_USER/$TARGET_SCRIPT 1>/dev/null 2>&1
 
 
-# To activate this crontab, do :
+# To activate this crontab, do:
 # scp CVS-to-webserver.crontab wondersye@shell.sourceforge.net:/home/users/w/wo/wondersye
 # ssh wondersye@shell.sourceforge.net
 # crontab CVS-to-webserver.crontab
 
-# To check : crontab -l
+# To check: crontab -l
 

@@ -9,7 +9,7 @@ ACTUAL_MOUNT_POINT=""
 UMOUNT=/bin/umount
 
 
-# Priority managed (first mount point preferred) :
+# Priority managed (first mount point preferred):
 
 if [ -d "${MOUNT_POINT_3}" ]; then
 	ACTUAL_MOUNT_POINT=${MOUNT_POINT_3}

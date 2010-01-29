@@ -20,7 +20,7 @@ MOUNT=/bin/mount
 LS=/bin/ls
 	
 
-# Priority managed (first mount point preferred) :
+# Priority managed (first mount point preferred):
 
 if [ -d "${MOUNT_POINT_3}" ]; then
 	ACTUAL_MOUNT_POINT=${MOUNT_POINT_3}
@@ -40,13 +40,13 @@ if [ -z "${ACTUAL_MOUNT_POINT}" ]; then
 	exit 1
 fi
 
-# Only root can use modprobe :
+# Only root can use modprobe:
 if [ `id -u` = "0" ]; then
 	${MODPROBE} usb_storage 1>/dev/null 2>&1 
 fi
 
 
-#${MOUNT} -t ${KEY_FILESYSTEM} ${KEY_DEVICE} ${ACTUAL_MOUNT_POINT} && echo "-- Content of USB key (on ${ACTUAL_MOUNT_POINT}) is :" && ${LS} --color ${ACTUAL_MOUNT_POINT}
+#${MOUNT} -t ${KEY_FILESYSTEM} ${KEY_DEVICE} ${ACTUAL_MOUNT_POINT} && echo "-- Content of USB key (on ${ACTUAL_MOUNT_POINT}) is:" && ${LS} --color ${ACTUAL_MOUNT_POINT}
 
-# Must be declared in /etc/fstab :
-${MOUNT} ${ACTUAL_MOUNT_POINT} && echo "-- Content of USB key (on ${ACTUAL_MOUNT_POINT}) is :" && ${LS} --color ${ACTUAL_MOUNT_POINT}
+# Must be declared in /etc/fstab:
+${MOUNT} ${ACTUAL_MOUNT_POINT} && echo "-- Content of USB key (on ${ACTUAL_MOUNT_POINT}) is:" && ${LS} --color ${ACTUAL_MOUNT_POINT}

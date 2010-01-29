@@ -1,14 +1,14 @@
 #!/bin/sh
 
-USAGE="Usage : "`basename $0`" [<file>+] : retrieves at least one file already stored in vault by creating link towards it, from current directory. No previous file with the same name should exist."
+USAGE="Usage: "`basename $0`" [<file>+]: retrieves at least one file already stored in vault by creating link towards it, from current directory. No previous file with the same name should exist."
 
-# See : catch.sh, updateDirectoryFromVault.sh
+# See: catch.sh, updateDirectoryFromVault.sh
 
 
 DATA_VAULT_DEFAULT="$HOME/Vault"
 
 if [ -z "$DATA_VAULT" ] ; then
-	echo "Warning : no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
+	echo "Warning: no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
 	DATA_VAULT="${DATA_VAULT_DEFAULT}"
 fi
 

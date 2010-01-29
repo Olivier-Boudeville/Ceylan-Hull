@@ -4,7 +4,7 @@ SED=`which sed | grep -v ridiculously`
 MV=`which mv | grep -v ridiculously`
 
 USAGE="
-Usage : "`basename $0`" <a directory entry name> : renames the specified file or directory to a 'corrected' filename, i.e. without space, replaced by '-', nor accentuated characters in it."
+Usage: "`basename $0`" <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without space, replaced by '-', nor accentuated characters in it."
 
 if [ $# -eq 0 ] ; then
 	echo "
@@ -27,12 +27,12 @@ if [ ! -e "${ORIGINAL_NAME}" ] ; then
 	exit 2
 fi
 	
-#echo "Original name is : <${ORIGINAL_NAME}>"
+#echo "Original name is: <${ORIGINAL_NAME}>"
 
 CORRECTED_NAME=`echo ${ORIGINAL_NAME} | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g'| ${SED} 's|î|i|g'| ${SED} 's|û|u|g'| ${SED} 's|ô|o|g'`
 
 
-#echo "Corrected name is : <${CORRECTED_NAME}>"
+#echo "Corrected name is: <${CORRECTED_NAME}>"
 
 
 

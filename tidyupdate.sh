@@ -1,8 +1,8 @@
 #!/bin/sh
 
-USAGE="$0 <my html file> : tidies the html code in chosen file"
+USAGE="$0 <my html file>: tidies the html code in chosen file"
 
-# See : http://tidy.sourceforge.net/
+# See: http://tidy.sourceforge.net/
 
 TIDY_PATH=${OSDL_ROOT}/src/conf/LOANI-installations/tidy/bin 
 
@@ -34,7 +34,7 @@ if [ -z "$targetFile" ]; then
 fi
 
 if [ ! -f "$targetFile" ]; then
-	echo "$USAGE ($targetFile : file not found)"
+	echo "$USAGE ($targetFile: file not found)"
 	exit 2
 fi
 

@@ -2,7 +2,7 @@
 
 OUTPUT_FILE="tree-md5.txt"
 
-USAGE="Usage : "`basename $0`" <root of the tree> [<output file>] : computes the MD5 sums for all tree elements and stores it in specified output file (default : $OUTPUT_FILE)"
+USAGE="Usage: "`basename $0`" <root of the tree> [<output file>]: computes the MD5 sums for all tree elements and stores it in specified output file (default: $OUTPUT_FILE)"
 
 FIND_GNU="/logiciels/public/bin/find"
 

@@ -8,7 +8,7 @@ echo $USAGE
 
 echo "
 
-	Listing archive content (by Ceylan's list-for-backup.sh script) : 
+	Listing archive content (by Ceylan's list-for-backup.sh script): 
 	
 
 " > $LISTING_FILE

@@ -18,7 +18,7 @@ mkdir -p LOANI-repository
 
 cd LOANI-repository
 
-#echo "In `pwd` :"
+#echo "In `pwd`:"
 
 for f in ${VAULT}/* ; do
 	echo "    + linking $f"

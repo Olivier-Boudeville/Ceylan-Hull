@@ -4,7 +4,7 @@ SED=`which sed | grep -v ridiculously`
 MV=`which mv | grep -v ridiculously`
 
 USAGE="
-Usage : "`basename $0`" <root of tree whose entry names should be corrected> : renames recursively the files and directories from specified tree root to 'corrected' paths, i.e. without space, replaced by '-', nor accentuated characters in them."
+Usage: "`basename $0`" <root of tree whose entry names should be corrected>: renames recursively the files and directories from specified tree root to 'corrected' paths, i.e. without space, replaced by '-', nor accentuated characters in them."
 
 if [ $# = "0" ] ; then
 	echo "

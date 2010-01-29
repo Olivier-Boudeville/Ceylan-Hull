@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-USAGE=`basename $0`" : generates automake-specific rules to specify the sources of test programs, based on their name, from current directory."
+USAGE=`basename $0`": generates automake-specific rules to specify the sources of test programs, based on their name, from current directory."
 
 for t in test*.cc; do
 	program_name=`echo $t | sed 's|.cc$||1'`

@@ -4,7 +4,7 @@
 # See update-docutils.sh.
 
 
-USAGE="Usage : `basename $0` [ --pdf | <path to CSS file to be used, ex: common/css/XXX.css> ]
+USAGE="Usage: `basename $0` [ --pdf | <path to CSS file to be used, ex: common/css/XXX.css> ]
 
 Updates generated files from more recent txt2tags files (*.t2t).
 If '--pdf' is specified, a PDF will be created, otherwise HTML files will be generated, using any specified CSS file. 

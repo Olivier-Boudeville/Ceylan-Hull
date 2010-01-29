@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo
-echo -e "\tShowing all core dumps starting from `pwd` :"
+echo -e "\tShowing all core dumps starting from `pwd`:"
 
 cores=`find . -name 'core*'`
 

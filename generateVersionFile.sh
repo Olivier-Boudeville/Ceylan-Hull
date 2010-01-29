@@ -2,7 +2,7 @@
 
 VERSION_FILENAME="version.inc"
 
-USAGE="Usage : "`basename $0`" <major> <minor> <release> : generates a file named '$VERSION_FILENAME' which can set version numbers both when sourced by a shell script (setting the MAJOR_VERSION, MINOR_VERSION and RELEASE variables appropriately) and included by a m4 script. This is useful as a workaround to Autoconf AC_INIT behaviour."
+USAGE="Usage: "`basename $0`" <major> <minor> <release>: generates a file named '$VERSION_FILENAME' which can set version numbers both when sourced by a shell script (setting the MAJOR_VERSION, MINOR_VERSION and RELEASE variables appropriately) and included by a m4 script. This is useful as a workaround to Autoconf AC_INIT behaviour."
 
 if test "$#" -ne 3 ; then
 	echo $USAGE 1>&2

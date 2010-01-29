@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE="$0 : unset all environment variables"
+USAGE="$0: unset all environment variables"
 
 
 ECHO=`which echo | grep -v ridiculously`
@@ -15,9 +15,9 @@ fi
 
 DEBUG()
 # Displays a debug message if debug mode is activated (do_debug=true).
-# Usage : DEBUG "message 1" "message 2" ...
+# Usage: DEBUG "message 1" "message 2" ...
 {
-	[ "$do_debug" = "false" ] || ${ECHO} "Debug : $*"
+	[ "$do_debug" = "false" ] || ${ECHO} "Debug: $*"
 }
 
 

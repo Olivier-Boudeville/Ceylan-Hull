@@ -6,10 +6,10 @@ USAGE="$0 selects recursively from current directory the files that should be co
 if [ -d ".svn" ] ; then
 
 	TOOL="svn"
-	
+
 	# Removes any pending lock:
 	svn cleanup
-	
+
 	OUTPUT=`svn status --no-ignore 2>/dev/null`
 
 	ADDED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep '^A' | awk '{print $2}')
@@ -18,10 +18,10 @@ if [ -d ".svn" ] ; then
 	MODIFIED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep  '^M' | awk '{print $2}')
 
 
-elif [ -d "CVS" ] ; then	
+elif [ -d "CVS" ] ; then
 
 	TOOL="cvs"
-	
+
 	NON_UP_TO_DATE="Locally Modified|Locally Added|Locally Removed|Needs Checkout|Needs Patch|Needs Merge|Unresolved Conflict|File had conflicts on merge|?"
 
 	OUTPUT="$(cvs status 2>/dev/null | egrep "${NON_UP_TO_DATE}" )"
@@ -35,13 +35,13 @@ else
 	echo "Error, no CVS nor SVN repository found in current directory." 1>&2
 	echo "Usage: $USAGE" 1>&2
 	exit 10
-	
+
 fi
 
 if [ -n "${ADDED}" ] ; then
 
 	echo
-	echo "####### Added file(s): ${ADDED}" 
+	echo "####### Added file(s): ${ADDED}"
 
 	for f in ${ADDED} ; do
 		echo
@@ -49,24 +49,22 @@ if [ -n "${ADDED}" ] ; then
 		echo
 		more $f
 		${TOOL} ci $f
-	done	
+	done
 
 fi
 
 if [ -n "${MODIFIED}" ] ; then
 
 	echo
-	echo "####### Modified file(s): ${MODIFIED}" 
+	echo "####### Modified file(s): ${MODIFIED}"
 	for f in ${MODIFIED} ; do
 		echo
 		echo " + diff for $f: "
 		dci $f
 		echo
-	done	
+	done
 
 fi
 
 echo "Full commit done, status for files is now:"
 toci
-
-

@@ -9,10 +9,10 @@ if [ -x /usr/bin/beep ]; then
   beep -f 1000 -n -f 2000 -n -f 1500
 fi
 
-dialog --title "Sye's configuration" --menu "Choose Debian aranor's role :" 15 55 2 "1" "Gateway (requires the ADSL modem)"  "2" "Pure LAN client" 2> $TMP_FILE
+dialog --title "Sye's configuration" --menu "Choose Debian aranor's role:" 15 55 2 "1" "Gateway (requires the ADSL modem)"  "2" "Pure LAN client" 2> $TMP_FILE
 
 
-# Default : gateway 
+# Default: gateway 
 if [ `cat $TMP_FILE` = "2" ]; then
 
 	if [ -x "$LANConfigScript" ]; then
