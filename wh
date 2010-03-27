@@ -79,6 +79,8 @@ if [ ! -d "$startingDir" ]; then
 	echo " Error, no such directory: $startingDir.$USAGE
 	" 1>&2
 	exit 3
+else
+	cd "$startingDir"
 fi
 
 
@@ -101,17 +103,21 @@ Looking for all files and directories matching <$targetPattern>, starting from d
 
 [ $verbose -eq 1 ] || echo "Current directory is: `pwd`"
 
+
+# For an unknown reason, 'cd XXX ; find . YYY' seems to work better than
+# 'find XXX YYY'.
+
 if [ $no_path -eq 0 ] ; then
 
-	[ $verbose -eq 1 ] || echo "No path case: command is: "	$FIND "$startingDir" $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	[ $verbose -eq 1 ] || echo "No path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 	
-	$FIND "$startingDir" $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	$FIND . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 	
 else    
 
-	#[ $verbose -eq 1 ] || echo "With path case: command is: " $FIND $startingDir $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	[ $verbose -eq 1 ] || echo "With path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
 	
-	$FIND "$startingDir" $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	$FIND . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
 	
 fi
 
