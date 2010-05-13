@@ -1,5 +1,17 @@
 #!/bin/sh
 
+USAGE="  Usage: "`basename $0`" <RST FILE>
+  Generates a PDF file from the specified RST file, overwriting any past file with that name.
+  Ex: '"`basename $0`" my_file.rst' will attempt to generate a new 'my_file.pdf' file."
+
+
+if [ "$1" = "-h" ] || [ -z "$1" ] ; then
+
+	echo "$USAGE"
+	exit
+fi
+
+
 source_file="$1"
 
 if [ ! -f "${source_file}" ] ; then
@@ -23,9 +35,16 @@ file_prefix=`echo ${source_file}|sed 's|.rst$||1'`
 
 target_file="${file_prefix}.pdf"
 
+if [ -f "${target_file}" ] ; then
+
+	echo "(removing pre-existing ${target_file})"
+	/bin/rm -f "${target_file}"
+
+fi
+
+
 echo "
 Generating now ${target_file} from ${source_file}...
 " && make -f "${rule_file}" "${target_file}" && echo "Generation succeeded!"
 
 /bin/rm -f ${file_prefix}.aux ${file_prefix}.tex ${file_prefix}.out ${file_prefix}.log
-
