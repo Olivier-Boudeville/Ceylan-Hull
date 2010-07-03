@@ -1,6 +1,7 @@
 #!/bin/sh
 
-USAGE=`basename $0`" describes recursively from current directory what files are not in up-to-date state regarding a CVS or SVN repository."
+USAGE=`basename $0`"[-s| --short]: describes recursively from current directory what files are not in up-to-date state regarding a CVS or SVN repository.
+The -s/--short option will not display elements that are not versioned or ignored."
 
 
 if [ -d ".svn" ] ; then
@@ -9,24 +10,22 @@ if [ -d ".svn" ] ; then
 	if [ ! -x `which toci-svn | grep -v ridiculously 2>/dev/null` ] ; then
 		echo "Error, no executable toci-svn script found." 1>&2
 		exit 1
-	fi	
-	toci-svn
-	
-elif [ -d "CVS" ] ; then	
+	fi
+	toci-svn $*
+
+elif [ -d "CVS" ] ; then
 
 	#echo "CVS detected"
 	if [ ! -x `which toci-cvs | grep -v ridiculously 2>/dev/null` ] ; then
 		echo "Error, no executable toci-cvs script found." 1>&2
 		exit 2
-	fi	
-	toci-cvs
-	
+	fi
+	toci-cvs $*
+
 else
 
 	echo "Error, no CVS nor SVN information found in current directory." 1>&2
 	echo "Usage: $USAGE" 1>&2
 	exit 10
-	
-fi
 
-		
+fi
