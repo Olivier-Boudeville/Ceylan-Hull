@@ -71,9 +71,10 @@ while [ $token_eaten -eq 0 ] ; do
 
 		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
 
-		#echo "Warning: using latest beta (unstable) version of Erlang."
+		echo "Warning: using latest beta (non stable) version of Erlang."
 		erlang_version="R14A"
 		erlang_md5="a24873bbace9ab3c307f3d2492d9e134"
+
 		token_eaten=0
 
 	fi
