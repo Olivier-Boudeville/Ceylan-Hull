@@ -11,12 +11,15 @@ Usage: "`basename $0`" [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-s|
   Opens the set of specified files with the 'best' available editor.
 
   Options are:
-      '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display
-      '${SHOW_OPT}' to display only the chosen settings (not executing them)
-      '-e' or '--emacs' to prefer emacs over all other editors (the default)
-      '-n' or '--nedit' to prefer nedit over all other editors
-      '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)"
+	  '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display
+	  '${SHOW_OPT}' to display only the chosen settings (not executing them)
+	  '-e' or '--emacs' to prefer emacs over all other editors (the default)
+	  '-n' or '--nedit' to prefer nedit over all other editors
+	  '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)"
 
+# Note: a special syntax is recognised as well: 'n A_FILE -s', which is
+# convenient when wanting to open a file yet thinking last that this should be
+# done in another window.
 
 # Many names for nedit client/server: gentoo...
 NEDITC_GENTOO=`which neditc 2>/dev/null | grep -v ridiculously 2>/dev/null`
@@ -65,11 +68,11 @@ standalone=1
 chooseJedit()
 {
 
-    if [ -x "${JEDIT}" ] ; then
+	if [ -x "${JEDIT}" ] ; then
 		EDITOR="${JEDIT}"
 		EDITOR_SHORT_NAME="jedit"
 		MULTI_WIN=0
-    fi
+	fi
 
 }
 
@@ -79,33 +82,33 @@ chooseNedit()
 
 	# nedit:
 
-    if [ -x "${NEDIT}" ] ; then
+	if [ -x "${NEDIT}" ] ; then
 		EDITOR="${NEDIT} ${NEDIT_FAMILY_OPT}"
 		EDITOR_SHORT_NAME="nedit"
 		MULTI_WIN=0
-    fi
+	fi
 
-    if [ -x "${NC}" ] ; then
+	if [ -x "${NC}" ] ; then
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
 			EDITOR="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
 			EDITOR_SHORT_NAME="nc"
 			MULTI_WIN=0
-     # else: the nc being detected is netcat, not nedit tool: do nothing here.
+	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
-    fi
+	fi
 
-    if [ -x "${NEDITC_GENTOO}" ] ; then
+	if [ -x "${NEDITC_GENTOO}" ] ; then
 		EDITOR="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
 		EDITOR_SHORT_NAME="neditc"
 		MULTI_WIN=0
-    fi
+	fi
 
-    if [ -x "${NEDITC_DEBIAN}" ] ; then
+	if [ -x "${NEDITC_DEBIAN}" ] ; then
 		EDITOR="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
 		EDITOR_SHORT_NAME="nedit-nc"
 		MULTI_WIN=0
-    fi
+	fi
 
 }
 
@@ -120,11 +123,11 @@ chooseXemacs()
 
 	# xemacs:
 
-    if [ -x "${XEMACS}" ] ; then
+	if [ -x "${XEMACS}" ] ; then
 		EDITOR="${XEMACS} --geometry=83x60 "
 		EDITOR_SHORT_NAME="xemacs"
 		MULTI_WIN=0
-    fi
+	fi
 
 }
 
@@ -137,7 +140,7 @@ chooseEmacs()
 	# '(server-start)' configuration.
 
 
-    if [ -x "${EMACS}" ] ; then
+	if [ -x "${EMACS}" ] ; then
 
 		ALTERNATE_EDITOR="emacs --geometry=83x60"
 
@@ -151,7 +154,7 @@ chooseEmacs()
 		EDITOR_SHORT_NAME="emacs"
 
 		MULTI_WIN=0
-		
+
 	fi
 
 }
@@ -162,13 +165,13 @@ autoSelectEditor()
 
 	# Take the best one (watch out the order!):
 
-    EDITOR=""
-    EDITOR_SHORT_NAME=""
+	EDITOR=""
+	EDITOR_SHORT_NAME=""
 
-    MULTI_WIN=1
+	MULTI_WIN=1
 
 
-    if [ "${do_X}" -eq 0 ] ; then
+	if [ "${do_X}" -eq 0 ] ; then
 
 		if [ $prefer_emacs -eq 0 ] ; then
 
@@ -218,33 +221,33 @@ autoSelectEditor()
 
 	fi
 
-    if [ -n "$EDITOR" ] ; then
+	if [ -n "$EDITOR" ] ; then
 		return
-    fi
+	fi
 
 
-    if [ -x "${NANO}" ] ; then
+	if [ -x "${NANO}" ] ; then
 		EDITOR="${NANO}"
 		EDITOR_SHORT_NAME="nano"
 		MULTI_WIN=1
 		return
-    fi
+	fi
 
 
-    if [ -x "${VIM}" ] ; then
+	if [ -x "${VIM}" ] ; then
 		EDITOR="${VIM}"
 		EDITOR_SHORT_NAME="vim"
 		MULTI_WIN=1
 		return
-    fi
+	fi
 
 
-    if [ -x "${VI}" ] ; then
+	if [ -x "${VI}" ] ; then
 		EDITOR="${VI}"
 		EDITOR_SHORT_NAME="vi"
 		MULTI_WIN=1
 		return
-    fi
+	fi
 
 }
 
@@ -255,7 +258,7 @@ applyEditor()
 	# Let's hope the display is OK.
 
 	# Open the files in parallel or sequentially:
-    for f in ${PARAMETERS}; do
+	for f in ${PARAMETERS}; do
 
 		if [ -z "${DISPLAY}" ] ; then
 			echo "    Opening $f with ${EDITOR_SHORT_NAME} (no DISPLAY set)"
@@ -280,12 +283,12 @@ applyEditor()
 			fi
 
 		else
-		
+
 			${EDITOR} "$f" 2>/dev/null
-			
+
 		fi
 
-    done
+	done
 
 }
 
@@ -293,17 +296,17 @@ applyEditor()
 displayEditors()
 {
 
-    echo
-    echo "JEDIT         = ${JEDIT}"
-    echo "NEDITC_GENTOO = ${NEDITC_GENTOO}"
-    echo "NEDITC_DEBIAN = ${NEDITC_DEBIAN}"
-    echo "NC            = ${NC}"
-    echo "NEDIT         = ${NEDIT}"
-    echo "NANO          = ${NANO}"
-    echo "VIM           = ${VIM}"
-    echo "VI            = ${VI}"
-    echo "XEMACS        = ${XEMACS}"
-    echo
+	echo
+	echo "JEDIT         = ${JEDIT}"
+	echo "NEDITC_GENTOO = ${NEDITC_GENTOO}"
+	echo "NEDITC_DEBIAN = ${NEDITC_DEBIAN}"
+	echo "NC            = ${NC}"
+	echo "NEDIT         = ${NEDIT}"
+	echo "NANO          = ${NANO}"
+	echo "VIM           = ${VIM}"
+	echo "VI            = ${VI}"
+	echo "XEMACS        = ${XEMACS}"
+	echo
 
 }
 
@@ -318,62 +321,61 @@ do_force_nedit=1
 
 
 if [ "$1" = "${NO_X_OPT}" ] ; then
-    do_X=1
-    shift
+	do_X=1
+	shift
 fi
 
 
 if [ "$1" = "${SHOW_OPT}" ] ; then
-    do_show=0
-    shift
+	do_show=0
+	shift
 fi
 
 
 if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
-    prefer_emacs=1
+	prefer_emacs=1
 	prefer_nedit=0
 	echo "(requested to prefer emacs over other editors)"
-    shift
+	shift
 fi
 
 
 if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
-    prefer_emacs=0
-    prefer_nedit=1
+	prefer_emacs=0
+	prefer_nedit=1
 	echo "(requested to prefer nedit over other editors)"
-    shift
+	shift
 fi
 
 
 if [ "$1" = "-s" ] || [ "$1" = "--standalone" ] ; then
 	standalone=0
-	echo "(standalone mode activated)"
 	shift
 fi
 
 
 if [ "$1" = "--help" ] ; then
-    echo "${USAGE}"
-    exit 0
+	echo "${USAGE}"
+	exit 0
 fi
 
 
 if [ "$1" = "-h" ] ; then
-    echo "${USAGE}"
-    exit 0
+	echo "${USAGE}"
+	exit 0
 fi
 
 
 if [ -z "$1" ] ; then
-    if [ ${do_show} -eq 1 ] ; then
+	if [ ${do_show} -eq 1 ] ; then
 		echo "${USAGE}"
 		exit 1
-    fi
+	fi
 fi
 
 
 if [ ${do_show} -eq 0 ] ; then
-    displayEditors
+	displayEditors
 fi
 
 
@@ -389,25 +391,50 @@ fi
 #fi
 
 # Assigned only here to take into account the previous shifts:
-PARAMETERS="$*"
+REMAINING_PARAMETERS="$*"
+#echo "REMAINING_PARAMETERS = $REMAINING_PARAMETERS"
 
+PARAMETERS=""
+
+# Last filtering:
+for arg in $REMAINING_PARAMETERS ; do
+
+	if [ "$arg" = "-s" ] ; then
+
+		standalone=0
+
+	else
+
+		PARAMETERS="$PARAMETERS $arg"
+
+	fi
+
+done
+
+#echo "PARAMETERS = $PARAMETERS"
+
+if [ $standalone -eq 0 ] ; then
+
+	echo "(standalone mode activated)"
+
+fi
 
 autoSelectEditor
 
 if [ ${do_show} -eq 0 ] ; then
 
-    echo "Chosen editor: ${EDITOR_SHORT_NAME}"
-    echo "Complete editor command: ${EDITOR}"
-    echo "Multiwin: ${MULTI_WIN}"
-    exit
+	echo "Chosen editor: ${EDITOR_SHORT_NAME}"
+	echo "Complete editor command: ${EDITOR}"
+	echo "Multiwin: ${MULTI_WIN}"
+	exit
 
 fi
 
 
 if [ -z "${EDITOR}" ] ; then
 
-    echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
-    exit 1
+	echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
+	exit 1
 
 fi
 
