@@ -202,7 +202,7 @@ ${iptables} -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
 
 
 # Avoid stealth TCP port scans if SYN is not set properly:
-${iptables} -A INPUT -m state --state NEW,RELATED -p tcp --tcp-flags ! ALL SYN -j DROP
+${iptables} -A INPUT -m state --state NEW,RELATED -p tcp ! --tcp-flags ALL SYN -j DROP
 
 # Rejects directly 'auth/ident' obsolete requests:
 ${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
