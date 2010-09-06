@@ -60,7 +60,7 @@ if [ -n "${MODIFIED}" ] ; then
 	for f in ${MODIFIED} ; do
 		echo
 		echo " + diff for $f: "
-		dci $f
+		dci $f | more
 		echo
 	done
 
