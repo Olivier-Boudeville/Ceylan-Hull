@@ -27,7 +27,7 @@ if [ ${TOOL} = "cvs" ] ; then
 
 else
 
-	if ${TOOL} diff $target ; then
+	if ${TOOL} diff $target | more ; then
 
 		echo "$arrow Committing-in <$target>:"
 		${TOOL} ci $target
