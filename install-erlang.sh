@@ -3,9 +3,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R13B04"
+erlang_version="R14B"
 
-erlang_md5="ca6da4921e438891967900aa6a084341"
+erlang_md5="5292a04556d17ad528d570e02357dfbb"
 
 
 usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and in this case adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
@@ -71,9 +71,9 @@ while [ $token_eaten -eq 0 ] ; do
 
 		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
 
-		echo "Warning: using latest beta (non stable) version of Erlang."
-		erlang_version="R14A"
-		erlang_md5="a24873bbace9ab3c307f3d2492d9e134"
+		#echo "Warning: using latest beta (non stable) version of Erlang."
+		#erlang_version="R14A"
+		#erlang_md5="a24873bbace9ab3c307f3d2492d9e134"
 
 		token_eaten=0
 
