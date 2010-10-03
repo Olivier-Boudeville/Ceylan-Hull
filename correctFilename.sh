@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Absolutely needed, as otherwise sed will fail when using "é" as a parameter, in
+# ${SED} 's|é|e|g...
+export LANG=
+
 SED=`which sed | grep -v ridiculously`
 MV=`which mv | grep -v ridiculously`
 
@@ -24,19 +28,23 @@ if [ ! -e "${ORIGINAL_NAME}" ] ; then
 	Error, no entry named <${ORIGINAL_NAME}> exists. $USAGE
 
 	" 1>&2
+
 	exit 2
+
 fi
 
 #echo "Original name is: <${ORIGINAL_NAME}>"
 
-CORRECTED_NAME=`echo ${ORIGINAL_NAME} | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g'| ${SED} 's|î|i|g'| ${SED} 's|û|u|g'| ${SED} 's|ô|o|g' | ${SED} "s|'|-|g"`
+
+
+CORRECTED_NAME=`echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g'| ${SED} 's|î|i|g'| ${SED} 's|û|u|g'| ${SED} 's|ô|o|g' | ${SED} "s|'|-|g"`
 
 
 #echo "Corrected name is: <${CORRECTED_NAME}>"
 
 
-
 if [ "${ORIGINAL_NAME}" != "${CORRECTED_NAME}" ]; then
+
 	if [ -f "${CORRECTED_NAME}" ]; then
 		echo "
 
@@ -47,6 +55,9 @@ if [ "${ORIGINAL_NAME}" != "${CORRECTED_NAME}" ]; then
 
 	echo "  '${ORIGINAL_NAME}' renamed to '${CORRECTED_NAME}'"
 	${MV} -f "${ORIGINAL_NAME}" "${CORRECTED_NAME}"
+
 #else
+
 #	echo "  (<${ORIGINAL_NAME}> left unchanged)"
+
 fi
