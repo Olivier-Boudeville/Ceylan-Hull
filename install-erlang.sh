@@ -322,6 +322,9 @@ cd otp_src_${erlang_version}
 # 'OpenSSL is configured for kerberos but no krb5.h found'.
 configure_opt="--enable-threads --enable-smp-support --enable-kernel-poll --enable-hipe"
 
+# Uncomment if building from a pre-Pentium4 computer:
+#configure_opt="$configure_opt --enable-ethread-pre-pentium4-compatibility enable_ethread_pre_pentium4_compatibilit=yes"
+
 if [ $use_prefix -eq 0 ] ; then
 	prefix_opt="--prefix=${prefix}"
 fi
