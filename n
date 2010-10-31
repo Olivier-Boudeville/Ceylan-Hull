@@ -135,9 +135,9 @@ chooseXemacs()
 chooseEmacs()
 {
 
-	# emacs: (allows, if no emacs server is running, to run a standalone
-	# emacs instead, which itself will be a server thanks to its
-	# '(server-start)' configuration.
+	# emacs: (allows, if no emacs server is running, to run a standalone emacs
+	# instead, which itself will be a server thanks to its '(server-start)'
+	# configuration.
 
 
 	if [ -x "${EMACS}" ] ; then
@@ -225,6 +225,16 @@ autoSelectEditor()
 		return
 	fi
 
+	# No graphical editor matched, trying console ones:
+
+	if [ $prefer_emacs -eq 0 ] ; then
+
+			if [ -z "$EDITOR" ] ; then
+				chooseEmacs
+				return
+			fi
+
+	fi
 
 	if [ -x "${NANO}" ] ; then
 		EDITOR="${NANO}"
@@ -305,6 +315,7 @@ displayEditors()
 	echo "NANO          = ${NANO}"
 	echo "VIM           = ${VIM}"
 	echo "VI            = ${VI}"
+	echo "EMACS         = ${EMACS}"
 	echo "XEMACS        = ${XEMACS}"
 	echo
 
