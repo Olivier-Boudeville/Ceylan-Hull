@@ -139,7 +139,6 @@ chooseEmacs()
 	# instead, which itself will be a server thanks to its '(server-start)'
 	# configuration.
 
-
 	if [ -x "${EMACS}" ] ; then
 
 		ALTERNATE_EDITOR="emacs --geometry=83x60"
@@ -228,12 +227,8 @@ autoSelectEditor()
 	# No graphical editor matched, trying console ones:
 
 	if [ $prefer_emacs -eq 0 ] ; then
-
-			if [ -z "$EDITOR" ] ; then
-				chooseEmacs
-				return
-			fi
-
+		chooseEmacs
+		return
 	fi
 
 	if [ -x "${NANO}" ] ; then
