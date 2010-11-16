@@ -21,7 +21,7 @@ case "$1" in
 		exit 10
 	else
 		echo "Starting $name (webserver will need some time before serving requests)."
-		YAWSHOME=/tmp/yaws-esperide privbind -u web-srv $yaws_root/bin/yaws -c  $yaws_root/etc/yaws/yaws.conf 1>$log_file 2>&1 &
+		YAWSHOME=/tmp/yaws-esperide privbind -u web-srv $yaws_root/bin/yaws -c $yaws_root/etc/yaws/yaws.conf --heart --daemon 1>$log_file 2>&1 &
 	fi
 	;;
 
@@ -37,8 +37,8 @@ case "$1" in
 
   restart)
 	echo "Restarting $name."
+	# Implies a new start thanks to heart:
 	$0 stop
-	$0 start
 	;;
 
   reload|force-reload)
@@ -55,8 +55,11 @@ case "$1" in
 	;;
 
   force-stop)
-	echo "Force stopping $name."
-	$0 stop
+		echo "Force stopping $name."
+		killall -9 heart beam yaws
+		killall -9 heart beam yaws
+		killall -9 heart beam yaws
+		$0 stop
 	;;
 
   *)
