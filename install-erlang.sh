@@ -46,6 +46,26 @@ do_remove_build_tree=0
 erlang_download_location="http://erlang.org/download"
 
 
+# Sets the wget variable appropriately.
+set_wget()
+{
+
+	if [ -z "${wget}" ] ; then
+
+		wget=`which wget`
+
+		if [ ! -x "${wget}" ] ; then
+
+			echo "  Error, no wget tool found, exiting." 1>&2
+			exit 10
+
+		fi
+
+	fi
+
+}
+
+
 
 # Read all known options:
 
@@ -197,16 +217,11 @@ if [ $do_download -eq 0 ] ; then
 
 		erlang_target_src_url="${erlang_download_location}/${erlang_src_archive}"
 
-		wget=`which wget`
-
-		if [ ! -x "${wget}" ] ; then
-
-			echo "  Error, no wget tool found, exiting." 1>&2
-			exit 10
-
-		fi
 
 		echo "Downloading now ${erlang_target_src_url}"
+
+		set_wget
+
 		${wget} ${erlang_target_src_url} 1>/dev/null 2>&1
 
 		if [ ! $? -eq 0 ] ; then
@@ -221,6 +236,9 @@ if [ $do_download -eq 0 ] ; then
 	if [ $do_manage_doc -eq 0 ] ; then
 
 		if [ $doc_available -eq 1 ] ; then
+
+
+			set_wget
 
 			echo "Downloading now ${erlang_target_doc_url}"
 			${wget} ${erlang_target_doc_url} 1>/dev/null 2>&1
