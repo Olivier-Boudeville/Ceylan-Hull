@@ -3,16 +3,19 @@
 LANG=C; export LANG
 
 
-erlang_version="R14B"
+erlang_version="R14B01"
 
-erlang_md5="5292a04556d17ad528d570e02357dfbb"
+erlang_md5="ce595447571128bc66f630a8fa13339a"
 
 
-usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and in this case adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
-Note that, if relevant archives are found in the current directory, they will be used, even if the user did not specified a 'no download' option.
-If this script is run without specifying a base install directory, it should be done preferably from a location like ~/Software/Erlang.
+usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
 
-If no base install directory is specified, then if this script is run by root Erlang will be installed into /usr/local (i.e. system-wide), otherwise it will be installed into ~/Software/Erlang/Erlang-${erlang_version}/.
+Note that, if relevant archives are found in the current directory, they will be used, even if the user did not specify a 'no download' option.
+
+
+If no base install directory is specified, then, if this script is run by root, Erlang will be installed into /usr/local (i.e. system-wide), otherwise it will be installed into ~/Software/Erlang/Erlang-${erlang_version}/.
+
+If a base install directory MY_DIR is specified, then Erlang will be installed into MY_DIR/Erlang/Erlang-${erlang_version}/.
 
 Options:
 	-c or --cutting-edge: use, instead of the latest stable Erlang version, the latest beta version, if any
@@ -90,6 +93,8 @@ while [ $token_eaten -eq 0 ] ; do
 	if [ "$1" = "-c" -o "$1" = "--cutting-edge" ] ; then
 
 		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
+
+        # Comment the next three lines if not using the beta:
 
 		#echo "Warning: using latest beta (non stable) version of Erlang."
 		#erlang_version="R14A"
