@@ -1,13 +1,13 @@
 #!/bin/sh
 
-USAGE=`basename $0`"[-s|--short]: describes recursively from current directory what files are not in up-to-date state regarding the SVN repository.
-The -s/--short option will not display elements that are not versioned or ignored."
+USAGE=`basename $0`"[-l|--long]: describes recursively from current directory what files are not in up-to-date state regarding the SVN repository.
+The -l/--long option will display elements that are not versioned or ignored."
 
-short=1
+short=0
 
-if [ "$1" = "-s" ] || [ "$1" = "--short" ] ; then
+if [ "$1" = "-l" ] || [ "$1" = "--long" ] ; then
 
-	short=0
+	short=1
 
 fi
 
