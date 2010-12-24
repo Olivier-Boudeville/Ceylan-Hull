@@ -1,7 +1,7 @@
 #!/bin/sh
 
-USAGE=`basename $0`" [-s|--short]: describes recursively from current directory what files are not in up-to-date state regarding a CVS or SVN repository.
-The -s/--short option will not display elements that are not versioned or ignored."
+USAGE=`basename $0`" [-l|--long]: describes recursively from current directory what files are not in up-to-date state regarding a CVS or SVN repository.
+The -l/--long option will display elements that are not versioned or ignored."
 
 
 if [ -d ".svn" ] ; then
