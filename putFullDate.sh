@@ -8,12 +8,10 @@
 
 if [ "$1" = "-f" ] ; then
 
-	export LANG=fr_FR@euro
-	date '+%A %-e %B %Y'
+	LANG=fr_FR.UTF-8 date '+%A %-e %B %Y'
 
 else
 
-	export LANG=
-	date '+%A, %B %-e, %Y'
+	LANG= date '+%A, %B %-e, %Y'
 
 fi
