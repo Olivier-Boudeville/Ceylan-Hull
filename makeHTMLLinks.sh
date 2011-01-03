@@ -79,8 +79,7 @@ while [ $index -lt $element_count ] ; do
 
   echo "    Making new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
   ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
-  
-  let "index = $index + 1"
-  
-done
 
+  let "index = $index + 1"
+
+done

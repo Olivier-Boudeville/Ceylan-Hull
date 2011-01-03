@@ -1,6 +1,6 @@
 ARCHIVE_DIR  = @CEYLAN_ARCHIVE_DIR@/bin
 ARCHIVE_FILE = \
-	"$(ARCHIVE_DIR)/`date '+%Y%m%d'`-Full-archive-Ceylan-bin.tar.bz2" 
+	"$(ARCHIVE_DIR)/`date '+%Y%m%d'`-Full-archive-Ceylan-bin.tar.bz2"
 
 SUBDIRS = tests
 
@@ -121,12 +121,12 @@ SHELL_SCRIPTS_SET = \
 	valgrindTest.sh              \
 	watch.sh                     \
 	wh                           \
-	xcdroast-launch.sh           
+	xcdroast-launch.sh
 
-        
-EXTRA_DIST = $(SHELL_SCRIPTS_SET)		 
-                  
-all: 
+
+EXTRA_DIST = $(SHELL_SCRIPTS_SET)
+
+all:
 
 
 install-data-local:
@@ -146,4 +146,3 @@ tar:
 
 clean-local:
 	@/bin/rm -f *.wav *.ogg
-	
