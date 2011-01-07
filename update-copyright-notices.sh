@@ -2,11 +2,15 @@
 
 do_debug=1
 
+#new_year=`date '+%Y'`
+
 USAGE="
 Usage: "`basename $0`" CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
 Updates the copyright notices of code of specified type found from specified root directory.
 
-CODE_TYPE is either 'C++' or 'Erlang'.
+CODE_TYPE is among:
+  - 'C++', for *.h, *.h.in, *.cc, *.cpp files
+  - 'Erlang', for *.hrl, *.erl files
 Ex: "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011  Foobar Ltd\"
 This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 2008-2011 Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 "
@@ -98,7 +102,7 @@ if [ $code_type -eq 1 ] ; then
 elif [ $code_type -eq 2 ] ; then
 
 	# C++:
-	target_files=`find -L . -name '*.h' -o -name '*.cc'`
+	target_files=`find -L . -name '*.h' -o -name '*.h.in' -o -name '*.cc' -o -name '*.cpp'`
 	target_pattern="^ \* Copyright (C) $old_notice"
 	replacement_pattern=" * Copyright (C) $new_notice"
 
