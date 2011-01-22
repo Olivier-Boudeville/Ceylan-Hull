@@ -20,7 +20,7 @@ if [ $# -lt 1 ] ; then
 	echo "Error, no file to decrypt specified.
 $USAGE" 1>&2
 	exit 6
-	
+
 fi
 
 #rm="/bin/rm -f"
@@ -30,33 +30,38 @@ decrypt_opt=" -d"
 for f in $* ; do
 
 	if [ -f "$f" ] ; then
-	
+
 		echo " - decrypting file '$f'"
 
 		decrypted_file=`echo $f | sed 's|.gpg$||1'`
 		if [ -f "${decrypted_file}" ] ; then
 			echo "Error, target file '$decrypted_file' is already existing, remove it first ($f has NOT been decrypted), stopping." 1>&2
-			exit 15 
+			exit 15
 		fi
-		
-		$crypt_tool $decrypt_opt $f > $decrypted_file 
+
+		$crypt_tool $decrypt_opt $f > $decrypted_file
 		res="$?"
-		
+
 		if [ $res -eq 0 ] ; then
-		
-			
+
+
 			echo "$decrypted_file successfully decrypted (file $f still available)."
-			
+
 		else
 
 			echo "Error, decryption failed (code: $res), stopping." 1>&2
+
+			if [ -f "${decrypted_file}" ] ; then
+				echo "(generated '$decrypted_file' removed)" 1>&2
+				/bin/rm -f "${decrypted_file}"
+			fi
+
 			exit 10
-			
-		fi 
-		
+
+		fi
+
 	else
-		echo "  ### Warning: file '$f' not found, skipped." 
+		echo "  ### Warning: file '$f' not found, skipped."
 	fi
 
 done
-
