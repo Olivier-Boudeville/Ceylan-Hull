@@ -11,8 +11,13 @@ Updates the copyright notices of code of specified type found from specified roo
 CODE_TYPE is among:
   - 'C++', for *.h, *.h.in, *.cc, *.cpp files
   - 'Erlang', for *.hrl, *.erl files
+
 Ex: "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011  Foobar Ltd\"
 This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 2008-2011 Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
+
+Note that if PREVIOUS_NOTICE contains characters that are specifial for Regular Expressions, they must be appropriately escaped.
+
+Ex for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011  Foobar R\&D Ltd\"
 "
 
 
@@ -137,16 +142,24 @@ count=0
 
 for f in $target_files ; do
 
+	#echo
+
 	if grep -e "$target_pattern" $f 1>/dev/null 2>&1 ; then
 
 		#echo "  + found in $f"
+
+		# Target pattern found, let's replace it:
 		$replace_script "$old_notice" "$new_notice" $f
 		count=`expr $count + 1`
 
 	else
 
+		# Not found, searching for similar entries:
+
 		res=`cat $f | grep -i 'copyright ' 2>&1`
-		#echo "res = $res"
+
+		#echo "res = '$res'"
+		#echo "target_pattern = '$target_pattern'"
 
 		if [ -z "$res" ] ; then
 
@@ -154,9 +167,14 @@ for f in $target_files ; do
 
 		else
 
-			# Do not display changes already performed:
-			if [ ! "$res" = "$replacement_pattern" ] ; then
+			# Do not insist too much on changes already performed:
+			if grep -e "$replacement_pattern" $f 1>/dev/null 2>&1 ; then
 
+				echo "  (new copyright notice found in $f)"
+
+			else
+
+				#echo "replacement_pattern = '$replacement_pattern'"
 				echo "  + previous copyright notice not found in $f, best candidates:
 $res"
 			fi
