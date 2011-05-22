@@ -161,7 +161,7 @@ manage_rst_to_pdf()
 	# extension, even if there were dots in the base name):
 	tex_file=`echo $source|sed 's|\.[^\.]*$|.tex|1'`
 
-	
+
 	#echo "Docutils command: ${docutils_latex} ${docutils_pdf_opt} $source $tex_file
 
 	${docutils_latex} ${docutils_pdf_opt} $source $tex_file
@@ -178,11 +178,11 @@ manage_rst_to_pdf()
 
 	fi
 
-    if [ ! -e "${tex_file}" ] ; then
+	if [ ! -e "${tex_file}" ] ; then
 		echo "${begin_marker} Error: generated TeX file '${tex_file}' could not be found, probably due to RST errors." 1>&2
 		exit 8
 
-    fi
+	fi
 
 	# Run thrice on purpose, to fix links:
 	echo "LateX command: ${latex_to_pdf} ${latex_to_pdf_opt} ${tex_file}"
