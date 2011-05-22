@@ -10,7 +10,7 @@ if [ -z "$TRASH" ] ; then
 fi
 
 
-if [ ! -d "$TRASH" ] ; then	
+if [ ! -d "$TRASH" ] ; then
 	echo "Warning: trash directory, $TRASH, does not exist. Creating it."
 	/bin/mkdir -p "$TRASH"
 fi
@@ -20,15 +20,14 @@ echo
 if [ -n "$*" ] ; then
 	echo  "Secure deleting (moving to trash $TRASH):
 		$*"
-		
-	for f in $* ; do 
-		/bin/mv -f "$f" $TRASH 
+
+	for f in $* ; do
+		/bin/mv -f "$f" $TRASH
 	done
-	
+
 	echo "Deleting finished"
 	echo
 else
 	echo "Error: no argument specified. Usage: $USAGE"
 	exit 1
-fi	
-
+fi
