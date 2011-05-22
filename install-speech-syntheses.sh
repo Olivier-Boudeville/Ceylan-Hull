@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# To be run for example in ../Content-repository/audio/speech-synthesis.
+# To be run for example in Content-repository/audio/speech-synthesis.
 
 # Largely inspired from: http://ubuntuforums.org/showthread.php?t=751169
 
@@ -74,9 +74,9 @@ sudo mv lib/hts.scm /usr/share/festival/hts.scm
 echo " Available voices are: "
 /bin/ls /usr/share/festival/voices/*
 
-echo "Check with the (voice.list) interactive command."
+echo "Check with the '(voice.list)' interactive command."
 
-# We should end up with:
+# We should end up with:
 #festival> (voice.list)
 #(nitech_us_awb_arctic_hts
 # nitech_us_rms_arctic_hts
@@ -97,7 +97,3 @@ echo "Check with the (voice.list) interactive command."
 # cmu_us_jmk_arctic_clunits
 # don_diphone
 # cmu_us_bdl_arctic_clunits)
-
-
-
-
