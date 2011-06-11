@@ -8,10 +8,9 @@ erlang_version="R14B03"
 erlang_md5="7979e662d11476b97c462feb7c132fb7"
 
 
-usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh Erlang version in specified base directory (if any), or in default directory, and adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
+usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh $erlang_version Erlang version in specified base directory (if any), or in default directory, and in this case adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
 
 Note that, if relevant archives are found in the current directory, they will be used, even if the user did not specify a 'no download' option.
-
 
 If no base install directory is specified, then, if this script is run by root, Erlang will be installed into /usr/local (i.e. system-wide), otherwise it will be installed into ~/Software/Erlang/Erlang-${erlang_version}/.
 
@@ -27,7 +26,7 @@ Example:
 	will install latest available version of Erlang, with its documentation, in the ~/Software/Erlang directory, without downloading anything,
 	  - or -
   install-erlang.sh --doc-install ~/my-directory
-	will install current official stable version of Erlang, with its documentation, in the ~/my-directory/Erlang/Erlang-${erlang_version} base directory, by downloading Erlang archives from the Internet
+	will install current official stable version of Erlang ($erlang_version), with its documentation, in the ~/my-directory/Erlang/Erlang-${erlang_version} base directory, by downloading Erlang archives from the Internet
 
 For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev openssl libssl-dev', otherwise for example the crypto module might not be available.
 "
@@ -94,7 +93,7 @@ while [ $token_eaten -eq 0 ] ; do
 
 		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
 
-        # Comment the next three lines if not using the beta:
+		# Comment the next three lines if not using the beta:
 
 		#echo "Warning: using latest beta (non stable) version of Erlang."
 		#erlang_version="R14A"
