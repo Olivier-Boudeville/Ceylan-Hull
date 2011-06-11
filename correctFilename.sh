@@ -37,7 +37,7 @@ fi
 
 
 
-CORRECTED_NAME=`echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g'| ${SED} 's|î|i|g'| ${SED} 's|û|u|g'| ${SED} 's|ô|o|g' | ${SED} "s|'|-|g " | ${SED} 's|--|-|g'`
+CORRECTED_NAME=`echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g'| ${SED} 's|î|i|g'| ${SED} 's|û|u|g'| ${SED} 's|ô|o|g'| ${SED} 's|(||g'| ${SED} 's|)||g' | ${SED} "s|'|-|g " | ${SED} 's|--|-|g'`
 
 
 #echo "Corrected name is: <${CORRECTED_NAME}>"
