@@ -218,6 +218,10 @@ findSupplementaryShellTools()
 	findTool bunzip2 $1
 	BUNZIP2=$returnedString
 
+	# Obtained with 'apt-get install xz-utils':
+	findTool xz $1
+	XZ=$returnedString
+
 	findTool ping $1
 	PING=$returnedString
 
@@ -227,7 +231,7 @@ findSupplementaryShellTools()
 	findTool patch $1
 	PATCH=$returnedString
 
-	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, PING = $PING, SLEEP = $SLEEP, PATCH = $PATCH"
+	DEBUG "AWK = $AWK, TAR = $TAR, GUNZIP = $GUNZIP, BUNZIP2 = $BUNZIP2, XZ = $XZ, PING = $PING, SLEEP = $SLEEP, PATCH = $PATCH"
 
 }
 
