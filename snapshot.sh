@@ -29,27 +29,26 @@ fi
 
 
 target_dir="$1"
-  
+
 if [ ! -d "$target_dir" ] ; then
 
 	echo "Error, specified directory ($target_dir) does not exist. $USAGE." 1>&2
 	exit 6
 
 fi
-  
+
 date=`date "+%Y%m%d"`
 
-archive_name="$date-"`basename $target_dir`"-snapshot.tar.bz2"
+archive_name="$date-"`basename $target_dir`"-snapshot.tar.xz"
 #echo "archive_name = $archive_name"
 
-tar cvjf "$archive_name" "$target_dir" 
+tar cvJf "$archive_name" "$target_dir"
 
 if [ ! $? -eq 0 ] ; then
-	
+
 	echo "Error, archive creation failed." 1>&2
 	exit 7
-	
-fi
-	
-$crypt_tool "$archive_name" && echo "Snapshot file $archive_name.gpg is ready!"
 
+fi
+
+$crypt_tool "$archive_name" && echo "Snapshot file $archive_name.gpg is ready!"
