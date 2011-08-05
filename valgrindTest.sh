@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Created as a more complete solution than:
+# valgrind --leak-check=full --show-reachable=yes  ./my-exec
+
+
 RM=/bin/rm
 
 shell_location=`dirname $0`
