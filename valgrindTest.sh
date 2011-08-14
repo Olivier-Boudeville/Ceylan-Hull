@@ -127,11 +127,18 @@ fi
 
 
 
-#valgrind_options="--tool=memcheck --leak-check=full --show-reachable=yes --num-callers=6 --trace-children=yes --log-file=`basename $target`-%p-valgrind.log"
+# Most usual settings showing only direct MLK (does not take into account still
+# reachable blocks, which are often too numerous):
+#valgrind_options="--tool=memcheck --leak-check=full --log-file=${valgrind_log_file} -q ${suppression_opt} $generate_suppression_opt"
 
+
+# Same as previous settings, but shows still-reachable blocks:
 valgrind_options="--tool=memcheck --leak-check=full --show-reachable=yes --log-file=${valgrind_log_file} -q ${suppression_opt} $generate_suppression_opt"
 
-#valgrind_options=""
+
+#valgrind_options="--tool=memcheck --leak-check=full --show-reachable=yes --num-callers=6 --trace-children=yes --log-file=`basename $target`-%p-valgrind.log"
+
+
 
 #valgrind_advanced_options="--verbose"
 valgrind_advanced_options=""
