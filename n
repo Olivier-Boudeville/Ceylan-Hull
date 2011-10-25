@@ -68,6 +68,8 @@ standalone=1
 chooseJedit()
 {
 
+	#echo " - choosing jedit"
+
 	if [ -x "${JEDIT}" ] ; then
 		EDITOR="${JEDIT}"
 		EDITOR_SHORT_NAME="jedit"
@@ -79,6 +81,8 @@ chooseJedit()
 
 chooseNedit()
 {
+
+	#echo " - choosing nedit"
 
 	# nedit:
 
@@ -114,12 +118,14 @@ chooseNedit()
 
 
 
-# For the *emacs, we use a window width of 83 instead of 80 to compensate
-# for the line numbers. However the length of that number depends on the
-# number of lines (ex: more than 1000 lines implies 4 digits on the left).
+# For the *emacs, we use a window width of 83 instead of 80 to compensate for
+# the line numbers. However the length of that number depends on the number of
+# lines (ex: more than 1000 lines implies 4 digits on the left).
 
 chooseXemacs()
 {
+
+	#echo " - choosing xemacs"
 
 	# xemacs:
 
@@ -134,6 +140,8 @@ chooseXemacs()
 
 chooseEmacs()
 {
+
+	#echo " - choosing emacs"
 
 	# emacs: (allows, if no emacs server is running, to run a standalone emacs
 	# instead, which itself will be a server thanks to its '(server-start)'
@@ -168,6 +176,10 @@ autoSelectEditor()
 	EDITOR_SHORT_NAME=""
 
 	MULTI_WIN=1
+
+	#echo "do_X = $do_X"
+	#echo "prefer_emacs = $prefer_emacs"
+	#echo "prefer_nedit = $prefer_nedit"
 
 
 	if [ "${do_X}" -eq 0 ] ; then
@@ -339,16 +351,16 @@ fi
 
 
 if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
-	prefer_emacs=1
-	prefer_nedit=0
+	prefer_emacs=0
+	prefer_nedit=1
 	echo "(requested to prefer emacs over other editors)"
 	shift
 fi
 
 
 if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
-	prefer_emacs=0
-	prefer_nedit=1
+	prefer_emacs=1
+	prefer_nedit=0
 	echo "(requested to prefer nedit over other editors)"
 	shift
 fi
