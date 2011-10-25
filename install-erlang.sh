@@ -3,9 +3,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R14B03"
+erlang_version="R14B04"
 
-erlang_md5="7979e662d11476b97c462feb7c132fb7"
+erlang_md5="4b469729f103f52702bfb1fb24529dc0"
 
 
 usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh $erlang_version Erlang version in specified base directory (if any), or in default directory, and in this case adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
