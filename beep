@@ -1,9 +1,0 @@
-#!/bin/bash
-
-
-printf "\007"
-printf "\007"
-printf "\007"
-
-
-
