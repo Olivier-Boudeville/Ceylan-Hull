@@ -10,13 +10,29 @@
 # Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14 (article
 # written by Christophe Grenier, grenier@cgsecurity.org)
 
+# So that Debian does not complain when put in /etc/init.d:
+
+### BEGIN INIT INFO
+# Provides:             iptables_secured_for_esperide
+# Required-Start:
+# Required-Stop:
+# Default-Start:        2 3 4 5
+# Default-Stop:
+# Short-Description:    Iptables set for a secured Esperide server
+### END INIT INFO
+
+set -e
+
+
+. /lib/lsb/init-functions
+
 # To debug this kind of firewall script, one may use:
 # sh -x /path/to/this/file
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date: s is for server (log prefix must be shorter than
 # 29 characters):
-version="s-8"
+version="s-9"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
