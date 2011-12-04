@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # To be preferably declared in root crontab (crontab -e), as from
-# /etc/cron.weekly it does not seem to be executed.
+# /etc/cron.weekly it never seems to be executed.
 
 # Ex:
 # Each Tuesday (2), at 3:17 AM (in the night), update the distro:
@@ -9,9 +9,8 @@
 
 
 
-USAGE="Usage: "`basename $0`": script to be placed in a cron directory (ex: /etc/cron.weekly/), so that the system is regularly 
-and automatically updated. Some regular maintenance by hand is to be performed though, in the case some packages require special 
-settings, and for dist-upgrade. Ensure you have a local mirror in /etc/apt/sources.list, not to load too much main servers."
+USAGE="Usage: "`basename $0`": script to be declared in a crontab entry or placed in a cron directory (ex: /etc/cron.weekly/), so that the system is regularly and automatically updated. Some regular maintenance by hand is to be performed though, in the case some packages require special settings, and for dist-upgrade. Ensure you have a local mirror in /etc/apt/sources.list, not to load too much main servers."
+
 
 # PATH can apparently be garbled by cron:
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -39,15 +38,15 @@ date=`LANG= date`
 if [ $res -eq 0 ] ; then
 
 	# Success:
-	
+
 	touch "$log_dir/debian-update-last-success.timestamp"
 
 	# Log file still there.
-	
+
 else
 
 	# Failure:
-	
+
 	touch "$log_dir/debian-update-last-failure.timestamp"
 
 	subject="["`hostname`"] System update notification"
@@ -55,7 +54,7 @@ else
 	host=`hostname`
 
 	mail_file="$HOME/debian-update-last-error.txt"
-	
+
 	echo "System update triggered an error on $host at $date:" > $mail_file
 
 	cat ${log_file} >> $mail_file
@@ -65,5 +64,3 @@ else
 	# Log file still there too.
 
 fi
-
-
