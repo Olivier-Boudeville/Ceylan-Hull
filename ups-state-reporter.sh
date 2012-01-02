@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# This script is to be called automatically by nut (upsmon) whenever the 
-# state of the UPS changes: a mail will then be sent to notify it.
+# This script is to be called automatically by nut (upsmon) whenever the state
+# of the UPS changes: a mail will then be sent to notify it.
 
 # NUT and ups* must be correctly setup.
 # Should be referenced from /etc/nut/upsmon.conf with an enabled daemon.
@@ -35,4 +35,3 @@ subject="["`hostname`"] UPS notification"
 cat ${TEMP_MAIL} | /usr/bin/mail -s "$subject" $ups_notification_address
 
 /bin/rm -f ${TEMP_MAIL}
-
