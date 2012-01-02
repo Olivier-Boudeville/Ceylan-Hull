@@ -38,7 +38,7 @@ $USAGE" 1>&2
 
 fi
 
-photos=`find . -name '*.JPG'`
+photos=`find . -iname '*.JPG'`
 
 #echo "photos = $photos"
 
@@ -57,12 +57,24 @@ echo "  Renaming now snapshots bearing old prefix '$old_prefix' into ones with n
 for f in $photos; do
 
 	chmod -x $f
-	/bin/mv $f `echo $f | sed 's|.JPG$|.jpeg|1' | sed "s|$old_prefix|$date-$new_prefix-|1"`
+	# 'I' means 'case insensitive' as 'JPG' *and* 'jpg' are interesting us:
+	target_file=`echo $f | sed 's|.JPG$|.jpeg|1' | sed "s|$old_prefix|$date-$new_prefix-|1"`
 
-	if [ ! $? -eq 0 ] ; then
-		echo "Error, renaming failed." 1>&2
-		exit 10
+	if [ "$f" = "$target_file" ] ; then
+
+		echo "  ('$f' name left as is by renaming rule)"
+
+	else
+
+		/bin/mv "$f" "$target_file"
+
+		if [ ! $? -eq 0 ] ; then
+			echo "Error, renaming failed." 1>&2
+			exit 10
+		fi
+
 	fi
+
 
 done
 
