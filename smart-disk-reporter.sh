@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# This script is to be called automatically by smartmontools whenever the 
-# state of a disk changes: a mail will then be sent to notify it.
+# This script is to be called automatically by smartmontools whenever the state
+# of a disk changes: a mail will then be sent to notify it.
 
 # SMART must be enabled.
-# Should be referenced from /etc/SMARTD.conf with an enabled daemon.
+# Should be referenced from /etc/smartd.conf with an enabled daemon.
 
 
 # More infos:
@@ -28,11 +28,17 @@ echo "Date of first error: $SMARTD_TFIRST" >> ${TEMP_MAIL}
 
 echo "
 Complete diagnosis follows:" >> ${TEMP_MAIL}
-/usr/sbin/smartctl -a -d $SMARTD_DEVICETYPE $SMARTD_DEVICE >> ${TEMP_MAIL}
+
+# So that "/dev/sdc [SAT]" becomes just ""/dev/sdc":
+SHORT_DEVICE=`echo $SMARTD_DEVICE | sed 's| \[.*$||1'`
+
+# To debug:
+#echo "Command: /usr/sbin/smartctl -a -d $SMARTD_DEVICETYPE $SHORT_DEVICE" >> ${TEMP_MAIL}
+
+/usr/sbin/smartctl -a -d $SMARTD_DEVICETYPE $SHORT_DEVICE >> ${TEMP_MAIL}
 
 subject="["`hostname`"] $SMARTD_SUBJECT"
 
 cat ${TEMP_MAIL} | /usr/bin/mail -s "$subject" $SMARTD_ADDRESS
 
 /bin/rm -f ${TEMP_MAIL}
-
