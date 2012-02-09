@@ -1,14 +1,22 @@
 #!/bin/sh
 
+# Copyright (C) 2009-2012 Olivier Boudeville
+#
+# This file is part of the Ceylan Erlang library.
+
+
 LANG=C; export LANG
 
 
-erlang_version="R14B04"
+erlang_version="R15B"
 
-erlang_md5="4b469729f103f52702bfb1fb24529dc0"
+erlang_md5="dd6c2a4807551b4a8a536067bde31d73"
+
+plt_file="Erlang-$erlang_version.plt"
+plt_link="Erlang.plt"
 
 
-usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-n|--no-download] [<base install directory>]: downloads, builds and installs a fresh $erlang_version Erlang version in specified base directory (if any), or in default directory, and in this case adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
+usage="Usage: "`basename $0`" [-h|--help] [-c|--cutting-edge] [-d|--doc-install] [-g|--generate-plt] [-n|--no-download] [-np|--no-patch] [<base install directory>]: downloads, patches, builds and installs a fresh $erlang_version Erlang version in specified base directory (if any), or in default directory, and in this case adds a symbolic link pointing to it from its parent directory so that Erlang-current-install always points to the latest installed version.
 
 Note that, if relevant archives are found in the current directory, they will be used, even if the user did not specify a 'no download' option.
 
@@ -19,10 +27,13 @@ If a base install directory MY_DIR is specified, then Erlang will be installed i
 Options:
 	-c or --cutting-edge: use, instead of the latest stable Erlang version, the latest beta version, if any
 	-d or --doc-install: download and install the corresponding documentation as well
+	-g or --generate-plt: generate the PLT file ($plt_file) for Dialyzer corresponding to this Erlang/OTP install
 	-n or --no-download: do not attempt to download anything, expect that needed files are already available (useful if not having a direct access to the Internet)
+	-np or --no-patch: disable the automatic patching we make use of
+
 
 Example:
-  install-erlang.sh --cutting-edge --doc-install --no-download
+  install-erlang.sh --cutting-edge --doc-install --no-download --generate-plt
 	will install latest available version of Erlang, with its documentation, in the ~/Software/Erlang directory, without downloading anything,
 	  - or -
   install-erlang.sh --doc-install ~/my-directory
@@ -38,11 +49,18 @@ do_download=0
 # By default, will not manage the documentation:
 do_manage_doc=1
 
+# By default, will not generate the PLT file:
+do_generate_plt=1
+
 # By default, use an installation prefix:
 use_prefix=0
 
-# By default, the Erlang build tree will be removed:
-do_remove_build_tree=0
+# By default, the Erlang sources will be patched to better suit our use:
+do_patch=0
+
+
+# By default, the Erlang build tree will not be removed (more convenient):
+do_remove_build_tree=1
 
 
 erlang_download_location="http://erlang.org/download"
@@ -113,6 +131,13 @@ while [ $token_eaten -eq 0 ] ; do
 
 	fi
 
+	if [ "$1" = "-g" -o "$1" = "--generate-plt" ] ; then
+
+		echo "Will generate the PLT file $plt_file for Dialyzer."
+		do_generate_plt=0
+		token_eaten=0
+
+	fi
 
 	if [ "$1" = "-n" -o "$1" = "--no-download" ] ; then
 
@@ -122,6 +147,14 @@ while [ $token_eaten -eq 0 ] ; do
 
 	fi
 
+
+	if [ "$1" = "-np" -o "$1" = "--no-patch" ] ; then
+
+		echo "No patch will be applied to the Erlang sources."
+		do_patch=1
+		token_eaten=0
+
+	fi
 
 	if [ -n "$read_parameter" ] ; then
 		shift
@@ -146,6 +179,7 @@ if [ -z "$read_parameter" ] ; then
 	   echo "Run as root, thus using default system installation directory."
 
    else
+
 	   prefix="$HOME/Software/Erlang/Erlang-${erlang_version}"
 	   echo "Not run as root, thus using default installation directory '$prefix'."
 
@@ -161,7 +195,7 @@ fi
 
 #echo "do_download = $do_download"
 #echo "do_manage_doc = $do_manage_doc"
-
+#echo "do_generate_plt = $do_generate_plt"
 
 
 erlang_src_prefix="otp_src_${erlang_version}"
@@ -172,12 +206,30 @@ erlang_doc_prefix="otp_doc_html_${erlang_version}"
 erlang_doc_archive="${erlang_doc_prefix}.tar.gz"
 
 
+# Some early checkings:
+
 if [ ! -e "/usr/include/ncurses.h" ] ; then
 
 	echo "  Error, the libncurses headers cannot be found, whereas they are needed for the build.
 Use for instance 'apt-get install libncurses5-dev' (other packages should preferably be also installed beforehand, refer to the help message displayed thanks to the -h option)." 1>&2
 
 	exit 5
+
+fi
+
+
+if [ $do_patch -eq 0 ] ; then
+
+	patch_tool=`which patch`
+
+	if [ ! -x "$patch_tool" ] ; then
+
+		echo "  Error, the patching of the Erlang sources was requested, but the 'patch' utility cannot be found on this system. Either install it (ex: 'apt-get install patch') or use the --no-patch option." 1>&2
+
+		exit 6
+
+	fi
+
 fi
 
 
@@ -316,6 +368,10 @@ else
 
 	echo "Erlang version ${erlang_version} will be installed in the system tree."
 
+	# Nevertheless some cleaning is to be performed, otherwise Dialyzer may
+	# catch mutltiple versions of the same BEAM:
+	/bin/rm -rf /usr/local/lib/erlang
+
 fi
 
 
@@ -331,6 +387,54 @@ initial_path=`pwd`
 # Starting from the source tree:
 
 cd otp_src_${erlang_version}
+
+
+if [ $do_patch -eq 0 ] ; then
+
+	echo "Patching first the Erlang sources."
+
+	cd lib/kernel/src
+
+	# Patch effects:
+	#
+	# - in lib/kernel/src/auth.erl, set a 30-second time-out for get_cookie
+	# requests instead of the default 5 seconds, otherwise a time-out may
+	# occur if using a few dozens of nodes:
+	# "{timeout,{gen_server,call,[auth,{get_cookie,'SOME_NODE..."
+
+	# First, generate the patch file with an "Here Document":
+	(
+		cat <<End-of-script
+--- auth.erl    2011-06-23 13:32:45.557984017 +0200
++++ auth.erl-fixed      2011-06-23 13:32:45.557984017 +0200
+@@ -106,7 +106,7 @@
+ get_cookie(_Node) when node() =:= nonode@nohost ->
+	 nocookie;
+ get_cookie(Node) ->
+-    gen_server:call(auth, {get_cookie, Node}).
++    gen_server:call(auth, {get_cookie, Node}, 30000).
+
+ -spec set_cookie(Cookie :: cookie()) -> 'true'.
+
+End-of-script
+
+	) > ceylan-auth.patch
+
+	$patch_tool -p0 < ceylan-auth.patch
+
+	if [ ! $? -eq 0 ] ; then
+
+		echo "Error, the patching of Erlang sources (auth.erl) failed." 1>&2
+
+		exit 55
+
+	fi
+
+	/bin/rm -f ceylan-auth.patch
+
+	cd ../../..
+
+fi
 
 
 # See also:
@@ -356,8 +460,7 @@ echo "  Building Erlang environment..." && ./configure ${configure_opt} ${prefix
 
 if [ $? -eq 0 ] ; then
 
-	echo "  Erlang successfully built and installed in ${prefix}.
-The build tree, in the otp_src_${erlang_version} directory, can be safely removed."
+	echo "  Erlang successfully built and installed in ${prefix}."
 
 else
 
@@ -448,3 +551,64 @@ fi
 
 echo
 echo "The Erlang environment was successfully installed in ${prefix}."
+
+
+if [ $do_generate_plt -eq 0 ] ; then
+
+	actual_plt_file="${prefix}/$plt_file"
+	actual_plt_link="${prefix}/$plt_link"
+
+	if [ $use_prefix -eq 1 ] ; then
+
+		prefix="/usr/local"
+
+	fi
+
+	dialyzer_exec="${prefix}/bin/dialyzer"
+	erlang_beam_root="${prefix}/lib/erlang"
+
+	cd $prefix
+
+
+	if [ ! -x "$dialyzer_exec" ] ; then
+
+		echo "  Error, no executable dialyzer found (tried '$dialyzer_exec'), quitting." 1>&2
+		exit 75
+
+	fi
+
+
+	if [ ! -d "$erlang_beam_root" ] ; then
+
+		echo "  Error, root of Erlang BEAMs not found (tried '$erlang_beam_root'), quitting." 1>&2
+		exit 80
+
+	fi
+
+
+	echo
+
+	#echo "Generating now a PLT file for that Erlang install (from $erlang_beam_root), in $actual_plt_file (using $dialyzer_exec). Note that this operation is generally quite long (ex: about one hour and a half)."
+
+	# Less detailed:
+	echo "Generating now a PLT file for that Erlang install in $actual_plt_file . Note that this operation is generally quite long (ex: about one hour and a half)."
+
+	$dialyzer_exec --build_plt -r $erlang_beam_root --output_plt $actual_plt_file
+	res=$?
+
+	if [ $res -eq 0 ] ; then
+		echo "The Erlang PLT file was successfully generated."
+	elif [ $res -eq 2 ] ; then
+		echo "The Erlang PLT file was generated, but warnings were issued."
+	else
+		echo "  Error, the PLT generation failed (error code: $res)." 1>&2
+		exit 90
+	fi
+
+	# To include a PLT without knowing the current Erlang version:
+	ln -s $actual_plt_file $actual_plt_link
+
+fi
+
+echo "
+If wanting to generate a list of all the declared types in this Erlang distribution, and if having the 'Common' package, you can run: 'cd common ; make generate-list-of-erlang-types ERLANG_SOURCE_ROOT=${initial_path}/otp_src_${erlang_version}'."
