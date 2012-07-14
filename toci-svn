@@ -1,16 +1,28 @@
 #!/bin/sh
 
-USAGE=`basename $0`"[-l|--long]: describes recursively from current directory what files are not in up-to-date state regarding the SVN repository.
-The -l/--long option will display elements that are not versioned or ignored."
+# Now by default we use the longer form.
 
-short=0
+# [-l|--long]
+# The -l/--long option will display elements that are not versioned or ignored."
 
-if [ "$1" = "-l" ] || [ "$1" = "--long" ] ; then
+USAGE=`basename $0`" [-s|--short]: describes recursively from current directory what files are not in up-to-date state regarding the SVN repository.
+The -s/--short option will display elements that are not versioned or that are ignored."
 
-	short=1
+
+#short=0
+
+#if [ "$1" = "-l" ] || [ "$1" = "--long" ] ; then
+
+#	short=1
+
+#fi
+
+short=1
+if [ "$1" = "-s" ] || [ "$1" = "--short" ] ; then
+
+	short=0
 
 fi
-
 
 # When having something like 'A  +   my-file.txt', breaks the structure:
 OUTPUT=`svn status --no-ignore 2>/dev/null|sed 's|+| |1'`
@@ -44,7 +56,7 @@ EXTERNALDEF=$(echo "${OUTPUT}" | grep '^X' | awk '{print $2}')
 
 
 UNKNOWN=$(echo "${OUTPUT}" | grep '^?' | awk '{print $2}')
-
+#echo "UNKNOWN = ${UNKNOWN}"
 
 INCOMPLETE=$(echo "${OUTPUT}" | grep '^!' | awk '{print $2}')
 
