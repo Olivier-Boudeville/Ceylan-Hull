@@ -68,8 +68,6 @@ standalone=1
 chooseJedit()
 {
 
-	#echo " - choosing jedit"
-
 	if [ -x "${JEDIT}" ] ; then
 		EDITOR="${JEDIT}"
 		EDITOR_SHORT_NAME="jedit"
@@ -81,8 +79,6 @@ chooseJedit()
 
 chooseNedit()
 {
-
-	#echo " - choosing nedit"
 
 	# nedit:
 
@@ -118,14 +114,12 @@ chooseNedit()
 
 
 
-# For the *emacs, we use a window width of 83 instead of 80 to compensate for
-# the line numbers. However the length of that number depends on the number of
-# lines (ex: more than 1000 lines implies 4 digits on the left).
+# For the *emacs, we use a window width of 83 instead of 80 to compensate
+# for the line numbers. However the length of that number depends on the
+# number of lines (ex: more than 1000 lines implies 4 digits on the left).
 
 chooseXemacs()
 {
-
-	#echo " - choosing xemacs"
 
 	# xemacs:
 
@@ -141,11 +135,10 @@ chooseXemacs()
 chooseEmacs()
 {
 
-	#echo " - choosing emacs"
+	# emacs: (allows, if no emacs server is running, to run a standalone
+	# emacs instead, which itself will be a server thanks to its
+	# '(server-start)' configuration.
 
-	# emacs: (allows, if no emacs server is running, to run a standalone emacs
-	# instead, which itself will be a server thanks to its '(server-start)'
-	# configuration.
 
 	if [ -x "${EMACS}" ] ; then
 
@@ -176,10 +169,6 @@ autoSelectEditor()
 	EDITOR_SHORT_NAME=""
 
 	MULTI_WIN=1
-
-	#echo "do_X = $do_X"
-	#echo "prefer_emacs = $prefer_emacs"
-	#echo "prefer_nedit = $prefer_nedit"
 
 
 	if [ "${do_X}" -eq 0 ] ; then
@@ -236,12 +225,6 @@ autoSelectEditor()
 		return
 	fi
 
-	# No graphical editor matched, trying console ones:
-
-	if [ $prefer_emacs -eq 0 ] ; then
-		chooseEmacs
-		return
-	fi
 
 	if [ -x "${NANO}" ] ; then
 		EDITOR="${NANO}"
@@ -276,6 +259,24 @@ applyEditor()
 
 	# Open the files in parallel or sequentially:
 	for f in ${PARAMETERS}; do
+
+		if [ ! -f "$f" ] ; then
+
+			# Sometimes a filename followed by some garbage is specified
+			# (ex: a regrep might return "class_X.erl:construct");
+			# Here we try to fix the filename:
+
+			new_f=`echo "$f"| sed 's|:.*$||1' `
+
+			if [ -f "$new_f" ] ; then
+
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+
+				   f=$new_f
+
+			fi
+
+		fi
 
 		if [ -z "${DISPLAY}" ] ; then
 			echo "    Opening $f with ${EDITOR_SHORT_NAME} (no DISPLAY set)"
@@ -322,7 +323,6 @@ displayEditors()
 	echo "NANO          = ${NANO}"
 	echo "VIM           = ${VIM}"
 	echo "VI            = ${VI}"
-	echo "EMACS         = ${EMACS}"
 	echo "XEMACS        = ${XEMACS}"
 	echo
 
@@ -351,16 +351,16 @@ fi
 
 
 if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
-	prefer_emacs=0
-	prefer_nedit=1
+	prefer_emacs=1
+	prefer_nedit=0
 	echo "(requested to prefer emacs over other editors)"
 	shift
 fi
 
 
 if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
-	prefer_emacs=1
-	prefer_nedit=0
+	prefer_emacs=0
+	prefer_nedit=1
 	echo "(requested to prefer nedit over other editors)"
 	shift
 fi
