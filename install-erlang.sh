@@ -8,9 +8,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R15B"
+erlang_version="R15B03-1"
 
-erlang_md5="dd6c2a4807551b4a8a536067bde31d73"
+erlang_md5="eccd1e6dda6132993555e088005019f2"
 
 plt_file="Erlang-$erlang_version.plt"
 plt_link="Erlang.plt"
@@ -39,7 +39,7 @@ Example:
   install-erlang.sh --doc-install ~/my-directory
 	will install current official stable version of Erlang ($erlang_version), with its documentation, in the ~/my-directory/Erlang/Erlang-${erlang_version} base directory, by downloading Erlang archives from the Internet
 
-For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install gcc make libncurses5-dev openssl libssl-dev', otherwise for example the crypto module might not be available.
+For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install g++ make libncurses5-dev openssl libssl-dev libwxgtk2.8-dev libgl1-mesa-dev libglu1-mesa-dev libpng3', otherwise for example the crypto, wx or observer modules might not be available or usable.
 "
 
 # By default, will download files:
@@ -197,7 +197,6 @@ fi
 #echo "do_manage_doc = $do_manage_doc"
 #echo "do_generate_plt = $do_generate_plt"
 
-
 erlang_src_prefix="otp_src_${erlang_version}"
 erlang_src_archive="${erlang_src_prefix}.tar.gz"
 
@@ -352,11 +351,25 @@ else
 
 fi
 
+# Sometimes, we have versions for urgent bugfixing (ex: R15B03-1 instead of
+# R15B03). In this case the archive is named 'otp_src_R15B03-1.tar.gz' but it
+# contains a root directory named only 'otp_src_R15B03'.  So if
+# erlang_src_prefix="otp_src_R15B03-1" then
+# erlang_extracted_prefix="otp_src_R15B03":
+erlang_extracted_prefix=`echo "${erlang_src_prefix}" | sed 's|-[0-9]*$||'`
+
 if [ $use_prefix -eq 0 ] ; then
 
 	echo "Erlang version ${erlang_version} will be installed in ${prefix}."
 
 	mkdir -p ${prefix}
+
+	# Removes any previous extracted directory, renamed or not:
+	if [ -e "${erlang_extracted_prefix}" ] ; then
+
+		/bin/rm -rf "${erlang_extracted_prefix}"
+
+	fi
 
 	if [ -e "${erlang_src_prefix}" ] ; then
 
@@ -369,7 +382,7 @@ else
 	echo "Erlang version ${erlang_version} will be installed in the system tree."
 
 	# Nevertheless some cleaning is to be performed, otherwise Dialyzer may
-	# catch mutltiple versions of the same BEAM:
+	# catch multiple versions of the same BEAM:
 	/bin/rm -rf /usr/local/lib/erlang
 
 fi
@@ -384,9 +397,25 @@ fi
 
 initial_path=`pwd`
 
+# Corrects any extracted root directory, like 'R15B03' instead of 'R15B03-1':
+if [ ! -d "${erlang_src_prefix}" ] ; then
+
+	if [ -d "${erlang_extracted_prefix}" ] ; then
+
+		/bin/mv -f ${erlang_extracted_prefix} ${erlang_src_prefix}
+
+	else
+
+		echo "  Error, no extracted directory (${erlang_extracted_prefix}) found." 1>&2
+		exit 60
+
+	fi
+
+fi
+
 # Starting from the source tree:
 
-cd otp_src_${erlang_version}
+cd ${erlang_src_prefix}
 
 
 if [ $do_patch -eq 0 ] ; then
@@ -540,7 +569,7 @@ fi
 
 if [ $do_remove_build_tree -eq 0 ] ; then
 
-	/bin/rm -rf ${initial_path}/otp_src_${erlang_version}
+	/bin/rm -rf ${initial_path}/${erlang_src_prefix}
 
 else
 
@@ -591,7 +620,7 @@ if [ $do_generate_plt -eq 0 ] ; then
 	#echo "Generating now a PLT file for that Erlang install (from $erlang_beam_root), in $actual_plt_file (using $dialyzer_exec). Note that this operation is generally quite long (ex: about one hour and a half)."
 
 	# Less detailed:
-	echo "Generating now a PLT file for that Erlang install in $actual_plt_file . Note that this operation is generally quite long (ex: about one hour and a half)."
+	echo "Generating now a PLT file for that Erlang install in $actual_plt_file. Note that this operation is generally quite long (ex: about one hour and a half)."
 
 	$dialyzer_exec --build_plt -r $erlang_beam_root --output_plt $actual_plt_file
 	res=$?
@@ -606,9 +635,9 @@ if [ $do_generate_plt -eq 0 ] ; then
 	fi
 
 	# To include a PLT without knowing the current Erlang version:
-	ln -s $actual_plt_file $actual_plt_link
+	/bin/ln -s $actual_plt_file $actual_plt_link
 
 fi
 
 echo "
-If wanting to generate a list of all the declared types in this Erlang distribution, and if having the 'Common' package, you can run: 'cd common ; make generate-list-of-erlang-types ERLANG_SOURCE_ROOT=${initial_path}/otp_src_${erlang_version}'."
+If wanting to generate a list of all the declared types in this Erlang distribution, and if having the 'Common' package, you can run: 'cd common ; make generate-list-of-erlang-types ERLANG_SOURCE_ROOT=${prefix}'."
