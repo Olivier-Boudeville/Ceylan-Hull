@@ -1,25 +1,46 @@
 #!/bin/sh
 
+# See also update-all-copyright-notices.sh for more global updates.
+
 do_debug=1
 
 #new_year=`date '+%Y'`
 
 USAGE="
-Usage: "`basename $0`" CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
+Usage: "`basename $0`" [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
 Updates the copyright notices of code of specified type found from specified root directory.
 
 CODE_TYPE is among:
   - 'C++', for *.h, *.h.in, *.cc, *.cpp files
   - 'Erlang', for *.hrl, *.erl files
 
-Ex: "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011  Foobar Ltd\"
+Ex: "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
 This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 2008-2011 Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 
-Note that if PREVIOUS_NOTICE contains characters that are specifial for Regular Expressions, they must be appropriately escaped.
+Note that if PREVIOUS_NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Ex for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011  Foobar R\&D Ltd\"
+Example for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
+
 "
 
+be_quiet=1
+
+
+if [ $# -eq 5 ] ; then
+
+	if [ $1 = "--quiet" ] ; then
+
+		be_quiet=0
+		shift
+
+	else
+
+		echo "  Error, unknown '$1' option. $USAGE" 1>&2
+		exit 2
+
+	fi
+
+fi
 
 
 if [ ! $# -eq 4 ] ; then
@@ -163,19 +184,19 @@ for f in $target_files ; do
 
 		if [ -z "$res" ] ; then
 
-			echo "  + no copyright notice at all found in $f"
+			[ $be_quiet -eq 1 ] && echo "  + no copyright notice at all found in $f"
 
 		else
 
 			# Do not insist too much on changes already performed:
 			if grep -e "$replacement_pattern" $f 1>/dev/null 2>&1 ; then
 
-				echo "  (new copyright notice found in $f)"
+				echo "  (latest copyright notice found in $f)"
 
 			else
 
 				#echo "replacement_pattern = '$replacement_pattern'"
-				echo "  + previous copyright notice not found in $f, best candidates:
+				[ $be_quiet -eq 1 ] && echo "  + previous copyright notice not found in $f, best candidates:
 $res"
 			fi
 
