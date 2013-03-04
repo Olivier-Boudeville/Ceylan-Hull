@@ -13,10 +13,15 @@
 # To debug this kind of firewall script, one may use:
 # sh -x /path/to/this/file
 
+# This script is meant to be copied in /etc/init.d, and to be the target of a
+# symbolic link in: cd /etc/rc2.d && ln -s ../init.d/iptables.rules-LANBox.sh
+# S24iptables.rules-LANBox
+
+
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date:
 # c is for client (log prefix must be shorter than 29 characters):
-version="c-4"
+version="c-5"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -123,7 +128,7 @@ $echo "0" > /proc/sys/net/ipv4/ip_forward
 ## First rule is to let packets through which belong to established or
 # related connections and we let all traffic out as we trust ourself.
 $iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-$iptables -A INPUT  -m state --state 	 ESTABLISHED,RELATED -j ACCEPT
+$iptables -A INPUT  -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 
 # ----------------  INPUT ---------------------
