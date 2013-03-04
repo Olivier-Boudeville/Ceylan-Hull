@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2009-2012 Olivier Boudeville
+# Copyright (C) 2009-2013 Olivier Boudeville
 #
 # This file is part of the Ceylan Erlang library.
 
@@ -8,9 +8,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R15B03-1"
+erlang_version="R16B"
 
-erlang_md5="eccd1e6dda6132993555e088005019f2"
+erlang_md5="7ee131515bc496e7522e0dec2a4c26e3"
 
 plt_file="Erlang-$erlang_version.plt"
 plt_link="Erlang.plt"
