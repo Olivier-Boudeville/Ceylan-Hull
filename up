@@ -4,7 +4,9 @@
 
 if [ -d 'CVS' ] ; then
 	cvs update -d $*
-else
+elif [ -d '.svn' ] ; then
 	svn update $*
+else
+	git pull $*
 fi
 

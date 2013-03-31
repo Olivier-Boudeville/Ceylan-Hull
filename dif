@@ -4,6 +4,8 @@
 
 if [ -d 'CVS' ] ; then
 	cvs diff $* | more
-else
+elif [ -d '.svn' ] ; then
 	svn diff $* | more
+else
+	git diff
 fi
