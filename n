@@ -397,16 +397,6 @@ if [ ${do_show} -eq 0 ] ; then
 fi
 
 
-# Deactivated for the moment:
-#EXTENSION=`echo $1| sed 's|^.*\.||1'`
-#
-#if [ "${EXTENSION}" = "erl" ] ; then
-#
-#	chooseJedit
-#	applyEditor
-#	exit 0
-#
-#fi
 
 # Assigned only here to take into account the previous shifts:
 REMAINING_PARAMETERS="$*"
@@ -436,6 +426,81 @@ if [ $standalone -eq 0 ] ; then
 	echo "(standalone mode activated)"
 
 fi
+
+
+# Default:
+MULTI_WIN=1
+
+# Deactivated for the moment:
+EXTENSION=`echo $1| sed 's|^.*\.||1'`
+#
+#if [ "${EXTENSION}" = "erl" ] ; then
+#
+#	chooseJedit
+#	applyEditor
+#	exit 0
+#
+#fi
+
+if [ "${EXTENSION}" = "pdf" ] ; then
+
+	EDITOR=`which evince`
+	EDITOR_SHORT_NAME="evince"
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${EXTENSION}" = "png" ] ; then
+
+	EDITOR=`which eog`
+	EDITOR_SHORT_NAME="eog"
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${EXTENSION}" = "jpeg" ] ; then
+
+	EDITOR=`which eog`
+	EDITOR_SHORT_NAME="eog"
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${EXTENSION}" = "html" ] ; then
+
+	EDITOR=`which firefox`
+	EDITOR_SHORT_NAME="firefox"
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4" ] ; then
+
+	EDITOR=`which mplayer`
+	EDITOR_SHORT_NAME="mplayer"
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${EXTENSION}" = "dia" ] ; then
+
+	EDITOR=`which dia`
+	EDITOR_SHORT_NAME="dia"
+	applyEditor
+	exit 0
+
+fi
+
 
 autoSelectEditor
 
