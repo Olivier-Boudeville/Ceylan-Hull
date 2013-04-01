@@ -25,18 +25,21 @@ if [ ${TOOL} = "cvs" ] ; then
 
 	echo "...done"
 
-else
-
+elif [ -d ".svn" ] ; then
+		
 	if ${TOOL} diff $target | more ; then
 
 		echo "$arrow Committing-in <$target>:"
 		${TOOL} ci $target
-
+		
 		echo "...done"
 
-	else
-		echo "Error, diff failed." 1>&2
-		exit 1
 	fi
+	
+else
 
+	git diff $target
+	echo "$arrow Committing-in <$target>:"
+	git commit $target
+	
 fi

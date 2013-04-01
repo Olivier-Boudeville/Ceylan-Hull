@@ -24,8 +24,14 @@ elif [ -d "CVS" ] ; then
 
 else
 
-	echo "Error, no CVS nor SVN information found in current directory." 1>&2
-	echo "Usage: $USAGE" 1>&2
-	exit 10
+	if [ "$1" = "-s" ] || [ "$1" = "--short" ] ; then
+		
+		git status --short --untracked-files=no
 
+	else
+		
+		git status --short --untracked-files=all
+
+	fi
+	
 fi
