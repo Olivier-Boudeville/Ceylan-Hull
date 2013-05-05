@@ -3,9 +3,19 @@
 # Select relevant version control client:
 
 if [ -d 'CVS' ] ; then
+
 	cvs diff $* | more
+
 elif [ -d '.svn' ] ; then
+
 	svn diff $* | more
+
 else
-	git diff --staged $*
+
+	# We want to compare the current working version with the commit, not with
+	# the origin:
+
+	#git diff --staged $*
+	git diff $*
+
 fi
