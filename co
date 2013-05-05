@@ -2,12 +2,11 @@
 
 # Select relevant version control client:
 
-TOOL="svn"
-
 if [ -d 'CVS' ] ; then
-	TOOL="cvs"
+	cvs co $*
+elif [ -d '.svn' ] ; then
+	svn co $*	
+else
+	git checkout $*	
 fi
-
-
-${TOOL} co
 

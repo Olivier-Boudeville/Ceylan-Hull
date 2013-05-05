@@ -7,5 +7,5 @@ if [ -d 'CVS' ] ; then
 elif [ -d '.svn' ] ; then
 	svn diff $* | more
 else
-	git diff
+	git diff --staged $*
 fi
