@@ -32,9 +32,40 @@ elif [ -d "CVS" ] ; then
 
 else
 
-	echo "Error, no CVS nor SVN repository found in current directory." 1>&2
-	echo "Usage: $USAGE" 1>&2
-	exit 10
+	# Supposing GIT here.
+
+	TOOL="git"
+
+	OUTPUT=`git status --porcelain 2>/dev/null`
+	#echo "OUTPUT = $OUTPUT"
+
+	# A problem is that, even in porcelain mode, offsets may be used to display
+	# status. For example, 'M a_file' or ' M afile' may be both used. The
+	# pattern '^ \?M' allows to include the two cases (i.e. whether or not a
+	# space has been inserted).
+	
+	ADDED=$(echo "${OUTPUT}" | grep -e '^ \?A' | awk '{print $2}')
+	#echo "ADDED = $ADDED"
+	
+	MODIFIED=$(echo "${OUTPUT}" | grep '^ \?M' | awk '{print $2}')
+	#echo "MODIFIED= $MODIFIED"
+
+	DELETED=$(echo "${OUTPUT}" |  grep -e '^ \?D' | awk '{print $2}')
+	#echo "DELETED= $DELETED"
+
+	UNKNOWN=$(echo "${OUTPUT}" | grep -e '^ \?M' | awk '{print $2}')
+	#echo "UNKNOWN= $UNKNOWN"
+	
+fi
+
+
+# In porcelain mode, all paths are relative to the root of the repository, we must thus go there:
+relative_to_root=$(git rev-parse --show-cdup)
+
+# (empty string is already there)
+if [ -n "${relative_to_root}" ] ; then
+
+	cd "${relative_to_root}"
 
 fi
 
@@ -44,11 +75,13 @@ if [ -n "${ADDED}" ] ; then
 	echo "####### Added file(s): ${ADDED}"
 
 	for f in ${ADDED} ; do
+		
 		echo
 		echo " + content of $f: "
 		echo
 		more $f
 		${TOOL} ci $f
+		
 	done
 
 fi
@@ -58,10 +91,13 @@ if [ -n "${MODIFIED}" ] ; then
 	echo
 	echo "####### Modified file(s): ${MODIFIED}"
 	for f in ${MODIFIED} ; do
+		
 		echo
 		echo " + diff for $f: "
-		dci $f | more
+		#dci $f | more
+		dci $f
 		echo
+		
 	done
 
 fi
