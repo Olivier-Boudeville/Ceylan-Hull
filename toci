@@ -24,14 +24,26 @@ elif [ -d "CVS" ] ; then
 
 else
 
-	if [ "$1" = "-s" ] || [ "$1" = "--short" ] ; then
-		
-		git status --short --untracked-files=no
+	# Default preferred to be 'short' rather than 'long':
 
-	else
+	#if [ "$1" = "-s" ] || [ "$1" = "--short" ] ; then
+		
+	#	git status --short --untracked-files=no
+
+	#else
+		
+	#	git status --short --untracked-files=all
+
+	#fi
+
+	if [ "$1" = "-l" ] || [ "$1" = "--long" ] ; then
 		
 		git status --short --untracked-files=all
 
+	else
+		
+		git status --short --untracked-files=no
+		
 	fi
 	
 fi
