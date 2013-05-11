@@ -38,8 +38,12 @@ elif [ -d ".svn" ] ; then
 	
 else
 
-	# In case was not added yet, to see the diffs at next stage:
-	git add $target
+	if [ -n "$target" ] ; then
+		
+	    # In case was not added yet, to see the diffs at next stage:
+		git add $target
+
+	fi
 	
 	# We want to see what we are about to commit:
 	git diff --staged $target
