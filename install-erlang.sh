@@ -8,9 +8,9 @@
 LANG=C; export LANG
 
 
-erlang_version="R16B"
+erlang_version="R16B01"
 
-erlang_md5="7ee131515bc496e7522e0dec2a4c26e3"
+erlang_md5="266b95db35560e505c9f69cc3e539e41"
 
 plt_file="Erlang-$erlang_version.plt"
 plt_link="Erlang.plt"
