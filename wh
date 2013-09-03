@@ -95,7 +95,19 @@ fi
 
 
 
-targetPattern=$1
+initialPattern=$1
+
+
+# Sometimes a filename followed by some garbage is specified (ex: 'wh
+# OSDLFromGfx.cc:926:34:'), here we try to fix the pattern:
+
+targetPattern=`echo "$initialPattern" | sed 's|:.*$||1' `
+
+if [ "${targetPattern}" != "${initialPattern}" ] ; then
+
+	echo "  (pattern '$initialPattern' has been automatically translated to pattern '$targetPattern')"
+
+fi
 
 [ $quiet -eq 0 ] || echo "
 Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>
