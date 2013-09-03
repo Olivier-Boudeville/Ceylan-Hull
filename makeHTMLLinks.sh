@@ -1,7 +1,13 @@
 #!/bin/bash
 
 
-# This script makes the shortcut links to pre-made html script:
+# This script makes the shortcut links to pre-made html scripts, or deletes these links.
+
+do_delete=1
+
+if [ "$1" = "--delete" ] ; then 
+	do_delete=0
+fi
 
 
 SCRIPTS[0]="putTOC.sh"
@@ -69,7 +75,7 @@ LINKS[20]="lnkr"
 
 
 element_count=${#SCRIPTS[@]}
-echo "element_count = $element_count"
+#echo "element_count = $element_count"
 
 index=0
 
@@ -77,8 +83,18 @@ while [ $index -lt $element_count ] ; do
 
   # Lists all the elements in the array:
 
-  echo "    Making new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
-  ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
+  if [ $do_delete -eq 0 ] ; then
+	
+        echo "    - deleting link ${LINKS[$index]}"
+
+	/bin/rm -f ${LINKS[$index]}
+
+  else	
+
+  	echo "    - creating new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
+  	ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
+	
+  fi
 
   let "index = $index + 1"
 
