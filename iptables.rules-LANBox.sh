@@ -1,4 +1,19 @@
 #!/bin/sh
+
+# Adapted for Arch Linux and Systemd (see https://wiki.archlinux.org/index.php/Iptables).
+# A 'logdrop' rule could be defined. 
+
+# To use it in this context: 
+#  - run this script as root, with: ./iptables.rules-LANBox.sh start
+#  - copy the resulting state of iptables in the relevant file: iptables-save > /etc/iptables/iptables.rules
+#  - reload the firewall: systemctl reload iptables
+#  - check it just for this session: iptables -L
+#  - check that iptables is meant to be started at boot: systemctl is-enabled iptables.service ; if not, run: systemctl enable iptables.service 
+
+# Note: for IPv6, use ip6tables instead of iptables.
+
+
+
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-LANBox
 # Required-Start:    $all
@@ -28,14 +43,17 @@
 
 set -e
 
+INIT_FILE="/lib/lsb/init-functions"
 
-. /lib/lsb/init-functions
+if [ -f "$INIT_FILE" ] ; then
+	. "$INIT_FILE"
+fi
 
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date:
 # c is for client (log prefix must be shorter than 29 characters):
-version="c-6"
+version="c-7"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -46,8 +64,24 @@ rmmod=/sbin/rmmod
 
 LOG_FILE=/root/lastly-LAN-firewalled.touched
 
+
+echo "* detected network interfaces:"
+ifconfig -s | grep -v '^Iface' | cut -f 1 -d ' '
+
+LAN_IF=""
+
 # Local (LAN) interface:
-LAN_IF=eth0
+if ifconfig enp0s25 1>/dev/null 2>&1 ; then
+	LAN_IF=enp0s25
+elif ifconfig eth0 1>/dev/null 2>&1 ; then
+	LAN_IF=eth0
+else
+	echo "No LAN interface found!" 1>&2
+	exit 25
+fi		
+
+echo
+echo "* selected LAN interface: $LAN_IF"
 
 
 start_it_up()
