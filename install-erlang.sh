@@ -173,7 +173,7 @@ if [ -z "$read_parameter" ] ; then
 
    if [ `id -u` -eq 0 ] ; then
 
-		# Run as root, no prefix specified, thus:
+	   # Run as root, no prefix specified, thus:
 	   use_prefix=1
 	   prefix="/usr/local"
 	   echo "Run as root, thus using default system installation directory."
@@ -501,7 +501,14 @@ fi
 
 if [ $use_prefix -eq 0 ] ; then
 
-	# Go to the install (not source) tree:
+	# First, let's create a symbolic link so that this new version can be
+	# transparently used by emacs:
+	cd ${prefix}/lib/erlang
+
+	# Exactly one match expected for the wildcard (ex: tools-2.6.11):
+	/bin/ln -sf lib/tools-*/emacs
+
+	# Then go again in the install (not source) tree to create the base link:
 	cd ${prefix}/..
 
 	# Ex: we are in $HOME/Software/Erlang now.
