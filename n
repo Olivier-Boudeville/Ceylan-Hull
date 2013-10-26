@@ -472,14 +472,15 @@ if [ "${EXTENSION}" = "jpeg" ] ; then
 fi
 
 
-if [ "${EXTENSION}" = "html" ] ; then
-
-	EDITOR=`which firefox`
-	EDITOR_SHORT_NAME="firefox"
-	applyEditor
-	exit 0
-
-fi
+# Disabled now, as we want to be able to edit HTML files:
+#if [ "${EXTENSION}" = "html" ] ; then
+#
+#	EDITOR=`which firefox`
+#	EDITOR_SHORT_NAME="firefox"
+#	applyEditor
+#	exit 0
+#
+#fi
 
 
 if [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4" ] ; then
