@@ -26,32 +26,32 @@ while [ $token_eaten -eq 0 ] ; do
 		verbose=0
 		echo "Verbose mode activated."
 		shift
-       
+
 	elif [ "$1" = "--quiet" ]; then
 
 		quiet=0
 		#echo "Quiet mode activated."
 		shift
-       
+
 	elif [ "$1" = "--no-path" ]; then
 
 		no_path=0
 		[ $quiet -eq 0 ] || echo "Only filenames without paths will be output."
 		shift
-		
+
 	elif [ "$1" = "--exclude-path" ]; then
 
 		to_exclude="$2"
 		exclude_command="${exclude_command} ( -name $to_exclude -prune -o -type f ) -a "
 		[ $quiet -eq 0 ] || echo "Directory $to_exclude will be excluded."
 		#echo "exclude_command = $exclude_command"
-		
+
 		shift
 		shift
 
 	else
 		token_eaten=1
-    fi
+	fi
 
 done
 
@@ -62,16 +62,16 @@ done
 
 if [ $# -eq 1 ]; then
 
-	startingDir=`pwd`
-	
+	startingDir="."
+
 elif [ $# -eq 2 ]; then
 
 	startingDir=$2
-	
+
 else
 	echo " Error, too many parameters specified: $*.$USAGE
 	" 1>&2
-	exit 2	
+	exit 2
 fi
 
 
@@ -79,8 +79,6 @@ if [ ! -d "$startingDir" ]; then
 	echo " Error, no such directory: $startingDir.$USAGE
 	" 1>&2
 	exit 3
-else
-	cd "$startingDir"
 fi
 
 
@@ -88,8 +86,8 @@ fi
 if [ -x "$FIND_GNU" ]; then
 	FIND="$FIND_GNU"
 else
-	FIND=`which find 2>/dev/null | grep -v ridiculously`	
-fi	
+	FIND=`which find 2>/dev/null | grep -v ridiculously`
+fi
 
 [ $verbose -eq 1 ] || echo "FIND is $FIND"
 
@@ -122,17 +120,16 @@ Looking for all files and directories matching <$targetPattern>, starting from d
 if [ $no_path -eq 0 ] ; then
 
 	[ $verbose -eq 1 ] || echo "No path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
-	
-	$FIND . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
-	
-else    
 
-	[ $verbose -eq 1 ] || echo "With path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
-	
-	$FIND . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
-	
+	$FIND $startingDir $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+
+else
+
+	[ $verbose -eq 1 ] || echo "With path case, run from "`pwd`": command is: $FIND $startingDir $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
+
+	$FIND $startingDir $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+
 fi
 
 [ $quiet -eq 0 ] || echo "
 End of search"
-
