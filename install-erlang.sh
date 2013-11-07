@@ -560,7 +560,7 @@ if [ $do_manage_doc -eq 0 ] ; then
 	cd ..
 
 	# Sets as current:
-	if [ -e Erlang-current-install ] ; then
+	if [ -e Erlang-current-documentation ] ; then
 
 		/bin/rm -f Erlang-current-documentation
 
