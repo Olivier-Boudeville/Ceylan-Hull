@@ -1,12 +1,22 @@
 #!/bin/bash
 
 
-# This script makes the shortcut links to pre-made html scripts, or deletes these links.
+# This script makes the shortcut links to pre-made html script:
 
-do_delete=1
 
-if [ "$1" = "--delete" ] ; then 
-	do_delete=0
+# The --rm option allows to remove all created elements.
+
+do_rm=1
+
+if [ $1 = "--rm" ] ; then
+
+	echo "Will remove HTML links."
+	do_rm=0
+	
+else
+
+	echo "Will create HTML linls."
+
 fi
 
 
@@ -75,7 +85,7 @@ LINKS[20]="lnkr"
 
 
 element_count=${#SCRIPTS[@]}
-#echo "element_count = $element_count"
+echo "element_count = $element_count"
 
 index=0
 
@@ -83,19 +93,18 @@ while [ $index -lt $element_count ] ; do
 
   # Lists all the elements in the array:
 
-  if [ $do_delete -eq 0 ] ; then
-	
-        echo "    - deleting link ${LINKS[$index]}"
+	if [ $do_rm -eq 1 ] ; then
 
-	/bin/rm -f ${LINKS[$index]}
+		echo "    Making new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
+		ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
 
-  else	
+	else
 
-  	echo "    - creating new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
-  	ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
-	
-  fi
+		echo "    Removing ${LINKS[$index]}"
+		/bin/rm -f ${LINKS[$index]} 2>/dev/null
 
-  let "index = $index + 1"
+	fi
+
+	let "index = $index + 1"
 
 done
