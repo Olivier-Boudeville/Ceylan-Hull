@@ -1,18 +1,15 @@
 #!/bin/sh
 
-
 # diffDir.sh operates only on the direct entries of a directory.
 # See diffTree.sh for a recursive comparison.
 
 
 USAGE="
-Usage: `basename $0` <first path (main one)> <second path (to be integrated into first one)> [--svn] [ -v ] [ -d ] [ -a ] [ -n ] [ -h ]: compares thanks to diff all files which are present both in first and second directories, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
+Usage: `basename $0` <first path (main one)> <second path (to be integrated into first one)> [--svn] [ -v ] [ -a ] [ -h ]: compares thanks to diff all files which are present both in first and second directories, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
    The --svn option stands for SVN (Subversion) mode, where SVN informations are ignored (only focusing on file content)
    The -v option stands for verbose mode, where identical files are notified too.
    The -s option stands for short mode, shorter messages are output.
-   The -d option stands for show-diff mode, actual differences are output.
    The -a option stands for automatic diff editing: a merge tool (default: tkdiff) is triggered whenever a difference is detected, and an editor (default: $EDITOR, otherwise nedit) is triggered to modify the corresponding file being on the first path.
-   The -n option stands for no color (no control codes output).
    The -h option gives this help."
 
 
@@ -39,7 +36,6 @@ fi
 
 be_verbose=1
 be_quiet=1
-show_diff=1
 auto_edit=1
 ignore_svn=1
 called_as_recursive=1
@@ -60,7 +56,6 @@ shift
 shift
 
 while [ $# -gt 0 ] ; do
-	
 	token_eaten=1
 
 	if [ "$1" = "--svn" ] ; then
@@ -89,23 +84,9 @@ while [ $# -gt 0 ] ; do
 		token_eaten=0
 	fi
 
-	if [ "$1" = "-d" ] ; then
-		show_diff=0
-		token_eaten=0
-	fi
-
 	if [ "$1" = "-a" ] ; then
 		auto_edit=0
 		token_eaten=0
-	fi
-	
-	if [ "$1" = "-n" ] ; then
-
-		# No color!
-		DEFAULT_TEXT=""
-		PREFIX_DIFF=""
-		PREFIX_NOEX=""
-
 	fi
 
 	if [ "$1" = "-h" ] ; then
@@ -165,33 +146,23 @@ for f in `/bin/ls $firstDir`; do
 			if [ $shorter_messages -eq 0 ] ; then
 				echo "${PREFIX_NOEX}'$f' only in FIRST.${DEFAULT_TEXT}"
 			else
-				echo "${PREFIX_NOEX}'$f' is only in first directory ($firstDir), i.e. not in $secondDir.${DEFAULT_TEXT}"
+			echo "${PREFIX_NOEX}'$f' is only in first directory ($firstDir), i.e. not in $secondDir.${DEFAULT_TEXT}"
 			
 			fi
 			
-		else
+	else
 			
 			if [ ! -d "$firstDir/$f" ] ; then
 				
 				if diff "$firstDir/$f" "$secondDir/$f" 1>/dev/null 2>&1 ; then
-					
 					[ $be_verbose -eq 1 ] || echo "${PREFIX_IDEN}('$f' identical in the two directories)${DEFAULT_TEXT}"
-
 				else
-					
 					echo "${PREFIX_DIFF} '$f' differs!${DEFAULT_TEXT}"
-
-					if [ $show_diff -eq 0 ]; then
-						diff "$firstDir/$f" "$secondDir/$f"
-					fi
-					
 					if [ $auto_edit -eq 0 ]; then
 						$MERGE_TOOL "$firstDir/$f" "$secondDir/$f" &
 						$EDITOR_TOOL "$firstDir/$f"
 					fi
-					
 				fi
-				
 			else
 				if [ ! -d "$secondDir/$f" ] ; then
 					echo "${PREFIX_DIFF} '$f' is a directory in '$firstDir' and a file in '$secondDir'!${DEFAULT_TEXT}"
