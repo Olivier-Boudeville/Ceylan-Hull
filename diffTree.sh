@@ -2,20 +2,18 @@
 
 
 # diffTree.sh performs a recursive comparison on directory elements.
-# See diffDir.sh for a comparison in just a directory.
 
 
-USAGE="
-Usage: `basename $0` <first path (main one)> <second path (to be integrated into first one)> [ -v ] [ -q ] [ -a ] [ -n ] [ -h ]: compares thanks to diff all files which are present both in first and second trees, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
+USAGE="Usage: `basename $0` <first path (main one)> <second path (to be integrated into first one)> [ -v ] [ -q ] [ -a ] [ -h ]: compares thanks to diff all files which are present both in first and second trees, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
    The --svn option stands for SVN (Subversion) mode, where SVN informations are ignored (only focusing on file content)
    The -v option stands for verbose mode, where identical files are notified too.
    The -q option stands for quiet mode, where only actual differences are displayed, without specifiyng which directories are traversed
-   The -d option stands for show-diff mode, actual differences are output.
    The -a option stands for automatic diff editing: a merge tool (default: tkdiff) is triggered whenever a difference is detected, and an editor (default: $EDITOR, otherwise nedit) is triggered to modify the corresponding file being on the first path.
-   The -n option stands for no color (no control codes output).
    The -h option gives this help."
 
 DEFAULT_TEXT="[00;37;40m"
+PREFIX_IDEN="     "
+PREFIX_DIFF="[00;30;43m---> "
 PREFIX_NOEX="[00;37;41m#### "
 
 DIFF_DIR=`which diffDir.sh|grep -v ridiculously 2>/dev/null`
@@ -32,38 +30,24 @@ firstDir="$1"
 secondDir="$2"
 
 if [ -z "$2" ] ; then
-	
-	echo "    Error, not enough arguments specified.
-$USAGE" 1>&2
-	
+	echo "Error, not enough arguments specified. $USAGE" 1>&2
 	exit 1
-	
 fi
 
 
 if [ ! -d "$firstDir" ] ; then
-	
-	echo "    Error, first directory specified ($firstDir) does not exist.
-$USAGE" 1>&2
-	
+	echo "Error, first directory specified ($firstDir) does not exist. $USAGE" 1>&2
 	exit 2
-	
 fi
 
 
 if [ ! -d "$secondDir" ] ; then
-	
-	echo "    Error, second directory specified ($secondDir) does not exist.
-$USAGE" 1>&2
-	
+	echo "Error, second directory specified ($secondDir) does not exist. $USAGE" 1>&2
 	exit 3
-	
 fi
-
 
 be_verbose=1
 be_quiet=1
-show_diff=1
 auto_edit=1
 ignore_svn=1
 
@@ -93,24 +77,11 @@ while [ $# -gt 0 ] ; do
 		token_eaten=0
 	fi
 
-	if [ "$1" = "-d" ] ; then
-		show_diff=0
-		token_eaten=0
-	fi
-
 	if [ "$1" = "-a" ] ; then
 		auto_edit=0
 		token_eaten=0
 	fi
 
-	if [ "$1" = "-n" ] ; then
-
-		# No color!
-		DEFAULT_TEXT=""
-		PREFIX_NOEX=""
-
-	fi
-	
 	if [ "$1" = "-h" ] ; then
 		echo "$USAGE"
 		exit
@@ -118,8 +89,7 @@ while [ $# -gt 0 ] ; do
 	fi
 
 	if [ $token_eaten -eq 1 ] ; then
-		echo "    Error, unknown argument ($1).
- $USAGE" 1>&2
+		echo "Error, unknown argument ($1). $USAGE" 1>&2
 		exit 4
 	fi
 	shift
