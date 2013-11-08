@@ -62,7 +62,7 @@ done
 
 if [ $# -eq 1 ]; then
 
-	startingDir="."
+	startingDir=`pwd`
 
 elif [ $# -eq 2 ]; then
 
@@ -79,6 +79,8 @@ if [ ! -d "$startingDir" ]; then
 	echo " Error, no such directory: $startingDir.$USAGE
 	" 1>&2
 	exit 3
+else
+	cd "$startingDir"
 fi
 
 
@@ -93,19 +95,7 @@ fi
 
 
 
-initialPattern=$1
-
-
-# Sometimes a filename followed by some garbage is specified (ex: 'wh
-# OSDLFromGfx.cc:926:34:'), here we try to fix the pattern:
-
-targetPattern=`echo "$initialPattern" | sed 's|:.*$||1' `
-
-if [ "${targetPattern}" != "${initialPattern}" ] ; then
-
-	echo "  (pattern '$initialPattern' has been automatically translated to pattern '$targetPattern')"
-
-fi
+targetPattern=$1
 
 [ $quiet -eq 0 ] || echo "
 Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>
@@ -121,13 +111,13 @@ if [ $no_path -eq 0 ] ; then
 
 	[ $verbose -eq 1 ] || echo "No path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 
-	$FIND $startingDir $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	$FIND . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 
 else
 
-	[ $verbose -eq 1 ] || echo "With path case, run from "`pwd`": command is: $FIND $startingDir $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
+	[ $verbose -eq 1 ] || echo "With path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
 
-	$FIND $startingDir $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	$FIND . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
 
 fi
 
