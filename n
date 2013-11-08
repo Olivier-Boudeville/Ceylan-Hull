@@ -6,7 +6,7 @@ SHOW_OPT="--display"
 
 
 USAGE="
-Usage: "`basename $0`" [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-s|--standalone] [-s|--standalone] file1 file2 ...:
+Usage: "`basename $0`" [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
 
   Opens the set of specified files with the 'best' available editor.
 
@@ -15,7 +15,9 @@ Usage: "`basename $0`" [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-s|
 	  '${SHOW_OPT}' to display only the chosen settings (not executing them)
 	  '-e' or '--emacs' to prefer emacs over all other editors (the default)
 	  '-n' or '--nedit' to prefer nedit over all other editors
-	  '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)"
+	  '-f' or '--find' to first look-up specified file from current directory, before opening it
+	  '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)
+"
 
 # Note: a special syntax is recognised as well: 'n A_FILE -s', which is
 # convenient when wanting to open a file yet thinking last that this should be
@@ -336,6 +338,7 @@ displayEditors()
 do_X=0
 do_show=1
 do_force_nedit=1
+do_find=1
 
 
 if [ "$1" = "${NO_X_OPT}" ] ; then
@@ -368,6 +371,12 @@ fi
 
 if [ "$1" = "-s" ] || [ "$1" = "--standalone" ] ; then
 	standalone=0
+	shift
+fi
+
+if [ "$1" = "-f" ] || [ "$1" = "--find" ] ; then
+	do_find=0
+
 	shift
 fi
 
@@ -423,7 +432,29 @@ done
 
 if [ $standalone -eq 0 ] ; then
 
-	echo "(standalone mode activated)"
+	echo "  (standalone mode activated)"
+
+fi
+
+
+if [ $do_find -eq 0 ] ; then
+
+	# Single file assumed, any initial whitespace removed:
+	target_file=`echo "${PARAMETERS}" | sed 's|^ ||1' | sed 's|:.*$||1'`
+	#echo "target_file = $target_file"
+
+	target_path=`find . -name $target_file`
+	if [ -z "${target_path}" ] ; then
+
+		echo "  (file '$target_file' not found, nothing done)"
+
+	else
+
+		echo "  (file '$target_file' found as '$target_path')"
+
+	fi
+
+	PARAMETERS="${target_path}"
 
 fi
 
@@ -471,17 +502,15 @@ if [ "${EXTENSION}" = "jpeg" ] ; then
 
 fi
 
-
 # Disabled now, as we want to be able to edit HTML files:
 #if [ "${EXTENSION}" = "html" ] ; then
 #
-#	EDITOR=`which firefox`
-#	EDITOR_SHORT_NAME="firefox"
-#	applyEditor
-#	exit 0
+#      EDITOR=`which firefox`
+#      EDITOR_SHORT_NAME="firefox"
+#      applyEditor
+#      exit 0
 #
 #fi
-
 
 if [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4" ] ; then
 
