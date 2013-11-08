@@ -27,23 +27,25 @@ else
 	# Default preferred to be 'short' rather than 'long':
 
 	#if [ "$1" = "-s" ] || [ "$1" = "--short" ] ; then
-		
+
 	#	git status --short --untracked-files=no
 
 	#else
-		
+
 	#	git status --short --untracked-files=all
 
 	#fi
 
+	# Only from current directory:
+	#
 	if [ "$1" = "-l" ] || [ "$1" = "--long" ] ; then
-		
-		git status --short --untracked-files=all
+
+		git status --short --untracked-files=all .
 
 	else
-		
-		git status --short --untracked-files=no
-		
+
+		git status --short --untracked-files=no .
+
 	fi
-	
+
 fi

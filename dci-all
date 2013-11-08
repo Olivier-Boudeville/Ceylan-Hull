@@ -3,6 +3,8 @@
 USAGE="$0 selects recursively from current directory the files that should be committed (either added or modified), and commits them. For each of the modified files, shows the diff with previous version before."
 
 
+initial_dir=$(pwd)
+
 if [ -d ".svn" ] ; then
 
 	TOOL="svn"
@@ -36,17 +38,18 @@ else
 
 	TOOL="git"
 
-	OUTPUT=`git status --porcelain 2>/dev/null`
+	# Only from current directory:
+	OUTPUT=`git status --porcelain 2>/dev/null .`
 	#echo "OUTPUT = $OUTPUT"
 
 	# A problem is that, even in porcelain mode, offsets may be used to display
 	# status. For example, 'M a_file' or ' M afile' may be both used. The
 	# pattern '^ \?M' allows to include the two cases (i.e. whether or not a
 	# space has been inserted).
-	
+
 	ADDED=$(echo "${OUTPUT}" | grep -e '^ \?A' | awk '{print $2}')
 	#echo "ADDED = $ADDED"
-	
+
 	MODIFIED=$(echo "${OUTPUT}" | grep '^ \?M' | awk '{print $2}')
 	#echo "MODIFIED= $MODIFIED"
 
@@ -55,19 +58,21 @@ else
 
 	UNKNOWN=$(echo "${OUTPUT}" | grep -e '^ \?M' | awk '{print $2}')
 	#echo "UNKNOWN= $UNKNOWN"
-	
+
+
+	 # In porcelain mode, all paths are relative to the root of the repository,
+	 # we must thus go there:
+	relative_to_root=$(git rev-parse --show-cdup)
+
+	# (empty string is already there)
+	if [ -n "${relative_to_root}" ] ; then
+
+		cd "${relative_to_root}"
+
+	fi
+
 fi
 
-
-# In porcelain mode, all paths are relative to the root of the repository, we must thus go there:
-relative_to_root=$(git rev-parse --show-cdup)
-
-# (empty string is already there)
-if [ -n "${relative_to_root}" ] ; then
-
-	cd "${relative_to_root}"
-
-fi
 
 if [ -n "${ADDED}" ] ; then
 
@@ -75,13 +80,13 @@ if [ -n "${ADDED}" ] ; then
 	echo "####### Added file(s): ${ADDED}"
 
 	for f in ${ADDED} ; do
-		
+
 		echo
 		echo " + content of $f: "
 		echo
 		more $f
 		${TOOL} ci $f
-		
+
 	done
 
 fi
@@ -91,14 +96,21 @@ if [ -n "${MODIFIED}" ] ; then
 	echo
 	echo "####### Modified file(s): ${MODIFIED}"
 	for f in ${MODIFIED} ; do
-		
+
 		echo
 		echo " + diff for $f: "
 		#dci $f | more
 		dci $f
 		echo
-		
+
 	done
+
+fi
+
+if [ "$TOOL" = "git" ] ; then
+
+	# To avoid listing all files from the root:
+	cd $initial_dir
 
 fi
 

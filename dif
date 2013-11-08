@@ -12,10 +12,15 @@ elif [ -d '.svn' ] ; then
 
 else
 
-	# We want to compare the current working version with the commit, not with
-	# the origin:
-
-	#git diff --staged $*
+	# We prefer here comparing the current working version with the commit, not
+	# with the origin:
+	#
 	git diff $*
+
+	# We prefer here seeing the changes you staged for the next commit relative
+	# to the current head:
+	#
+	#git diff --staged $*
+
 
 fi
