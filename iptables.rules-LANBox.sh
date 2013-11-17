@@ -257,7 +257,7 @@ start_it_up()
 	if [ $filter_epmd -eq 1 ] ; then
 
 		$echo " - enabling EPMD at TCP port ${epmd_port}"
-		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW -j ACCEPT
+		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
 
