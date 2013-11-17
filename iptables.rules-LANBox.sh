@@ -1,16 +1,25 @@
 #!/bin/sh
 
-# Adapted for Arch Linux and Systemd (see https://wiki.archlinux.org/index.php/Iptables).
+# Adapted for Arch Linux and Systemd (see
+# https://wiki.archlinux.org/index.php/Iptables).
+
 # A 'logdrop' rule could be defined.
 
 # To use it in this context:
+#
 #  - run this script as root, with: ./iptables.rules-LANBox.sh start
-#  - copy the resulting state of iptables in the relevant file: iptables-save > /etc/iptables/iptables.rules
+#
+#  - copy the resulting state of iptables in the relevant file: iptables-save >
+# /etc/iptables/iptables.rules
+#
 #  - reload the firewall: systemctl reload iptables
+#
 #  - check it just for this session: iptables -L
-#  - check that iptables is meant to be started at boot: systemctl is-enabled iptables.service ; if not, run: systemctl enable iptables.service
+#
+#  - check that iptables is meant to be started at boot: systemctl is-enabled
+# iptables.service ; if not, run: systemctl enable iptables.service
 
-# Note: for IPv6, use ip6tables instead of iptables.
+# Note: for IPv6, use 'ip6tables' instead of 'iptables'.
 
 
 
@@ -40,6 +49,15 @@
 # iptables.rules-LANBox defaults' (better than being directly set as the target
 # of a symbolic link in: cd /etc/rc2.d && ln -s
 # ../init.d/iptables.rules-LANBox.sh).
+
+if [ ! `id -u` = "0" ] ; then
+
+	echo "  Error, firewall rules can only be applied by root." 1>&2
+
+	exit 10
+
+fi
+
 
 set -e
 
@@ -73,8 +91,20 @@ filter_epmd=1
 # Over TCP:
 epmd_default_port=4369
 
-epmd_port=$epmd_default_port
-#epmd_port=4506
+#epmd_port=$epmd_default_port
+
+# Our default:
+epmd_port=4506
+
+
+# By default, we enable a range of unfiltered TCP ports:
+enable_unfiltered_tcp_range=0
+
+# TCP unfiltered window (ex: for passive FTP and BEAM port ranges):
+tcp_unfiltered_low_port=50000
+tcp_unfiltered_high_port=55000
+
+
 
 
 echo "* detected network interfaces:"
@@ -99,6 +129,7 @@ echo "* selected LAN interface: $LAN_IF"
 start_it_up()
 {
 
+	$echo
 	$echo "Setting LAN box firewall rules, version $version."
 	touch $LOG_FILE
 
@@ -225,9 +256,22 @@ start_it_up()
 
 	if [ $filter_epmd -eq 1 ] ; then
 
+		$echo " - enabling EPMD at TCP port ${epmd_port}"
 		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW -j ACCEPT
 
 	fi
+
+
+	if [ $enable_unfiltered_tcp_range -eq 0 ] ; then
+
+		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}"
+		$iptables -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+	fi
+
+
+# TCP unfiltered window (ex: for passive FTP and BEAM port ranges):
+
 
 
 	## FRAGMENTS
@@ -308,6 +352,7 @@ start_it_up()
 shut_it_down()
 {
 
+	$echo
 	$echo "Disabling LAN box firewall rules, version $version."
 
 	# Load appropriate modules:
