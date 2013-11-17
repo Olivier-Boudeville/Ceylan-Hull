@@ -1,14 +1,14 @@
 #!/bin/sh
 
 # Adapted for Arch Linux and Systemd (see https://wiki.archlinux.org/index.php/Iptables).
-# A 'logdrop' rule could be defined. 
+# A 'logdrop' rule could be defined.
 
-# To use it in this context: 
+# To use it in this context:
 #  - run this script as root, with: ./iptables.rules-LANBox.sh start
 #  - copy the resulting state of iptables in the relevant file: iptables-save > /etc/iptables/iptables.rules
 #  - reload the firewall: systemctl reload iptables
 #  - check it just for this session: iptables -L
-#  - check that iptables is meant to be started at boot: systemctl is-enabled iptables.service ; if not, run: systemctl enable iptables.service 
+#  - check that iptables is meant to be started at boot: systemctl is-enabled iptables.service ; if not, run: systemctl enable iptables.service
 
 # Note: for IPv6, use ip6tables instead of iptables.
 
@@ -53,7 +53,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date:
 # c is for client (log prefix must be shorter than 29 characters):
-version="c-7"
+version="c-8"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -63,6 +63,18 @@ lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
 LOG_FILE=/root/lastly-LAN-firewalled.touched
+
+
+# EPMD (Erlang) section.
+
+# By default, we do *not* filter out EPMD traffic (i.e. we accept it):
+filter_epmd=1
+
+# Over TCP:
+epmd_default_port=4369
+
+epmd_port=$epmd_default_port
+#epmd_port=4506
 
 
 echo "* detected network interfaces:"
@@ -78,7 +90,7 @@ elif ifconfig eth0 1>/dev/null 2>&1 ; then
 else
 	echo "No LAN interface found!" 1>&2
 	exit 25
-fi		
+fi
 
 echo
 echo "* selected LAN interface: $LAN_IF"
@@ -97,8 +109,10 @@ start_it_up()
 	fi
 
 	# Load appropriate modules:
-	$modprobe ip_tables
-
+	#
+	# (commented-out: it is very strange as the next (correct) call caused the
+	# script to silently abort)
+	#$modprobe ip_tables
 
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
@@ -209,6 +223,12 @@ start_it_up()
 
 	$iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
+	if [ $filter_epmd -eq 1 ] ; then
+
+		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW -j ACCEPT
+
+	fi
+
 
 	## FRAGMENTS
 	#
@@ -291,7 +311,10 @@ shut_it_down()
 	$echo "Disabling LAN box firewall rules, version $version."
 
 	# Load appropriate modules:
-	$modprobe ip_tables
+	#
+	# (commented-out: it is very strange as the next (correct) call caused the
+	# script to silently abort)
+	#$modprobe ip_tables
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
 	# counters before we implement new rules:
@@ -299,12 +322,15 @@ shut_it_down()
 	$iptables -X
 	$iptables -Z
 
+
 	$iptables -F -t nat
 	$iptables -X -t nat
 	$iptables -Z -t nat
 
 }
 
+
+script_name=$(basename $0)
 
 case "$1" in
   start)
@@ -325,8 +351,21 @@ case "$1" in
 	iptables -L
   ;;
   *)
-	echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+
+	echo " Error, no appropriate action specified." >&2
+
+	if [ -z "$NAME" ] ; then
+		# Launched from the command-line:
+		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status}" >&2
+
+	else
+
+		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+
+	fi
+
 	exit 2
+
   ;;
 
 esac
