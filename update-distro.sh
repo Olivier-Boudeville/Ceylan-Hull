@@ -5,9 +5,20 @@
 # Default is Debian:
 distro_type="Debian"
 
-if cat /etc/issue | grep Arch 1>/dev/null 2>&1 ; then
+# Not used anymore, cause often redefined:
+#if cat /etc/issue | grep Arch 1>/dev/null 2>&1 ; then
 
-	distro_type="Arch"
+distro_id_file="/etc/os-release"
+
+if [ -f "$distro_id_file" ] ; then
+
+	source "$distro_id_file"
+
+	if [ "$NAME" = "Arch Linux" ] ; then
+
+		distro_type="Arch"
+
+	fi
 
 fi
 
