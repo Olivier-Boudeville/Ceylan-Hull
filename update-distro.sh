@@ -59,7 +59,8 @@ if [ `id -u` -eq 0 ] ; then
 
 	else
 
-		echo "... update failed ($res)"
+		echo "... update failed ($res), on " $(date '+%A, %B %-e, %Y at %T')"."
+		echo "See '${log_file}' on"$(hostname -f) "for more information."
 
 	fi
 
