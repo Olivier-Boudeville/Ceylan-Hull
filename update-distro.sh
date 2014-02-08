@@ -22,8 +22,11 @@ if [ -f "$distro_id_file" ] ; then
 
 fi
 
+
 #echo "Distro type: $distro_type"
 
+# Only standard output will be intercepted there, not the error one:
+log_file="/root/.last-distro-update"
 
 if [ `id -u` -eq 0 ] ; then
 
@@ -32,11 +35,11 @@ if [ `id -u` -eq 0 ] ; then
 	case "${distro_type}" in
 
 		"Debian")
-			apt-get update && apt-get -y upgrade
+			( apt-get update && apt-get -y upgrade ) 1>${log_file} #2>&1
 			;;
 
 		"Arch")
-			pacman -Syu --noconfirm
+			pacman -Syu --noconfirm 1>${log_file} #2>&1
 			;;
 
 		*)
@@ -46,7 +49,21 @@ if [ `id -u` -eq 0 ] ; then
 
 	esac
 
-	echo "...done"
+
+	res=$?
+
+	if [ $res -eq 0 ] ; then
+
+		echo "... update done successfully"
+
+	else
+
+		echo "... update failed ($res)"
+
+	fi
+
+	# To propagate errors:
+	exit $res
 
 else
 
