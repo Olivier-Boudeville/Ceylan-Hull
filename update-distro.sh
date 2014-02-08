@@ -30,16 +30,17 @@ log_file="/root/.last-distro-update"
 
 if [ `id -u` -eq 0 ] ; then
 
-	echo "Updating the distribution now..."
+	# Erases the previous log as well, to avoid accumulation:
+	echo "Updating the distribution now..." 1>${log_file}
 
 	case "${distro_type}" in
 
 		"Debian")
-			( apt-get update && apt-get -y upgrade ) 1>${log_file} #2>&1
+			( apt-get update && apt-get -y upgrade ) 1>>${log_file} #2>&1
 			;;
 
 		"Arch")
-			pacman -Syu --noconfirm 1>${log_file} #2>&1
+			pacman -Syu --noconfirm 1>>${log_file} #2>&1
 			;;
 
 		*)
@@ -54,7 +55,7 @@ if [ `id -u` -eq 0 ] ; then
 
 	if [ $res -eq 0 ] ; then
 
-		echo "... update done successfully"
+		echo "... update done successfully" 1>>${log_file}
 
 	else
 
