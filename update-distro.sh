@@ -59,8 +59,10 @@ if [ `id -u` -eq 0 ] ; then
 
 	else
 
+		echo "... update failed ($res). Refer to sent mail for further information." 1>>${log_file}
+
 		echo "... update failed ($res), on " $(date '+%A, %B %-e, %Y at %T')"."
-		echo "See '${log_file}' on"$(hostname -f) "for more information."
+		echo "Failure logged in '${log_file}' on" $(hostname -f) "."
 
 	fi
 
