@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2009-2013 Olivier Boudeville
+# Copyright (C) 2009-2014 Olivier Boudeville
 #
 # This file is part of the Ceylan Erlang library.
 
@@ -8,9 +8,14 @@
 LANG=C; export LANG
 
 
-erlang_version="R16B01"
+# Current stable:
+erlang_version="17.0"
+erlang_md5="a5f78c1cf0eb7724de3a59babc1a28e5"
 
-erlang_md5="266b95db35560e505c9f69cc3e539e41"
+# Cutting-edge release candidate:
+erlang_version_candidate="17.0-rc2"
+erlang_md5_candidate="12c41cbab1b8708ab13b9d2cc4dc7387"
+
 
 plt_file="Erlang-$erlang_version.plt"
 plt_link="Erlang.plt"
@@ -25,7 +30,7 @@ If no base install directory is specified, then, if this script is run by root, 
 If a base install directory MY_DIR is specified, then Erlang will be installed into MY_DIR/Erlang/Erlang-${erlang_version}/.
 
 Options:
-	-c or --cutting-edge: use, instead of the latest stable Erlang version, the latest beta version, if any
+	-c or --cutting-edge: use, instead of the latest stable Erlang version, the latest supported release candidate version (namely, currently, ${erlang_version_candidate})
 	-d or --doc-install: download and install the corresponding documentation as well
 	-g or --generate-plt: generate the PLT file ($plt_file) for Dialyzer corresponding to this Erlang/OTP install
 	-n or --no-download: do not attempt to download anything, expect that needed files are already available (useful if not having a direct access to the Internet)
@@ -41,6 +46,26 @@ Example:
 
 For Debian-based distributions, you should preferably run beforehand, as root: 'apt-get update && apt-get install g++ make libncurses5-dev openssl libssl-dev libwxgtk2.8-dev libgl1-mesa-dev libglu1-mesa-dev libpng3', otherwise for example the crypto, wx or observer modules might not be available or usable.
 "
+
+
+# Additional notes:
+
+# On some distributions (ex: Arch Linux), the wx module is not available, as
+# WxWidget is not detected.
+#
+# The root of the problem is that no /bin/wx-config executable is found.
+#
+# One may have to run, as root: 'cd /bin && ln -s wx-config-2.8 wx-config' for
+# example.
+#
+# Once Erlang is compiled, it can be tested with:
+# wx:demo().
+#
+# Another related problem is that libtinfo.so might not be found. A solution is
+# to create a symlink to libncurses, which include it:
+# cd /usr/lib ; ln -s libncurses.so.5 -T libtinfo.so.5
+
+
 
 # By default, will download files:
 do_download=0
@@ -111,11 +136,11 @@ while [ $token_eaten -eq 0 ] ; do
 
 		echo "Warning: not using latest beta (unstable) version of Erlang, as the corresponding stable version is more recent."
 
-		# Comment the next three lines if not using the beta:
+		erlang_version="${erlang_version_candidate}"
+		erlang_md5="${erlang_md5_candidate}"
+		plt_file="Erlang-$erlang_version_candidate"
 
-		#echo "Warning: using latest beta (non stable) version of Erlang."
-		#erlang_version="R14A"
-		#erlang_md5="a24873bbace9ab3c307f3d2492d9e134"
+		echo "Warning: using latest beta ${erlang_version} (non stable) version of Erlang."
 
 		token_eaten=0
 
@@ -356,7 +381,11 @@ fi
 # contains a root directory named only 'otp_src_R15B03'.  So if
 # erlang_src_prefix="otp_src_R15B03-1" then
 # erlang_extracted_prefix="otp_src_R15B03":
-erlang_extracted_prefix=`echo "${erlang_src_prefix}" | sed 's|-[0-9]*$||'`
+#
+# (a similar case happened with the otp_src_17.0-rc1 release, which was put in
+# an otp_src_17 archive root directory)
+#
+erlang_extracted_prefix=`echo "${erlang_src_prefix}" | sed 's|-[0-9]*$||' | sed 's|\.[0-9]*-rc[0-9]*$||'`
 
 if [ $use_prefix -eq 0 ] ; then
 
@@ -560,7 +589,7 @@ if [ $do_manage_doc -eq 0 ] ; then
 	cd ..
 
 	# Sets as current:
-	if [ -e Erlang-current-documentation ] ; then
+	if [ -e Erlang-current-install ] ; then
 
 		/bin/rm -f Erlang-current-documentation
 
