@@ -1,7 +1,12 @@
 #!/bin/sh
 
 
-xrandr --output VGA --pos 0x0 --mode 1024x768 --rate 75
+#xrandr --output VGA --pos 0x0 --mode 1024x768 --rate 75
+
+# Also:
+
+#xrandr --output VGA-0 --pos 0x0 --mode 1024x768 --rate 60
+xrandr --output VGA-0 --auto --right-of LVDS
 
 # or: xrandr --output VGA --pos 0x0 --mode 1024x768 --same-as LVDS
 # or: xrandr --output VGA --pos 0x0 --rate 75 --mode 1024x768 --same-as LVDS
