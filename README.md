@@ -1,4 +1,4 @@
 Ceylan-Hull
 ===========
 
-Part of the Ceylan project gathering all kinds of shell scripts.
+This repository corresponds to the part of the [Ceylan project](https://github.com/Olivier-Boudeville/Ceylan) gathering all kinds of shell scripts.
