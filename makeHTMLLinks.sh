@@ -1,23 +1,12 @@
 #!/bin/bash
 
 
-# This script makes the shortcut links to pre-made html script:
+# This script makes the shortcut links to pre-made html scripts.
 
 
 # The --rm option allows to remove all created elements.
 
 do_rm=1
-
-if [ $1 = "--rm" ] ; then
-
-	echo "Will remove HTML links."
-	do_rm=0
-	
-else
-
-	echo "Will create HTML linls."
-
-fi
 
 
 SCRIPTS[0]="putTOC.sh"
@@ -85,7 +74,19 @@ LINKS[20]="lnkr"
 
 
 element_count=${#SCRIPTS[@]}
-echo "element_count = $element_count"
+#echo "element_count = $element_count"
+
+if [ "$1" = "--rm" ] ; then
+
+	echo "Will remove $element_count HTML links:"
+	do_rm=0
+
+else
+
+	echo "Will create $element_count HTML links:"
+
+fi
+
 
 index=0
 
@@ -95,12 +96,12 @@ while [ $index -lt $element_count ] ; do
 
 	if [ $do_rm -eq 1 ] ; then
 
-		echo "    Making new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
+		echo "   + making new link ${LINKS[$index]} to ${SCRIPTS[$index]}"
 		ln -s ${SCRIPTS[$index]} ${LINKS[$index]} 2>/dev/null
 
 	else
 
-		echo "    Removing ${LINKS[$index]}"
+		echo "   + removing ${LINKS[$index]}"
 		/bin/rm -f ${LINKS[$index]} 2>/dev/null
 
 	fi
@@ -108,3 +109,5 @@ while [ $index -lt $element_count ] ; do
 	let "index = $index + 1"
 
 done
+
+echo "...done"
