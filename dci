@@ -26,29 +26,30 @@ if [ ${TOOL} = "cvs" ] ; then
 	echo "...done"
 
 elif [ -d ".svn" ] ; then
-		
+
 	if ${TOOL} diff $target | more ; then
 
 		echo "$arrow Committing-in <$target>:"
 		${TOOL} ci $target
-		
+
 		echo "...done"
 
 	fi
-	
+
 else
 
 	if [ -n "$target" ] ; then
-		
-	    # In case was not added yet, to see the diffs at next stage:
+
+		# In case was not added yet, to see the diffs at next stage:
 		git add $target
 
 	fi
-	
+
 	# We want to see what we are about to commit:
-	git diff --staged $target
+	# (not wanting the pager to truncate longer lines)
+	GIT_PAGER='' git diff --staged --minimal $target
 
 	echo "$arrow Committing-in <$target>:"
 	git commit $target
-	
+
 fi
