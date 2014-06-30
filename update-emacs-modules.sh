@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# See also: Ceylan-Heavy/src/conf/environment/*.el
 
 echo
 echo " Updating emacs modules (*.el files)"
