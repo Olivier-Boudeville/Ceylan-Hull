@@ -21,7 +21,7 @@ if [ ! -f "${source_file}" ] ; then
 
 fi
 
-rule_file="$CEYLAN_SRC/doc/GNUmakerules-docutils.inc"
+rule_file="$CEYLAN_MYRIAD/doc/GNUmakerules-docutils.inc"
 
 if [ ! -f "${rule_file}" ] ; then
 
