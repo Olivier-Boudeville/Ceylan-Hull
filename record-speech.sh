@@ -35,10 +35,10 @@ trim_silences=0
 verbose=1
 
 playback_tool="play-sounds.sh"
-playback_tool_exec=`which $playback_tool`
+playback_tool_exec=`which $playback_tool 2>/dev/null`
 
 encoder_tool="oggenc"
-encoder_tool_exec=`which $encoder_tool`
+encoder_tool_exec=`which $encoder_tool 2>/dev/null`
 
 
 voice_id=0
@@ -169,7 +169,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 
 	if [ ! -x "${encoder_tool_exec}" ] ; then
 
-		echo "Error, no OggVorbis encoding tool found (${encoder_tool})." 1>&2
+		echo "Error, no OggVorbis encoding tool found (${encoder_tool}). Use: 'pacman -S vorbis-tools' for example." 1>&2
 		exit 15
 
 	fi
@@ -377,6 +377,11 @@ case $voice_id in
 	37)
 		tool="festival"
 		voice="don_diphone"
+		;;
+
+	38)
+		tool="festival"
+		voice="cmu_us_slt_arctic_hts"
 		;;
 
 	*)
