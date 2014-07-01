@@ -11,7 +11,7 @@ GLXINFO=$(which glxinfo 1>/dev/null 2>&1)
 
 if [ ! -x "$GLXINFO" ] ; then
 
-	echo "  Error, glxinfo tool not found." 1>&2
+	echo "  Error, glxinfo tool not found. Run for example: 'yaourt glxinfo'" 1>&2
 	exit 5
 
 fi
