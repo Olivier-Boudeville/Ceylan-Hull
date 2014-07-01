@@ -7,7 +7,8 @@ echo
 DISPLAY=:0
 
 echo "  * Hardware-accelerated rendering:"
-GLXINFO=$(which glxinfo 1>/dev/null 2>&1)
+GLXINFO=$(which glxinfo 2>/dev/null)
+
 
 if [ ! -x "$GLXINFO" ] ; then
 
