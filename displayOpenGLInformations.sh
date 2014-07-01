@@ -4,16 +4,26 @@ echo "Getting informations about OpenGL support..."
 echo
 
 # First display:
-DISPLAY=:0 
+DISPLAY=:0
 
 echo "  * Hardware-accelerated rendering:"
-glxinfo | egrep "direct rendering"
-glxinfo | egrep "OpenGL .* string"
+GLXINFO=$(which glxinfo 1>/dev/null 2>&1)
+
+if [ ! -x "$GLXINFO" ] ; then
+
+	echo "  Error, glxinfo tool not found." 1>&2
+	exit 5
+
+fi
+
+$GLXINFO | egrep "direct rendering"
+$GLXINFO | egrep "OpenGL .* string"
+
 echo
 
 
 echo "  * Graphical controller: "
-lspci | grep "VGA" 
+lspci | grep "VGA"
 echo
 
 echo "  * Installed GL libraries:"
@@ -25,4 +35,3 @@ grep AIGLX /var/log/Xorg.0.log | grep -v '(WW)'
 echo
 
 echo "..done"
-
