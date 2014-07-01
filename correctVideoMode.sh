@@ -23,4 +23,3 @@ if [ "${CURRENT_RES}" != "${TARGET_RES}" ] ; then
 else
 	echo "(nothing done, already at target resolution ${TARGET_RES})"
 fi
-

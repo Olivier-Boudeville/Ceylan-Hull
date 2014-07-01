@@ -1,5 +1,3 @@
-
-
 EXTRA_DIST = \
 	testDefaultLocations.sh \
 	testRecordSpeech.sh     \
@@ -7,5 +5,4 @@ EXTRA_DIST = \
 
 
 clean-local:
-	@rm -f testRecordSpeech-*.wav
-	
+	@/bin/rm -f testRecordSpeech-*.wav

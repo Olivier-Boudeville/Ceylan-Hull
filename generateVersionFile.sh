@@ -7,7 +7,7 @@ USAGE="Usage: "`basename $0`" <major> <minor> <release>: generates a file named 
 if test "$#" -ne 3 ; then
 	echo $USAGE 1>&2
 	exit 1
-fi 
+fi
 
 echo "dnl=\"This rather convoluted file allows to centralize version numbers while \"" > $VERSION_FILENAME
 
@@ -21,5 +21,3 @@ echo "$1.$2.$3" >> $VERSION_FILENAME
 echo "dnl \"" >> $VERSION_FILENAME
 
 echo "'$VERSION_FILENAME' has been generated."
-
-

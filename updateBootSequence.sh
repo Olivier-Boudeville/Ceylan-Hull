@@ -10,7 +10,7 @@ RC_DIR="/etc/rcS.d"
 echo -e "\t+ disabling useless starts in $RC_DIR"
 
 # No NFS, rtc module nowhere to be found (aliased to char-major-10-135)
-TO_DISABLE="mountnfs hwclockfirst hwclock" 
+TO_DISABLE="mountnfs hwclockfirst hwclock"
 
 cd $RC_DIR
 
@@ -28,7 +28,7 @@ done
 RC_DIR="/etc/rc2.d"
 echo -e "\t+ disabling useless starts in $RC_DIR"
 
-TO_DISABLE="ppp exim lpd gdm kdm xdm nfs-common nfs-kernel-server" 
+TO_DISABLE="ppp exim lpd gdm kdm xdm nfs-common nfs-kernel-server"
 
 cd $RC_DIR
 

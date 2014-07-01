@@ -8,7 +8,7 @@ shift
 do_debug="false"
 do_autokill="false"
 
-echo 
+echo
 
 if [ -z "$TARGET" ]; then
 	echo -e "$USAGE\n\nError, no target process specified."
@@ -34,43 +34,43 @@ do_stop=0
 while [ $do_stop -eq 0 ]; do
 
 	TO_KILL_NAMES=""
-	
+
 	while [ -z "$TO_KILL_NAMES" ]; do
 		TO_KILL_NAMES=`ps -u \`whoami\` -o args | grep "$TARGET" | grep -v grep | grep -v "$EDITOR " | grep -v "vi " | grep -v \`basename $0\` | grep -v "nedit "`
 		sleep 1
 	done
-	
+
 	if [ "$do_autokill" == "true" ]; then
 		choice="y"
-	else	
-        	echo "Following processes will be killed:"
+	else
+		echo "Following processes will be killed:"
 		ps -u `whoami` -o args | grep "$TARGET" | grep -v grep | grep -v "$EDITOR " | grep -v "vi " | grep -v `basename $0` | grep -v "$EDITOR_TO_LET_ALIVE"
-        
-        	read -e -p "Should we kill them ? (y/n) [n]: " choice
+
+		read -e -p "Should we kill them ? (y/n) [n]: " choice
 	fi
-		
-        if [ "$choice" == "y" ]; then
-                FIRST=`ps -u $(whoami) -o pid,args | grep "$TARGET" | grep -v grep |  grep -v "$EDITOR " | grep -v "vi " | grep -v $(basename $0) | grep -v "nedit " | awk '{print $1}'`
-		
-                if [ -n "$FIRST" ]; then
+
+	if [ "$choice" == "y" ]; then
+		FIRST=`ps -u $(whoami) -o pid,args | grep "$TARGET" | grep -v grep |  grep -v "$EDITOR " | grep -v "vi " | grep -v $(basename $0) | grep -v "nedit " | awk '{print $1}'`
+
+		if [ -n "$FIRST" ]; then
 			[ "$do_debug" == "false" ] || echo "DEBUG: PID is $FIRST"
-                        kill $FIRST
-                fi
-		
-        	SECOND=`ps -u $(whoami) -o pid,args | grep "$TARGET" | grep -v grep |  grep -v "$EDITOR " | grep -v "vi " | grep -v $(basename $0) | grep -v "nedit " | awk '{print $1}'`
-                if [ -n "$SECOND" ]; then
-			[ "$do_debug" == "false" ] || echo "DEBUG: PID is $SECOND"		
-                        kill -9 $SECOND
-                fi
-		
+			kill $FIRST
+		fi
+
+		SECOND=`ps -u $(whoami) -o pid,args | grep "$TARGET" | grep -v grep |  grep -v "$EDITOR " | grep -v "vi " | grep -v $(basename $0) | grep -v "nedit " | awk '{print $1}'`
+		if [ -n "$SECOND" ]; then
+			[ "$do_debug" == "false" ] || echo "DEBUG: PID is $SECOND"
+			kill -9 $SECOND
+		fi
+
 		if [ $? -eq 0 ]; then
-			echo "$TO_KILL_NAMES killed !"		
+			echo "$TO_KILL_NAMES killed !"
 		else
 			echo "Error while killing $TO_KILL_NAMES"
 		fi
 
-        else
-                echo "Killed cancelled"
-        fi
+	else
+		echo "Killed cancelled"
+	fi
 
 done

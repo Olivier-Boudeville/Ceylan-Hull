@@ -4,16 +4,16 @@ USAGE="$0 <my html file>: tidies the html code in chosen file"
 
 # See: http://tidy.sourceforge.net/
 
-TIDY_PATH=${OSDL_ROOT}/src/conf/LOANI-installations/tidy/bin 
+TIDY_PATH=${OSDL_ROOT}/src/conf/LOANI-installations/tidy/bin
 
 TIDY=`PATH=${TIDY_PATH}:${PATH} which tidy 2>/dev/null`
 
-if [ ! -x "$TIDY" ] ; then 
+if [ ! -x "$TIDY" ] ; then
 	TIDY="/usr/local/Logiciels/tidy/bin/tidy"
 fi
 
 
-if [ ! -x "$TIDY" ] ; then 
+if [ ! -x "$TIDY" ] ; then
 	echo "Unable to find any tidy executable, aborting."
 	exit 1
 fi
@@ -44,4 +44,4 @@ if [ ! -f "$TIDY_CONF_FILE" ] ; then
 fi
 
 echo "    Tidying $1"
-$TIDY $TIDY_OPT $targetFile | grep -v Info 
+$TIDY $TIDY_OPT $targetFile | grep -v Info

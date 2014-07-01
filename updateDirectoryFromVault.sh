@@ -22,13 +22,13 @@ if [ -z "$1" ] ; then
 	echo -e "Error, no directory specified. $USAGE" 1>&2
 	exit 2
 fi
-	
-	
+
+
 if [ ! -d "$1" ] ; then
 	echo -e "Error, specified directory does not exist ($1)." 1>&2
 	exit 3
 fi
-	 
+
 cd $1
 
 TARGET_FILES=`ls -A`
@@ -42,4 +42,3 @@ for f in ${TARGET_FILES} ; do
 done
 
 echo "Done !"
-	 

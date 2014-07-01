@@ -5,8 +5,7 @@
 if [ -d 'CVS' ] ; then
 	cvs co $*
 elif [ -d '.svn' ] ; then
-	svn co $*	
+	svn co $*
 else
-	git checkout $*	
+	git checkout $*
 fi
-

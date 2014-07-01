@@ -14,8 +14,8 @@ testAsk()
 }
 
 
-askTextold() 
-# Usage: 
+askTextold()
+# Usage:
 #	askText "my prompt" "my default value"
 #	myVariable=$value
 #	Affect after that call your target variable with the variable named "value"
@@ -23,26 +23,26 @@ askTextold()
 	unset value
 	read -e -p " + $1 [$2]: " value
 	if [ -z $value ]; then
-            value=$2
+	    value=$2
 	fi
-	echo 
-	return 
+	echo
+	return
 }
 
 
-askText() 
-# Usage: 
+askText()
+# Usage:
 #	if [ askText "my prompt" "my default value" ]; then
 #		myVariable=$value
 #	else
 #		echo "Cancel"
 #	You should set after that call your target variable with the variable
 # named "value"
-#   
+#
 {
 	read -e -p " + $1 [$2]: " value
 	if [ -z $value ]; then
-            value=$2
+	    value=$2
 	fi
  }
 
@@ -57,8 +57,8 @@ testAskText()
 }
 
 
-askGDIALOG() 
-# Usage: 
+askGDIALOG()
+# Usage:
 #	askGDIALOG "my title" "my prompt" "my default value"
 #	myVariable=$value
 #	Affect after that call your target variable with the variable named "value"
@@ -80,12 +80,12 @@ testAskGDIALOG()
 
 isXRunning()
 # Usage: if isXRunning; then
-#      
-# This test should be improved, I do not know which is the reliable 
+#
+# This test should be improved, I do not know which is the reliable
 # way to test whether X is running.
-{  
+{
  if [ `ps -edf | grep "/etc/X11/X " | grep -v grep 1>/dev/null` ]; then
-  return 0 
+  return 0
  fi
  return 1
 }
@@ -101,10 +101,10 @@ detectGUI()
 # Usage:
 #       detectGUI
 # prefers gdialog to kdialog (both if X running) to dialog to whiptail
-# to text only (which is always available default)    
+# to text only (which is always available default)
 {
 
-GUI="$FULLTEXT" 
+GUI="$FULLTEXT"
 
 if [ -n `availableCommand "$GDIALOG"` -a isXRunning ]; then
  GUI="GDIALOG"
@@ -139,7 +139,7 @@ setGUIFunctions
 test()
 {
 if gdialog --title "An Input Box" \
-        --inputbox "This box accepts a message." 200 200
+	--inputbox "This box accepts a message." 200 200
     then echo $?
 else echo "No text input."
 fi
@@ -181,7 +181,7 @@ if [ ! "$do_simulate" = "yes" ]; then
 make
 fi
 
-echo -e "\nThen they will all work their gentle way."   
+echo -e "\nThen they will all work their gentle way."
 cd $ROOT_INSTALL/$OSDL_ROOT/src/code/tests
 ./playTests.sh
 

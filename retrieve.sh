@@ -30,5 +30,5 @@ while [ -n "$1" ] ; do
 
 	ln -s ${DATA_VAULT}/`basename ${linkTarget}` ${linkTarget} && echo "    Linked back to ${DATA_VAULT}/`basename $linkTarget`"
 
-	shift 
+	shift
 done

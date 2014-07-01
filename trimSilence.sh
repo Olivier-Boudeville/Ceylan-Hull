@@ -9,10 +9,10 @@ Usage: "`basename $0`" filename
 target_file="$1"
 
 if [ -z "${target_file}" ] ; then
-	
+
 	echo "Error, no target file specified. ${USAGE}" 1>&2
 	exit 10
-	
+
 fi
 
 
@@ -51,8 +51,7 @@ if [ $? -eq 0 ] ; then
 else
 	echo "Error, the trimming of ${target_file} failed." 1>&2
 	exit 20
-fi		
+fi
 
 
 /bin/rm -r ${tmp_file}
-

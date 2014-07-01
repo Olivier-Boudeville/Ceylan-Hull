@@ -68,7 +68,7 @@ while [ $token_eaten -eq 0 ] ; do
 
 	read_parameter="$1"
 	#echo "read_parameter = $read_parameter"
-	
+
 	token_eaten=1
 
 	if [ "$read_parameter" = "--verbose" -o "$read_parameter" = "-v" ] ; then
@@ -77,15 +77,15 @@ while [ $token_eaten -eq 0 ] ; do
 		echo "Verbose mode activated."
 		token_eaten=0
 	fi
-	
-	
+
+
 	if [ "$read_parameter" = "--quiet" -o "$read_parameter" = "-q" ] ; then
 		verbose=1
 		quiet=0
 		#echo "Quiet mode activated."
 		token_eaten=0
 	fi
-	
+
 	if [ "$read_parameter" = "--filenames-only" -o "$read_parameter" = "-f" ] ; then
 		verbose=1
 		quiet=0
@@ -93,8 +93,8 @@ while [ $token_eaten -eq 0 ] ; do
 		[ $quiet -eq 0 ] || echo "Only filenames will be written, not found patterns."
 		token_eaten=0
 	fi
-	
-	
+
+
 	if [ "$read_parameter" = "--insensitive" -o "$read_parameter" = "-i" ] ;
 	then
 		insensitive_opt="-i"
@@ -102,25 +102,25 @@ while [ $token_eaten -eq 0 ] ; do
 		[ $quiet -eq 0 ] || echo "Case-insensitive mode activated."
 		token_eaten=0
 	fi
-	
-	
+
+
 	if [ "$read_parameter" = "--restructured" -o "$read_parameter" = "-r" ] ;
 	then
 		restructured_mode=0
 		[ $quiet -eq 0 ] || echo "ReStructured text mode activated."
 		token_eaten=0
 	fi
-	
-	
+
+
 	if [ -n "$read_parameter" ] ; then
 		shift
 	fi
-	
+
 done
 
 
 # Then check one or two parameters remain indeed:
-       
+
 if [ -z "$read_parameter" ] ; then
 	echo "Error, too few parameters. $USAGE" 1>&2
 	exit 3
@@ -147,7 +147,7 @@ if [ $verbose -eq 0 ] ; then
 		$find . -exec /bin/ls '{}' ';' 2>/dev/null
 	else
 		$find . -exec /bin/ls '{}' $force_multi_files ';' 2>/dev/null
-	fi  
+	fi
 
 fi
 
@@ -157,24 +157,24 @@ if [ -z "$filter_on_file" ] ; then
 	[ $quiet -eq 0 ] || echo "
 	Recursive grep for expression <$searched_expression> in all files:
 	"
-   
+
 	if [ $restructured_mode -eq 1 ] ; then
 
 		if [ $filenames_only -eq 1 ] ; then
-		
+
 			$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
-   
-   		else
-		
+
+		else
+
 			$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
-		
+
 		fi
-		
+
 	else
-	
+
 		# Note filter specified, using '*.rst':
 		$find . -name tmp-rst -prune -o ${name_opt} '*.rst' -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
- 	
+
 	fi
 
 else
@@ -184,33 +184,32 @@ else
 	"
 
 	if [ $restructured_mode -eq 1 ] ; then
-		
+
 		if [ $filenames_only -eq 1 ] ; then
-		
+
 			$find . ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
 		else
 			$find . ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
-			
+
 		fi
-		
+
 	else
 
 		if [ $filenames_only -eq 1 ] ; then
 
 			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
-   	
+
 		else
-		
+
 			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
-		
-		fi	
-   
+
+		fi
+
    fi
-   
-fi  
+
+fi
 
 
 [ $quiet -eq 0 ] || echo "
 End of search."
-

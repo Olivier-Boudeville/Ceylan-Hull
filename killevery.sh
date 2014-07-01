@@ -5,8 +5,8 @@ USAGE="Usage: $0 myProcessNameToKill"
 
 
 if [ $# != 1 ]; then
-        echo -e $USAGE
-        exit 1
+	echo -e $USAGE
+	exit 1
 fi
 
 # Debug mode, activated if true (0), default: false (1);
@@ -31,9 +31,9 @@ TO_KILL_NAMES=`ps -u \`whoami\` -o args | grep "$TARGET" | grep -v grep | grep -
 DEBUG "Basic ps: "`ps -u \`whoami\` -o args | grep "$TARGET"`
 DEBUG "Spotted process to kill = $TO_KILL_NAMES"
 
-if [ -z "$TO_KILL_NAMES" ]; then 
+if [ -z "$TO_KILL_NAMES" ]; then
 	echo "There is no process matching <$1>"
-else 
+else
 	echo "Following processes will be killed:"
 	ps  -u `whoami` -o args | grep "$1" | grep -v grep
 	read -e -p "Should we kill them ? (y/n) [n]: " choice
@@ -48,7 +48,7 @@ else
 		fi
 		echo "Killed !"
 	else
-		echo "$0 cancelled"	
-	fi	
-	
+		echo "$0 cancelled"
+	fi
+
 fi

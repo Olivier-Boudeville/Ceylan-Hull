@@ -18,7 +18,7 @@ ACTUAL_MOUNT_POINT=""
 MODPROBE=/sbin/modprobe
 MOUNT=/bin/mount
 LS=/bin/ls
-	
+
 
 # Priority managed (first mount point preferred):
 
@@ -42,7 +42,7 @@ fi
 
 # Only root can use modprobe:
 if [ `id -u` = "0" ]; then
-	${MODPROBE} usb_storage 1>/dev/null 2>&1 
+	${MODPROBE} usb_storage 1>/dev/null 2>&1
 fi
 
 

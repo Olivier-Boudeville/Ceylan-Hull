@@ -3,7 +3,7 @@
 USAGE="$0 <file pattern> <source expression> <target expression>"
 
 if [ ! "$#" -eq "3" ] ; then
-	echo "Error, $USAGE" 
+	echo "Error, $USAGE"
 	exit
 fi
 
@@ -13,4 +13,3 @@ do
    sed "s|$2|$3|g" $i > $i.tmp && mv $i.tmp $i
    # mv was cp before
 done
-

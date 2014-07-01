@@ -15,11 +15,8 @@ if [ ! $num -eq "0" ]; then
 	for c in $cores; do
 
 		ls -l $c
-		file $c	
+		file $c
 		echo
 	done
 
 fi
-
-
- 

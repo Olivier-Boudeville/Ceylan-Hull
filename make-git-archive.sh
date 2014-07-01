@@ -4,7 +4,7 @@ USAGE="Usage: "`basename $0`" PROJECT_DIR ARCHIVE_DIR: makes a backup (as an arc
 
 if [ ! $# -eq 2 ] ; then
 
-	echo "  Error, two parameters needed. 
+	echo "  Error, two parameters needed.
 $USAGE." 1>&2
 	exit 1
 
@@ -57,17 +57,17 @@ git bundle create "${git_archive_name}" --all
 res=$?
 
 if [ ! $res -eq 0 ] ; then
-	
+
 	echo "  Error, creation of the GIT bundle failed." 1>&2
 	exit 15
 
 fi
 
-$crypt_tool "$git_archive_name" 
+$crypt_tool "$git_archive_name"
 res=$?
 
 if [ ! $res -eq 0 ] ; then
-	
+
 	echo "  Error, cyphering of archive failed." 1>&2
 	exit 20
 

@@ -25,17 +25,15 @@ while [ $A -le 255 ] ; do
 		#echo "Testing $TARGET"
 		ping $TARGET  -c 1 1>/dev/null
 		if [ $? -eq 0 ] ; then
-			output_message "++++ Found $TARGET !!!!!" 
-		else 
-			output_message "(nothing at $TARGET)"	
+			output_message "++++ Found $TARGET !!!!!"
+		else
+			output_message "(nothing at $TARGET)"
 		fi
 		B=`expr $B + 1`
 	done
-	
+
 	A=`expr $A + 1`
-	B=0	
+	B=0
 done
 
 output_message "End of search at "`date`
-
-

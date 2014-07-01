@@ -9,4 +9,3 @@ elif [ -d '.svn' ] ; then
 else
 	git pull $*
 fi
-

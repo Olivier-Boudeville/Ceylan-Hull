@@ -34,14 +34,14 @@ testTextColors()
 	echo
 	echo "Testing text colors : "
 	echo
-	
+
 	for c in $text_color_list ; do
 		setText ${!c}
 		echo "This is color $c"
 		setDefaultTerm
 	done
 	echo
-	
+
 }
 
 
@@ -58,7 +58,7 @@ testTextAttributes()
 		setDefaultTerm
 	done
 	echo
-	
+
 }
 
 
@@ -77,7 +77,7 @@ testBackColors()
 		echo
 	done
 	echo
-		
+
 }
 
 
@@ -99,7 +99,7 @@ testSpecialMessages()
 	DEBUG "This is a debug message"
 	WARNING "This is a warning message"
 	ERROR "This is an error message"
-	
+
 }
 
 
@@ -112,21 +112,21 @@ testInteractions()
 	else
 		echo "No"
 	fi
-	
+
 	echo
-	
+
 	if askDefaultNo "Is your answer yes ?" ; then
 		echo "Yes"
 	else
 		echo "No"
 	fi
-	
+
 	askString "Enter your name :"
 	echo "Hello, $returnedString !"
-	
+
 	askNonVoidString "Enter your credit card number :"
 	echo "You should not have told us that your credit card number was $returnedString."
-	
+
 
 }
 

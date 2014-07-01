@@ -13,7 +13,7 @@ if [ ! $# -eq 2 ] ; then
 
 	echo "Error, exactly two parameters needed." 1>&2
 	exit 10
-	
+
 fi
 
 
@@ -29,14 +29,13 @@ substitute=`which substitute.sh 2>/dev/null`
 for f in ${target_files} ; do
 
 	echo "  - fixing $f"
-	
+
 	# Read-only by default (-r--r--r--):
 	chmod +w "$f"
 	${substitute} ${previous_user} ${new_user} "$f"
-	chmod 444 "$f"	
-	
+	chmod 444 "$f"
+
 done
 
 
 echo "...done"
-

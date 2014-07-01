@@ -34,7 +34,7 @@ if [ ! -x "${checker_tool}" ] ; then
 
 	echo "Error, checker tool ($checker_bin) not found." 1>&2
 	exit 10
-	
+
 fi
 
 
@@ -43,8 +43,8 @@ target_files=`find ${target_dir} -name "$searched_pattern"`
 for f in ${target_files} ; do
 
 	echo "  - opening $f"
-	$checker_tool $f 2>/dev/null 
-	
+	$checker_tool $f 2>/dev/null
+
 done
 
 
@@ -56,15 +56,14 @@ backup_files=`find . -name '*~'`
 if [ -n "${backup_files}" ] ; then
 
 	echo "Back-up files are: ${backup_files}."
-	
+
 	read -p "Remove following backup files? (y/n) [n] " value
-	
-	if [ "$value" = "y" ] ; then  
+
+	if [ "$value" = "y" ] ; then
 		/bin/rm -f ${backup_files}
 		echo "Files removed."
 	else
 		echo "No file removed."
 	fi
-	
-fi
 
+fi

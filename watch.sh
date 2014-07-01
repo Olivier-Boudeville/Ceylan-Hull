@@ -5,7 +5,7 @@ USAGE="Usage: `basename $0` <expression to watch in running processes>.\nExample
 if [ -z "$1" ] ; then
 	echo -e "\nError, no expression to watch.\n\t$USAGE."
 	exit 1
-fi	
+fi
 
 WATCH_FILE="watch-result.txt"
 
@@ -26,20 +26,18 @@ stop=1
 while [ $stop -eq 1 ] ; do
 
 	echo "   Watching $1..."
-	
+
 	if [ ${show_full_cmd} -eq 0 ]; then
-	
+
 		# Full command:
 		ps -ed -o comm,args | grep -v `basename $0` | grep -v grep | grep -i "$1"
 	else
-	
+
 		# Command filtered by user:
 		ps -edf | grep "$LOCAL_USER" | grep -v `basename $0` | grep -v grep | grep -i "$1"
 	fi
-	
+
 	echo
 	sleep 1
-	
+
 done 2>&1 | tee ${WATCH_FILE}
-
-

@@ -5,4 +5,3 @@ echo "Will list all files, starting from current directory, sorted by decreasing
 echo
 
 find . -type f -exec du -k '{}' ';' | sort -nr | more
-

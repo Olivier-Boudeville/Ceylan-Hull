@@ -4,7 +4,7 @@ MAILTO=wondersye
 # This script has be deprecated, since its OSDL's counterpart does the job.
 
 
-# Updates Ceylan's website in OSDL's webserver at SourceForge from Ceylan doc CVS repository 
+# Updates Ceylan's website in OSDL's webserver at SourceForge from Ceylan doc CVS repository
 # every 4 hours, at the minute number 10:
 
 HOME_USER=/home/users/w/wo/wondersye
@@ -19,4 +19,3 @@ TARGET_SCRIPT=export-CVS-to-webserver.sh
 # crontab CVS-to-webserver.crontab
 
 # To check: crontab -l
-

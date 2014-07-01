@@ -40,4 +40,3 @@ $ROUTE add $LAN_NET $ETH_LAN
 
 echo -e "\t+ Default route aimed at gateway $GATEWAY"
 $ROUTE add default gw $GATEWAY
-

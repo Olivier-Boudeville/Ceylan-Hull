@@ -17,4 +17,3 @@ echo "    Converting $1"
 
 $TOOL <$1 >$1.tmp
 mv $1.tmp $1
-

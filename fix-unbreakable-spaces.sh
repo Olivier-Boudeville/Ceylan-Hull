@@ -27,7 +27,7 @@ if [ ! $? -eq 0 ] ; then
 
 	echo "Error, initial copy of ${target_file} to ${temp_file} failed." 1>&2
 	exit 5
-	
+
 fi
 
 
@@ -36,7 +36,7 @@ if [ ! $? -eq 0 ] ; then
 
 	echo "Error, replacement in ${target_file} failed." 1>&2
 	exit 10
-	
+
 fi
 
 
@@ -45,6 +45,5 @@ if [ ! $? -eq 0 ] ; then
 
 	echo "Error, removal of ${temp_file} failed." 1>&2
 	# Not fatal: exit 10
-	
-fi
 
+fi

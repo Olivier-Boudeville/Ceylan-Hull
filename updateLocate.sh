@@ -6,7 +6,7 @@ SLOCATE_CONF=/etc/updatedb.conf
 if [ ! `id -u` = "0" ] ; then
 	echo "Error, only root can do that."
 	exit
-fi 
+fi
 
 if [ -x "$SLOCATE_EXE" ]; then
 
@@ -24,5 +24,3 @@ else
 	echo "Error, no slocate tool found (no $SLOCATE_EXE)."
 	exit
 fi
-
-

@@ -28,7 +28,7 @@ if [ ! -x "${CONVERT}" ] ; then
 	exit 15
 
 fi
-	
+
 ${CONVERT} "${SOURCE}" -resize 50% -quality 0.9 "${TARGET}"
 
 if [ ! $? -eq 0 ] ; then

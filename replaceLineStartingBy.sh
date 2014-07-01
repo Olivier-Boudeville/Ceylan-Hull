@@ -4,7 +4,7 @@ USAGE="
 Usage: replaceLineStartingBy.sh START TARGET FILE
 	replaces in FILE every line starting by START by line TARGET
 
-Example: 
+Example:
 	replaceLineStartingBy.sh 'MAKE=' 'MAKE=/usr/bin/make' myFile"
 
 
@@ -37,4 +37,3 @@ temp_file=".replaceLineStartingBy.tmp"
 /bin/cat ${temp_file} | sed -e "s|$SOURCE|$TARGET|g" > ${target_file}
 
 /bin/rm -f ${temp_file}
-

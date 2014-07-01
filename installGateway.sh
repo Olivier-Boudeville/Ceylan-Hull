@@ -33,4 +33,3 @@ mkdir -p /root/tmp
 echo "recompile a new kernel, /sbin/lilo -v"
 
 echo "/sbin/reboot"
-

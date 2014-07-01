@@ -17,7 +17,7 @@ bong()
 
 
 if [ ! -x "$WAVE_PLAYER" ] ; then
-	echo "No executable wave player found." 
+	echo "No executable wave player found."
 	exit 2
 fi
 

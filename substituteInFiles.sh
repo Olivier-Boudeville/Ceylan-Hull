@@ -3,7 +3,7 @@
 USAGE="
   Usage: substituteInFiles.sh <OldPattern> <NewPattern>
 Substitutes <OldPattern> with <NewPattern> in all files, starting recursively from current directory.
-  Example: 
+  Example:
 	substituteInFiles.sh wondrful wonderful
 	substituteInFiles.sh '<< endl )$' '<< endl ) ;'"
 
@@ -12,7 +12,7 @@ if [ ! $# -eq 2 ]; then
 
 	echo $USAGE 1>&2
 	exit 5
-	
+
 fi
 
 
@@ -34,4 +34,3 @@ else
 	exit 1
 
 fi
-

@@ -23,7 +23,7 @@ if [ ! -d "$WEB_ROOT" ] ; then
 	exit 3
 fi
 
- 
+
 MAP_HEADER="$WEB_ROOT/../common/Map-header.html"
 MAP_FOOTER="$WEB_ROOT/../common/Map-footer.html"
 
@@ -38,8 +38,8 @@ if [ ! -f "$MAP_FOOTER" ] ; then
 	exit 5
 fi
 
-	
-echo "Generating map file $MAP_FILE from $WEB_ROOT" 
+
+echo "Generating map file $MAP_FILE from $WEB_ROOT"
 
 cat $MAP_HEADER > $MAP_FILE
 

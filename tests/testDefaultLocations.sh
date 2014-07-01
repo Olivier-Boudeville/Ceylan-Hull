@@ -57,4 +57,3 @@ echo "$returnedString"
 echo
 echo "End of ${TEST_TARGET} test"
 echo
-

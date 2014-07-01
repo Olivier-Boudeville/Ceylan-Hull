@@ -9,8 +9,8 @@ FIND_GNU="/logiciels/public/bin/find"
 if [ -x "$FIND_GNU" ]; then
 	FIND="$FIND_GNU"
 else
-	FIND=FIND=`which find 2>/dev/null | grep -v ridiculously`	
-fi	
+	FIND=FIND=`which find 2>/dev/null | grep -v ridiculously`
+fi
 
 MD5SUMMER=`which md5sum 2>/dev/null | grep -v ridiculously`
 #echo $MD5SUMMER
@@ -26,9 +26,9 @@ fi
 if [ -n "$2" ] ; then
 	OUTPUT_FILE=$2
 fi
-	
+
 TMP=.tmp.txt
-	
+
 echo > $TMP
 $FIND $ROOT_TREE -type f -exec echo '{}' >> $TMP ';'
 
@@ -36,7 +36,7 @@ $FIND $ROOT_TREE -type f -exec echo '{}' >> $TMP ';'
 echo > $OUTPUT_FILE
 for f in `cat $TMP`; do
 	#echo $f "[md5 = "`$MD5SUMMER $f`"]" >> $OUTPUT_FILE ';'
-	echo `$MD5SUMMER $f` >> $OUTPUT_FILE 
+	echo `$MD5SUMMER $f` >> $OUTPUT_FILE
 done
 
 more $OUTPUT_FILE

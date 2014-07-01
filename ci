@@ -5,8 +5,7 @@
 if [ -d 'CVS' ] ; then
 	cvs ci $*
 elif [ -d '.svn' ] ; then
-	svn ci $*	
+	svn ci $*
 else
 	git commit $*
 fi
-

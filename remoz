@@ -3,4 +3,3 @@
 echo "Launching mozilla locally ($HOSTNAME) will avoid spawning another window on any remote mozilla"
 
 echo mozilla --no-xshm $* &
-

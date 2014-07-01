@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 
 USAGE=$(basename $0)" [-d]: reduce the size of JPEG files found in current directory. If the -d option is specified, the original files will be deleted."
 
@@ -33,6 +33,3 @@ if [ $do_delete -eq 0 ] ; then
 	/bin/rm -f ${TARGETS}
 
 fi
-
-
-

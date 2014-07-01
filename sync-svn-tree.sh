@@ -1,7 +1,7 @@
 #!/bin/bash
 
 USAGE="Usage: "`basename $0`" <SOURCE_DIR> <TARGET_DIR>:
-   
+
   Synchronizes (updates) target directory (<TARGET_DIR>), which should be fully check-ined beforhand, based on source directory (<SOURCE_DIR>), which will not be modified in any way.
 
 "
@@ -12,7 +12,7 @@ source_dir="$1"
 target_dir="$2"
 
 if [ -z "$source_dir" ] ; then
-	
+
 	echo "Error, not enough parameters." 1>&2
 	echo $USAGE 1>&2
 	exit 5
@@ -20,7 +20,7 @@ if [ -z "$source_dir" ] ; then
 fi
 
 if [ ! -d "$source_dir" ] ; then
-	
+
 	echo "Error, source directory $source_dir does not exist.
 $USAGE 1>&2"
 	exit 10
@@ -29,7 +29,7 @@ fi
 
 
 if [ -z "$target_dir" ] ; then
-	
+
 	echo "Error, not enough parameters." 1>&2
 	echo $USAGE 1>&2
 	exit 15
@@ -37,7 +37,7 @@ if [ -z "$target_dir" ] ; then
 fi
 
 if [ ! -d "$target_dir" ] ; then
-	
+
 	echo "Error, target directory $target_dir does not exist.
 $USAGE 1>&2"
 	exit 20
@@ -82,9 +82,3 @@ else
 	echo "There were errors while copying files, stopping." 1>&2
 	exit 55
 fi
-
-
-
-
-
-

@@ -120,7 +120,7 @@ if [ $auto_edit -eq 0 ] ; then
 
 fi
 
- 
+
 # To tell a new directory is scanned:
 
 if [ $be_verbose -eq 0 ] ; then
@@ -142,18 +142,18 @@ for f in `/bin/ls $firstDir`; do
 	if [ $ignore_svn -eq 1 ] || [ `basename $f` != ".svn" ] ; then
 
 		if [ ! -e "$secondDir/$f" ] ; then
-			
+
 			if [ $shorter_messages -eq 0 ] ; then
 				echo "${PREFIX_NOEX}'$f' only in FIRST.${DEFAULT_TEXT}"
 			else
 			echo "${PREFIX_NOEX}'$f' is only in first directory ($firstDir), i.e. not in $secondDir.${DEFAULT_TEXT}"
-			
+
 			fi
-			
+
 	else
-			
+
 			if [ ! -d "$firstDir/$f" ] ; then
-				
+
 				if diff "$firstDir/$f" "$secondDir/$f" 1>/dev/null 2>&1 ; then
 					[ $be_verbose -eq 1 ] || echo "${PREFIX_IDEN}('$f' identical in the two directories)${DEFAULT_TEXT}"
 				else

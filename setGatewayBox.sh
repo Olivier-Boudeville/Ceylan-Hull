@@ -43,4 +43,3 @@ echo -e "\t+ No default route set, ppp will do it for us"
 # Default route will be (after rc2.d) aimed at ppp0
 # by S14ppp -> /etc/ppp/ppp_on_boot -> $PPPD call wanadoo.dsl -> /etc/ppp/peers/wanadoo.dsl
 #$ROUTE add -net 0.0.0.0 netmask $NETMASK ppp0
-

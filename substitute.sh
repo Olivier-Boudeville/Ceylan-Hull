@@ -17,10 +17,10 @@ SED=/bin/sed
 if [ ! -x "${SED}" ] ; then
 	SED=/usr/bin/sed
 fi
-	
+
 RM=/bin/rm
 
-			 
+
 if [ $# != 3 ]; then
 
 	echo "Error, three parameters needed, whereas provided ones were: $*.
@@ -41,7 +41,7 @@ fi
 
 
 # Currently not used anymore, since using '|' as a sed separator instead of '/'.
- 
+
 # Both scripts should be found in the same directory:
 PROTECT_SCRIPT=`dirname $0`/protectSpecialCharacters.sh
 
@@ -49,7 +49,7 @@ if [ ! -x "${PROTECT_SCRIPT}" ]; then
 	echo "
 	Error, cannot find an executable protect script (${PROTECT_SCRIPT}) in "`pwd` 1>&2
 	exit 3
-fi	
+fi
 
 
 SOURCE=`${PROTECT_SCRIPT} "$1"`
@@ -68,4 +68,3 @@ ${CP} -f ${target_file} ${temp_file}
 ${CAT} ${temp_file} | ${SED} -e "s|${SOURCE}|${TARGET}|g" > ${target_file}
 
 ${RM} -f ${temp_file}
-

@@ -10,7 +10,7 @@ DATA_VAULT_DEFAULT="$HOME/Vault"
 if [ ! "$#" = "1" ] ; then
 	echo "Error, not exactly one argument provided. $USAGE"
 	exit 1
-fi	
+fi
 
 if [ -z "$DATA_VAULT" ] ; then
 	echo "Warning: no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
@@ -30,4 +30,3 @@ echo "Catching $target ..."
 
 
 mv -f "$target" $DATA_VAULT && ln -s $DATA_VAULT/`basename $target` $target && echo "... done"
-

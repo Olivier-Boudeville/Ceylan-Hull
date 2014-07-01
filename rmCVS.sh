@@ -13,14 +13,14 @@ TARGETS=`find $STARTING_DIR -iname 'CVS' -exec echo '{}' ';'`
 
 if [ -z "$TARGETS" ] ; then
 	echo "Nothing to delete, aborting."
-	exit 
+	exit
 fi
 
 echo
 echo "Spotted directories are:"
 find $STARTING_DIR -iname 'CVS' -exec echo '{}' ';'
 
-unset value 
+unset value
 
 echo
 read -p "   Will recursively remove all these CVS-related directories (CVS or cvs) and their content starting from $STARTING_DIR: ok? (y/n) [n]" value
@@ -28,21 +28,20 @@ read -p "   Will recursively remove all these CVS-related directories (CVS or cv
 if [ "$value" = "y" ] ; then
 
 	echo "Proceeding with deletion...."
-	
+
 	find $STARTING_DIR -iname 'CVS' -exec /bin/rm -rf '{}' ';' 2>/dev/null
-	
+
 	if [ $? -eq 0 ] ; then
-	
+
 		echo "... successfully done"
-	
+
 	else
 		echo "Error, operation failed." 1>&2
 		exit 5
 	fi
-	
+
 else
 
 	echo "Cancelled, nothing done!"
 
-fi	
-
+fi

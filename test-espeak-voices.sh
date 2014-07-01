@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # See also: Content-indexing/audio/speech-synthesis/Espeak-without-MBROLA.rst
- 
-USAGE="  Usage: "`basename $0`" 
+
+USAGE="  Usage: "`basename $0`"
 
   Tests espeak voices by recording a test sentence with each of them, and comparing the MD5sum for each resulting WAV file.
 "
@@ -30,7 +30,7 @@ ESPEAK_VOICES="${ESPEAK_EN_VOICES} ${ESPEAK_FR_VOICES} ${ESPEAK_VARIANT_VOICES}"
 
 #echo "ESPEAK_VOICES = ${ESPEAK_VOICES}"
 
-for v in ${ESPEAK_VOICES} ; do echo "Voice = $v" ;  echo "Esperide Software presents: In the Hall of the Mountain King." |  espeak -v $v -w $v.wav; play-sounds.sh --quiet $v.wav ; done  
+for v in ${ESPEAK_VOICES} ; do echo "Voice = $v" ;  echo "Esperide Software presents: In the Hall of the Mountain King." |  espeak -v $v -w $v.wav; play-sounds.sh --quiet $v.wav ; done
 
 ESPEAK_RETAINED_LIST=""
 
@@ -39,4 +39,3 @@ ESPEAK_RETAINED_LIST=""
 for f in *.wav; do md5sum $f >> voices-md5-unsorted.txt ; done
 
 cat voices-md5-unsorted.txt | sort >> voices-md5-sorted.txt
-

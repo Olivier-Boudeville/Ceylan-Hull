@@ -4,8 +4,8 @@ USAGE="
 Usage: protectSpecialCharacters.sh EXPR
 
 Prevents special characters in EXPR from being interpreted by tools like sed.
-Example: 
-	protectSpecialCharacters.sh eee/dd/f 
+Example:
+	protectSpecialCharacters.sh eee/dd/f
 	should output eee\/dd\/f"
 
 SED=/bin/sed
@@ -25,4 +25,3 @@ fi
 
 #echo $1 | ${SED} 's/\//\\\//g'
 echo $1 | ${SED} 's|/|\\/|g'
-

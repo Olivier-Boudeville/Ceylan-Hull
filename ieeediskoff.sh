@@ -8,7 +8,7 @@ MOUNT_POINT_3=/mnt/ieeedisk3
 
 umount ${MOUNT_POINT_1}
 umount ${MOUNT_POINT_2}
-umount ${MOUNT_POINT_3} 
+umount ${MOUNT_POINT_3}
 
 
 echo "IEEE disk unmounted"

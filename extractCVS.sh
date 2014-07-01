@@ -16,6 +16,6 @@ fi
 for d in `ls $1`; do
 	if [ "$d" != "$CVSROOT" ]; then
 		echo "    exporting module $d"
-		cvs -Q -d$1 export -D TOMORROW $d 
-	fi	
-done	
+		cvs -Q -d$1 export -D TOMORROW $d
+	fi
+done

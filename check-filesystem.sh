@@ -15,8 +15,8 @@ fi
 if [ ! `id -u` = "0" ] ; then
 	echo "  Error, only root can do that." 1>&2
 	exit 10
-fi 
-	
+fi
+
 filesystem=$1
 
 if [ ! -e "$filesystem" ] ; then
@@ -27,7 +27,7 @@ if [ ! -e "$filesystem" ] ; then
 fi
 
 tool=`which e2fsck`
-	
+
 echo "  Checking filesystem $filesystem..."
 
 $tool -p -f -c -k -D -C0 $filesystem

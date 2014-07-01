@@ -58,10 +58,10 @@ echo "Settings hdparm best-performance parameters for following drives: $selecte
 # -A1: activates read-lookahead (quite reliable)
 # -mN: sector count for multiple sector I/O on the drive; see
 # hdparm -i /dev/hdX |grep MaxMultSect to know the number of sector count N
-# -u1: permits the driver to unmask other interrupts during processing of 
-# a disk interrupt, which greatly improves Linuxs responsiveness and 
+# -u1: permits the driver to unmask other interrupts during processing of
+# a disk interrupt, which greatly improves Linuxs responsiveness and
 # eliminates "serial port overrun" errors (use with caution)
-# -aN: sector count for filesystem (software) read-ahead. This is used to 
+# -aN: sector count for filesystem (software) read-ahead. This is used to
 # improve performance in sequential reads of large files; choose a value N
 # equal to max(current,64) (reliable)
 # -W1: IDE/SATA drives write-caching feature (UNreliable)
@@ -71,5 +71,4 @@ hdarm_opt="-d1 -c1 -A1 -m16 -u1 -a64 -W1"
 
 for d in $selected_drives; do
 	$hdparm $hdarm_opt $d
-done 
-
+done

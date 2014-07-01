@@ -14,4 +14,3 @@ WEB_ROOT=/home/groups/o/os/osdl/htdocs/main
 cd $WEB_ROOT
 
 cvs -d:pserver:anonymous@cvs1:/cvsroot/osdl export -Dtomorrow Ceylan/Ceylan-0.2/src/doc/web
-

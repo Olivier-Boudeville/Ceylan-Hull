@@ -14,7 +14,7 @@ fi
 
 echo "$USAGE"
 
-mkdir -p LOANI-repository 
+mkdir -p LOANI-repository
 
 cd LOANI-repository
 

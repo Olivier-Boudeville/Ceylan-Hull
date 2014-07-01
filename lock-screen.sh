@@ -17,5 +17,3 @@ echo "Activating the screen saver, and locking the screen immediately..."
 xscreensaver -no-splash 1>/dev/null &
 
 xscreensaver-command -lock 1>/dev/null
-
-

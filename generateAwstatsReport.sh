@@ -23,7 +23,7 @@ report_log="${report_dir}/latest-awstats-generation.log"
 	cd ${report_dir}
 
 	echo "  + scanning logs"
-	
+
 	perl /usr/local/awstats/wwwroot/cgi-bin/awstats.pl -config=esperide.com -update
 
 	perl /usr/local/awstats/wwwroot/cgi-bin/awstats.pl -config=ftp.esperide.com -update
@@ -44,6 +44,5 @@ report_log="${report_dir}/latest-awstats-generation.log"
 	echo "  + full awstats FTP server report available at http://stats.esperide.com/ftp.html"
 
 	echo "... generation finished at "`date`
-	
-} 2>&1 > ${report_log}
 
+} 2>&1 > ${report_log}

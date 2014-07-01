@@ -28,11 +28,10 @@ if [ "${VIEWER}" = "${MORE}" ]; then
     # Only the first file is checked:
     FILE_TYPE=`file $1 | awk '{print $2}'`
     if [ "${FILE_TYPE}" == "data" ]; then
-        echo "$1 contains binary data (hence not printed)."
-        exit 0
-    fi   
+	echo "$1 contains binary data (hence not printed)."
+	exit 0
+    fi
 fi
 
 
 ${VIEWER} $*
-

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This script is to be called automatically by mdadm whenever the 
+# This script is to be called automatically by mdadm whenever the
 # state of a RAID array changes: a mail will then be sent to notify it.
 
 # Software RAID must be enabled.
@@ -39,4 +39,3 @@ subject="["`hostname`"] RAID notification"
 cat ${TEMP_MAIL} | /usr/bin/mail -s "$subject" $RAID_ADDRESS
 
 /bin/rm -f ${TEMP_MAIL}
-

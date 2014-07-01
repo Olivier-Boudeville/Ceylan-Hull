@@ -5,7 +5,7 @@ MBROLA_VERSION="301h"
 
 if [ -n "$1" ] ; then
 	install_dir="$1"
-else    
+else
 	install_dir="$LOANI_INSTALLATIONS/MBROLA"
 fi
 
@@ -22,7 +22,7 @@ wget http://tcts.fpms.ac.be/synthesis/mbrola/bin/pclinux/${target_file}
 
 unzip ${target_file}
 /bin/cp -f mbrola-linux-i386 ${install_dir}/mbrola
-    
+
 
 
 
@@ -31,4 +31,3 @@ cd ..
 rm -rf tmp-mbrola
 
 echo "MBROLA and voices successfully installed."
-

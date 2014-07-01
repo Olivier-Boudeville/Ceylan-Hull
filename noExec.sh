@@ -12,9 +12,5 @@ if [ "$value" = "y" ]; then
 	echo "Done, no more executable files !"
 else
 	echo "Cancelled !"
-	
+
 fi
-
-
-		
-
