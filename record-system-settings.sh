@@ -5,7 +5,8 @@ if [ ! `id -u` = "0" ] ; then
 	exit
 fi
 
-TARGET_FILE=system-settings-of-$(hostname -s).txt
+# Not 'hostname -s' anymore, as returns the domain name on a gateway:
+TARGET_FILE=system-settings-of-$(hostname).txt
 
 
 echo "  Recording system settings in file '$TARGET_FILE'..."
