@@ -46,10 +46,11 @@ echo=/bin/echo
 lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
-LOG_FILE=/root/lastly-gateway-firewalled.touched
+LOG_FILE=/root/.lastly-gateway-firewalled.touched
 
 # Local (LAN) interface:
-LAN_IF=eth1
+#LAN_IF=eth1
+LAN_IF=enp2s0
 
 
 # Tells whether Orge trafic should be allowed:
@@ -62,7 +63,8 @@ enable_orge=true
 #NET_IF=ppp0
 
 # For direct connection to a set-top box from your provider:
-NET_IF=eth0
+#NET_IF=eth0
+NET_IF=enp4s0
 
 
 start_it_up()
@@ -73,7 +75,8 @@ start_it_up()
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
-	if $lsmod  2>/dev/null | grep -q ipchains ; then
+	#
+	if $lsmod 2>/dev/null | grep -q ipchains ; then
 		$rmmod ipchains
 	fi
 
@@ -165,6 +168,7 @@ start_it_up()
 
 	# Make sure that IP forwarding is turned on, as it is a gateway:
 	$echo "1" > /proc/sys/net/ipv4/ip_forward
+
 
 	## ============================================================
 	# RULES
