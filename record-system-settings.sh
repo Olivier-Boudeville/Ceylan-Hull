@@ -39,6 +39,8 @@ exec_cmd "cat /etc/os-release"
 
 exec_cmd "lspci"
 
+exec_cmd "lshw"
+
 exec_cmd "cat /proc/cpuinfo"
 
 exec_cmd "lsmod"
