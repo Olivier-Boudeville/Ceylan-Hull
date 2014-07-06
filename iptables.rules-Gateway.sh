@@ -30,8 +30,8 @@
 
 set -e
 
-
-. /lib/lsb/init-functions
+# Not used anymore by distros like Arch:
+#. /lib/lsb/init-functions
 
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
