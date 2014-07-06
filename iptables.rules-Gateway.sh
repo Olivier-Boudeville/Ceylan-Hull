@@ -291,22 +291,26 @@ start_it_up()
 
 	## SSH:
 
+	# One may use a non-standard port:
+	#SSH_PORT=22
+	SSH_PORT=44324
+
 	# Unlimited logging from LAN:
-	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m state --state NEW -j ACCEPT
+	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m state --state NEW -j ACCEPT
 
 	# This rules allow to prevent brute-force SSH attacks by limiting the frequency
 	# of attempts coming from the Internet:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them:
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
+	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 	# Tags too frequent SSH attempts with the name 'SSH':
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -m recent --set --name SSH
+	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --set --name SSH
 
-   # Accepts nevertheless normal SSH logins:
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ssh -j ACCEPT
+	# Accepts nevertheless normal SSH logins:
+	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -j ACCEPT
 
 
 	## Mail stuff:
