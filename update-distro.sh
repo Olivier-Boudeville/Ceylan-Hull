@@ -40,6 +40,7 @@ if [ `id -u` -eq 0 ] ; then
 			;;
 
 		"Arch")
+			# Consider as well a 'yaourt -Sy' or alike?
 			pacman -Syu --noconfirm 1>>${log_file} #2>&1
 			;;
 
