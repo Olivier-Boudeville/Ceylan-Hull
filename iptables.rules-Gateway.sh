@@ -37,7 +37,7 @@ set -e
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date: s is for server (log prefix must be shorter than
 # 29 characters):
-version="s-10"
+version="s-11"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -266,8 +266,10 @@ start_it_up()
 	${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 	## FTP:
-	${iptables} -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
-	${iptables} -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
+	# (not used anymore - prefer SFTP, hence on the same port as SSH, instead)
+	#
+	#${iptables} -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
 
 
 	# Orge section:
