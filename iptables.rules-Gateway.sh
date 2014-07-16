@@ -218,7 +218,9 @@ start_it_up()
 
 
 	# Log some invalid connections:
-	${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
+	# (disabled, as uselessly verbose)
+
+	#${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
 
@@ -297,7 +299,7 @@ start_it_up()
 	#SSH_PORT=22
 	SSH_PORT=44324
 
-	# Unlimited logging from LAN:
+	# Unlimited input from LAN:
 	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m state --state NEW -j ACCEPT
 
 	# This rules allow to prevent brute-force SSH attacks by limiting the frequency
