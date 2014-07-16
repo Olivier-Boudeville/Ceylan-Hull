@@ -28,7 +28,15 @@
 # of a symbolic link in: cd /etc/rc2.d && ln -s
 # ../init.d/iptables.rules-Gateway.sh).
 
-set -e
+
+# To debug more easily, by printing each line being executed first:
+#set -x
+
+# Causes the script to exit on error as soon as a command failed.
+# Disabled, as some commands may fail (ex: modprobe)
+#set -e
+
+
 
 # Not used anymore by distros like Arch:
 #. /lib/lsb/init-functions
@@ -188,7 +196,7 @@ start_it_up()
 	# Everything from the LAN to the Internet is forwarded:
 	${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
-   # Packets from the Internet to the LAN must not be new unknown connections:
+	# Packets from the Internet to the LAN must not be new unknown connections:
 	${iptables} -A FORWARD -o ${LAN_IF} -i ${NET_IF} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 	AD_FILTER_PORT=3129
@@ -380,6 +388,11 @@ start_it_up()
 
 shut_it_down()
 {
+
+	# Not only one may end up not being protected, but one may also be locked
+	# out of the gateway if this command is issued remotely, e.g. through SSH,
+	# whose connection will be lost after this call, preventing from restarting
+	# the service again...
 
 	$echo "Disabling Gateway firewall rules, version $version (DANGER!)."
 
