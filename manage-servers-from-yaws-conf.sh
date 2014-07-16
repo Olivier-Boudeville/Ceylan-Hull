@@ -91,17 +91,33 @@ for S in $SITES ; do
 	echo "  daily" >> $LOGROTATE_CONF
 	echo "  rotate 4" >> $LOGROTATE_CONF
 	echo "  prerotate" >> $LOGROTATE_CONF
-	echo "	 $AWSTATS_SCRIPT -update -config=$S -awstatsprog=$AWSTATS_PROG -dir=$STATS_WEB_DIR/$S 1>/dev/null" >> $LOGROTATE_CONF
+	echo "    $AWSTATS_SCRIPT -update -config=$S -awstatsprog=$AWSTATS_PROG -dir=$STATS_WEB_DIR/$S 1>/dev/null" >> $LOGROTATE_CONF
 	echo "  endscript" >> $LOGROTATE_CONF
 	echo "  postrotate" >> $LOGROTATE_CONF
 	# Needed, otherwise new logs will not be written anymore afterwards:
-	echo "	 /bin/rm -f /var/log/yaws/$S.access" >> $LOGROTATE_CONF
+	echo "    /bin/rm -f /var/log/yaws/$S.access" >> $LOGROTATE_CONF
 	echo "  endscript" >> $LOGROTATE_CONF
 	echo " " >> $LOGROTATE_CONF
 	echo "}" >> $LOGROTATE_CONF
 
 
 done
+
+
+echo " + creating entry for report.log"
+
+echo "" >> $LOGROTATE_CONF
+echo "# Adding entry for server log:" >> $LOGROTATE_CONF
+echo "" >> $LOGROTATE_CONF
+
+echo " /var/log/yaws/report.log {" >> $LOGROTATE_CONF
+echo "  missingok" >> $LOGROTATE_CONF
+echo "  daily" >> $LOGROTATE_CONF
+echo "  rotate 4" >> $LOGROTATE_CONF
+echo "  postrotate" >> $LOGROTATE_CONF
+echo "    /bin/rm -f /var/log/yaws/report.log" >> $LOGROTATE_CONF
+echo "  endscript" >> $LOGROTATE_CONF
+echo " }" >> $LOGROTATE_CONF
 
 
 # We then add a last pseudo-entry (designed to be executed last), to force Yaws
