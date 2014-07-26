@@ -1,10 +1,12 @@
 #!/bin/sh
 
+USAGE="Usage:"$(basename $0)
+
 # Archives properly user mails (typically: thunderbird local state).
 
-# Note: one should have cleaned up its mail base first (removing useless mails
-# and larger attachments, emptying the trash, etc.) and shut down one's mail
-# client.
+# Note: one should have cleaned up one's mail base first (removing useless mails
+# and larger attachments, emptying the trash, compacting folders, etc.) and shut
+# down one's mail client.
 
 if [ ! $# -eq 0 ] ; then
 
@@ -14,7 +16,7 @@ if [ ! $# -eq 0 ] ; then
 fi
 
 
-if ps -edf|grep thunderbird | grep -v grep 1>/dev/null 2>&1 ; then
+if ps -edf| grep thunderbird | grep -v grep 1>/dev/null 2>&1 ; then
 
 	echo "   Error, your mail client (thunderbird) seems to \
 be still running." 1>&2
@@ -44,7 +46,8 @@ if [ ! -x "$archive_tool" ] ; then
 
 fi
 
-#$archive_tool $mail_root
+echo "   Archiving now the current mail base...."
+$archive_tool $mail_root
 
 if [ ! $? -eq 0 ] ; then
 
@@ -76,5 +79,5 @@ mv -f $generated_file "$target_path"
 size=$(du -sh "$target_path" | cut -f 1)
 
 echo
-echo "Mails have been successfully archived in $target_dir/$target_file, \
+echo "Mails have been successfully archived in $target_dir/$target_file - \
 whose size is $size."
