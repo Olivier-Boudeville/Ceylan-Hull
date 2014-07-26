@@ -304,7 +304,10 @@ applyEditor()
 
 		else
 
-			${EDITOR} "$f" 2>/dev/null
+			# Note: not all tools can be run in background
+			# (add relevant tests?)
+			#
+			${EDITOR} "$f" 2>/dev/null &
 
 		fi
 
