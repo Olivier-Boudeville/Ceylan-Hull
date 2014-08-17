@@ -1,4 +1,7 @@
 #!/bin/sh
+
+
+
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-Gateway
 # Required-Start:    $all
@@ -9,7 +12,6 @@
 # Description:       Starts our iptables-based firewall for gateways.
 ### END INIT INFO
 
-# Adapted from script 'iptables.rules.ppp' by Olivier Boudeville, 2003, June 22.
 
 # This script configures the firewall for a (typically ADSL) gateway.
 
@@ -29,6 +31,48 @@
 # ../init.d/iptables.rules-Gateway.sh).
 
 
+# Note: if 'modprobe iptables' fails because of tables not being found, it is
+# the sign that the corresponding kernel modules could not be loaded. This often
+# happens when the kernel modules on disk have been already updated while the
+# currently running kernel, dating from latest boot, is lingering
+# behind. Solution: rebooting and ensuring these kernel modules are loaded at
+# boot.
+
+
+# Adapted for Arch Linux and Systemd (see
+# https://wiki.archlinux.org/index.php/Iptables).
+
+# Adapted from script 'iptables.rules.ppp' by Olivier Boudeville, 2003, June 22.
+
+
+# To use it in the context of Arch Linux:
+#
+#  - run this script as root, with: ./iptables.rules-Geteway.sh start
+#
+#  - copy the resulting state of iptables in the relevant file: iptables-save >
+# /etc/iptables/iptables.rules
+#
+#  - reload the firewall: systemctl reload iptables
+#
+#  - check it just for this session: iptables -L
+#
+#  - check that iptables is meant to be started at boot: systemctl is-enabled
+# iptables.service ; if not, run: systemctl enable iptables.service
+
+# Note: for IPv6, use 'ip6tables' instead of 'iptables'.
+
+# A 'logdrop' rule could be defined.
+
+
+if [ ! $(id -u) -eq 0 ] ; then
+
+	echo "  Error, firewall rules can only be applied by root." 1>&2
+
+	exit 10
+
+fi
+
+
 # To debug more easily, by printing each line being executed first:
 #set -x
 
@@ -37,14 +81,18 @@
 #set -e
 
 
-
 # Not used anymore by distros like Arch:
-#. /lib/lsb/init-functions
+INIT_FILE="/lib/lsb/init-functions"
+
+if [ -f "$INIT_FILE" ] ; then
+	. "$INIT_FILE"
+fi
+
 
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
-# whether rules are up-to-date: s is for server (log prefix must be shorter than
-# 29 characters):
+# whether rules are up-to-date.
+# s is for server (log prefix must be shorter than 29 characters):
 version="s-11"
 
 # Full path of the programs we need, change them to your needs:
@@ -61,10 +109,6 @@ LOG_FILE=/root/.lastly-gateway-firewalled.touched
 LAN_IF=enp2s0
 
 
-# Tells whether Orge trafic should be allowed:
-enable_orge=true
-
-
 # Internet interface:
 
 # For PPP ADSL connections:
@@ -73,6 +117,10 @@ enable_orge=true
 # For direct connection to a set-top box from your provider:
 #NET_IF=eth0
 NET_IF=enp4s0
+
+
+# Tells whether Orge trafic should be allowed:
+enable_orge=true
 
 
 start_it_up()
@@ -104,6 +152,7 @@ start_it_up()
 	#
 	# We want to remove all rules and pre-exisiting user defined chains and zero
 	# the counters before we implement new rules:
+	#
 	${iptables} -F
 	${iptables} -X
 	${iptables} -Z
@@ -111,7 +160,6 @@ start_it_up()
 	${iptables} -F -t nat
 	${iptables} -X -t nat
 	${iptables} -Z -t nat
-
 
 
 	# Set up a default DROP policy for the built-in chains.
@@ -122,6 +170,7 @@ start_it_up()
 	#
 	# There is no period, however small, when packets we do not want are
 	# allowed.
+	#
 	${iptables} -P INPUT DROP
 	${iptables} -P FORWARD DROP
 	${iptables} -P OUTPUT DROP
@@ -310,8 +359,8 @@ start_it_up()
 	# Unlimited input from LAN:
 	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m state --state NEW -j ACCEPT
 
-	# This rules allow to prevent brute-force SSH attacks by limiting the frequency
-	# of attempts coming from the Internet:
+	# This rules allow to prevent brute-force SSH attacks by limiting the
+	# frequency of attempts coming from the Internet:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them:
 	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
@@ -334,6 +383,7 @@ start_it_up()
 
 	# Allow UDP & TCP packets to the DNS server from LAN clients (only needed if
 	# this gateway is a LAN DNS server).
+	#
 	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 53 -m state --state NEW -j ACCEPT
 	${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 53 -m state --state NEW -j ACCEPT
 
@@ -345,6 +395,7 @@ start_it_up()
 
 	# Squid (only local)
 	#${iptables} -A INPUT -p tcp -i ${LAN_IF} --dport 3128:3129 -m state --state NEW -j ACCEPT
+
 
 	# Allow the smb stuff (only local)
 	#${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 137:139 -m state --state NEW -j ACCEPT
@@ -383,6 +434,7 @@ start_it_up()
 	# system logs, might hide other important events)
 	#
 	#${iptables} -A INPUT -m limit --limit 2/minute -j LOG
+
 }
 
 
@@ -412,6 +464,8 @@ shut_it_down()
 }
 
 
+script_name=$(basename $0)
+
 case "$1" in
   start)
 	start_it_up
@@ -431,8 +485,21 @@ case "$1" in
 	iptables -L
   ;;
   *)
-	echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+
+	echo " Error, no appropriate action specified." >&2
+
+	if [ -z "$NAME" ] ; then
+		# Launched from the command-line:
+		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status}" >&2
+
+	else
+
+		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+
+	fi
+
 	exit 2
+
   ;;
 
 esac
