@@ -1,27 +1,5 @@
 #!/bin/sh
 
-# Adapted for Arch Linux and Systemd (see
-# https://wiki.archlinux.org/index.php/Iptables).
-
-# A 'logdrop' rule could be defined.
-
-# To use it in this context:
-#
-#  - run this script as root, with: ./iptables.rules-LANBox.sh start
-#
-#  - copy the resulting state of iptables in the relevant file: iptables-save >
-# /etc/iptables/iptables.rules
-#
-#  - reload the firewall: systemctl reload iptables
-#
-#  - check it just for this session: iptables -L
-#
-#  - check that iptables is meant to be started at boot: systemctl is-enabled
-# iptables.service ; if not, run: systemctl enable iptables.service
-
-# Note: for IPv6, use 'ip6tables' instead of 'iptables'.
-
-
 
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-LANBox
@@ -33,8 +11,6 @@
 # Description:       Starts our iptables-based firewall for LAN clients.
 ### END INIT INFO
 
-
-# Adapted from script 'iptables.rules' by Olivier Boudeville, 2003, June 22.
 
 # This script configures the firewall for a mere LAN box client.
 
@@ -50,7 +26,44 @@
 # of a symbolic link in: cd /etc/rc2.d && ln -s
 # ../init.d/iptables.rules-LANBox.sh).
 
-if [ ! `id -u` = "0" ] ; then
+
+# Note: if 'modprobe iptables' fails because of tables not being found, it is
+# the sign that the corresponding kernel modules could not be loaded. This often
+# happens when the kernel modules on disk have been already updated while the
+# currently running kernel, dating from latest boot, is lingering
+# behind. Solution: rebooting and ensuring these kernel modules are loaded at
+# boot.
+
+
+# Adapted for Arch Linux and Systemd (see
+# https://wiki.archlinux.org/index.php/Iptables).
+
+# Adapted from script 'iptables.rules' by Olivier Boudeville, 2003, June 22.
+
+
+# To use it in the context of Arch Linux:
+#
+#  - run this script as root, with: ./iptables.rules-LANBox.sh start
+#
+#  - copy the resulting state of iptables in the relevant file (note: this
+# filename cannot be changed, it is a system convention):
+#
+# iptables-save > /etc/iptables/iptables.rules
+#
+#  - restart the firewall: systemctl stop iptables ; systemctl start iptables ;
+# systemctl status iptables
+#
+#  - check it just for this session: iptables -L
+#
+#  - check that iptables is meant to be started at boot: systemctl is-enabled
+# iptables.service ; if not, run: systemctl enable iptables.service
+
+# Note: for IPv6, use 'ip6tables' instead of 'iptables'.
+
+# A 'logdrop' rule could be defined.
+
+
+if [ ! $(id -u) -eq 0 ] ; then
 
 	echo "  Error, firewall rules can only be applied by root." 1>&2
 
@@ -59,8 +72,15 @@ if [ ! `id -u` = "0" ] ; then
 fi
 
 
-set -e
+# To debug more easily, by printing each line being executed first:
+#set -x
 
+# Causes the script to exit on error as soon as a command failed.
+# Disabled, as some commands may fail (ex: modprobe)
+#set -e
+
+
+# Not used anymore by distros like Arch:
 INIT_FILE="/lib/lsb/init-functions"
 
 if [ -f "$INIT_FILE" ] ; then
@@ -68,8 +88,9 @@ if [ -f "$INIT_FILE" ] ; then
 fi
 
 
+
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
-# to check whether rules are up-to-date:
+# to check whether rules are up-to-date.
 # c is for client (log prefix must be shorter than 29 characters):
 version="c-8"
 
@@ -80,10 +101,36 @@ echo=/bin/echo
 lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
-LOG_FILE=/root/lastly-LAN-firewalled.touched
+LOG_FILE=/root/.lastly-LAN-firewalled.touched
 
 
 # EPMD (Erlang) section.
+
+
+echo "* detected network interfaces:"
+ifconfig -s | grep -v '^Iface' | cut -f 1 -d ' '
+
+LAN_IF=""
+
+
+# Local (LAN) interface:
+#
+# (we could select the first interface listed and/or use 'ip addr' instead)
+#
+if ifconfig enp0s25 1>/dev/null 2>&1 ; then
+	LAN_IF=enp0s25
+elif ifconfig eth0 1>/dev/null 2>&1 ; then
+	LAN_IF=eth0
+elif ifconfig eno1 1>/dev/null 2>&1 ; then
+	LAN_IF=eno1
+else
+	echo "  No LAN interface found!" 1>&2
+	exit 25
+fi
+
+echo
+echo "* selected LAN interface: $LAN_IF"
+
 
 # By default, we do *not* filter out EPMD traffic (i.e. we accept it):
 filter_epmd=1
@@ -106,50 +153,32 @@ tcp_unfiltered_high_port=55000
 
 
 
-
-echo "* detected network interfaces:"
-ifconfig -s | grep -v '^Iface' | cut -f 1 -d ' '
-
-LAN_IF=""
-
-# Local (LAN) interface:
-if ifconfig enp0s25 1>/dev/null 2>&1 ; then
-	LAN_IF=enp0s25
-elif ifconfig eth0 1>/dev/null 2>&1 ; then
-	LAN_IF=eth0
-else
-	echo "No LAN interface found!" 1>&2
-	exit 25
-fi
-
-echo
-echo "* selected LAN interface: $LAN_IF"
-
-
 start_it_up()
 {
 
-	$echo
 	$echo "Setting LAN box firewall rules, version $version."
 	touch $LOG_FILE
 
-	# Only needed for older distros that do load ipchains by default,
-	# just unload it:
+	# Only needed for older distros that do load ipchains by default, just
+	# unload it:
+	#
 	if $lsmod  2>/dev/null | grep -q ipchains ; then
 		$rmmod ipchains
 	fi
 
 	# Load appropriate modules:
 	#
-	# (commented-out: it is very strange as the next (correct) call caused the
-	# script to silently abort)
-	#$modprobe ip_tables
+	# (was commented-out: this (correct) call returned an error and used to
+	# cause the script to silently abort)
+	#
+	$modprobe ip_tables
 
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
 	#
 	# We want to remove all rules and pre-exisiting user defined chains and zero
 	# the counters before we implement new rules:
+	#
 	$iptables -F
 	$iptables -X
 	$iptables -Z
@@ -167,6 +196,7 @@ start_it_up()
 	#
 	# There is no period, however small, when packets we do not want are
 	# allowed.
+	#
 	$iptables -P INPUT DROP
 	$iptables -P FORWARD DROP
 	$iptables -P OUTPUT DROP
@@ -239,6 +269,8 @@ start_it_up()
 	# ----------------  INPUT ---------------------
 
 	# Log some invalid connections:
+	# (was disabled, as uselessly verbose)
+
 	$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
 
 	$iptables -A INPUT -m state --state INVALID -j DROP
@@ -270,7 +302,6 @@ start_it_up()
 	fi
 
 
-# TCP unfiltered window (ex: for passive FTP and BEAM port ranges):
 
 
 
@@ -298,25 +329,31 @@ start_it_up()
 	$iptables -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 	## FTP:
-	#$iptables -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
+	# (not used anymore - prefer SFTP, hence on the same port as SSH, instead)
+	#
+	#${iptables} -A INPUT -p tcp --dport 20 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
 
 
 	## SSH:
+
+	# One may use a non-standard port:
+	#SSH_PORT=22
+	SSH_PORT=44324
 
 	# This rules allow to prevent brute-force SSH attacks by limiting the
 	# frequency of attempts coming from the LAN if compromised:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them:
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
+	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 	# Tags too frequent SSH attempts with the name 'SSH':
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -m recent --set --name SSH
+	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m recent --set --name SSH
 
 	# Accepts nevertheless normal SSH logins:
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ssh -j ACCEPT
+	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -j ACCEPT
 
 
 	## Mail stuff:
@@ -334,6 +371,7 @@ start_it_up()
 	$iptables -A INPUT -i  lo -j ACCEPT
 	$iptables -A OUTPUT -o lo -j ACCEPT
 
+
 	# ---------------- ICMP ---------------------
 
 	# Everybody from the LAN can ping me:
@@ -343,7 +381,10 @@ start_it_up()
 
 	 # ---------------- LOGGING -------------------
 
-	# Log everything else, up to 2 pings per min
+	# Log everything else, up to 2 pings per min:
+	#
+	# (might be too verbose)
+	#
 	$iptables -A INPUT -m limit --limit 2/minute -j LOG
 
 }
@@ -352,21 +393,21 @@ start_it_up()
 shut_it_down()
 {
 
-	$echo
+	# Not only one may end up not being protected, but one may also be locked
+	# out of the gateway if this command is issued remotely, e.g. through SSH,
+	# whose connection will be lost after this call, preventing from restarting
+	# the service again...
+
 	$echo "Disabling LAN box firewall rules, version $version."
 
 	# Load appropriate modules:
-	#
-	# (commented-out: it is very strange as the next (correct) call caused the
-	# script to silently abort)
-	#$modprobe ip_tables
+	$modprobe ip_tables
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
 	# counters before we implement new rules:
 	$iptables -F
 	$iptables -X
 	$iptables -Z
-
 
 	$iptables -F -t nat
 	$iptables -X -t nat
