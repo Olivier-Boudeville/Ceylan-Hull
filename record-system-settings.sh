@@ -1,12 +1,14 @@
 #!/bin/sh
 
-if [ ! `id -u` = "0" ] ; then
+if [ ! $(id -u) -eq 0 ] ; then
 	echo "Error, only root can do that."
 	exit
 fi
 
-# Not 'hostname -s' anymore, as returns the domain name on a gateway:
-TARGET_FILE=system-settings-of-$(hostname).txt
+# 'hostname -s' shall return the shortest, local machine name if configuration
+# in /etc/hosts is correct:
+#
+TARGET_FILE=system-settings-of-$(hostname -s).txt
 
 
 echo "  Recording system settings in file '$TARGET_FILE'..."
