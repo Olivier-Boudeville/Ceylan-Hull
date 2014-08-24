@@ -269,9 +269,8 @@ start_it_up()
 	# ----------------  INPUT ---------------------
 
 	# Log some invalid connections:
-	# (was disabled, as uselessly verbose)
-
-	$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
+	# (disabled, as uselessly verbose)
+	#$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
 
 	$iptables -A INPUT -m state --state INVALID -j DROP
 
