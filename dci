@@ -47,7 +47,10 @@ else
 
 	# We want to see what we are about to commit:
 	# (not wanting the pager to truncate longer lines)
-	GIT_PAGER='' git diff --staged --minimal $target
+
+	# Ex: version 1.7.2.5 does not support minimal:
+	#GIT_PAGER='' git diff --staged --minimal $target
+	GIT_PAGER='' git diff --staged  $target
 
 	echo "$arrow Committing-in <$target>:"
 	git commit $target
