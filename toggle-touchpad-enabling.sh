@@ -14,7 +14,7 @@ fi
 
 
 # Quick and dirty, yet working:
-if $CLIENT | grep TouchpadOff | grep '= 1' 1>/dev/null ; then
+if $CLIENT -l | grep TouchpadOff | grep '= 1' 1>/dev/null ; then
 
 	$CLIENT TouchpadOff=0
 	echo "Touchpad enabled."
