@@ -1,10 +1,7 @@
 #!/bin/sh
 
 
-USAGE="  Usage: "$(basename $0)" WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one.
-
-  Example: "$(basename $0)" ~/Projects/Sim-Diasca/sources/Sim-Diasca"
-
+USAGE="  Usage: "$(basename $0)" WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one."
 
 
 if [ ! $# -eq 2 ] ; then
@@ -73,9 +70,23 @@ RSYNC_OPT="--recursive "
 cd $WORK_ROOT
 
 echo
-
 echo " + real-cleaning work directory"
-#make -s real-clean 1>/dev/null
+make -s real-clean 1>/dev/null
+
+echo
+echo " + cleaning public repositories"
+
+cd ${PUBLIC_ROOT}/Ceylan-Myriad
+make -s clean 1>/dev/null
+
+cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+make -s clean 1>/dev/null
+
+cd ${PUBLIC_ROOT}/Ceylan-Traces
+make -s clean 1>/dev/null
+
+
+cd $WORK_ROOT
 
 echo " + checking GIT status of work directory"
 git status
