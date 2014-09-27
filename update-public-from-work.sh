@@ -86,7 +86,11 @@ cd common
 
 ${RSYNC} ${RSYNC_OPT} . ${PUBLIC_ROOT}/Ceylan-Myriad
 
-cd ..
+
+echo " + status of Ceylan-Myriad:"
+cd ${PUBLIC_ROOT}/Ceylan-Myriad
+git status
+cd ${WORK_ROOT}
 
 
 echo " + updating Ceylan-WOOPER from wooper"
@@ -94,18 +98,25 @@ cd wooper
 
 ${RSYNC} ${RSYNC_OPT} . ${PUBLIC_ROOT}/Ceylan-WOOPER
 
-cd ..
+echo " + status of Ceylan-WOOPER:"
+cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+git status
+cd ${WORK_ROOT}
 
 
 echo " + updating Ceylan-Traces from traces"
 cd traces
 
 ${RSYNC} ${RSYNC_OPT} . ${PUBLIC_ROOT}/Ceylan-Traces
+echo " + status of Ceylan-Traces:"
+cd ${PUBLIC_ROOT}/Ceylan-Traces
+git status
+cd ${WORK_ROOT}
 
-cd ..
 
 
 echo
 echo "Public repositories have been updated from work one."
 
-echo "One may then use: 'git add -u && git commit -m \"Synchronisation update.\" && git push'"
+echo
+echo "One may then use: 'for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push' ) ; done"
