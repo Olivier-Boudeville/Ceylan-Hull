@@ -92,7 +92,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date.
 # c is for client (log prefix must be shorter than 29 characters):
-version="c-8"
+version="c-9"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -107,29 +107,30 @@ LOG_FILE=/root/.lastly-LAN-firewalled.touched
 # EPMD (Erlang) section.
 
 
-echo "* detected network interfaces:"
-ifconfig -s | grep -v '^Iface' | cut -f 1 -d ' '
+detected_if=$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')
 
-LAN_IF=""
+if [ -z "$detected_if" ] ; then
 
+   echo "  No LAN interface found!" 1>&2
+   exit 25
 
-# Local (LAN) interface:
-#
-# (we could select the first interface listed and/or use 'ip addr' instead)
-#
-if ifconfig enp0s25 1>/dev/null 2>&1 ; then
-	LAN_IF=enp0s25
-elif ifconfig eth0 1>/dev/null 2>&1 ; then
-	LAN_IF=eth0
-elif ifconfig eno1 1>/dev/null 2>&1 ; then
-	LAN_IF=eno1
-else
-	echo "  No LAN interface found!" 1>&2
-	exit 25
 fi
 
+printf "* detected network interfaces: \n$detected_if"
+
+# By default we select the first interface found:
+LAN_IF=$(echo $detected_if | sed 's| .*$||1')
+
+echo
 echo
 echo "* selected LAN interface: $LAN_IF"
+
+if [ -z "$LAN_IF" ] ; then
+
+   echo "  No LAN interface selected!" 1>&2
+   exit 30
+
+fi
 
 
 # By default, we do *not* filter out EPMD traffic (i.e. we accept it):
