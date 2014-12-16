@@ -12,6 +12,8 @@ if [ ! $# -eq 2 ] ; then
 fi
 
 
+current_dir=$(pwd)
+
 
 PUBLIC_ROOT="$1"
 
@@ -35,6 +37,13 @@ $USAGE" 1>&2
 fi
 
 
+# To convert any relative directory into an absolute one:
+cd "$PUBLIC_ROOT"
+PUBLIC_ROOT=$(pwd)
+cd $current_dir
+
+
+
 WORK_ROOT="$2"
 
 if [ ! -d "$WORK_ROOT" ] ; then
@@ -56,6 +65,11 @@ $USAGE" 1>&2
 
 fi
 
+
+# To convert any relative directory into an absolute one:
+cd "$WORK_ROOT"
+WORK_ROOT=$(pwd)
+cd $current_dir
 
 
 
