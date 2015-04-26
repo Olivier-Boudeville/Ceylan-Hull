@@ -6,7 +6,10 @@ echo
 echo " Updating emacs modules (*.el files)"
 echo
 
-emacs_conf_dir="$HOME/.emacs.d"
+# We define a subdirectory, otherwise the '(setq load-path...' will be reported
+# as a problem waiting to happen:
+#
+emacs_conf_dir="$HOME/.emacs.d/my-modules"
 
 mkdir -p $emacs_conf_dir
 cd $emacs_conf_dir
@@ -31,6 +34,7 @@ update()
 echo "Note that init.el must be modified so that it references the Erlang version you are using (ex: .../lib/tools-x.y.z/emacs)."
 # Fetch from the Erlang install, not from the net anymore:
 #update erlang.el http://www.erlang.org/download/contrib/erlang.el
+ln -s ~/Software/Erlang/Erlang-current-install/lib/erlang/lib/tools-*/emacs/erlang.el
 
 update flyspell-guess http://www.emacswiki.org/emacs/download/flyspell-guess.el
 
@@ -52,3 +56,4 @@ update whitespace http://www.emacswiki.org/emacs/download/whitespace.el
 
 # For a correct right-mouse text search:
 update acme-search http://www.emacswiki.org/emacs/download/acme-search.el
+
