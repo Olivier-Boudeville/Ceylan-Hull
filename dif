@@ -15,7 +15,19 @@ else
 	# We prefer here comparing the current working version with the commit, not
 	# with the origin:
 	#
-	git diff $*
+	args="$*"
+
+	if [ -z "${args}" ] ; then
+
+		# We find it more convenient to only start from the current directory,
+		# rather than inspecting the full repository (hence the dot):
+		git diff .
+
+	else
+
+		git diff $*
+
+	fi
 
 	# We prefer here seeing the changes you staged for the next commit relative
 	# to the current head:
