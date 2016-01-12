@@ -1,7 +1,7 @@
 #!/bin/sh
 
 USAGE="
-Usage: "`basename $0`" CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
+Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
 Updates the copyright notices of code of specified type found from specified root directory, based on the specified years.
 
@@ -9,7 +9,7 @@ CODE_TYPE is among:
   - 'C++', for *.h, *.h.in, *.cc, *.cpp files
   - 'Erlang', for *.hrl, *.erl files
 
-Ex: "`basename $0`" Erlang $HOME/My-program-tree 2001 2013 \"Foobar Ltd\"
+Ex: $(basename $0) Erlang $HOME/My-program-tree 2001 2013 \"Foobar Ltd\"
 This will replace '% Copyright (C) x-y Foobar Ltd' by '% Copyright (C) x-2013 Foobar Ltd' for all x in [2001;2012] in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 
 Note that if NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
@@ -17,6 +17,12 @@ Note that if NOTICE contains characters that are meaningful in terms of Regular 
 Example for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree 2008 2010 \"Foobar R\&D Ltd\"
 
 "
+
+# To check whether all (Erlang, here) files have been updated:
+#
+# git diff --name-only | grep 'rl$' | sort > changed.txt
+# find . -name '*.?rl' | sort > all.txt
+# meld changed.txt all.txt
 
 
 # If having forgot some years ago to update the notices (ex: we are in 2013 but
@@ -86,7 +92,7 @@ if [ $new_year -le $starting_year ] ; then
 
 fi
 
-max_year=`expr $new_year - 1`
+max_year=$(expr $new_year - 1)
 
 notice="$5"
 
@@ -96,11 +102,11 @@ notice="$5"
 #echo "notice = ${notice}"
 #echo "max_year = ${max_year}"
 
-years=`seq --equal-width $starting_year $max_year`
+years=$(seq --equal-width $starting_year $max_year)
 
 #echo "years = ${years}"
 
-per_year_script=`dirname $0`"/update-copyright-notices.sh"
+per_year_script="$(dirname $0)/update-copyright-notices.sh"
 
 #echo "per_year_script = ${per_year_script}"
 
@@ -113,3 +119,5 @@ if [ ! -x "$per_year_script" ] ; then
 fi
 
 for y in $years ; do echo "---> searching for year $y-$max_year, to be replaced by $y-$new_year $notice" ; $per_year_script --quiet $code_type $root_dir "$y-$max_year $notice" "$y-$new_year $notice" ; echo ; done
+
+echo "Replacements done."
