@@ -496,7 +496,7 @@ if [ "${EXTENSION}" = "png" ] ; then
 fi
 
 
-if [ "${EXTENSION}" = "jpeg" ] ; then
+if [ "${EXTENSION}" = "jpeg" -o "${EXTENSION}" = "jpg" ] ; then
 
 	EDITOR=`which eog`
 	EDITOR_SHORT_NAME="eog"
