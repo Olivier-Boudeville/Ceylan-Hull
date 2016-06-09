@@ -15,7 +15,7 @@ do_default_beep()
 
 	# Obtained with 'apt-get install beep':
 	#BEEPER="/usr/bin/beep"
-	BEEPER=`which beep`
+	BEEPER=$(which beep 2>/dev/null)
 
 	if [ -x "$BEEPER" ] ; then
 
@@ -65,8 +65,8 @@ $USAGE" 1>&2
 fi
 
 
-SCRIPT_CMD=`which play-sounds.sh`
-PLAY_CMD=`which play`
+SCRIPT_CMD=$(which play-sounds.sh 2>/dev/null)
+PLAY_CMD=$(which play 2>/dev/null)
 
 ACTUAL_CMD=""
 
