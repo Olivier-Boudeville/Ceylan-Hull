@@ -11,7 +11,7 @@ USAGE="Usage: "$(basename $0)" [ status | start | scan | stop | isolate | --help
 if [ "$1" = "--help" ] ; then
 
 	echo "$USAGE"
-	exit 0x
+	exit 0
 
 fi
 
