@@ -1,19 +1,19 @@
 #!/bin/sh
 
 USAGE="
-`basename $0`: recursive grep for the ones that lack it.
-  Usage: `basename $0` [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+$(basename $0): recursive grep for the ones that lack it.
+  Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
   Options:
-    -v or --verbose: be specifically verbose
-    -q or --quiet: be specifically quiet
-    -f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
-    -i or --insensitive: perform case-insensitive searches
-    -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
-  Example: `basename $0` -i 'little red rooster' '*.txt'"
+	-v or --verbose: be specifically verbose
+	-q or --quiet: be specifically quiet, just listing matches
+	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
+	-i or --insensitive: perform case-insensitive searches
+	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+  Example: $(basename $0) -i 'little red rooster' '*.txt'"
 
 
-find=`which find | grep -v ridiculously 2>/dev/null`
-grep=`which grep | grep -v ridiculously 2>/dev/null`
+find=$(which find | grep -v ridiculously 2>/dev/null)
+grep=$(which grep | grep -v ridiculously 2>/dev/null)
 
 #echo "grep = ${grep}"
 #echo "find = ${find}"
