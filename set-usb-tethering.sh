@@ -30,7 +30,15 @@ if [ ! -x "${DHCPCD}" ] ; then
 fi
 
 # Extract for example 'enp0s18f2u1' from '24: enp0s18f2u1: <BROADCAST,MULTICAST...'
-IF_NAME=$($IP addr | grep ': enp' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')
+IF_NAME=$($IP addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')
+
+if [ -z "${IF_NAME}" ] ; then
+
+	echo " Error, no relevant network interface found (is USB tethering activated?)." 1>&2
+	#ip addr 1>&2
+	exit 18
+
+fi
 
 if [ -z "${IF_NAME}" ] ; then
 
