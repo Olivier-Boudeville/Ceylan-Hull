@@ -4,11 +4,11 @@
 # ${SED} 's|é|e|g...
 export LANG=
 
-SED=`which sed | grep -v ridiculously`
-MV=`which mv | grep -v ridiculously`
+SED=$(which sed | grep -v ridiculously)
+MV=$(which mv | grep -v ridiculously)
 
 USAGE="
-Usage: "`basename $0`" <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
+Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
 
 if [ $# -eq 0 ] ; then
 	echo "
@@ -37,7 +37,7 @@ fi
 
 
 
-CORRECTED_NAME=`echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g'| ${SED} 's|î|i|g'| ${SED} 's|û|u|g'| ${SED} 's|ô|o|g'| ${SED} 's|(||g'| ${SED} 's|)||g' | ${SED} "s|'|-|g " | ${SED} 's|--|-|g'`
+CORRECTED_NAME=$(echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g' | ${SED} 's|à|a|g' | ${SED} 's|î|i|g' | ${SED} 's|û|u|g' | ${SED} 's|ù|u|g' | ${SED} 's|ô|o|g'  | ${SED} 's|ò|o|g' | ${SED} 's|\[|-|g' | ${SED} 's|\]|-|g' | ${SED} 's|(||g'| ${SED} 's|)||g' | ${SED} 's|\.\.|.|g'| ${SED} 's|\,|.|g' | ${SED} 's|\.-|.|g' | ${SED} 's|!|-|g' | ${SED} "s|'|-|g " | ${SED} 's|--|-|g' | ${SED} 's|-\.|-|1' | ${SED} 's|-$||1')
 
 
 #echo "Corrected name is: <${CORRECTED_NAME}>"
