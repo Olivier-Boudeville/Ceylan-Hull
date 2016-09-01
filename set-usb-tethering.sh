@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE="Usage: $(basename $0): sets USB tethering on local host, typically so that a linked smartphone provides it an Internet access."
+USAGE="Usage: $(basename $0) [--stop]: sets (or stops) USB tethering on local host, typically so that a linked smartphone provides it with an Internet access."
 
 #echo $USAGE
 
@@ -40,20 +40,34 @@ if [ -z "${IF_NAME}" ] ; then
 
 fi
 
-if [ -z "${IF_NAME}" ] ; then
-
-	echo " Error, no relevant network interface found (is USB tethering activated?)." 1>&2
-	#ip addr 1>&2
-	exit 18
-
-fi
 
 #echo "IF_NAME = $IF_NAME"
 
-echo "Using auto-detected interface $IF_NAME..."
+
+if [ "$1" = "--stop" ]; then
+
+	echo "Disabling connection on auto-detected interface $IF_NAME..."
+
+	${IP} link set dev ${IF_NAME} down && echo "...done"
+
+	exit 0
+
+fi
+
+if [ -n "$1" ] ; then
+
+	echo "  Error, parameter '$1' not supported.
+$USAGE" 1>&2
+	exit 25
+
+fi
 
 
-RETRIES=2
+
+echo "Enabling connection using auto-detected interface $IF_NAME..."
+
+
+RETRIES=3
 
 
 connect()
@@ -68,7 +82,14 @@ connect()
 
 		if test_link ; then
 
-			echo "Connection up and running. Enjoy!"
+			MESSAGE="Connection up and running. Enjoy!"
+			echo "${MESSAGE}"
+
+			ESPEAK=$(which espeak 2>/dev/null)
+			if [ -x "${ESPEAK} ]" ] ; then
+				${ESPEAK} -v female1 "${MESSAGE}"
+			fi
+
 			exit 0
 
 		else
