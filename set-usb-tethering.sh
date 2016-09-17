@@ -29,6 +29,22 @@ if [ ! -x "${DHCPCD}" ] ; then
 
 fi
 
+ESPEAK=$(which espeak 2>/dev/null)
+
+notify()
+{
+
+	MESSAGE="$1"
+
+	echo "${MESSAGE}"
+
+	if [ -x "${ESPEAK}" ] ; then
+		${ESPEAK} -v female1 "${MESSAGE}" 1>/dev/null 2>&1
+	fi
+
+}
+
+
 # Extract for example 'enp0s18f2u1' from '24: enp0s18f2u1: <BROADCAST,MULTICAST...'
 IF_NAME=$($IP addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')
 
@@ -70,6 +86,7 @@ echo "Enabling connection using auto-detected interface $IF_NAME..."
 RETRIES=3
 
 
+
 connect()
 {
 
@@ -82,13 +99,7 @@ connect()
 
 		if test_link ; then
 
-			MESSAGE="Connection up and running. Enjoy!"
-			echo "${MESSAGE}"
-
-			ESPEAK=$(which espeak 2>/dev/null)
-			if [ -x "${ESPEAK} ]" ] ; then
-				${ESPEAK} -v female1 "${MESSAGE}"
-			fi
+			notify "Connection up and running. Enjoy!"
 
 			exit 0
 
@@ -113,7 +124,7 @@ connect()
 
 		if [ $RETRIES -eq 0 ] ; then
 
-			echo " Error, unable to obtain an IP address from interface, all retries failed, giving up." 1>&2
+			notify " Error, unable to obtain an IP address from interface, all retries failed, giving up." 1>&2
 			exit 25
 
 		else
