@@ -143,4 +143,4 @@ echo
 echo "Public repositories have been updated from work one."
 
 echo
-echo "One may then use: 'for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push' ) ; done"
+echo "One may then use: 'for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push ) ; done'"
