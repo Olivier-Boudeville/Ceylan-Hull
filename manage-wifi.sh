@@ -98,8 +98,8 @@ elif [ "$arg" = "stop" ] ; then
 
 elif [ "$arg" = "scan" ] ; then
 
-	echo "Scanning with interface $IF:"
-	$IW dev $IF scan | grep SSID
+	echo "Scanning for wireless networks with interface $IF, found following SSIDs:"
+	$IW dev $IF scan | grep SSID | sort | uniq | sed 's|.*SSID: | - |1'
 
 elif [ "$arg" = "isolate" ] ; then
 
