@@ -1,8 +1,15 @@
 #!/bin/sh
 
-USAGE="Usage: "$(basename $0)" [-q]: updates the current distribution.
+USAGE="Usage: $(basename $0) [-q]: updates the current distribution.
   -q: quiet mode, no output if no error (suitable for crontab)"
 
+
+# Many problems with Haskell:
+
+#pacman -Rsc pandoc
+#pacman -Syu pandoc
+#pacman -Su --ignore=ghc
+#pacman -Rsdd haskell-fail
 
 
 # Tired of typing it:
@@ -43,7 +50,7 @@ fi
 # Only standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
-if [ `id -u` -eq 0 ] ; then
+if [ $(id -u) -eq 0 ] ; then
 
 	# Erases the previous log as well, to avoid accumulation:
 	echo "Updating the distribution now..." 1>${log_file}
@@ -65,17 +72,20 @@ if [ `id -u` -eq 0 ] ; then
 		"Arch")
 			# Consider as well a 'yaourt -Sy' or alike?
 
+			# Too many updates blocked by Haskell-related packages:
+			PACMAN_OPT="-Syu --noconfirm --ignore=ghc"
+
 			if [ $quiet -eq 1 ] ; then
 
 				# To be run from the command-line:
-				pacman -Syu --noconfirm 2>&1 | tee ${log_file}
+				pacman ${PACMAN_OPT} 2>&1 | tee ${log_file}
 
 			else
 
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				pacman -Syu --noconfirm 1>>${log_file} #2>&1
+				pacman ${PACMAN_OPT} 1>>${log_file} #2>&1
 
 			fi
 
