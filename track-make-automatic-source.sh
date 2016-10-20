@@ -36,7 +36,22 @@ fi
 
 TARGET_FILE=$(echo "${SOURCE_FILE}" | sed 's|.rst$|.pdf|1')
 
+if [ "${SOURCE_FILE}" = "${TARGET_FILE}" ] ; then
+
+	echo "    Error, source and target files are the same ('${SOURCE_FILE}')." 1>&2
+	exit 20
+
+fi
+
 echo "Will track ${SOURCE_FILE}: at each of its modifications the generation of ${TARGET_FILE} will requested..."
+
+# To force a first build (better than a touch detected by the editor):
+if [ -f "${TARGET_FILE}" ] ; then
+
+	/bin/rm -f "${TARGET_FILE}"
+
+fi
+
 
 while true ; do
 
