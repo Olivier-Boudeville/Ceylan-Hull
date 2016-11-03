@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-USAGE="  Usage: "$(basename $0)" WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one."
+USAGE="  Usage: $(basename $0) WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one."
 
 
 if [ ! $# -eq 2 ] ; then
@@ -26,7 +26,7 @@ fi
 
 WORK_TEST_DIR="$WORK_ROOT/mock-simulators"
 
-if [  ! -d "$WORK_TEST_DIR" ] ; then
+if [ ! -d "$WORK_TEST_DIR" ] ; then
 
 	echo "  Error, work root ($WORK_ROOT) does not seem to be a suitable work root ($WORK_TEST_DIR not found).
 $USAGE" 1>&2
@@ -143,4 +143,4 @@ echo
 echo "Public repositories have been updated from work one."
 
 echo
-echo "One may then use: 'for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push' ) ; done"
+echo "One may then use: 'for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push ) ; done'"
