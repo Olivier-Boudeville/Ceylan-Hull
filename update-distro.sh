@@ -1,6 +1,6 @@
 #!/bin/sh
 
-USAGE="Usage: "$(basename $0)" [-q]: updates the current distribution.
+USAGE="Usage: $(basename $0) [-q]: updates the current distribution.
   -q: quiet mode, no output if no error (suitable for crontab)"
 
 
@@ -43,7 +43,7 @@ fi
 # Only standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
-if [ `id -u` -eq 0 ] ; then
+if [ $(id -u) -eq 0 ] ; then
 
 	# Erases the previous log as well, to avoid accumulation:
 	echo "Updating the distribution now..." 1>${log_file}
