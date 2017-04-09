@@ -54,7 +54,7 @@ else
 
 	if [ ! -x "${DISK_TOOL}" ] ; then
 
-		echo "  Error, the udisksctl tool is not available (use 'pacman -Sy udisks2')." 1>&2
+		echo "  Error, the 'udisksctl' tool is not available (use 'pacman -Sy udisks2')." 1>&2
 		exit 15
 
 	fi
