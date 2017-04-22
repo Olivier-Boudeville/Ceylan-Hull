@@ -6,6 +6,14 @@
 # SMART must be enabled.
 # Should be referenced from /etc/smartd.conf with an enabled daemon.
 
+# Example as root:
+#
+# pacman -Sy smartmontools
+# smartctl -a /dev/sda
+# smartctl -t short /dev/sda
+# (wait)
+# smartctl -H /dev/sda
+# smartctl -a /dev/sda
 
 # More infos:
 # http://lea-linux.org/documentations/index.php/Hardware-hard_plus-smart
@@ -30,14 +38,14 @@ echo "
 Complete diagnosis follows:" >> ${TEMP_MAIL}
 
 # So that "/dev/sdc [SAT]" becomes just ""/dev/sdc":
-SHORT_DEVICE=`echo $SMARTD_DEVICE | sed 's| \[.*$||1'`
+SHORT_DEVICE=$(echo $SMARTD_DEVICE | sed 's| \[.*$||1')
 
 # To debug:
 #echo "Command: /usr/sbin/smartctl -a -d $SMARTD_DEVICETYPE $SHORT_DEVICE" >> ${TEMP_MAIL}
 
 /usr/sbin/smartctl -a -d $SMARTD_DEVICETYPE $SHORT_DEVICE >> ${TEMP_MAIL}
 
-subject="["`hostname`"] $SMARTD_SUBJECT"
+subject="["$(hostname)"] $SMARTD_SUBJECT"
 
 cat ${TEMP_MAIL} | /usr/bin/mail -s "$subject" $SMARTD_ADDRESS
 
