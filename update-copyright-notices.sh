@@ -4,7 +4,7 @@
 
 do_debug=1
 
-#new_year=`date '+%Y'`
+#new_year=$(date '+%Y')
 
 USAGE="
 Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
@@ -19,7 +19,7 @@ This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 200
 
 Note that if PREVIOUS_NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Example for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
+Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
 
 "
 
@@ -103,7 +103,7 @@ cd $root_dir
 replace_name="replace-in-file.sh"
 
 base_dir=$(dirname $0)
-replace_script=`PATH=$base_dir:$PATH which $replace_name 2>/dev/null`
+replace_script=$(PATH=$base_dir:$PATH which $replace_name 2>/dev/null)
 #echo "replace_script = $replace_script"
 
 if [ ! -x "$replace_script" ] ; then

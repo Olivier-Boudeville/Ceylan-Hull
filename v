@@ -8,15 +8,15 @@ SHOW_OPT="--display"
 USAGE="
 Usage: $(basename $0) [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
 
-  Opens the set of specified files with the 'best' available editor.
+  Opens the set of specified files with the 'best' available viewer (hence in read-only).
 
   Options are:
-	  '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display
+	  '${NO_X_OPT}' to prevent selecting a graphical viewer, notably if there is no available X display
 	  '${SHOW_OPT}' to display only the chosen settings (not executing them)
-	  '-e' or '--emacs' to prefer emacs over all other editors (the default)
-	  '-n' or '--nedit' to prefer nedit over all other editors
+	  '-e' or '--emacs' to prefer emacs over all other viewers (the default)
+	  '-n' or '--nedit' to prefer nedit over all other viewers
 	  '-f' or '--find' to first look-up specified file from current directory, before opening it
-	  '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)
+	  '-s' or '--standalone' to prefer not using the server-based version of the selected viewer, if applicable (useful to avoid reusing any already opened window)
 "
 
 # Note: a special syntax is recognised as well: 'n A_FILE -s', which is
@@ -28,11 +28,26 @@ Usage: $(basename $0) [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-n|-
 prefer_emacs=0
 prefer_nedit=1
 
-# Tells whether we want to launch a standalone editor (default: no):
+# Tells whether we want to launch a standalone viewer (default: no):
 standalone=1
 
 
 # Function section.
+
+
+chooseLogMX()
+{
+
+	# Logmx:
+	LOGMX=$(which logmx.sh 2>/dev/null | grep -v ridiculously 2>/dev/null)
+
+	if [ -x "${LOGMX}" ] ; then
+		VIEWER="${LOGMX}"
+		VIEWER_SHORT_NAME="LogMX"
+		MULTI_WIN=0
+	fi
+
+}
 
 
 chooseJedit()
@@ -42,8 +57,8 @@ chooseJedit()
 	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${JEDIT}" ] ; then
-		EDITOR="${JEDIT}"
-		EDITOR_SHORT_NAME="jedit"
+		VIEWER="${JEDIT}"
+		VIEWER_SHORT_NAME="jedit"
 		MULTI_WIN=0
 	fi
 
@@ -75,30 +90,30 @@ chooseNedit()
 	NEDIT_NC_OPT="-noask"
 
 	if [ -x "${NEDIT}" ] ; then
-		EDITOR="${NEDIT} ${NEDIT_FAMILY_OPT}"
-		EDITOR_SHORT_NAME="nedit"
+		VIEWER="${NEDIT} ${NEDIT_FAMILY_OPT}"
+		VIEWER_SHORT_NAME="nedit"
 		MULTI_WIN=0
 	fi
 
 	if [ -x "${NC}" ] ; then
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
-			EDITOR="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-			EDITOR_SHORT_NAME="nc"
+			VIEWER="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+			VIEWER_SHORT_NAME="nc"
 			MULTI_WIN=0
 	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
 	fi
 
 	if [ -x "${NEDITC_GENTOO}" ] ; then
-		EDITOR="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
-		EDITOR_SHORT_NAME="neditc"
+		VIEWER="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
+		VIEWER_SHORT_NAME="neditc"
 		MULTI_WIN=0
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ] ; then
-		EDITOR="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-		EDITOR_SHORT_NAME="nedit-nc"
+		VIEWER="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+		VIEWER_SHORT_NAME="nedit-nc"
 		MULTI_WIN=0
 	fi
 
@@ -119,8 +134,8 @@ chooseXemacs()
 	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${XEMACS}" ] ; then
-		EDITOR="${XEMACS} --geometry=83x60 "
-		EDITOR_SHORT_NAME="xemacs"
+		VIEWER="${XEMACS} --geometry=83x60 "
+		VIEWER_SHORT_NAME="xemacs"
 		MULTI_WIN=0
 	fi
 
@@ -139,17 +154,16 @@ chooseEmacs()
 
 	if [ -x "${EMACS}" ] ; then
 
-		ALTERNATE_EDITOR="emacs --geometry=83x60"
+		ALTERNATE_VIEWER="emacs --geometry=83x60"
 
 		if [ $standalone -eq 1 ] ; then
-			# Default:
-			EDITOR="emacsclient --alternate-editor=emacs"
+			VIEWER="emacsclient --alternate-viewer=emacs"
 		else
-			EDITOR="emacs"
+			VIEWER="emacs"
 		fi
 
-		VISUAL=$EDITOR
-		EDITOR_SHORT_NAME="emacs"
+		VISUAL=$VIEWER
+		VIEWER_SHORT_NAME="emacs"
 
 		MULTI_WIN=0
 
@@ -162,11 +176,11 @@ chooseEmacs()
 chooseNano()
 {
 
-	# nano, text-based user-friendly editor:
+	# nano, text-based user-friendly viewer:
 	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	EDITOR="${NANO}"
-	EDITOR_SHORT_NAME="nano"
+	VIEWER="${NANO}"
+	VIEWER_SHORT_NAME="nano"
 	MULTI_WIN=1
 
 }
@@ -179,8 +193,8 @@ chooseVim()
 	# vi improved:
 	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	EDITOR="${VIM}"
-	EDITOR_SHORT_NAME="vim"
+	VIEWER="${VIM}"
+	VIEWER_SHORT_NAME="vim"
 	MULTI_WIN=1
 
 }
@@ -193,21 +207,21 @@ chooseVi()
 	# Raw vi:
 	VI=$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	EDITOR="${VI}"
-	EDITOR_SHORT_NAME="vi"
+	VIEWER="${VI}"
+	VIEWER_SHORT_NAME="vi"
 	MULTI_WIN=1
 
 }
 
 
 
-autoSelectEditor()
+autoSelectViewer()
 {
 
 	# Take the best one (watch out the order!):
 
-	EDITOR=""
-	EDITOR_SHORT_NAME=""
+	VIEWER=""
+	VIEWER_SHORT_NAME=""
 
 	MULTI_WIN=1
 
@@ -216,15 +230,15 @@ autoSelectEditor()
 
 		if [ $prefer_emacs -eq 0 ] ; then
 
-			if [ -z "$EDITOR" ] ; then
+			if [ -z "$VIEWER" ] ; then
 				chooseEmacs
 			fi
 
-			if [ -z "$EDITOR" ] ; then
+			if [ -z "$VIEWER" ] ; then
 				chooseXemacs
 			fi
 
-			if [ -z "$EDITOR" ] ; then
+			if [ -z "$VIEWER" ] ; then
 				chooseNedit
 			fi
 
@@ -232,15 +246,15 @@ autoSelectEditor()
 
 			if [ $prefer_nedit -eq 0 ] ; then
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$VIEWER" ] ; then
 					chooseNedit
 				fi
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$VIEWER" ] ; then
 					chooseEmacs
 				fi
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$VIEWER" ] ; then
 					chooseXemacs
 				fi
 
@@ -248,11 +262,11 @@ autoSelectEditor()
 
 				chooseEmacs
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$VIEWER" ] ; then
 					chooseXemacs
 				fi
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$VIEWER" ] ; then
 					chooseNedit
 				fi
 
@@ -262,7 +276,7 @@ autoSelectEditor()
 
 	fi
 
-	if [ -n "$EDITOR" ] ; then
+	if [ -n "$VIEWER" ] ; then
 		return
 	fi
 
@@ -288,7 +302,7 @@ autoSelectEditor()
 
 
 
-applyEditor()
+applyViewer()
 {
 
 	# Let's hope the display is OK.
@@ -315,18 +329,18 @@ applyEditor()
 		fi
 
 		if [ -z "${DISPLAY}" ] ; then
-			echo "    Opening $f with ${EDITOR_SHORT_NAME} (no DISPLAY set)"
+			echo "    Opening $f with ${VIEWER_SHORT_NAME} (no DISPLAY set)"
 		else
-			echo "    Opening $f with ${EDITOR_SHORT_NAME} (DISPLAY is <${DISPLAY}>)"
+			echo "    Opening $f with ${VIEWER_SHORT_NAME} (DISPLAY is <${DISPLAY}>)"
 		fi
 
 		if [ ${MULTI_WIN} -eq 0 ] ; then
 
-			if [ "${EDITOR_SHORT_NAME}" = "emacs" ] ; then
+			if [ "${VIEWER_SHORT_NAME}" = "emacs" ] ; then
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
-				${EDITOR} $f 1>/dev/null 2>&1 &
+				${VIEWER} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
 				# apparently may freeze emacs to death, loosing all pending
@@ -335,11 +349,11 @@ applyEditor()
 				sleep 1
 
 			else
-				${EDITOR} $f 2>/dev/null &
+				${VIEWER} $f 2>/dev/null &
 
 			fi
 
-			if [ "{EDITOR_SHORT_NAME}" = "nedit" ] ; then
+			if [ "{VIEWER_SHORT_NAME}" = "nedit" ] ; then
 				sleep 1
 			fi
 
@@ -348,7 +362,7 @@ applyEditor()
 			# Note: not all tools can be run in background
 			# (add relevant tests?)
 			#
-			${EDITOR} "$f" 2>/dev/null &
+			${VIEWER} "$f" 2>/dev/null &
 
 		fi
 
@@ -357,7 +371,7 @@ applyEditor()
 }
 
 
-displayEditors()
+displayViewers()
 {
 
 	# Just for the side-effect of setting their executable paths:
@@ -410,7 +424,7 @@ fi
 if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
 	prefer_emacs=1
 	prefer_nedit=0
-	echo "(requested to prefer emacs over other editors)"
+	echo "(requested to prefer emacs over other viewers)"
 	shift
 fi
 
@@ -418,7 +432,7 @@ fi
 if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
 	prefer_emacs=0
 	prefer_nedit=1
-	echo "(requested to prefer nedit over other editors)"
+	echo "(requested to prefer nedit over other viewers)"
 	shift
 fi
 
@@ -456,7 +470,7 @@ fi
 
 
 if [ ${do_show} -eq 0 ] ; then
-	displayEditors
+	displayViewers
 fi
 
 
@@ -516,22 +530,21 @@ fi
 # Default:
 MULTI_WIN=1
 
-# Deactivated for the moment:
 EXTENSION=$(echo $1| sed 's|^.*\.||1')
-#
-#if [ "${EXTENSION}" = "erl" ] ; then
-#
-#	chooseJedit
-#	applyEditor
-#	exit 0
-#
-#fi
+
+if [ "${EXTENSION}" = "traces" ] ; then
+
+	chooseLogMX
+	applyViewer
+	exit 0
+
+fi
 
 if [ "${EXTENSION}" = "pdf" ] ; then
 
-	EDITOR=$(which evince)
-	EDITOR_SHORT_NAME="evince"
-	applyEditor
+	VIEWER=$(which evince)
+	VIEWER_SHORT_NAME="evince"
+	applyViewer
 	exit 0
 
 fi
@@ -539,9 +552,9 @@ fi
 
 if [ "${EXTENSION}" = "png" ] ; then
 
-	EDITOR=$(which eog)
-	EDITOR_SHORT_NAME="eog"
-	applyEditor
+	VIEWER=$(which eog)
+	VIEWER_SHORT_NAME="eog"
+	applyViewer
 	exit 0
 
 fi
@@ -549,9 +562,9 @@ fi
 
 if [ "${EXTENSION}" = "jpeg" -o "${EXTENSION}" = "jpg" ] ; then
 
-	EDITOR=$(which eog)
-	EDITOR_SHORT_NAME="eog"
-	applyEditor
+	VIEWER=$(which eog)
+	VIEWER_SHORT_NAME="eog"
+	applyViewer
 	exit 0
 
 fi
@@ -559,18 +572,18 @@ fi
 # Disabled now, as we want to be able to *edit* HTML files:
 #if [ "${EXTENSION}" = "html" ] ; then
 #
-#      EDITOR=$(which firefox)
-#      EDITOR_SHORT_NAME="firefox"
-#      applyEditor
+#      VIEWER=$(which firefox)
+#      VIEWER_SHORT_NAME="firefox"
+#      applyViewer
 #      exit 0
 #
 #fi
 
 if [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4" ] ; then
 
-	EDITOR=$(which mplayer)
-	EDITOR_SHORT_NAME="mplayer"
-	applyEditor
+	VIEWER=$(which mplayer)
+	VIEWER_SHORT_NAME="mplayer"
+	applyViewer
 	exit 0
 
 fi
@@ -578,32 +591,32 @@ fi
 
 if [ "${EXTENSION}" = "dia" ] ; then
 
-	EDITOR=$(which dia)
-	EDITOR_SHORT_NAME="dia"
-	applyEditor
+	VIEWER=$(which dia)
+	VIEWER_SHORT_NAME="dia"
+	applyViewer
 	exit 0
 
 fi
 
 
-autoSelectEditor
+autoSelectViewer
 
 if [ ${do_show} -eq 0 ] ; then
 
-	echo "Chosen editor: ${EDITOR_SHORT_NAME}"
-	echo "Complete editor command: ${EDITOR}"
+	echo "Chosen viewer: ${VIEWER_SHORT_NAME}"
+	echo "Complete viewer command: ${VIEWER}"
 	echo "Multiwin: ${MULTI_WIN}"
 	exit
 
 fi
 
 
-if [ -z "${EDITOR}" ] ; then
+if [ -z "${VIEWER}" ] ; then
 
-	echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
+	echo "Error, none of the registered viewers (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
 	exit 1
 
 fi
 
 
-applyEditor
+applyViewer

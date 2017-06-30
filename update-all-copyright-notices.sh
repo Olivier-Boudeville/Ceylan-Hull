@@ -14,8 +14,7 @@ This will replace '% Copyright (C) x-y Foobar Ltd' by '% Copyright (C) x-2013 Fo
 
 Note that if NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Example for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree 2008 2010 \"Foobar R\&D Ltd\"
-
+Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 2010 \"Foobar R\&D Ltd\"
 "
 
 # To check whether all (Erlang, here) files have been updated:
@@ -25,18 +24,18 @@ Example for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree 2008 201
 # meld changed.txt all.txt
 
 
-# If having forgot some years ago to update the notices (ex: we are in 2013 but
-# you forgot to update the sources in 2012, so you still have 20XX-2011, that
-# you want to transform into 20XX-2013), then you may run:
+# If having forgotten, some years ago, to update the notices (ex: we are in 2013
+# but you forgot to update the sources in 2012, so you still have 20XX-2011,
+# that you want to transform into 20XX-2013), then you may run:
 #
 # for y in 2009 2010 2011 2012 ; do update-all-copyright-notices.sh C++ . 2000
 # $y "Olivier Boudeville" ; done
 
 if [ ! $# -eq 5 ] ; then
 
-		echo "  Error, exactly five parameters are required.
+	echo "  Error, exactly five parameters are required.
 $USAGE" 1>&2
-		exit 5
+	exit 5
 
 fi
 

@@ -29,8 +29,34 @@ if [ -n "$*" ] ; then
 	# This version finally preferred to the next one, which could not support
 	# multiple filenames:
 
-	for f in "$@" ; do
-		/bin/mv -f "$f" $TRASH
+	for elem in "$@" ; do
+
+		#echo "elem = ${elem}"
+
+		actual_elem=$(basename ${elem})
+		#echo "actual_elem = ${actual_elem}"
+
+		if [ -e "${elem}" ] ; then
+
+			if [ -e "${TRASH}/${actual_elem}" ] ; then
+
+				new_elem=${actual_elem}-$(date +'%Y%m%d-%Hh%Mm%Ss')
+				new_full_elem=$TRASH/${new_elem}
+				echo "Warning: element '${actual_elem}' was already existing in trash, storing it as '$TRASH/${new_elem}' instead." 1>&2
+				/bin/mv -f "$elem" $new_full_elem
+
+			else
+
+				/bin/mv -f "$elem" $TRASH
+
+			fi
+
+		else
+
+			echo "(element '${elem}' not found, hence skipped)" 1>&2
+
+		fi
+
 	done
 
 	# Better management of exotic filenames (ex: with spaces):

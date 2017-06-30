@@ -22,7 +22,7 @@ CLIENT=$(which synclient 2>/dev/null)
 
 if $XINPUT | grep -i mouse 1>/dev/null ; then
 
-	touch ~/TOUCHPAD_DISABLED
+	#touch ~/TOUCHPAD_DISABLED
 
 	if $XINPUT set-prop $TOUCHPAD_ID "Device Enabled" 0 1>/dev/null ; then
 
@@ -40,7 +40,7 @@ if $XINPUT | grep -i mouse 1>/dev/null ; then
 
 else
 
-	touch ~/TOUCHPAD_ENABLED
+	#touch ~/TOUCHPAD_ENABLED
 
 	notify-send "No mouse found, enabling touchpad."
 	$XINPUT set-prop $TOUCHPAD_ID "Device Enabled" 1
