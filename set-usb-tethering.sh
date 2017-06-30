@@ -97,6 +97,10 @@ connect()
 
 	if [ $? -eq 0 ] ; then
 
+		# Fix routes (only gateway needed, not full network):
+		ip route del 192.168.0.0/24 dev $IF_NAME
+		ip route add 192.168.0.1 dev $IF_NAME
+
 		if test_link ; then
 
 			notify "Connection up and running. Enjoy!"
