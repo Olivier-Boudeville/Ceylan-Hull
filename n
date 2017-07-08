@@ -31,6 +31,7 @@ prefer_nedit=1
 # Tells whether we want to launch a standalone editor (default: no):
 standalone=1
 
+run_in_background=0
 
 # Function section.
 
@@ -345,10 +346,19 @@ applyEditor()
 
 		else
 
-			# Note: not all tools can be run in background
-			# (add relevant tests?)
-			#
-			${EDITOR} "$f" 2>/dev/null &
+			# As not all tools can/shall be run in background:
+
+			if [ $run_in_background -eq 0 ] ; then
+
+				echo "Running ${EDITOR} in background..."
+				${EDITOR} "$f" 2>/dev/null &
+
+			else
+
+				echo "Running ${EDITOR} in foreground..."
+				${EDITOR} "$f"
+
+			fi
 
 		fi
 
@@ -566,11 +576,16 @@ fi
 #
 #fi
 
-if [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4" ] ; then
+if [ "${EXTENSION}" = "ogg" ] || [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4"  ] ; then
 
 	EDITOR=$(which mplayer)
 	EDITOR_SHORT_NAME="mplayer"
+
+	# Otherwise difficult to control/stop:
+	run_in_background=1
+
 	applyEditor
+
 	exit 0
 
 fi
