@@ -66,7 +66,7 @@ if [ ! -f "$generated_file" ] ; then
 fi
 
 
-target_dir="$HOME/Archives/Courriels/"
+target_dir="$HOME/Archives/Courriels"
 
 mkdir -p "$target_dir"
 
@@ -81,3 +81,9 @@ size=$(du -sh "$target_path" | cut -f 1)
 echo
 echo "Mails have been successfully archived in $target_dir/$target_file - \
 whose size is $size."
+
+if [ -n "${TO_MAIL_ARCHIVE}" ] ; then
+
+	/bin/scp $SP "$target_path" "${TO_MAIL_ARCHIVE}" && echo "Mail archive also transferred to ${TO_MAIL_ARCHIVE}."
+
+fi

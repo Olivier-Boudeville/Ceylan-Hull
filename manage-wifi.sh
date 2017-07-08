@@ -2,7 +2,7 @@
 
 
 USAGE="Usage: "$(basename $0)" [ status | start | scan | stop | isolate | --help ]:
-  - without argument or with status: returns status
+  - without argument or with 'status': returns status
   - with 'start': put the wireless interface up
   - with 'scan': scan for wireless access points (once started)
   - with 'stop': put the wireless interface down"
@@ -11,7 +11,7 @@ USAGE="Usage: "$(basename $0)" [ status | start | scan | stop | isolate | --help
 if [ "$1" = "--help" ] ; then
 
 	echo "$USAGE"
-	exit 0x
+	exit 0
 
 fi
 
@@ -98,8 +98,8 @@ elif [ "$arg" = "stop" ] ; then
 
 elif [ "$arg" = "scan" ] ; then
 
-	echo "Scanning with interface $IF:"
-	$IW dev $IF scan | grep SSID
+	echo "Scanning for wireless networks with interface $IF, found following SSIDs:"
+	$IW dev $IF scan | grep SSID | sort | uniq | sed 's|.*SSID: | - |1'
 
 elif [ "$arg" = "isolate" ] ; then
 
@@ -116,9 +116,30 @@ fi
 
 # To connect:
 
+# First, ensure that RFKILL is disabled:
+# We must have:
+# rfkill list wifi
+#0: phy0: Wireless LAN
+#	Soft blocked: no
+#	Hard blocked: no
+#
+# If hard blocked, toggle an hardware button.
+# If soft blocked, push once the wireless key (F12)
+# Then re-check.
+#
+
+
 # - if no encryption: 'iw dev $IF connect $ESSID'
 # - if WEP is used: 'iw dev $IF connect $ESSID key 0:$KEY'
 # - if using WPA/WPA2:
+
+# netctl start "wlo1-100_Fils_d'Ariane"
+
+# If failed:
+# ip link set wlo1 down
+# netctl start "wlo1-100_Fils_d'Ariane"
+
+# Otherwise:
 # 'wpa_supplicant -i $IF -c < ( wpa_passphrase $ESSID $KEY )'
 
 # Check with 'status'.

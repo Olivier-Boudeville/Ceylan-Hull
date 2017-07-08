@@ -39,7 +39,7 @@ else
 	TOOL="git"
 
 	# Only from current directory:
-	OUTPUT=`git status --porcelain 2>/dev/null .`
+	OUTPUT=$(git status --porcelain 2>/dev/null .)
 	#echo "OUTPUT = $OUTPUT"
 
 	# A problem is that, even in porcelain mode, offsets may be used to display
@@ -64,7 +64,7 @@ else
 	 # we must thus go there:
 	relative_to_root=$(git rev-parse --show-cdup)
 
-	# (empty string is already there)
+	# (empty string means already there)
 	if [ -n "${relative_to_root}" ] ; then
 
 		cd "${relative_to_root}"

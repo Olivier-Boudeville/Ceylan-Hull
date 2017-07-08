@@ -1,7 +1,6 @@
 #!/bin/sh
 
 
-
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-Gateway
 # Required-Start:    $all
@@ -13,7 +12,8 @@
 ### END INIT INFO
 
 
-# This script configures the firewall for a (typically ADSL) gateway.
+# This script configures the firewall for a gateway (ex: between an ADSL or
+# optic fiber connection providing an Internet connection, and the LAN).
 
 # Written by Robert Penz (robert.penz@outertech.com).
 # This script is under GPL.
@@ -36,7 +36,7 @@
 # happens when the kernel modules on disk have been already updated while the
 # currently running kernel, dating from latest boot, is lingering
 # behind. Solution: rebooting and ensuring these kernel modules are loaded at
-# boot.
+# boot (see /etc/modules-load.d/ for that).
 
 
 # Adapted for Arch Linux and Systemd (see
@@ -47,7 +47,9 @@
 
 # To use it in the context of Arch Linux:
 #
-#  - run this script as root, with: ./iptables.rules-Geteway.sh start
+#  - test it with the automatic support disabled: 'systemctl stop iptables'
+#
+#  - run this script as root, with: ./iptables.rules-Geteway.sh restart
 #
 #  - copy the resulting state of iptables in the relevant file: iptables-save >
 # /etc/iptables/iptables.rules
@@ -57,7 +59,10 @@
 #  - check it just for this session: iptables -L
 #
 #  - check that iptables is meant to be started at boot: systemctl is-enabled
-# iptables.service ; if not, run: systemctl enable iptables.service
+#    iptables.service ; if not, run: systemctl enable iptables.service
+
+# An alternate, preferred solution is to rely on a
+# /etc/systemd/system/iptables.rules-Gateway.service file.
 
 # Note: for IPv6, use 'ip6tables' instead of 'iptables'.
 
@@ -92,8 +97,8 @@ fi
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
-# s is for server (log prefix must be shorter than 29 characters):
-version="s-11"
+# 's' is for server (log prefix must be shorter than 29 characters):
+version="s-12"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -114,14 +119,20 @@ LAN_IF=enp2s0
 # For PPP ADSL connections:
 #NET_IF=ppp0
 
-# For direct connection to a set-top box from your provider:
+# For direct connection to a set-top (telecom) box from your provider:
 #NET_IF=eth0
 NET_IF=enp4s0
 
 
 # Tells whether Orge trafic should be allowed:
-enable_orge=true
+enable_orge=false
 
+# Tells whether IPTV (TV on the Internet thanks to a box) should be allowed:
+enable_iptv=true
+
+
+# The general approach here is based on whitelisting: first everything is
+# rejected, then only specific elements are allowed.
 
 start_it_up()
 {
@@ -141,8 +152,8 @@ start_it_up()
 
 	# We load these modules as we want to do stateful firewalling:
 	$modprobe ip_conntrack
-	$modprobe ip_conntrack_ftp
-	$modprobe ip_conntrack_irc
+	#$modprobe ip_conntrack_ftp
+	#$modprobe ip_conntrack_irc
 
 	# Starts by disabling IP forwarding:
 	$echo "0" > /proc/sys/net/ipv4/ip_forward
@@ -150,8 +161,8 @@ start_it_up()
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
 	#
-	# We want to remove all rules and pre-exisiting user defined chains and zero
-	# the counters before we implement new rules:
+	# We want to remove all rules and pre-exisiting user defined chains and to
+	# zero the counters before we implement new rules:
 	#
 	${iptables} -F
 	${iptables} -X
@@ -223,7 +234,7 @@ start_it_up()
 	# Log spoofed packets, source routed packets, redirect packets.
 	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
 
-	# Make sure that IP forwarding is turned on, as it is a gateway:
+	# Finally, make sure that IP forwarding is turned on, as it is a gateway:
 	$echo "1" > /proc/sys/net/ipv4/ip_forward
 
 
@@ -233,43 +244,74 @@ start_it_up()
 
 	# ----------------  FORWARD ---------------------
 
+	# To inspect the exchanges made by a multimedia box with following
+	# statically-assigned IP:
+
+	MULTIMEDIA_BOX=192.168.0.15
+
+	#${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -s ${MULTIMEDIA_BOX} -j LOG --log-prefix "[FW-Box-out] "
+	#${iptables} -A FORWARD -i ${NET_IF} -o ${LAN_IF} -d ${MULTIMEDIA_BOX} -j LOG --log-prefix "[FW-Box-in]"
+
+	if [ "$enable_iptv" = "true" ] ; then
+
+		# So that the ISP content servers can join the LAN in terms of
+		# multicast:
+
+		# Too broad authorisation:
+		#${iptables} -A FORWARD -d 224.0.0.0/4 -j ACCEPT
+
+		# Better targeted ones; must comply with the altnet clauses in
+		# /etc/igmpproxy.conf:
+
+		${iptables} -A FORWARD -i ${NET_IF} -s 89.86.0.0/16    -d 224.0.0.0/4 -j ACCEPT
+		${iptables} -A FORWARD -i ${NET_IF} -s 193.251.97.0/24 -d 224.0.0.0/4 -j ACCEPT
+
+	fi
+
 	## We are masquerading:
 	${iptables} -t nat -A POSTROUTING -o ${NET_IF} -s 192.168.0.0/24 -j MASQUERADE
 
-	# With ADSL connections, NAT reduces the MTU, counter-measure:
+	# NAT reduces the MTU, so counter-measure:
 	${iptables} -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS -o ${NET_IF} --clamp-mss-to-pmtu
 
 	# Only forward that stuff from one interface to the other, and do that with
 	# connection tracking:
 
-	# Everything from the LAN to the Internet is forwarded:
+	# Everything from the LAN interface to the Internet one is forwarded:
 	${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
-	# Packets from the Internet to the LAN must not be new unknown connections:
-	${iptables} -A FORWARD -o ${LAN_IF} -i ${NET_IF} -m state --state ESTABLISHED,RELATED -j ACCEPT
+	# Packets from the Internet interface to the LAN one must not be new unknown
+	# connections:
 
-	AD_FILTER_PORT=3129
+	${iptables} -A FORWARD -i ${NET_IF} -o ${LAN_IF} -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+
+	#AD_FILTER_PORT=3129
 	## Transparent proxy
 	#
 	# Redirects http traffic to port $AD_FILTER_PORT where our ad filter is
 	# running. Normal squid port is 3128.
 	#
-	#${iptables} -t nat -A PREROUTING -i ${LAN_IF} -p tcp --dport 80 -j REDIRECT --to-port $AD_FILTER_PORT
+	#${iptables} -t nat -A PREROUTING -i ${LAN_IF} -p tcp --dport 80 -j REDIRECT --to-port ${AD_FILTER_PORT}
+
 
 
 	# ----------------  OUTPUT ---------------------
 
-	# To allow packets from the LAN (ex: a multimedia box, or a local computer to tune the network box) to reach the networking box:
+	# To allow packets from the LAN (ex: a multimedia box, or a local computer
+	# to tune the network box) to reach the networking box:
 
 
-        #${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
+	#${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
 	#${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
 
 	# No unroutable (private) adddress should be output by the gateway:
-	#${iptables} -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
-	#${iptables} -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT
-	#${iptables} -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT
-	#${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT
+
+	${iptables} -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
+	${iptables} -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT
+	${iptables} -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT
+	${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT
+
 
 
 	# Second rule is to let packets through which belong to established or
@@ -279,10 +321,11 @@ start_it_up()
 
 	# ----------------  INPUT ---------------------
 
+	# To log all input packets:
+	#${iptables} -A INPUT -i ${NET_IF} -j LOG --log-prefix "[FW-all-I] "
 
 	# Log some invalid connections:
 	# (disabled, as uselessly verbose)
-
 	#${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
@@ -290,6 +333,12 @@ start_it_up()
 	# Filter out broadcasts:
 	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
+	if [ "$enable_iptv" = "true" ] ; then
+
+		# Needed for the IGMP proxy, in both ways:
+		${iptables} -A INPUT -d 224.0.0.0/4 -j ACCEPT
+
+	fi
 
 	# Drops directly connections coming from the Internet with unroutable
 	# (private) addresses:
@@ -317,7 +366,7 @@ start_it_up()
 	#
 	# We are not going to trust any fragments.
 	# Log fragments just to see if we get any, and deny them too.
-	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: iptables fragments] "
+	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: fragments] "
 	${iptables} -A INPUT -f -j DROP
 
 	 ## HTTP (web server):
@@ -339,7 +388,7 @@ start_it_up()
 
 	# Orge section:
 
-	if [ $enable_orge = "true" ] ; then
+	if [ "$enable_orge" = "true" ] ; then
 
 		# For Erlang epmd daemon:
 		${iptables} -A INPUT -p tcp --dport 4369 -m state --state NEW -j ACCEPT
@@ -395,8 +444,8 @@ start_it_up()
 
 
 	# NUT, for UPS monitoring:
-	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
-	${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j ACCEPT
 
 
 	# Squid (only local)
@@ -421,8 +470,10 @@ start_it_up()
 
 	# ---------------- ICMP ---------------------
 
-	# Everybody from the LAN can ping me (but no one from the Internet):
-	# Remove that line if no one should be able to ping you
+	# Everybody from the LAN can ping me (but no one from the Internet - however
+	# the network box may answer):
+
+	# Remove that line if no one should be able to ping you:
 	${iptables} -A INPUT -i ${LAN_IF} -p icmp --icmp-type ping -j ACCEPT
 
 

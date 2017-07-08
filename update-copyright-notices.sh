@@ -4,22 +4,22 @@
 
 do_debug=1
 
-#new_year=`date '+%Y'`
+#new_year=$(date '+%Y')
 
 USAGE="
-Usage: "`basename $0`" [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
+Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
 Updates the copyright notices of code of specified type found from specified root directory.
 
 CODE_TYPE is among:
   - 'C++', for *.h, *.h.in, *.cc, *.cpp files
   - 'Erlang', for *.hrl, *.erl files
 
-Ex: "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
+Ex: $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
 This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 2008-2011 Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 
 Note that if PREVIOUS_NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Example for ampersand (&): "`basename $0`" Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
+Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
 
 "
 
@@ -102,8 +102,8 @@ cd $root_dir
 
 replace_name="replace-in-file.sh"
 
-base_dir=`dirname $0`
-replace_script=`PATH=$base_dir:$PATH which $replace_name`
+base_dir=$(dirname $0)
+replace_script=$(PATH=$base_dir:$PATH which $replace_name 2>/dev/null)
 #echo "replace_script = $replace_script"
 
 if [ ! -x "$replace_script" ] ; then
@@ -120,7 +120,7 @@ if [ $code_type -eq 1 ] ; then
 	# Erlang:
 
 	# -L: follow symlinks.
-	target_files=`find -L . -name '*.hrl' -o -name '*.erl'`
+	target_files=$(find -L . -name '*.hrl' -o -name '*.erl')
 
 	target_pattern="^% Copyright (C) $old_notice"
 	replacement_pattern="% Copyright (C) $new_notice"
@@ -128,7 +128,7 @@ if [ $code_type -eq 1 ] ; then
 elif [ $code_type -eq 2 ] ; then
 
 	# C++:
-	target_files=`find -L . -name '*.h' -o -name '*.h.in' -o -name '*.cc' -o -name '*.cpp'`
+	target_files=$(find -L . -name '*.h' -o -name '*.h.in' -o -name '*.cc' -o -name '*.cpp')
 	target_pattern="^ \* Copyright (C) $old_notice"
 	replacement_pattern=" * Copyright (C) $new_notice"
 
@@ -148,7 +148,7 @@ if [ $do_debug -eq 0 ] ; then
 fi
 
 
-target_count=`echo $target_files | wc -w`
+target_count=$(echo $target_files | wc -w)
 
 if [ $target_count -eq 0 ] ; then
 
@@ -165,19 +165,19 @@ for f in $target_files ; do
 
 	#echo
 
-	if grep -e "$target_pattern" $f 1>/dev/null 2>&1 ; then
+	if /bin/grep -e "$target_pattern" $f 1>/dev/null 2>&1 ; then
 
 		#echo "  + found in $f"
 
 		# Target pattern found, let's replace it:
 		$replace_script "$old_notice" "$new_notice" $f
-		count=`expr $count + 1`
+		count=$(expr $count + 1)
 
 	else
 
 		# Not found, searching for similar entries:
 
-		res=`cat $f | grep -i 'copyright ' 2>&1`
+		res=$(/bin/cat $f | grep -i 'copyright ' 2>&1)
 
 		#echo "res = '$res'"
 		#echo "target_pattern = '$target_pattern'"

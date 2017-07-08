@@ -50,9 +50,17 @@ else
 
 	# Ex: version 1.7.2.5 does not support minimal:
 	#GIT_PAGER='' git diff --staged --minimal $target
-	GIT_PAGER='' git diff --staged  $target
+	GIT_PAGER='' git diff --staged $target
 
 	echo "$arrow Committing-in <$target>:"
 	git commit $target
+
+	if [ ! $? -eq 0 ] ; then
+
+		echo "Commit aborted for $target, unstaging it." 1>&2
+
+		git reset HEAD $target
+
+	fi
 
 fi
