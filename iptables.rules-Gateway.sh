@@ -259,11 +259,17 @@ start_it_up()
 
 	# ----------------  OUTPUT ---------------------
 
+	# To allow packets from the LAN (ex: a multimedia box, or a local computer to tune the network box) to reach the networking box:
+
+
+        #${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
+	#${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
+
 	# No unroutable (private) adddress should be output by the gateway:
-	${iptables} -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
-	${iptables} -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT
-	${iptables} -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT
-	${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT
+	#${iptables} -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
+	#${iptables} -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT
+	#${iptables} -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT
+	#${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT
 
 
 	# Second rule is to let packets through which belong to established or
@@ -287,10 +293,10 @@ start_it_up()
 
 	# Drops directly connections coming from the Internet with unroutable
 	# (private) addresses:
-	${iptables} -A INPUT -i ${NET_IF} -s 10.0.0.0/8     -j DROP
-	${iptables} -A INPUT -i ${NET_IF} -s 127.0.0.0/8    -j DROP
-	${iptables} -A INPUT -i ${NET_IF} -s 172.16.0.0/12  -j DROP
-	${iptables} -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
+	#${iptables} -A INPUT -i ${NET_IF} -s 10.0.0.0/8     -j DROP
+	#${iptables} -A INPUT -i ${NET_IF} -s 127.0.0.0/8    -j DROP
+	#${iptables} -A INPUT -i ${NET_IF} -s 172.16.0.0/12  -j DROP
+	#${iptables} -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
 
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
