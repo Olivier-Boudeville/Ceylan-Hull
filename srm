@@ -33,8 +33,15 @@ if [ -n "$*" ] ; then
 
 		#echo "elem = ${elem}"
 
-		actual_elem=$(basename ${elem})
+		actual_elem=$(basename ${elem} 2>/dev/null)
 		#echo "actual_elem = ${actual_elem}"
+
+		if [ -z "${actual_elem}" ] ; then
+
+			echo "(uname to process element '${elem}', aborting)" 1>&2
+			exit 17
+
+		fi
 
 		# File or symbolic link:
 		if [ -e "${elem}" ] || [ -L "${elem}" ] ; then

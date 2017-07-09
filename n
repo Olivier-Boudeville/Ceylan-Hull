@@ -469,16 +469,25 @@ if [ ${do_show} -eq 0 ] ; then
 	displayEditors
 fi
 
+# A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
+# then apparently there is not easy way in sh to preserve that space (the script
+# will understand that two files are listed, 'hello' and 'world.txt'.
+#
+# See
+# https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters for more details.
 
 
 # Assigned only here to take into account the previous shifts:
-REMAINING_PARAMETERS="$*"
+
+# Not done anymore, as loses spaces:
+#REMAINING_PARAMETERS="$@"
 #echo "REMAINING_PARAMETERS = $REMAINING_PARAMETERS"
 
 PARAMETERS=""
 
 # Last filtering:
-for arg in $REMAINING_PARAMETERS ; do
+#for arg in $REMAINING_PARAMETERS ; do
+for arg in "$@" ; do
 
 	if [ "$arg" = "-s" ] ; then
 
@@ -486,13 +495,19 @@ for arg in $REMAINING_PARAMETERS ; do
 
 	else
 
-		PARAMETERS="$PARAMETERS $arg"
+		# Here $arg is still right:
+		#echo "arg=$arg"
+
+		# But then the information is lost when:
+		PARAMETERS="$PARAMETERS ${arg}"
 
 	fi
 
 done
 
-#echo "PARAMETERS = $PARAMETERS"
+# Last test regarding spaces included in filenames:
+#for p in ${PARAMETERS} ; do echo "- parameter: '$p'" ; done
+#exit
 
 if [ $standalone -eq 0 ] ; then
 
@@ -537,7 +552,7 @@ EXTENSION=$(echo $1| sed 's|^.*\.||1')
 #
 #fi
 
-if [ "${EXTENSION}" = "pdf" ] ; then
+if [ "${EXTENSION}" = "pdf" ] || [ "${EXTENSION}" = "PDF" ] ; then
 
 	EDITOR=$(which evince)
 	EDITOR_SHORT_NAME="evince"
