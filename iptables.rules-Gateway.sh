@@ -390,8 +390,9 @@ start_it_up()
 
 	if [ "$enable_orge" = "true" ] ; then
 
-		# For Erlang epmd daemon:
-		${iptables} -A INPUT -p tcp --dport 4369 -m state --state NEW -j ACCEPT
+		# For Erlang epmd daemon (would be a major security hazard):
+		EPMD_PORT=4506
+		#${iptables} -A INPUT -p tcp --dport ${EPMD_PORT} -m state --state NEW -j ACCEPT
 
 		# For the listening socket of TCP Orge server:
 		${iptables} -A INPUT -p tcp --dport 9512 -m state --state NEW -j ACCEPT
