@@ -351,12 +351,12 @@ applyEditor()
 
 			if [ $run_in_background -eq 0 ] ; then
 
-				echo "Running ${EDITOR} in background..."
+				#echo "Running ${EDITOR} in background..."
 				${EDITOR} "$f" 2>/dev/null &
 
 			else
 
-				echo "Running ${EDITOR} in foreground..."
+				#echo "Running ${EDITOR} in foreground..."
 				${EDITOR} "$f"
 
 			fi
