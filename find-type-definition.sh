@@ -33,4 +33,7 @@ fi
 echo "Looking for the '${type}' Erlang type from ${base_dir}..."
 echo
 
-/bin/find ${base_dir} -name '*.?rl' -exec /bin/grep -e "[[:space:]]\?-type[[:space:]]\+${type}()" '{}' ';' 2>/dev/null
+# DUMMY to force the display of the corresponding file.
+# '{type}', not '{type}()', so that partial type names can still be found.
+#
+cd ${base_dir} && /bin/find . -name '*.?rl' -exec /bin/grep -e "[[:space:]]\?-type[[:space:]]\+${type}" DUMMY '{}' ';' 2>/dev/null
