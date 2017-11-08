@@ -38,28 +38,36 @@ elif [ -d ".svn" ] ; then
 
 else
 
-	if [ -n "$target" ] ; then
+
+	if [ -z "$target" ] ; then
+
+		# If no argument has been specified, default to incremental commits for
+		# all:
+		#
+		dci-all
+
+	else
 
 		# In case was not added yet, to see the diffs at next stage:
 		git add $target
 
-	fi
+		# We want to see what we are about to commit:
+		# (not wanting the pager to truncate longer lines)
 
-	# We want to see what we are about to commit:
-	# (not wanting the pager to truncate longer lines)
+		# Ex: version 1.7.2.5 does not support minimal:
+		#GIT_PAGER='' git diff --staged --minimal $target
+		GIT_PAGER='' git diff --staged $target
 
-	# Ex: version 1.7.2.5 does not support minimal:
-	#GIT_PAGER='' git diff --staged --minimal $target
-	GIT_PAGER='' git diff --staged $target
+		echo "$arrow Committing-in <$target>:"
+		git commit $target
 
-	echo "$arrow Committing-in <$target>:"
-	git commit $target
+		if [ ! $? -eq 0 ] ; then
 
-	if [ ! $? -eq 0 ] ; then
+			echo "Commit aborted for $target, unstaging it." 1>&2
 
-		echo "Commit aborted for $target, unstaging it." 1>&2
+			git reset HEAD $target
 
-		git reset HEAD $target
+		fi
 
 	fi
 
