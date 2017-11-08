@@ -32,4 +32,4 @@ echo "Listing all Erlang type definitions from ${base_dir}..."
 echo
 
 # DUMMY to force the display of the corresponding file:
-cd ${base_dir} && /bin/find . -name '*.?rl' -exec /bin/grep -e "[[:space:]]\?-type[[:space:]]\+" '{}' DUMMY ';' 2>/dev/null
+cd ${base_dir} && find . -name '*.?rl' -exec /bin/grep -e "[[:space:]]\?-type[[:space:]]\+" '{}' DUMMY ';' 2>/dev/null
