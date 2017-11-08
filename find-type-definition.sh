@@ -24,7 +24,7 @@ fi
 
 if [ ! $# -eq 1 ] ; then
 
-	echo -e "$USAGE" 1>&2
+	echo "$USAGE" 1>&2
 	exit 5
 
 fi
@@ -33,7 +33,8 @@ fi
 echo "Looking for the '${type}' Erlang type from ${base_dir}..."
 echo
 
+
 # DUMMY to force the display of the corresponding file.
 # '{type}', not '{type}()', so that partial type names can still be found.
 #
-cd ${base_dir} && /bin/find . -name '*.?rl' -exec /bin/grep -e "[[:space:]]\?-type[[:space:]]\+${type}" DUMMY '{}' ';' 2>/dev/null
+cd ${base_dir} && find . -name '*.?rl' -exec /bin/grep -e "[[:space:]]\?-type[[:space:]]\+${type}" DUMMY '{}' ';' 2>/dev/null
