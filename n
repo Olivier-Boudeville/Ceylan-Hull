@@ -1,18 +1,18 @@
 #!/bin/sh
 
 
-NO_X_OPT="--noX"
-SHOW_OPT="--display"
+no_x_opt="--noX"
+show_opt="--display"
 
 
-USAGE="
-Usage: $(basename $0) [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
+usage="
+Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
 
   Opens the set of specified files with the 'best' available editor.
 
   Options are:
-	  '${NO_X_OPT}' to prevent selecting a graphical editor, notably if there is no available X display
-	  '${SHOW_OPT}' to display only the chosen settings (not executing them)
+	  '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display
+	  '${show_opt}' to display only the chosen settings (not executing them)
 	  '-e' or '--emacs' to prefer emacs over all other editors (the default)
 	  '-n' or '--nedit' to prefer nedit over all other editors
 	  '-f' or '--find' to first look-up specified file from current directory, before opening it
@@ -25,6 +25,14 @@ Usage: $(basename $0) [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-n|-
 # done in another window.
 
 
+editor=""
+
+# Not to be directly included in the editor variable, so that it can be still
+# tested with -x for example.
+#
+editor_opt=""
+
+
 # Defaults:
 prefer_emacs=0
 prefer_nedit=1
@@ -33,6 +41,8 @@ prefer_nedit=1
 standalone=1
 
 run_in_background=0
+
+
 
 # Function section.
 
@@ -44,9 +54,9 @@ chooseJedit()
 	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${JEDIT}" ] ; then
-		EDITOR="${JEDIT}"
-		EDITOR_SHORT_NAME="jedit"
-		MULTI_WIN=0
+		editor="${JEDIT}"
+		editor_short_name="jedit"
+		multi_win=0
 	fi
 
 }
@@ -77,31 +87,31 @@ chooseNedit()
 	NEDIT_NC_OPT="-noask"
 
 	if [ -x "${NEDIT}" ] ; then
-		EDITOR="${NEDIT} ${NEDIT_FAMILY_OPT}"
-		EDITOR_SHORT_NAME="nedit"
-		MULTI_WIN=0
+		editor="${NEDIT} ${NEDIT_FAMILY_OPT}"
+		editor_short_name="nedit"
+		multi_win=0
 	fi
 
 	if [ -x "${NC}" ] ; then
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
-			EDITOR="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-			EDITOR_SHORT_NAME="nc"
-			MULTI_WIN=0
+			editor="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+			editor_short_name="nc"
+			multi_win=0
 	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
 	fi
 
 	if [ -x "${NEDITC_GENTOO}" ] ; then
-		EDITOR="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
-		EDITOR_SHORT_NAME="neditc"
-		MULTI_WIN=0
+		editor="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
+		editor_short_name="neditc"
+		multi_win=0
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ] ; then
-		EDITOR="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-		EDITOR_SHORT_NAME="nedit-nc"
-		MULTI_WIN=0
+		editor="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+		editor_short_name="nedit-nc"
+		multi_win=0
 	fi
 
 }
@@ -116,14 +126,16 @@ chooseNedit()
 chooseXemacs()
 {
 
+	#echo "Choosing xemacs"
+
 	# xemacs:
 
 	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${XEMACS}" ] ; then
-		EDITOR="${XEMACS} --geometry=83x60 "
-		EDITOR_SHORT_NAME="xemacs"
-		MULTI_WIN=0
+		editor="${XEMACS} --geometry=83x60 "
+		editor_short_name="xemacs"
+		multi_win=0
 	fi
 
 }
@@ -133,6 +145,8 @@ chooseXemacs()
 chooseEmacs()
 {
 
+	#echo "Choosing emacs"
+
 	# emacs: (allows, if no emacs server is running, to run a standalone
 	# emacs instead, which itself will be a server thanks to its
 	# '(server-start)' configuration.
@@ -140,8 +154,6 @@ chooseEmacs()
 	EMACS=$(which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${EMACS}" ] ; then
-
-		ALTERNATE_EDITOR="/bin/emacs --geometry=83x60"
 
 		if [ $standalone -eq 1 ] ; then
 
@@ -161,11 +173,10 @@ chooseEmacs()
 			fi
 
 			# Default:
-			EDITOR="${EMACS_CLIENT} --alternate-editor=emacs"
+			editor="${EMACS_CLIENT}"
+			editor_opt="--alternate-editor=emacs"
 
 		else
-
-			EMACS="/bin/emacs"
 
 			if [ ! -x "${EMACS}" ] ; then
 
@@ -177,16 +188,16 @@ chooseEmacs()
 					exit 56
 
 				fi
+
 			fi
 
-			EDITOR="/bin/emacs"
+			editor="${EMACS}"
 
 		fi
 
-		VISUAL=$EDITOR
-		EDITOR_SHORT_NAME="emacs"
+		editor_short_name="emacs"
 
-		MULTI_WIN=0
+		multi_win=0
 
 	fi
 
@@ -197,12 +208,14 @@ chooseEmacs()
 chooseNano()
 {
 
+	#echo "Choosing nano"
+
 	# nano, text-based user-friendly editor:
 	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	EDITOR="${NANO}"
-	EDITOR_SHORT_NAME="nano"
-	MULTI_WIN=1
+	editor="${NANO}"
+	editor_short_name="nano"
+	multi_win=1
 
 }
 
@@ -211,12 +224,14 @@ chooseNano()
 chooseVim()
 {
 
+	#echo "Choosing VIM"
+
 	# vi improved:
 	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	EDITOR="${VIM}"
-	EDITOR_SHORT_NAME="vim"
-	MULTI_WIN=1
+	editor="${VIM}"
+	editor_short_name="vim"
+	multi_win=1
 
 }
 
@@ -225,12 +240,14 @@ chooseVim()
 chooseVi()
 {
 
+	#echo "Choosing VI"
+
 	# Raw vi:
 	VI=$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	EDITOR="${VI}"
-	EDITOR_SHORT_NAME="vi"
-	MULTI_WIN=1
+	editor="${VI}"
+	editor_short_name="vi"
+	multi_win=1
 
 }
 
@@ -241,25 +258,25 @@ autoSelectEditor()
 
 	# Take the best one (watch out the order!):
 
-	EDITOR=""
-	EDITOR_SHORT_NAME=""
+	editor=""
+	editor_short_name=""
 
-	MULTI_WIN=1
+	multi_win=1
 
 
 	if [ "${do_X}" -eq 0 ] ; then
 
 		if [ $prefer_emacs -eq 0 ] ; then
 
-			if [ -z "$EDITOR" ] ; then
+			if [ -z "$editor" ] ; then
 				chooseEmacs
 			fi
 
-			if [ -z "$EDITOR" ] ; then
+			if [ -z "$editor" ] ; then
 				chooseXemacs
 			fi
 
-			if [ -z "$EDITOR" ] ; then
+			if [ -z "$editor" ] ; then
 				chooseNedit
 			fi
 
@@ -267,15 +284,15 @@ autoSelectEditor()
 
 			if [ $prefer_nedit -eq 0 ] ; then
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$editor" ] ; then
 					chooseNedit
 				fi
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$editor" ] ; then
 					chooseEmacs
 				fi
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$editor" ] ; then
 					chooseXemacs
 				fi
 
@@ -283,11 +300,11 @@ autoSelectEditor()
 
 				chooseEmacs
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$editor" ] ; then
 					chooseXemacs
 				fi
 
-				if [ -z "$EDITOR" ] ; then
+				if [ -z "$editor" ] ; then
 					chooseNedit
 				fi
 
@@ -297,7 +314,7 @@ autoSelectEditor()
 
 	fi
 
-	if [ -n "$EDITOR" ] ; then
+	if [ -n "$editor" ] ; then
 		return
 	fi
 
@@ -326,14 +343,23 @@ autoSelectEditor()
 applyEditor()
 {
 
-	#echo "MULTI_WIN = ${MULTI_WIN}"
-	#echo "EDITOR_SHORT_NAME = ${EDITOR_SHORT_NAME}"
-	#echo "EDITOR = ${EDITOR}"
+	#echo "multi_win = ${multi_win}"
+	#echo "editor_short_name = ${editor_short_name}"
+	#echo "editor = ${editor}"
+	#echo "editor_opt = ${editor_opt}"
+
+	if [ ! -x "${editor}" ] ; then
+
+		echo "  Error, the '${editor_short_name}' tool is not available." 1>&2
+
+		exit 10
+
+	fi
 
 	# Let's hope the display is OK.
 
 	# Open the files in parallel or sequentially:
-	for f in ${PARAMETERS}; do
+	for f in ${parameters}; do
 
 		if [ ! -f "$f" ] ; then
 
@@ -354,18 +380,18 @@ applyEditor()
 		fi
 
 		if [ -z "${DISPLAY}" ] ; then
-			echo "    Opening $f with ${EDITOR_SHORT_NAME} (no DISPLAY set)"
+			echo "    Opening $f with ${editor_short_name} (no DISPLAY set)"
 		else
-			echo "    Opening $f with ${EDITOR_SHORT_NAME} (DISPLAY is <${DISPLAY}>)"
+			echo "    Opening $f with ${editor_short_name} (DISPLAY is <${DISPLAY}>)"
 		fi
 
-		if [ ${MULTI_WIN} -eq 0 ] ; then
+		if [ ${multi_win} -eq 0 ] ; then
 
-			if [ "${EDITOR_SHORT_NAME}" = "emacs" ] ; then
+			if [ "${editor_short_name}" = "emacs" ] ; then
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
-				${EDITOR} $f 1>/dev/null 2>&1 &
+				${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
 				# apparently may freeze emacs to death, loosing all pending
@@ -374,11 +400,11 @@ applyEditor()
 				sleep 1
 
 			else
-				${EDITOR} $f 2>/dev/null &
+				${editor} ${editor_opt} $f 2>/dev/null &
 
 			fi
 
-			if [ "{EDITOR_SHORT_NAME}" = "nedit" ] ; then
+			if [ "{editor_short_name}" = "nedit" ] ; then
 				sleep 1
 			fi
 
@@ -388,13 +414,13 @@ applyEditor()
 
 			if [ $run_in_background -eq 0 ] ; then
 
-				#echo "Running ${EDITOR} in background..."
-				${EDITOR} "$f" 2>/dev/null &
+				#echo "Running ${editor} in background..."
+				${editor} ${editor_opt} "$f" 2>/dev/null &
 
 			else
 
-				#echo "Running ${EDITOR} in foreground..."
-				${EDITOR} "$f"
+				#echo "Running ${editor} ${editor_opt} in foreground..."
+				${editor} ${editor_opt} "$f"
 
 			fi
 
@@ -444,13 +470,13 @@ do_find=1
 do_locate=1
 
 
-if [ "$1" = "${NO_X_OPT}" ] ; then
+if [ "$1" = "${no_x_opt}" ] ; then
 	do_X=1
 	shift
 fi
 
 
-if [ "$1" = "${SHOW_OPT}" ] ; then
+if [ "$1" = "${show_opt}" ] ; then
 	do_show=0
 	shift
 fi
@@ -489,20 +515,20 @@ fi
 
 
 if [ "$1" = "--help" ] ; then
-	echo "${USAGE}"
+	echo "${usage}"
 	exit 0
 fi
 
 
 if [ "$1" = "-h" ] ; then
-	echo "${USAGE}"
+	echo "${usage}"
 	exit 0
 fi
 
 
 if [ -z "$1" ] ; then
 	if [ ${do_show} -eq 1 ] ; then
-		echo "${USAGE}"
+		echo "${usage}"
 		exit 1
 	fi
 fi
@@ -523,13 +549,13 @@ fi
 # Assigned only here to take into account the previous shifts:
 
 # Not done anymore, as loses spaces:
-#REMAINING_PARAMETERS="$@"
-#echo "REMAINING_PARAMETERS = $REMAINING_PARAMETERS"
+#remaining_parameters="$@"
+#echo "remaining_parameters = $remaining_parameters"
 
-PARAMETERS=""
+parameters=""
 
 # Last filtering:
-#for arg in $REMAINING_PARAMETERS ; do
+#for arg in $remaining_parameters ; do
 for arg in "$@" ; do
 
 	if [ "$arg" = "-s" ] ; then
@@ -542,14 +568,14 @@ for arg in "$@" ; do
 		#echo "arg=$arg"
 
 		# But then the information is lost when:
-		PARAMETERS="$PARAMETERS ${arg}"
+		parameters="$parameters ${arg}"
 
 	fi
 
 done
 
 # Last test regarding spaces included in filenames:
-#for p in ${PARAMETERS} ; do echo "- parameter: '$p'" ; done
+#for p in ${parameters} ; do echo "- parameter: '$p'" ; done
 #exit
 
 if [ $standalone -eq 0 ] ; then
@@ -562,7 +588,7 @@ fi
 if [ $do_find -eq 0 ] ; then
 
 	# Single file assumed, any initial whitespace removed:
-	target_file=$(echo "${PARAMETERS}" | sed 's|^ ||1' | sed 's|:.*$||1')
+	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
 	#echo "target_file = $target_file"
 
 	target_path=$(find . -name $target_file)
@@ -577,7 +603,7 @@ if [ $do_find -eq 0 ] ; then
 
 	fi
 
-	PARAMETERS="${target_path}"
+	parameters="${target_path}"
 
 fi
 
@@ -585,7 +611,7 @@ fi
 if [ $do_locate -eq 0 ] ; then
 
 	# Single file assumed, any initial whitespace removed:
-	target_file=$(echo "${PARAMETERS}" | sed 's|^ ||1' | sed 's|:.*$||1')
+	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
 	#echo "target_file = $target_file"
 
 	target_path=$(/bin/locate --limit 1 --existing ${target_file})
@@ -600,7 +626,7 @@ if [ $do_locate -eq 0 ] ; then
 
 	fi
 
-	PARAMETERS="${target_path}"
+	parameters="${target_path}"
 
 fi
 
@@ -608,20 +634,20 @@ fi
 
 
 # Default:
-MULTI_WIN=1
+multi_win=1
 
 
-EXTENSION=$(echo $PARAMETERS| sed 's|^.*\.||1')
-#EXTENSION=$(echo $1| sed 's|^.*\.||1')
+extension=$(echo $parameters| sed 's|^.*\.||1')
+#extension=$(echo $1| sed 's|^.*\.||1')
 
 
-#echo "PARAMETERS = $PARAMETERS"
-#echo "EXTENSION = $EXTENSION"
+#echo "parameters = $parameters"
+#echo "extension = $extension"
 
 
 # Deactivated for the moment:
 #
-#if [ "${EXTENSION}" = "erl" ] ; then
+#if [ "${extension}" = "erl" ] ; then
 #
 #	chooseJedit
 #	applyEditor
@@ -629,49 +655,49 @@ EXTENSION=$(echo $PARAMETERS| sed 's|^.*\.||1')
 #
 #fi
 
-if [ "${EXTENSION}" = "pdf" ] || [ "${EXTENSION}" = "PDF" ] ; then
+if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 
-	EDITOR=$(which evince)
-	EDITOR_SHORT_NAME="evince"
+	editor=$(which evince)
+	editor_short_name="evince"
 	applyEditor
 	exit 0
 
 fi
 
 
-if [ "${EXTENSION}" = "png" ] ; then
+if [ "${extension}" = "png" ] ; then
 
-	EDITOR=$(which eog)
-	EDITOR_SHORT_NAME="eog"
+	editor=$(which eog)
+	editor_short_name="eog"
 	applyEditor
 	exit 0
 
 fi
 
 
-if [ "${EXTENSION}" = "jpeg" -o "${EXTENSION}" = "jpg" ] ; then
+if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
 
-	EDITOR=$(which eog)
-	EDITOR_SHORT_NAME="eog"
+	editor=$(which eog)
+	editor_short_name="eog"
 	applyEditor
 	exit 0
 
 fi
 
 # Disabled now, as we want to be able to *edit* HTML files:
-#if [ "${EXTENSION}" = "html" ] ; then
+#if [ "${extension}" = "html" ] ; then
 #
-#      EDITOR=$(which firefox)
-#      EDITOR_SHORT_NAME="firefox"
+#      editor=$(which firefox)
+#      editor_short_name="firefox"
 #      applyEditor
 #      exit 0
 #
 #fi
 
-if [ "${EXTENSION}" = "ogg" ] || [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4"  ] ; then
+if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4"  ] ; then
 
-	EDITOR=$(which mplayer)
-	EDITOR_SHORT_NAME="mplayer"
+	editor=$(which mplayer)
+	editor_short_name="mplayer"
 
 	# Otherwise difficult to control/stop:
 	run_in_background=1
@@ -683,37 +709,37 @@ if [ "${EXTENSION}" = "ogg" ] || [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" 
 fi
 
 
-if [ "${EXTENSION}" = "dia" ] ; then
+if [ "${extension}" = "dia" ] ; then
 
-	EDITOR=$(which dia)
-	EDITOR_SHORT_NAME="dia"
+	editor=$(which dia)
+	editor_short_name="dia"
 	applyEditor
 	exit 0
 
 fi
 
 
-if [ "${EXTENSION}" = "xlsx" ] ; then
+if [ "${extension}" = "xlsx" ] ; then
 
-	EDITOR=$(which libreoffice)
-	EDITOR_SHORT_NAME="LibreOffice"
+	editor=$(which libreoffice)
+	editor_short_name="LibreOffice"
 	applyEditor
 	exit 0
 
 fi
 
 
-if [ "${EXTENSION}" = "docx" ] ; then
+if [ "${extension}" = "docx" ] ; then
 
-	EDITOR=$(which libreoffice)
-	EDITOR_SHORT_NAME="LibreOffice"
+	editor=$(which libreoffice)
+	editor_short_name="LibreOffice"
 	applyEditor
 	exit 0
 
 fi
 
 
-if [ "${EXTENSION}" = "traces" ] ; then
+if [ "${extension}" = "traces" ] ; then
 
 	LOGMX=$(which logmx.sh)
 
@@ -723,8 +749,8 @@ if [ "${EXTENSION}" = "traces" ] ; then
 
 	else
 
-		EDITOR="${LOGMX}"
-		EDITOR_SHORT_NAME="LogMX"
+		editor="${LOGMX}"
+		editor_short_name="LogMX"
 
 	fi
 
@@ -738,20 +764,21 @@ autoSelectEditor
 
 if [ ${do_show} -eq 0 ] ; then
 
-	echo "Chosen editor: ${EDITOR_SHORT_NAME}"
-	echo "Complete editor command: ${EDITOR}"
-	echo "Multiwin: ${MULTI_WIN}"
+	echo "Chosen editor: ${editor_short_name}"
+	echo "Complete editor command: ${editor} ${editor_opt}"
+	echo "Multiwin: ${multi_win}"
 	exit
 
 fi
 
 
-if [ -z "${EDITOR}" ] ; then
+if [ -z "${editor}" ] ; then
 
 	echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
 	exit 1
 
 fi
 
+#echo "Applying finally the editor"
 
 applyEditor
