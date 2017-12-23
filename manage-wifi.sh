@@ -1,14 +1,14 @@
 #!/bin/sh
 
 
-USAGE="Usage: "$(basename $0)" [ status | start | scan | stop | isolate | --help ]:
+USAGE="Usage: "$(basename $0)" [ status | start | scan | stop | isolate | --help | -h ]:
   - without argument or with 'status': returns status
   - with 'start': put the wireless interface up
   - with 'scan': scan for wireless access points (once started)
   - with 'stop': put the wireless interface down"
 
 
-if [ "$1" = "--help" ] ; then
+if [ "$1" = "--help" ] || [ "$1" = "-h" ] ; then
 
 	echo "$USAGE"
 	exit 0
@@ -72,11 +72,7 @@ fi
 
 arg="$1"
 
-if [ -z "$arg" ] ; then
-
-	echo "Information about wireless interface $IF: "$($IW dev $IF link)
-
-elif [ "$arg" = "status" ] ; then
+if [ -z "$arg" ] || [ "$arg" = "status" ]; then
 
 	$RFKILL list
 	echo "Status of wireless interface $IF: "$($IW dev $IF link)
