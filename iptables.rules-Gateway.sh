@@ -49,7 +49,7 @@
 #
 #  - test it with the automatic support disabled: 'systemctl stop iptables'
 #
-#  - run this script as root, with: ./iptables.rules-Geteway.sh restart
+#  - run this script as root, with: ./iptables.rules-Gateway.sh restart
 #
 #  - copy the resulting state of iptables in the relevant file: iptables-save >
 # /etc/iptables/iptables.rules
@@ -87,10 +87,10 @@ fi
 
 
 # Not used anymore by distros like Arch:
-INIT_FILE="/lib/lsb/init-functions"
+init_file="/lib/lsb/init-functions"
 
-if [ -f "$INIT_FILE" ] ; then
-	. "$INIT_FILE"
+if [ -f "$init_file" ] ; then
+	. "$init_file"
 fi
 
 
@@ -98,7 +98,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
 # 's' is for server (log prefix must be shorter than 29 characters):
-version="s-12"
+version="s-14"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -107,45 +107,45 @@ echo=/bin/echo
 lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
-LOG_FILE=/root/.lastly-gateway-firewalled.touched
+log_file=/root/.lastly-gateway-firewalled.touched
 
 # Local (LAN) interface:
-#LAN_IF=eth1
-LAN_IF=enp2s0
+#lan_if=eth1
+lan_if=enp2s0
 
 
-# Internet interface:
+# Internet (WAN) interface:
 
 # For PPP ADSL connections:
-#NET_IF=ppp0
+#net_if=ppp0
 
 # For direct connection to a set-top (telecom) box from your provider:
-#NET_IF=eth0
-NET_IF=enp4s0
+#net_if=eth0
+net_if=enp4s0
 
 
-# Tells whether Orge trafic should be allowed:
+# Tells whether Orge traffic should be allowed:
 enable_orge=false
 
 # Tells whether IPTV (TV on the Internet thanks to a box) should be allowed:
-enable_iptv=true
+enable_iptv=false
 
 
-# The general approach here is based on whitelisting: first everything is
+# The general approach here is based on whitelisting: by default everything is
 # rejected, then only specific elements are allowed.
 
 start_it_up()
 {
 
 	$echo "Setting Gateway firewall rules, version $version."
-	touch $LOG_FILE
+	$echo "# ---- Setting Gateway firewall rules, version $version, on $(date)." > $log_file
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
-	if $lsmod 2>/dev/null | grep -q ipchains ; then
-		$rmmod ipchains
-	fi
+	#if $lsmod 2>/dev/null | grep -q ipchains ; then
+	#	$rmmod ipchains
+	#fi
 
 	# Load appropriate modules:
 	$modprobe ip_tables
@@ -161,7 +161,7 @@ start_it_up()
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
 	#
-	# We want to remove all rules and pre-exisiting user defined chains and to
+	# We want to remove all rules and pre-exisiting user defined chains, and to
 	# zero the counters before we implement new rules:
 	#
 	${iptables} -F
@@ -231,7 +231,7 @@ start_it_up()
 		$echo "1" > ${interface}
 	done
 
-	# Log spoofed packets, source routed packets, redirect packets.
+	# Log spoofed packets, source routed packets, redirect packets:
 	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Finally, make sure that IP forwarding is turned on, as it is a gateway:
@@ -247,10 +247,10 @@ start_it_up()
 	# To inspect the exchanges made by a multimedia box with following
 	# statically-assigned IP:
 
-	MULTIMEDIA_BOX=192.168.0.15
+	multimedia_box=10.0.100.1
 
-	#${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -s ${MULTIMEDIA_BOX} -j LOG --log-prefix "[FW-Box-out] "
-	#${iptables} -A FORWARD -i ${NET_IF} -o ${LAN_IF} -d ${MULTIMEDIA_BOX} -j LOG --log-prefix "[FW-Box-in]"
+	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -s ${multimedia_box} -j LOG --log-prefix "[FW-Box-out] "
+	#${iptables} -A FORWARD -i ${net_if} -o ${lan_if} -d ${multimedia_box} -j LOG --log-prefix "[FW-Box-in]"
 
 	if [ "$enable_iptv" = "true" ] ; then
 
@@ -263,27 +263,27 @@ start_it_up()
 		# Better targeted ones; must comply with the altnet clauses in
 		# /etc/igmpproxy.conf:
 
-		${iptables} -A FORWARD -i ${NET_IF} -s 89.86.0.0/16    -d 224.0.0.0/4 -j ACCEPT
-		${iptables} -A FORWARD -i ${NET_IF} -s 193.251.97.0/24 -d 224.0.0.0/4 -j ACCEPT
+		${iptables} -A FORWARD -i ${net_if} -s 89.86.0.0/16    -d 224.0.0.0/4 -j ACCEPT
+		${iptables} -A FORWARD -i ${net_if} -s 193.251.97.0/24 -d 224.0.0.0/4 -j ACCEPT
 
 	fi
 
-	## We are masquerading:
-	${iptables} -t nat -A POSTROUTING -o ${NET_IF} -s 192.168.0.0/24 -j MASQUERADE
+	## We are masquerading the full LAN:
+	${iptables} -t nat -A POSTROUTING -o ${net_if} -s 10.0.0.0/8 -j MASQUERADE
 
 	# NAT reduces the MTU, so counter-measure:
-	${iptables} -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS -o ${NET_IF} --clamp-mss-to-pmtu
+	${iptables} -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS -o ${net_if} --clamp-mss-to-pmtu
 
 	# Only forward that stuff from one interface to the other, and do that with
 	# connection tracking:
 
 	# Everything from the LAN interface to the Internet one is forwarded:
-	${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+	${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	# Packets from the Internet interface to the LAN one must not be new unknown
 	# connections:
 
-	${iptables} -A FORWARD -i ${NET_IF} -o ${LAN_IF} -m state --state ESTABLISHED,RELATED -j ACCEPT
+	${iptables} -A FORWARD -i ${net_if} -o ${lan_if} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 
 	#AD_FILTER_PORT=3129
@@ -292,7 +292,10 @@ start_it_up()
 	# Redirects http traffic to port $AD_FILTER_PORT where our ad filter is
 	# running. Normal squid port is 3128.
 	#
-	#${iptables} -t nat -A PREROUTING -i ${LAN_IF} -p tcp --dport 80 -j REDIRECT --to-port ${AD_FILTER_PORT}
+	#${iptables} -t nat -A PREROUTING -i ${lan_if} -p tcp --dport 80 -j REDIRECT --to-port ${AD_FILTER_PORT}
+
+	# To access from the LAN to a box with such IP:
+	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -d 192.168.1.254 -j ACCEPT
 
 
 
@@ -302,27 +305,30 @@ start_it_up()
 	# to tune the network box) to reach the networking box:
 
 
-	#${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
-	#${iptables} -A FORWARD -i ${LAN_IF} -o ${NET_IF} -d 192.168.1.254 -j ACCEPT
+	#${iptables} -A OUTPUT -o ${net_if} -d 192.168.1.254 -j ACCEPT
 
 	# No unroutable (private) adddress should be output by the gateway:
 
-	${iptables} -A OUTPUT -o ${NET_IF} -d 10.0.0.0/8     -j REJECT
-	${iptables} -A OUTPUT -o ${NET_IF} -d 127.0.0.0/8    -j REJECT
-	${iptables} -A OUTPUT -o ${NET_IF} -d 172.16.0.0/12  -j REJECT
-	${iptables} -A OUTPUT -o ${NET_IF} -d 192.168.0.0/16 -j REJECT
+	${iptables} -A OUTPUT -o ${net_if} -d 10.0.0.0/8     -j REJECT
+	${iptables} -A OUTPUT -o ${net_if} -d 127.0.0.0/8    -j REJECT
+	${iptables} -A OUTPUT -o ${net_if} -d 172.16.0.0/12  -j REJECT
 
+	# Now the DMZ is 192.168.0.0/16:
+	#${iptables} -A OUTPUT -o ${net_if} -d 192.168.0.0/16 -j REJECT
 
+	# Protect the LAN:
+	${iptables} -A OUTPUT -o ${lan_if} -d 192.168.0.0/16 -j REJECT
 
 	# Second rule is to let packets through which belong to established or
 	# related connections and we let all traffic out, as we trust ourself:
 	${iptables} -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
+	
 
 	# ----------------  INPUT ---------------------
 
 	# To log all input packets:
-	#${iptables} -A INPUT -i ${NET_IF} -j LOG --log-prefix "[FW-all-I] "
+	#${iptables} -A INPUT -i ${net_if} -j LOG --log-prefix "[FW-all-I] "
 
 	# Log some invalid connections:
 	# (disabled, as uselessly verbose)
@@ -342,10 +348,10 @@ start_it_up()
 
 	# Drops directly connections coming from the Internet with unroutable
 	# (private) addresses:
-	#${iptables} -A INPUT -i ${NET_IF} -s 10.0.0.0/8     -j DROP
-	#${iptables} -A INPUT -i ${NET_IF} -s 127.0.0.0/8    -j DROP
-	#${iptables} -A INPUT -i ${NET_IF} -s 172.16.0.0/12  -j DROP
-	#${iptables} -A INPUT -i ${NET_IF} -s 192.168.0.0/16 -j DROP
+	#${iptables} -A INPUT -i ${net_if} -s 10.0.0.0/8     -j DROP
+	#${iptables} -A INPUT -i ${net_if} -s 127.0.0.0/8    -j DROP
+	#${iptables} -A INPUT -i ${net_if} -s 172.16.0.0/12  -j DROP
+	#${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/16 -j DROP
 
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
@@ -354,6 +360,7 @@ start_it_up()
 	# Rejects directly 'auth/ident' obsolete requests:
 	${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
 
+	# Accept non-new inputs:
 	${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 	## FRAGMENTS
@@ -390,18 +397,17 @@ start_it_up()
 
 	if [ "$enable_orge" = "true" ] ; then
 
-		# For Erlang epmd daemon (would be a major security hazard):
-		EPMD_PORT=4506
-		#${iptables} -A INPUT -p tcp --dport ${EPMD_PORT} -m state --state NEW -j ACCEPT
+		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
+		epmd_port=4506
+		#${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW -j ACCEPT
 
 		# For the listening socket of TCP Orge server:
 		${iptables} -A INPUT -p tcp --dport 9512 -m state --state NEW -j ACCEPT
 
-
-		# For passive FTP and client TCP Orge server sockets:
+		# For any passive FTP and client TCP Orge server sockets:
 		${iptables} -A INPUT -p tcp --dport 51000:51999 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
-		# For main UDP Orge server socket:
+		# For the main UDP Orge server socket:
 		${iptables} -A INPUT -p udp --dport 9512 -m state --state NEW -j ACCEPT
 
 	fi
@@ -409,25 +415,25 @@ start_it_up()
 	## SSH:
 
 	# One may use a non-standard port:
-	#SSH_PORT=22
-	SSH_PORT=44324
+	#ssh_port=22
+	ssh_port=44324
 
 	# Unlimited input from LAN:
-	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m state --state NEW -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m state --state NEW -j ACCEPT
 
 	# This rules allow to prevent brute-force SSH attacks by limiting the
 	# frequency of attempts coming from the Internet:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them:
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
+	${iptables} -A INPUT -i ${net_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+	${iptables} -A INPUT -i ${net_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 	# Tags too frequent SSH attempts with the name 'SSH':
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -m recent --set --name SSH
+	${iptables} -A INPUT -i ${net_if} -p tcp --dport ${ssh_port} -m recent --set --name SSH
 
 	# Accepts nevertheless normal SSH logins:
-	${iptables} -A INPUT -i ${NET_IF} -p tcp --dport ${SSH_PORT} -j ACCEPT
+	${iptables} -A INPUT -i ${net_if} -p tcp --dport ${ssh_port} -j ACCEPT
 
 
 	## Mail stuff:
@@ -438,24 +444,23 @@ start_it_up()
 	#$iptables -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
 
 	# Allow UDP & TCP packets to the DNS server from LAN clients (only needed if
-	# this gateway is a LAN DNS server).
+	# this gateway is a LAN DNS server, for example with dnsmasq).
 	#
-	${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 53 -m state --state NEW -j ACCEPT
-	${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 53 -m state --state NEW -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport 53 -m state --state NEW -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p udp --dport 53 -m state --state NEW -j ACCEPT
 
 
 	# NUT, for UPS monitoring:
-	#${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 3493 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${lan_if} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${lan_if} -p udp --dport 3493 -m state --state NEW -j ACCEPT
 
 
 	# Squid (only local)
-	#${iptables} -A INPUT -p tcp -i ${LAN_IF} --dport 3128:3129 -m state --state NEW -j ACCEPT
-
+	#${iptables} -A INPUT -p tcp -i ${lan_if} --dport 3128:3129 -m state --state NEW -j ACCEPT
 
 	# Allow the smb stuff (only local)
-	#${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 137:139 -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -i ${LAN_IF} -p tcp --dport 137:139 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${lan_if} -p udp --dport 137:139 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${lan_if} -p tcp --dport 137:139 -m state --state NEW -j ACCEPT
 
 	# GnomeMeeting:
 	#${iptables} -A INPUT -p tcp --dport 30000:33000 -j ACCEPT
@@ -472,16 +477,16 @@ start_it_up()
 	# ---------------- ICMP ---------------------
 
 	# Everybody from the LAN can ping me (but no one from the Internet - however
-	# the network box may answer):
+	# the network box may answer instead):
 
-	# Remove that line if no one should be able to ping you:
-	${iptables} -A INPUT -i ${LAN_IF} -p icmp --icmp-type ping -j ACCEPT
+	# Comment that line if no one should be able to ping you:
+	${iptables} -A INPUT -i ${lan_if} -p icmp --icmp-type ping -j ACCEPT
 
 
 	# ---------------- NTP ---------------------
 
 	# Local clients can ask for gateway-synchronized time:
-	${iptables} -A INPUT -i ${LAN_IF} -p udp --dport 123 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p udp --dport 123 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
 	# ---------------- LOGGING -------------------
@@ -493,6 +498,10 @@ start_it_up()
 	#
 	#${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
+
+	$echo "Set rules are:" >> $log_file
+	$iptables -nvL --line-numbers >> $log_file
+	$echo "# ---- End of rules, on $(date)." >> $log_file
 }
 
 
@@ -536,6 +545,9 @@ case "$1" in
 	start_it_up
   ;;
   restart)
+	# Note: at least in general, using the 'restart' option will not break a
+	# remote SSH connection issuing that command.
+	#
 	shut_it_down
 	start_it_up
   ;;
@@ -548,6 +560,7 @@ case "$1" in
 
 	if [ -z "$NAME" ] ; then
 		# Launched from the command-line:
+		#
 		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status}" >&2
 
 	else
