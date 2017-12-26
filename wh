@@ -2,7 +2,7 @@
 
 
 USAGE="
- Usage: wh [--verbose] [--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
+ Usage: wh [-h|--help] [--verbose] [--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
  Searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory
    Options:
 	 --no-path: returns the filenames with any leading path
@@ -21,7 +21,12 @@ token_eaten=0
 
 while [ $token_eaten -eq 0 ] ; do
 
-	if [ "$1" = "--verbose" ]; then
+	if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+		echo "$USAGE"
+		exit 0
+
+	elif [ "$1" = "--verbose" ]; then
 
 		verbose=0
 		echo "Verbose mode activated."
