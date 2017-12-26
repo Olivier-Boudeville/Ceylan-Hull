@@ -638,6 +638,14 @@ if [ "${EXTENSION}" = "pdf" ] || [ "${EXTENSION}" = "PDF" ] ; then
 
 fi
 
+if [ "${EXTENSION}" = "odg" ] || [ "${EXTENSION}" = "rtf" ] || [ "${EXTENSION}" = "doc" ] || [ "${EXTENSION}" = "docx" ]; then
+
+	EDITOR=$(which libreoffice)
+	EDITOR_SHORT_NAME="LibreOffice"
+	applyEditor
+	exit 0
+
+fi
 
 if [ "${EXTENSION}" = "png" ] ; then
 
