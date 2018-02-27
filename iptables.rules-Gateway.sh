@@ -12,8 +12,9 @@
 ### END INIT INFO
 
 
-# This script configures the firewall for a gateway (ex: between an ADSL or
-# optic fiber connection providing an Internet connection, and the LAN).
+# This script configures the firewall for a gateway
+# (ex: between an ADSL or optic fiber connection providing an Internet
+# connection, and the LAN).
 
 # Written by Robert Penz (robert.penz@outertech.com).
 # This script is under GPL.
@@ -24,10 +25,10 @@
 # To debug this kind of firewall script, one may use:
 # sh -x /path/to/this/file
 
-# This script is meant to be copied in /etc/init.d, to be set as executable, and
-# to be registered for future automatic launches by using: 'update-rc.d
-# iptables.rules-Gateway defaults' (better than being directly set as the target
-# of a symbolic link in: cd /etc/rc2.d && ln -s
+# For older distributions, this script is meant to be copied in /etc/init.d, to
+# be set as executable, and to be registered for future automatic launches by
+# using: 'update-rc.d iptables.rules-Gateway defaults' (better than being
+# directly set as the target of a symbolic link in: cd /etc/rc2.d && ln -s
 # ../init.d/iptables.rules-Gateway.sh).
 
 
@@ -45,7 +46,7 @@
 # Adapted from script 'iptables.rules.ppp' by Olivier Boudeville, 2003, June 22.
 
 
-# To use it in the context of Arch Linux:
+# To use it in the context of Arch Linux (first method):
 #
 #  - test it with the automatic support disabled: 'systemctl stop iptables'
 #
@@ -61,8 +62,9 @@
 #  - check that iptables is meant to be started at boot: systemctl is-enabled
 #    iptables.service ; if not, run: systemctl enable iptables.service
 
-# An alternate, preferred solution is to rely on a
-# /etc/systemd/system/iptables.rules-Gateway.service file.
+# An alternate, preferred method is to rely on a
+# /etc/systemd/system/iptables.rules-Gateway.service file, which is to recreate
+# from scratch (based on code rather than data) the targeted rules.
 
 # Note: for IPv6, use 'ip6tables' instead of 'iptables'.
 
@@ -98,7 +100,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
 # 's' is for server (log prefix must be shorter than 29 characters):
-version="s-14"
+version="s-15"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -148,12 +150,15 @@ start_it_up()
 	#fi
 
 	# Load appropriate modules:
-	$modprobe ip_tables
+	${modprobe} ip_tables
+
+	# So that filtering rules can be commented:
+	${modprobe} xt_comment
 
 	# We load these modules as we want to do stateful firewalling:
-	$modprobe ip_conntrack
-	#$modprobe ip_conntrack_ftp
-	#$modprobe ip_conntrack_irc
+	${modprobe} ip_conntrack
+	#${modprobe} ip_conntrack_ftp
+	#${modprobe} ip_conntrack_irc
 
 	# Starts by disabling IP forwarding:
 	$echo "0" > /proc/sys/net/ipv4/ip_forward
@@ -242,6 +247,45 @@ start_it_up()
 	# RULES
 
 
+	# ---------------- PRIVACY  -------------------
+
+	# This is an exception section, having mixed INPUT and OUTPUT rules.
+	# It shall come first!
+
+	use_ban_rules="true"
+	#use_ban_rules="false"
+
+	ban_file="/etc/ban-rules.iptables"
+
+	if [ "$use_ban_rules" = "true" ] ; then
+
+		if [ -f "${ban_file}" ] ; then
+
+			$echo "Adding ban rules from '${ban_file}'."
+
+			. "${ban_file}"
+
+			res=$?
+
+			if [ ! $res -eq 0 ] ; then
+
+				echo "  Error, the addition of ban rules failed." 1>&2
+
+				exit 60
+
+			fi
+
+		else
+
+			echo "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
+
+			exit 61
+
+		fi
+
+	fi
+
+
 	# ----------------  FORWARD ---------------------
 
 	# To inspect the exchanges made by a multimedia box with following
@@ -323,7 +367,7 @@ start_it_up()
 	# related connections and we let all traffic out, as we trust ourself:
 	${iptables} -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
-	
+
 
 	# ----------------  INPUT ---------------------
 
@@ -343,6 +387,21 @@ start_it_up()
 
 		# Needed for the IGMP proxy, in both ways:
 		${iptables} -A INPUT -d 224.0.0.0/4 -j ACCEPT
+
+	fi
+
+
+	# DHT subsection, for P2P exchanges:
+	# More infos: https://github.com/rakshasa/rtorrent/wiki/Using-DHT
+
+	dht_udp_port=7881
+
+	#use_dht="true"
+	use_dht="false"
+
+	if [ "$use_dht" = "true" ] ; then
+
+		${iptables} -A INPUT -i ${net_if} -p udp -m udp --dport ${dht_udp_port} -j ACCEPT
 
 	fi
 
@@ -516,7 +575,7 @@ shut_it_down()
 	$echo "Disabling Gateway firewall rules, version $version (DANGER!)."
 
 	# Load appropriate modules:
-	$modprobe ip_tables
+	${modprobe} ip_tables
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
 	# counters before we implement new rules:
