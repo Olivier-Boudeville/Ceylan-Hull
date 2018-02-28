@@ -407,10 +407,12 @@ start_it_up()
 
 	# Drops directly connections coming from the Internet with unroutable
 	# (private) addresses:
-	#${iptables} -A INPUT -i ${net_if} -s 10.0.0.0/8     -j DROP
-	#${iptables} -A INPUT -i ${net_if} -s 127.0.0.0/8    -j DROP
-	#${iptables} -A INPUT -i ${net_if} -s 172.16.0.0/12  -j DROP
-	#${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/16 -j DROP
+	${iptables} -A INPUT -i ${net_if} -s 10.0.0.0/8     -j DROP
+	${iptables} -A INPUT -i ${net_if} -s 127.0.0.0/8    -j DROP
+	${iptables} -A INPUT -i ${net_if} -s 172.16.0.0/12  -j DROP
+
+	# If the DMZ is 192.168.0.1/24 for example:
+	${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/24 -j DROP
 
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
@@ -496,11 +498,11 @@ start_it_up()
 
 
 	## Mail stuff:
-	#$iptables -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
 
 	# Allow UDP & TCP packets to the DNS server from LAN clients (only needed if
 	# this gateway is a LAN DNS server, for example with dnsmasq).
@@ -557,10 +559,10 @@ start_it_up()
 	#
 	#${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
-
 	$echo "Set rules are:" >> $log_file
-	$iptables -nvL --line-numbers >> $log_file
-	$echo "# ---- End of rules, on $(date)." >> $log_file
+	${iptables} -nvL --line-numbers >> $log_file
+	$echo "# ---- End of gateway rules, on $(date)." >> $log_file
+
 }
 
 
@@ -579,13 +581,13 @@ shut_it_down()
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
 	# counters before we implement new rules:
-	$iptables -F
-	$iptables -X
-	$iptables -Z
+	${iptables} -F
+	${iptables} -X
+	${iptables} -Z
 
-	$iptables -F -t nat
-	$iptables -X -t nat
-	$iptables -Z -t nat
+	${iptables} -F -t nat
+	${iptables} -X -t nat
+	${iptables} -Z -t nat
 
 }
 
@@ -600,10 +602,12 @@ case "$1" in
 	shut_it_down
   ;;
   reload|force-reload)
+	echo "(reloading)"
 	shut_it_down
 	start_it_up
   ;;
   restart)
+	echo "(restarting)"
 	# Note: at least in general, using the 'restart' option will not break a
 	# remote SSH connection issuing that command.
 	#
@@ -611,7 +615,19 @@ case "$1" in
 	start_it_up
   ;;
   status)
-	iptables -L
+	echo "(status)"
+	${iptables} -L
+  ;;
+  disable)
+	echo "Disabling all rules (hence disabling the firewall)"
+	${iptables} -F INPUT
+	${iptables} -P INPUT ACCEPT
+
+	${iptables} -F FORWARD
+	${iptables} -P FORWARD ACCEPT
+
+	${iptables} -F OUTPUT
+	${iptables} -P OUTPUT ACCEPT
   ;;
   *)
 
