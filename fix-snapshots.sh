@@ -1,8 +1,8 @@
 #!/bin/sh
 
 USAGE="
-Usage: "`basename $0`" OLD_PREFIX NEW_PREFIX [DATE]: takes care of all snapshots found from current directory, so that they respect better conventions.
-Ex: '"`basename $0`" P1010 hello 20101023' will transform picture filenames like P1010695.JPG into 20101023-hello-695.jpeg, and will ensure it is not an executable file.
+Usage: $(basename $0) OLD_PREFIX NEW_PREFIX [DATE]: takes care of all snapshots found from current directory, so that they respect better conventions.
+Ex: '$(basename $0) P1010 hello 20101023' will transform picture filenames like P1010695.JPG into 20101023-hello-695.jpeg, and will ensure it is not an executable file.
 Should no date be specified, the current day will be used instead.
 "
 
@@ -38,7 +38,7 @@ $USAGE" 1>&2
 
 fi
 
-photos=`find . -iname '*.JPG' -o -iname '*.jpeg'`
+photos=$(find . -iname '*.JPG' -o -iname '*.jpeg')
 
 #echo "photos = $photos"
 
@@ -47,7 +47,7 @@ photos=`find . -iname '*.JPG' -o -iname '*.jpeg'`
 date="$3"
 
 if [ -z "$date" ] ; then
-	date=`date '+%Y%m%d'`
+	date=$(date '+%Y%m%d')
 	echo "
   Warning: no date specified, using current day ($date) instead."
 fi
@@ -58,7 +58,7 @@ for f in $photos; do
 
 	chmod -x $f
 	# 'I' means 'case insensitive' as 'JPG' *and* 'jpg' are interesting us:
-	target_file=`echo $f | sed 's|.JPG$|.jpeg|1' | sed "s|$old_prefix|$date-$new_prefix-|1"`
+	target_file=$(echo $f | sed 's|.JPG$|.jpeg|1' | sed 's|.jpg$|.jpeg|1' | sed "s|$old_prefix|$date-$new_prefix-|1")
 
 	if [ "$f" = "$target_file" ] ; then
 
@@ -80,4 +80,4 @@ done
 
 echo "  Snapshots successfully fixed!"
 echo "  New snapshot filenames are:
-"`ls`
+$(ls)"

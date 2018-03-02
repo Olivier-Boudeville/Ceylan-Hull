@@ -81,18 +81,18 @@ fi
 
 
 # Not used anymore by distros like Arch:
-INIT_FILE="/lib/lsb/init-functions"
+init_file="/lib/lsb/init-functions"
 
-if [ -f "$INIT_FILE" ] ; then
-	. "$INIT_FILE"
+if [ -f "$init_file" ] ; then
+	. "$init_file"
 fi
 
 
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date.
-# c is for client (log prefix must be shorter than 29 characters):
-version="c-9"
+# 'c' is for client (log prefix must be shorter than 29 characters):
+version="c-10"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -101,10 +101,7 @@ echo=/bin/echo
 lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
-LOG_FILE=/root/.lastly-LAN-firewalled.touched
-
-
-# EPMD (Erlang) section.
+log_file=/root/.lastly-LAN-firewalled.touched
 
 
 detected_if=$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')
@@ -119,18 +116,31 @@ fi
 printf "* detected network interfaces: \n$detected_if"
 
 # By default we select the first interface found:
-LAN_IF=$(echo $detected_if | sed 's| .*$||1')
+lan_if=$(echo $detected_if | sed 's| .*$||1')
 
 echo
 echo
-echo "* selected LAN interface: $LAN_IF"
+echo "* selected LAN interface: $lan_if"
 
-if [ -z "$LAN_IF" ] ; then
+if [ -z "$lan_if" ] ; then
 
    echo "  No LAN interface selected!" 1>&2
    exit 30
 
 fi
+
+
+# UPnp/DLNA section.
+#
+# Set to true iff this LAN computer is to host a DLNA server (ex: minidlna):
+#
+use_dlna="true"
+
+dlna_http_port=8200
+
+
+
+# EPMD (Erlang) section.
 
 
 # By default, we do *not* filter out EPMD traffic (i.e. we accept it):
@@ -158,21 +168,24 @@ start_it_up()
 {
 
 	$echo "Setting LAN box firewall rules, version $version."
-	touch $LOG_FILE
+	$echo "# ---- Setting LAN firewall rules, version $version, on $(date)." > $log_file
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
-	if $lsmod  2>/dev/null | grep -q ipchains ; then
-		$rmmod ipchains
-	fi
+	#if $lsmod  2>/dev/null | grep -q ipchains ; then
+	#	$rmmod ipchains
+	#fi
 
 	# Load appropriate modules:
 	#
 	# (was commented-out: this (correct) call returned an error and used to
 	# cause the script to silently abort)
 	#
-	$modprobe ip_tables
+	${modprobe} ip_tables
+
+	# So that filtering rules can be commented:
+	${modprobe} xt_comment
 
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
@@ -180,13 +193,13 @@ start_it_up()
 	# We want to remove all rules and pre-exisiting user defined chains and zero
 	# the counters before we implement new rules:
 	#
-	$iptables -F
-	$iptables -X
-	$iptables -Z
+	${iptables} -F
+	${iptables} -X
+	${iptables} -Z
 
-	$iptables -F -t nat
-	$iptables -X -t nat
-	$iptables -Z -t nat
+	${iptables} -F -t nat
+	${iptables} -X -t nat
+	${iptables} -Z -t nat
 
 
 	# Set up a default DROP policy for the built-in chains.
@@ -198,9 +211,9 @@ start_it_up()
 	# There is no period, however small, when packets we do not want are
 	# allowed.
 	#
-	$iptables -P INPUT DROP
-	$iptables -P FORWARD DROP
-	$iptables -P OUTPUT DROP
+	${iptables} -P INPUT DROP
+	${iptables} -P FORWARD DROP
+	${iptables} -P OUTPUT DROP
 
 	## ============================================================
 	## Kernel flags
@@ -251,6 +264,7 @@ start_it_up()
 	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Make sure that IP forwarding is turned off.
+	#
 	# We only want this for a multi-homed host.
 	# Remember: this is for a LAN box (mere client)
 	$echo "0" > /proc/sys/net/ipv4/ip_forward
@@ -259,32 +273,88 @@ start_it_up()
 	## ============================================================
 	# RULES
 
+	# ---------------- PRIVACY  -------------------
+
+	# This is an exception section, having mixed INPUT and OUTPUT rules.
+	# It shall come first!
+
+	use_ban_rules="true"
+	#use_ban_rules="false"
+
+	ban_file="/etc/ban-rules.iptables"
+
+	if [ "$use_ban_rules" = "true" ] ; then
+
+		if [ -f "${ban_file}" ] ; then
+
+			$echo "Adding ban rules from '${ban_file}'."
+
+			# May add useless FORWARD rules as well (expected to be harmless):
+			. "${ban_file}"
+
+			res=$?
+
+			if [ ! $res -eq 0 ] ; then
+
+				echo "  Error, the addition of ban rules failed." 1>&2
+
+				exit 60
+
+			fi
+
+		else
+
+			echo "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
+
+			exit 61
+
+		fi
+
+	fi
+
+
 	# ----------------  OUTPUT ---------------------
 
 	## First rule is to let packets through which belong to established or
 	# related connections and we let all traffic out as we trust ourself.
-	$iptables -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
-	$iptables -A INPUT  -m state --state ESTABLISHED,RELATED -j ACCEPT
+	${iptables} -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+	${iptables} -A INPUT  -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 
 	# ----------------  INPUT ---------------------
 
 	# Log some invalid connections:
 	# (disabled, as uselessly verbose)
-	#$iptables -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
+	#${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
 
-	$iptables -A INPUT -m state --state INVALID -j DROP
+	${iptables} -A INPUT -m state --state INVALID -j DROP
+
+	if [ "$use_dlna" = "true" ] ; then
+
+		# No restriction onto source IP except local network:
+		${iptables} -A INPUT -p tcp -m tcp -s 10.0.0.0/16 --dport ${dlna_http_port} -j ACCEPT
+		#${iptables} -A INPUT -p udp -m udp -s 10.0.0.0/16 --dport ${dlna_http_port} -j ACCEPT
+
+		# For remote discovery (quicker than having the client wait for any
+		# periodic hello from this host):
+		${iptables} -A INPUT -p udp -m udp -s 10.0.0.0/16 --dport 1900 -j ACCEPT
+
+		# IGMP broadcast:
+		${iptables} -A INPUT -s 0.0.0.0/32 -d 224.0.0.1/32 -p igmp -j ACCEPT
+		${iptables} -A INPUT -d 239.0.0.0/8 -p igmp -j ACCEPT
+
+	fi
 
 	# Filter out broadcasts:
-	$iptables -A INPUT -m pkttype --pkt-type broadcast -j DROP
+	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
-	$iptables -A INPUT -m state --state NEW,RELATED -p tcp ! --tcp-flags ALL SYN -j DROP
+	${iptables} -A INPUT -m state --state NEW,RELATED -p tcp ! --tcp-flags ALL SYN -j DROP
 
 	# Rejects directly 'auth/ident' obsolete requests:
-	$iptables -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
+	${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
 
-	$iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+	${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 	if [ $filter_epmd -eq 1 ] ; then
 
@@ -297,11 +367,9 @@ start_it_up()
 	if [ $enable_unfiltered_tcp_range -eq 0 ] ; then
 
 		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}"
-		$iptables -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+		${iptables} -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
-
-
 
 
 
@@ -315,18 +383,18 @@ start_it_up()
 	#
 	# We are not going to trust any fragments.
 	# Log fragments just to see if we get any, and deny them too.
-	$iptables -A INPUT -f -j LOG --log-prefix "[v.$version: iptables fragments] "
-	$iptables -A INPUT -f -j DROP
+	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: iptables fragments] "
+	${iptables} -A INPUT -f -j DROP
 
 	## HTTP (web server):
-	#$iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
 
 	# HTTPS:
-	#$iptables -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
 
 	## ident, if we drop these packets we may need to wait for the timeouts
 	# e.g. on ftp servers
-	$iptables -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
+	${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 	## FTP:
 	# (not used anymore - prefer SFTP, hence on the same port as SSH, instead)
@@ -338,45 +406,45 @@ start_it_up()
 	## SSH:
 
 	# One may use a non-standard port:
-	#SSH_PORT=22
-	SSH_PORT=44324
+	#ssh_port=22
+	ssh_port=44324
 
 	# This rules allow to prevent brute-force SSH attacks by limiting the
 	# frequency of attempts coming from the LAN if compromised:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them:
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
 
 	# Tags too frequent SSH attempts with the name 'SSH':
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -m recent --set --name SSH
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --set --name SSH
 
 	# Accepts nevertheless normal SSH logins:
-	$iptables -A INPUT -i ${LAN_IF} -p tcp --dport ${SSH_PORT} -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -j ACCEPT
 
 
 	## Mail stuff:
-	#$iptables -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
-	#$iptables -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
 
 
 
 	## LOOPBACK
 	# Allow unlimited traffic on the loopback interface.
 	# e.g. needed for KDE, Gnome
-	$iptables -A INPUT -i  lo -j ACCEPT
-	$iptables -A OUTPUT -o lo -j ACCEPT
+	${iptables} -A INPUT -i  lo -j ACCEPT
+	${iptables} -A OUTPUT -o lo -j ACCEPT
 
 
 	# ---------------- ICMP ---------------------
 
 	# Everybody from the LAN can ping me:
 	# Remove that line if no one should be able to ping you
-	$iptables -A INPUT -i ${LAN_IF} -p icmp --icmp-type ping -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p icmp --icmp-type ping -j ACCEPT
 
 
 	 # ---------------- LOGGING -------------------
@@ -385,7 +453,11 @@ start_it_up()
 	#
 	# (might be too verbose)
 	#
-	$iptables -A INPUT -m limit --limit 2/minute -j LOG
+	${iptables} -A INPUT -m limit --limit 2/minute -j LOG
+
+	$echo "Set rules are:" >> $log_file
+	${iptables} -nvL --line-numbers >> $log_file
+	$echo "# ---- End of LAN rules, on $(date)." >> $log_file
 
 }
 
@@ -401,22 +473,23 @@ shut_it_down()
 	$echo "Disabling LAN box firewall rules, version $version."
 
 	# Load appropriate modules:
-	$modprobe ip_tables
+	${modprobe} ip_tables
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
-	# counters before we implement new rules:
-	$iptables -F
-	$iptables -X
-	$iptables -Z
+	# counters:
+	${iptables} -F
+	${iptables} -X
+	${iptables} -Z
 
-	$iptables -F -t nat
-	$iptables -X -t nat
-	$iptables -Z -t nat
+	${iptables} -F -t nat
+	${iptables} -X -t nat
+	${iptables} -Z -t nat
 
 }
 
 
 script_name=$(basename $0)
+
 
 case "$1" in
   start)
@@ -426,15 +499,32 @@ case "$1" in
 	shut_it_down
   ;;
   reload|force-reload)
+	echo "(reloading)"
 	shut_it_down
 	start_it_up
   ;;
   restart)
+	echo "(restarting)"
+	# Note: at least in general, using the 'restart' option will not break a
+	# remote SSH connection issuing that command.
+	#
 	shut_it_down
 	start_it_up
   ;;
   status)
-	iptables -L
+	echo "(status)"
+	${iptables} -L
+  ;;
+  disable)
+	echo "Disabling all rules (hence disabling the firewall)"
+	${iptables} -F INPUT
+	${iptables} -P INPUT ACCEPT
+
+	${iptables} -F FORWARD
+	${iptables} -P FORWARD ACCEPT
+
+	${iptables} -F OUTPUT
+	${iptables} -P OUTPUT ACCEPT
   ;;
   *)
 

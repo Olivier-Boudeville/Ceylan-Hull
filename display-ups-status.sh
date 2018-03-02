@@ -15,12 +15,17 @@ if [ -x "${UPSC}" ] ; then
 
 else
 
+	# Typically obtained through: pacman -Sy apcupsd; then
+	# /etc/apcupsd/apcupsd.conf shall be updated accordingly.
+
+	# Otherwise: "Error contacting apcupsd @ localhost:3551: Connection refused"
+
 	APCC=$(which apcaccess 2>/dev/null)
 
 	if [ -x "${APCC}" ] ; then
 
 		echo "Displaying state of APC UPS:"
-		$APCC  status
+		$APCC status
 
 	else
 
