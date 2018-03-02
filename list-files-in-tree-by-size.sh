@@ -22,4 +22,5 @@ fi
 
 echo
 
-/bin/find . -type f -exec /bin/du -h '{}' ';' | /bin/sort -hr | /bin/more
+# Tool location varies quite a lot depending on the distros:
+find . -type f -exec du -h '{}' ';' | sort -hr | more
