@@ -136,7 +136,13 @@ fi
 #
 use_dlna="true"
 
-dlna_http_port=8200
+# For trivnet1 (TCP):
+trivnet1_tcp_port=8200
+
+# For SSDP (UDP):
+ssdp_udp_port=1900
+
+# More information: https://help.ubuntu.com/community/MiniDLNA
 
 
 
@@ -331,21 +337,20 @@ start_it_up()
 
 	if [ "$use_dlna" = "true" ] ; then
 
+		$echo " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}"
+
 		# No restriction onto source IP except local network:
-		${iptables} -A INPUT -p tcp -m tcp -s 10.0.0.0/16 --dport ${dlna_http_port} -j ACCEPT
-		#${iptables} -A INPUT -p udp -m udp -s 10.0.0.0/16 --dport ${dlna_http_port} -j ACCEPT
+		${iptables} -A INPUT -p tcp -m tcp -s 10.0.0.0/16 --dport ${trivnet1_tcp_port} -j ACCEPT
 
-		# For remote discovery (quicker than having the client wait for any
-		# periodic hello from this host):
-		${iptables} -A INPUT -p udp -m udp -s 10.0.0.0/16 --dport 1900 -j ACCEPT
+		${iptables} -A INPUT -p udp -m udp -s 10.0.0.0/16 --dport ${ssdp_udp_port} -j ACCEPT
 
-		# IGMP broadcast:
-		${iptables} -A INPUT -s 0.0.0.0/32 -d 224.0.0.1/32 -p igmp -j ACCEPT
-		${iptables} -A INPUT -d 239.0.0.0/8 -p igmp -j ACCEPT
+		# IGMP broadcast, apparently useless here:
+		#${iptables} -A INPUT -s 0.0.0.0/32 -d 224.0.0.1/32 -p igmp -j ACCEPT
+		#${iptables} -A INPUT -d 239.0.0.0/8 -p igmp -j ACCEPT
 
 	fi
 
-	# Filter out broadcasts:
+	# Filter out (other) broadcasts:
 	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
