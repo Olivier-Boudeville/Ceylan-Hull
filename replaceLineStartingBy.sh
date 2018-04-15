@@ -17,14 +17,14 @@ fi
 target_file="$3"
 
 if [ ! -f "${target_file}" ]; then
-	echo "Cannot operate on ${target_file}, which is not a regular file." 1>&2
+	echo "  Cannot operate on ${target_file}, which is not a regular file." 1>&2
 	exit 2
 fi
 
-shell_dir=`dirname $0`
+shell_dir=$(dirname $0)
 
-SOURCE="^"`${shell_dir}/protectSpecialCharacters.sh "$1"`".*$"
-TARGET=`${shell_dir}/protectSpecialCharacters.sh "$2"`
+SOURCE="^$(${shell_dir}/protectSpecialCharacters.sh "$1").*$"
+TARGET=$(${shell_dir}/protectSpecialCharacters.sh "$2")
 
 #echo "SOURCE = $SOURCE"
 #echo "TARGET = $TARGET"
