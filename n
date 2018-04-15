@@ -514,13 +514,7 @@ if [ "$1" = "-l" ] || [ "$1" = "--locate" ] ; then
 fi
 
 
-if [ "$1" = "--help" ] ; then
-	echo "${usage}"
-	exit 0
-fi
-
-
-if [ "$1" = "-h" ] ; then
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	echo "${usage}"
 	exit 0
 fi
@@ -574,7 +568,7 @@ for arg in "$@" ; do
 
 done
 
-# Last test regarding spaces included in filenames:
+# Last test regarding bloody spaces included in filenames:
 #for p in ${parameters} ; do echo "- parameter: '$p'" ; done
 #exit
 
@@ -637,12 +631,16 @@ fi
 multi_win=1
 
 
+# In case of a *list* of filenames, the detected extension will be the one of
+# the last filename:
+#
 extension=$(echo $parameters| sed 's|^.*\.||1')
 #extension=$(echo $1| sed 's|^.*\.||1')
 
 
 #echo "parameters = $parameters"
 #echo "extension = $extension"
+
 
 
 # Deactivated for the moment:
@@ -664,7 +662,7 @@ if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 
 fi
 
-if [ "${EXTENSION}" = "odg" ] || [ "${EXTENSION}" = "rtf" ] || [ "${EXTENSION}" = "doc" ] || [ "${EXTENSION}" = "docx" ]; then
+if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xlsx" ] ; then
 
 	EDITOR=$(which libreoffice)
 	EDITOR_SHORT_NAME="LibreOffice"
@@ -702,7 +700,9 @@ fi
 #
 #fi
 
-if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4"  ] ; then
+if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] ; then
+
+	# Another option is: vlc.
 
 	editor=$(which mplayer)
 	editor_short_name="mplayer"
@@ -726,25 +726,6 @@ if [ "${extension}" = "dia" ] ; then
 
 fi
 
-
-if [ "${extension}" = "xlsx" ] ; then
-
-	editor=$(which libreoffice)
-	editor_short_name="LibreOffice"
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "docx" ] ; then
-
-	editor=$(which libreoffice)
-	editor_short_name="LibreOffice"
-	applyEditor
-	exit 0
-
-fi
 
 
 if [ "${extension}" = "traces" ] ; then
