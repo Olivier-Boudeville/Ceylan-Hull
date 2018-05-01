@@ -664,8 +664,10 @@ fi
 
 if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xlsx" ] ; then
 
-	EDITOR=$(which libreoffice)
-	EDITOR_SHORT_NAME="LibreOffice"
+	#echo "LibreOffice selected."
+
+	editor=$(which libreoffice)
+	editor_short_name="LibreOffice"
 	applyEditor
 	exit 0
 
