@@ -1,6 +1,13 @@
 #!/bin/sh
 
 
+# Copyright (C) 2010-2018 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox.
+
+
 no_x_opt="--noX"
 show_opt="--display"
 
@@ -728,6 +735,16 @@ if [ "${extension}" = "dia" ] ; then
 
 fi
 
+
+if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ] ; then
+
+	# Is it a compressed trace file?
+	if echo $parameters| grep '.traces' 1>/dev/null ; then
+		# In this case trigger next clause, as LogMX can handle it:
+		extension="traces"
+	fi
+
+fi
 
 
 if [ "${extension}" = "traces" ] ; then
