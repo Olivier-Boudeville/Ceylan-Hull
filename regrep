@@ -133,6 +133,8 @@ if [ $# -ge 2 ] ; then
 fi
 
 
+base_grep_opt="--color"
+
 searched_expression="$read_parameter"
 #echo "searched_expression = $searched_expression"
 
@@ -162,18 +164,18 @@ if [ -z "$filter_on_file" ] ; then
 
 		if [ $filenames_only -eq 1 ] ; then
 
-			$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+			$find . -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
 		else
 
-			$find . -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			$find . -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
 	else
 
 		# Note filter specified, using '*.rst':
-		$find . -name tmp-rst -prune -o ${name_opt} '*.rst' -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+		$find . -name tmp-rst -prune -o ${name_opt} '*.rst' -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
 	fi
 
@@ -187,10 +189,10 @@ else
 
 		if [ $filenames_only -eq 1 ] ; then
 
-			$find . ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+			$find . ${name_opt} "$filter_on_file" -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
 		else
-			$find . ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			$find . ${name_opt} "$filter_on_file" -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
@@ -198,11 +200,11 @@ else
 
 		if [ $filenames_only -eq 1 ] ; then
 
-			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
 		else
 
-			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
