@@ -52,6 +52,32 @@ log_file="/root/.last-distro-update"
 
 if [ $(id -u) -eq 0 ] ; then
 
+	lock_file="/var/lib/pacman/db.lck"
+
+	if [ -e "${lock_file}" ] ; then
+
+
+		if [ $quiet -eq 1 ] ; then
+
+			echo "Pacman lock file (${lock_file}) found; shall it be deleted first? [y/n]"
+
+			read answer
+
+			if [ "${answer}" = "y" ] ; then
+
+				/bin/rm -f "${lock_file}"
+				echo "  (lock file deleted)"
+
+			else
+
+				echo "  (lock file NOT deleted)"
+
+			fi
+
+		fi
+
+	fi
+
 	# Erases the previous log as well, to avoid accumulation:
 	echo "Updating the distribution now..." 1>${log_file}
 
