@@ -59,7 +59,7 @@ if [ $(id -u) -eq 0 ] ; then
 
 		if [ $quiet -eq 1 ] ; then
 
-			echo "Pacman lock file (${lock_file}) found; shall it be deleted first? [y/n]"
+			echo "Pacman lock file (${lock_file}) found; shall it be deleted first? [y/N]"
 
 			read answer
 
