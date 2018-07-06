@@ -44,9 +44,9 @@ if [ -n "$*" ] ; then
 		fi
 
 		# File or symbolic link:
-		if [ -e "${elem}" ] || [ -L "${elem}" ] ; then
+		if [ -e "${elem}" ] ; then
 
-			if [ -e "${TRASH}/${actual_elem}" ] || [ -L "${TRASH}/${actual_elem}" ] ; then
+			if [ -e "${TRASH}/${actual_elem}" ] ; then
 
 				new_elem="${actual_elem}-$(date +'%Y%m%d-%Hh%Mm%Ss')"
 				new_full_elem="$TRASH/${new_elem}"
