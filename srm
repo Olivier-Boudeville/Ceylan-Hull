@@ -44,18 +44,33 @@ if [ -n "$*" ] ; then
 		fi
 
 		# File or symbolic link:
-		if [ -e "${elem}" ] || [ -L "${elem}" ] ; then
+		if [ -e "${elem}" ] ; then
 
-			if [ -e "${TRASH}/${actual_elem}" ] || [ -L "${elem}" ] ; then
+			if [ -e "${TRASH}/${actual_elem}" ] ; then
 
-				new_elem=${actual_elem}-$(date +'%Y%m%d-%Hh%Mm%Ss')
-				new_full_elem=$TRASH/${new_elem}
-				echo "Warning: element '${actual_elem}' was already existing in trash, storing it as '$TRASH/${new_elem}' instead." 1>&2
-				/bin/mv -f "$elem" $new_full_elem
+				new_elem="${actual_elem}-$(date +'%Y%m%d-%Hh%Mm%Ss')"
+				new_full_elem="$TRASH/${new_elem}"
+
+				# To provide a real unicity (otherwise a 'find' executing a srm
+				# could remove in the same second a large number of different
+				# files bearing the same name in that tree):
+				#
+
+				#echo "Testing trash target ${new_full_elem}"
+
+				while [ -e "${new_full_elem}" ] ; do
+
+					new_full_elem="${new_full_elem}x"
+
+				done
+
+				echo "Warning: element '${actual_elem}' was already existing in trash, storing it as '${new_full_elem}' instead." 1>&2
+
+				/bin/mv -f "${elem}" "${new_full_elem}"
 
 			else
 
-				/bin/mv -f "$elem" $TRASH
+				/bin/mv -f "${elem}" $TRASH
 
 			fi
 
