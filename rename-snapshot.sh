@@ -14,13 +14,17 @@ fi
 
 filename="$1"
 
-if [ ! -e "${filename}" ] ; then
+if [ ! -f "${filename}" ] ; then
 
-	echo "  Error, file '${filename}' does not exist." 1>&2
+	echo "  Error, '${filename}' is not an existing file." 1>&2
 
 	exit 10
 
 fi
+
+expanded_filename=$(realpath "${filename}")
+
+#echo "Expanding input filename '${filename}' into '${expanded_filename}'."
 
 
 # Do not add a date prefix if there is already one:
@@ -48,7 +52,11 @@ else
 
 
 	# Like "20180702":
-	prefix=$(${exiftool} "${filename}" | grep 'GPS Date Stamp' | sed 's|^.*: ||1' | sed 's|:||g')"-"
+	prefix=$(${exiftool} "${expanded_filename}" | grep 'GPS Date Stamp' | sed 's|^.*: ||1' | sed 's|:||g')
+
+	if [ -n "${prefix}" ] ; then
+		prefix="${prefix}-"
+	fi
 
 	#echo "prefix = '${prefix}'"
 
@@ -72,36 +80,46 @@ fi
 
 #echo "retained extension = ${extension}"
 
+if [ -n "${prefix}" ] ; then
 
-new_filename="$(dirname ${filename})/${prefix}$(basename ${all_but_extension}).${extension}"
+	# The original filename may already include the just determined prefix; if so,
+	# let's remove that potential duplication:
+	#
+	new_basename=$(basename "${all_but_extension}" | sed "s|${prefix}||1")
+
+fi
+
+
+new_filename="$(dirname ${expanded_filename})/${prefix}$(basename ${all_but_extension}).${extension}"
 
 #echo "new filename = ${new_filename}"
 
 if [ -e "{new_filename}" ]; then
 
-	echo "  Error, new filename for '${filename}', i.e. '${new_filename}', already exists." 1>&2
+	echo "  Error, new filename for '${expanded_filename}', i.e. '${new_filename}', already exists." 1>&2
 
 	exit 20
 
 fi
 
 
-if [ ! "${filename}" = "${new_filename}" ] ; then
-	/bin/mv "${filename}" "${new_filename}"
+if [ ! "${expanded_filename}" = "${new_filename}" ] ; then
+
+	/bin/mv "${expanded_filename}" "${new_filename}"
 
 
 	if [ ! $? -eq 0 ]; then
 
-		echo "  Error, renaming '${filename}' into '${new_filename}' failed." 1>&2
+		echo "  Error, renaming '${expanded_filename}' into '${new_filename}' failed." 1>&2
 
 		exit 25
 
 	fi
 
-	echo "'${filename}' has been renamed as '${new_filename}'."
+	echo "'${expanded_filename}' has been renamed as '${new_filename}'."
 
 else
 
-	echo "('${filename}' kept as is)"
+	echo "('${expanded_filename}' kept as is)"
 
 fi
