@@ -669,7 +669,7 @@ if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 
 fi
 
-if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xlsx" ] ; then
+if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 	#echo "LibreOffice selected."
 
