@@ -8,6 +8,9 @@
 # This file is part of the Ceylan-Hull toolbox.
 
 
+# See also: the 'xdg-open' command.
+
+
 no_x_opt="--noX"
 show_opt="--display"
 
@@ -698,6 +701,18 @@ if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
 	exit 0
 
 fi
+
+
+if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ] ; then
+
+	editor=$(which jq)
+	editor_opt="."
+	editor_short_name="jq"
+	applyEditor
+	exit 0
+
+fi
+
 
 # Disabled now, as we want to be able to *edit* HTML files:
 #if [ "${extension}" = "html" ] ; then
