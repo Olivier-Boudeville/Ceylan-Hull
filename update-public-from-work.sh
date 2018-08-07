@@ -78,7 +78,7 @@ fi
 
 
 # Not relying on timestamps (no --update):
-RSYNC_OPT="--recursive "
+RSYNC_OPT="--recursive --links"
 
 cd $WORK_ROOT
 

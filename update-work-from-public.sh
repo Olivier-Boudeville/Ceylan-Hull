@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-USAGE="  Usage: "$(basename $0)" PUBLIC_ROOT WORK_ROOT: updates base work repository from all public Ceylan-* repositories."
+USAGE="  Usage: $(basename $0) PUBLIC_ROOT WORK_ROOT: updates base work repository from all public Ceylan-* repositories."
 
 
 if [ ! $# -eq 2 ] ; then
@@ -84,7 +84,7 @@ fi
 
 
 # Not relying on timestamps (no --update):
-RSYNC_OPT="--recursive "
+RSYNC_OPT="--recursive --links"
 
 
 echo
@@ -123,7 +123,7 @@ git status
 echo " + updating common from Ceylan-Myriad"
 cd ${PUBLIC_ROOT}/Ceylan-Myriad
 
-${RSYNC} ${RSYNC_OPT} . ${WORK_ROOT}/common
+${RSYNC} ${RSYNC_OPT} . ${WORK_ROOT}/myriad
 
 
 echo " + updating wooper from Ceylan-WOOPER"
@@ -140,7 +140,7 @@ ${RSYNC} ${RSYNC_OPT} . ${WORK_ROOT}/traces
 
 echo " + performing final cleanings"
 cd ${WORK_ROOT}
-/bin/rm -f */.gitignore */README.md 2>/dev/null
+#/bin/rm -f */.gitignore */README.md 2>/dev/null
 /bin/rm -rf */.git 2>/dev/null
 
 
