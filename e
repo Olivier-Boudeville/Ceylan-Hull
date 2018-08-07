@@ -8,7 +8,13 @@
 # This file is part of the Ceylan-Hull toolbox.
 
 
-# See also: the 'xdg-open' command.
+# This script has for purpose to *edit* (hence its name, 'e') files, so it opens
+# them (as read/write) with a relevant tool.
+
+
+# See also:
+# - the 'v' ('view') script
+# - the 'xdg-open' command
 
 
 no_x_opt="--noX"
@@ -18,7 +24,7 @@ show_opt="--display"
 usage="
 Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
 
-  Opens the set of specified files with the 'best' available editor.
+  Opens for reading/writing the set of specified files with the 'best' available editor.
 
   Options are:
 	  '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display
@@ -60,17 +66,50 @@ run_in_background=0
 chooseJedit()
 {
 
-	# jedit:
+	#echo "Jedit selected."
+
 	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${JEDIT}" ] ; then
 		editor="${JEDIT}"
-		editor_short_name="jedit"
+		editor_short_name="Jedit"
 		multi_win=0
 	fi
 
 }
 
+
+chooseLibreOffice()
+{
+
+	#echo "LibreOffice selected."
+
+	editor=$(which libreoffice)
+	editor_short_name="LibreOffice"
+
+}
+
+
+chooseGimp()
+{
+
+	#echo "Gimp selected."
+
+	editor=$(which gimp)
+	editor_short_name="The Gimp"
+
+}
+
+
+chooseInkscape()
+{
+
+	#echo "Inkscape selected."
+
+	editor=$(which inkscape)
+	editor_short_name="Inkscape"
+
+}
 
 
 chooseNedit()
@@ -98,7 +137,7 @@ chooseNedit()
 
 	if [ -x "${NEDIT}" ] ; then
 		editor="${NEDIT} ${NEDIT_FAMILY_OPT}"
-		editor_short_name="nedit"
+		editor_short_name="Nedit"
 		multi_win=0
 	fi
 
@@ -106,7 +145,7 @@ chooseNedit()
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
 			editor="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-			editor_short_name="nc"
+			editor_short_name="Nc"
 			multi_win=0
 	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
@@ -114,13 +153,13 @@ chooseNedit()
 
 	if [ -x "${NEDITC_GENTOO}" ] ; then
 		editor="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
-		editor_short_name="neditc"
+		editor_short_name="Neditc"
 		multi_win=0
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ] ; then
 		editor="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-		editor_short_name="nedit-nc"
+		editor_short_name="Nedit-nc"
 		multi_win=0
 	fi
 
@@ -144,7 +183,7 @@ chooseXemacs()
 
 	if [ -x "${XEMACS}" ] ; then
 		editor="${XEMACS} --geometry=83x60 "
-		editor_short_name="xemacs"
+		editor_short_name="XEmacs"
 		multi_win=0
 	fi
 
@@ -205,7 +244,7 @@ chooseEmacs()
 
 		fi
 
-		editor_short_name="emacs"
+		editor_short_name="Emacs"
 
 		multi_win=0
 
@@ -214,21 +253,19 @@ chooseEmacs()
 }
 
 
-
 chooseNano()
 {
 
-	#echo "Choosing nano"
+	#echo "Nano selected."
 
 	# nano, text-based user-friendly editor:
 	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	editor="${NANO}"
-	editor_short_name="nano"
+	editor_short_name="Nano"
 	multi_win=1
 
 }
-
 
 
 chooseVim()
@@ -240,7 +277,7 @@ chooseVim()
 	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	editor="${VIM}"
-	editor_short_name="vim"
+	editor_short_name="Vim"
 	multi_win=1
 
 }
@@ -390,9 +427,9 @@ applyEditor()
 		fi
 
 		if [ -z "${DISPLAY}" ] ; then
-			echo "    Opening $f with ${editor_short_name} (no DISPLAY set)"
+			echo "    Editing $f with ${editor_short_name} (no DISPLAY set)"
 		else
-			echo "    Opening $f with ${editor_short_name} (DISPLAY is <${DISPLAY}>)"
+			echo "    Editing $f with ${editor_short_name} (DISPLAY is <${DISPLAY}>)"
 		fi
 
 		if [ ${multi_win} -eq 0 ] ; then
@@ -543,7 +580,7 @@ if [ ${do_show} -eq 0 ] ; then
 fi
 
 # A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
-# then apparently there is not easy way in sh to preserve that space (the script
+# then apparently there is no easy way in sh to preserve that space (the script
 # will understand that two files are listed, 'hello' and 'world.txt').
 #
 # See
@@ -652,41 +689,27 @@ extension=$(echo $parameters| sed 's|^.*\.||1')
 #echo "extension = $extension"
 
 
-
-# Deactivated for the moment:
-#
-#if [ "${extension}" = "erl" ] ; then
-#
-#	chooseJedit
-#	applyEditor
-#	exit 0
-#
-#fi
-
 if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 
-	editor=$(which evince)
-	editor_short_name="evince"
+	chooseLibreOffice
 	applyEditor
 	exit 0
 
 fi
+
 
 if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
-	#echo "LibreOffice selected."
-
-	editor=$(which libreoffice)
-	editor_short_name="LibreOffice"
+	chooseLibreOffice
 	applyEditor
 	exit 0
 
 fi
 
+
 if [ "${extension}" = "png" ] ; then
 
-	editor=$(which eog)
-	editor_short_name="eog"
+	chooseGimp
 	applyEditor
 	exit 0
 
@@ -695,8 +718,16 @@ fi
 
 if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
 
-	editor=$(which eog)
-	editor_short_name="eog"
+	chooseGimp
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "svg" -o "${extension}" = "svgz" ] ; then
+
+	chooseInkscape
 	applyEditor
 	exit 0
 
@@ -714,25 +745,13 @@ if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ] ; then
 fi
 
 
-# Disabled now, as we want to be able to *edit* HTML files:
-#if [ "${extension}" = "html" ] ; then
-#
-#      editor=$(which firefox)
-#      editor_short_name="firefox"
-#      applyEditor
-#      exit 0
-#
-#fi
+# HTML files are to be edited (hence no special case here)
+
 
 if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] ; then
 
-	# Another option is: vlc.
-
-	editor=$(which mplayer)
-	editor_short_name="mplayer"
-
-	# Otherwise difficult to control/stop:
-	run_in_background=1
+	editor=$(which audacity)
+	editor_short_name="Audacity"
 
 	applyEditor
 
@@ -797,7 +816,7 @@ fi
 
 if [ -z "${editor}" ] ; then
 
-	echo "Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
+	echo "  Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
 	exit 1
 
 fi

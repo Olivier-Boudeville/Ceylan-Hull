@@ -1,27 +1,52 @@
 #!/bin/sh
 
 
-NO_X_OPT="--noX"
-SHOW_OPT="--display"
+# Copyright (C) 2010-2018 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox.
 
 
-USAGE="
-Usage: $(basename $0) [${NO_X_OPT}] [${SHOW_OPT}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
+# This script has for purpose to *view* (hence its name, 'v') files, so it opens
+# them (as read-only) with a relevant tool.
 
-  Opens the set of specified files with the 'best' available viewer (hence in read-only).
+
+# See also:
+# - the 'e' ('edit') script
+# - the 'xdg-open' command
+
+
+no_x_opt="--noX"
+show_opt="--display"
+
+
+usage="
+Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
+
+  Opens for reading the set of specified files with the 'best' available viewer.
 
   Options are:
-	  '${NO_X_OPT}' to prevent selecting a graphical viewer, notably if there is no available X display
-	  '${SHOW_OPT}' to display only the chosen settings (not executing them)
+	  '${no_x_opt}' to prevent selecting a graphical viewer, notably if there is no available X display
+	  '${show_opt}' to display only the chosen settings (not executing them)
 	  '-e' or '--emacs' to prefer emacs over all other viewers (the default)
 	  '-n' or '--nedit' to prefer nedit over all other viewers
 	  '-f' or '--find' to first look-up specified file from current directory, before opening it
 	  '-s' or '--standalone' to prefer not using the server-based version of the selected viewer, if applicable (useful to avoid reusing any already opened window)
+	  '-l' or '--locate' to open the single file (if any) found thanks to 'locate'
 "
 
 # Note: a special syntax is recognised as well: 'n A_FILE -s', which is
 # convenient when wanting to open a file yet thinking last that this should be
 # done in another window.
+
+
+viewer=""
+
+# Not to be directly included in the viewer variable, so that it can be still
+# tested with -x for example.
+#
+viewer_opt=""
 
 
 # Defaults:
@@ -31,36 +56,80 @@ prefer_nedit=1
 # Tells whether we want to launch a standalone viewer (default: no):
 standalone=1
 
+run_in_background=0
+
+
 
 # Function section.
-
-
-chooseLogMX()
-{
-
-	# Logmx:
-	LOGMX=$(which logmx.sh 2>/dev/null | grep -v ridiculously 2>/dev/null)
-
-	if [ -x "${LOGMX}" ] ; then
-		VIEWER="${LOGMX}"
-		VIEWER_SHORT_NAME="LogMX"
-		MULTI_WIN=0
-	fi
-
-}
 
 
 chooseJedit()
 {
 
-	# jedit:
+	#echo "Jedit selected."
+
 	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${JEDIT}" ] ; then
-		VIEWER="${JEDIT}"
-		VIEWER_SHORT_NAME="jedit"
-		MULTI_WIN=0
+		viewer="${JEDIT}"
+		viewer_short_name="Jedit"
+		multi_win=0
 	fi
+
+}
+
+
+chooseEvince()
+{
+
+	#echo "Evince selected."
+
+	viewer=$(which evince)
+	viewer_short_name="Evince"
+
+}
+
+
+chooseLibreOffice()
+{
+
+	#echo "LibreOffice selected."
+
+	viewer=$(which libreoffice)
+	viewer_short_name="LibreOffice"
+
+}
+
+
+chooseEog()
+{
+
+	#echo "Eog selected."
+
+	viewer=$(which eog)
+	viewer_short_name="Eog"
+
+}
+
+
+chooseFirefox()
+{
+
+	#echo "Firefox selected."
+
+	viewer=$(which firefox)
+	viewer_short_name="Firefox"
+
+}
+
+
+chooseMplayer()
+{
+
+	#echo "Mplayer selected."
+
+	viewer=$(which mplayer)
+	viewer_short_name="Mplayer"
 
 }
 
@@ -68,6 +137,8 @@ chooseJedit()
 
 chooseNedit()
 {
+
+	#echo "Nedit selected."
 
 	# nedit:
 
@@ -90,31 +161,31 @@ chooseNedit()
 	NEDIT_NC_OPT="-noask"
 
 	if [ -x "${NEDIT}" ] ; then
-		VIEWER="${NEDIT} ${NEDIT_FAMILY_OPT}"
-		VIEWER_SHORT_NAME="nedit"
-		MULTI_WIN=0
+		viewer="${NEDIT} ${NEDIT_FAMILY_OPT}"
+		viewer_short_name="nedit"
+		multi_win=0
 	fi
 
 	if [ -x "${NC}" ] ; then
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
-			VIEWER="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-			VIEWER_SHORT_NAME="nc"
-			MULTI_WIN=0
+			viewer="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+			viewer_short_name="nc"
+			multi_win=0
 	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
 	fi
 
 	if [ -x "${NEDITC_GENTOO}" ] ; then
-		VIEWER="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
-		VIEWER_SHORT_NAME="neditc"
-		MULTI_WIN=0
+		viewer="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
+		viewer_short_name="neditc"
+		multi_win=0
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ] ; then
-		VIEWER="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-		VIEWER_SHORT_NAME="nedit-nc"
-		MULTI_WIN=0
+		viewer="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+		viewer_short_name="nedit-nc"
+		multi_win=0
 	fi
 
 }
@@ -129,14 +200,16 @@ chooseNedit()
 chooseXemacs()
 {
 
+	#echo "Choosing xemacs"
+
 	# xemacs:
 
 	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${XEMACS}" ] ; then
-		VIEWER="${XEMACS} --geometry=83x60 "
-		VIEWER_SHORT_NAME="xemacs"
-		MULTI_WIN=0
+		viewer="${XEMACS} --geometry=83x60 "
+		viewer_short_name="xemacs"
+		multi_win=0
 	fi
 
 }
@@ -146,6 +219,8 @@ chooseXemacs()
 chooseEmacs()
 {
 
+	#echo "Choosing emacs"
+
 	# emacs: (allows, if no emacs server is running, to run a standalone
 	# emacs instead, which itself will be a server thanks to its
 	# '(server-start)' configuration.
@@ -154,18 +229,49 @@ chooseEmacs()
 
 	if [ -x "${EMACS}" ] ; then
 
-		ALTERNATE_VIEWER="emacs --geometry=83x60"
-
 		if [ $standalone -eq 1 ] ; then
-			VIEWER="emacsclient --alternate-viewer=emacs"
+
+			EMACS_CLIENT="/bin/emacsclient"
+
+			if [ ! -x "${EMACS_CLIENT}" ] ; then
+
+				EMACS_CLIENT="/usr/bin/emacsclient"
+
+				if [ ! -x "${EMACS_CLIENT}" ] ; then
+
+					echo " Error, no emacs client available." 1>&2
+					exit 55
+
+				fi
+
+			fi
+
+			# Default:
+			viewer="${EMACS_CLIENT}"
+			viewer_opt="--alternate-viewer=emacs"
+
 		else
-			VIEWER="emacs"
+
+			if [ ! -x "${EMACS}" ] ; then
+
+				EMACS="/usr/bin/emacs"
+
+				if [ ! -x "${EMACS}" ] ; then
+
+					echo " Error, no (standalone) emacs available." 1>&2
+					exit 56
+
+				fi
+
+			fi
+
+			viewer="${EMACS}"
+
 		fi
 
-		VISUAL=$VIEWER
-		VIEWER_SHORT_NAME="emacs"
+		viewer_short_name="emacs"
 
-		MULTI_WIN=0
+		multi_win=0
 
 	fi
 
@@ -176,12 +282,14 @@ chooseEmacs()
 chooseNano()
 {
 
+	#echo "Choosing nano"
+
 	# nano, text-based user-friendly viewer:
 	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	VIEWER="${NANO}"
-	VIEWER_SHORT_NAME="nano"
-	MULTI_WIN=1
+	viewer="${NANO}"
+	viewer_short_name="nano"
+	multi_win=1
 
 }
 
@@ -190,12 +298,14 @@ chooseNano()
 chooseVim()
 {
 
+	#echo "Choosing VIM"
+
 	# vi improved:
 	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	VIEWER="${VIM}"
-	VIEWER_SHORT_NAME="vim"
-	MULTI_WIN=1
+	viewer="${VIM}"
+	viewer_short_name="vim"
+	multi_win=1
 
 }
 
@@ -204,12 +314,14 @@ chooseVim()
 chooseVi()
 {
 
+	#echo "Choosing VI"
+
 	# Raw vi:
 	VI=$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	VIEWER="${VI}"
-	VIEWER_SHORT_NAME="vi"
-	MULTI_WIN=1
+	viewer="${VI}"
+	viewer_short_name="vi"
+	multi_win=1
 
 }
 
@@ -220,25 +332,25 @@ autoSelectViewer()
 
 	# Take the best one (watch out the order!):
 
-	VIEWER=""
-	VIEWER_SHORT_NAME=""
+	viewer=""
+	viewer_short_name=""
 
-	MULTI_WIN=1
+	multi_win=1
 
 
 	if [ "${do_X}" -eq 0 ] ; then
 
 		if [ $prefer_emacs -eq 0 ] ; then
 
-			if [ -z "$VIEWER" ] ; then
+			if [ -z "$viewer" ] ; then
 				chooseEmacs
 			fi
 
-			if [ -z "$VIEWER" ] ; then
+			if [ -z "$viewer" ] ; then
 				chooseXemacs
 			fi
 
-			if [ -z "$VIEWER" ] ; then
+			if [ -z "$viewer" ] ; then
 				chooseNedit
 			fi
 
@@ -246,15 +358,15 @@ autoSelectViewer()
 
 			if [ $prefer_nedit -eq 0 ] ; then
 
-				if [ -z "$VIEWER" ] ; then
+				if [ -z "$viewer" ] ; then
 					chooseNedit
 				fi
 
-				if [ -z "$VIEWER" ] ; then
+				if [ -z "$viewer" ] ; then
 					chooseEmacs
 				fi
 
-				if [ -z "$VIEWER" ] ; then
+				if [ -z "$viewer" ] ; then
 					chooseXemacs
 				fi
 
@@ -262,11 +374,11 @@ autoSelectViewer()
 
 				chooseEmacs
 
-				if [ -z "$VIEWER" ] ; then
+				if [ -z "$viewer" ] ; then
 					chooseXemacs
 				fi
 
-				if [ -z "$VIEWER" ] ; then
+				if [ -z "$viewer" ] ; then
 					chooseNedit
 				fi
 
@@ -276,7 +388,7 @@ autoSelectViewer()
 
 	fi
 
-	if [ -n "$VIEWER" ] ; then
+	if [ -n "$viewer" ] ; then
 		return
 	fi
 
@@ -305,10 +417,23 @@ autoSelectViewer()
 applyViewer()
 {
 
+	#echo "multi_win = ${multi_win}"
+	#echo "viewer_short_name = ${viewer_short_name}"
+	#echo "viewer = ${viewer}"
+	#echo "viewer_opt = ${viewer_opt}"
+
+	if [ ! -x "${viewer}" ] ; then
+
+		echo "  Error, the '${viewer_short_name}' tool is not available." 1>&2
+
+		exit 10
+
+	fi
+
 	# Let's hope the display is OK.
 
 	# Open the files in parallel or sequentially:
-	for f in ${PARAMETERS}; do
+	for f in ${parameters}; do
 
 		if [ ! -f "$f" ] ; then
 
@@ -329,18 +454,18 @@ applyViewer()
 		fi
 
 		if [ -z "${DISPLAY}" ] ; then
-			echo "    Opening $f with ${VIEWER_SHORT_NAME} (no DISPLAY set)"
+			echo "    Viewing $f with ${viewer_short_name} (no DISPLAY set)"
 		else
-			echo "    Opening $f with ${VIEWER_SHORT_NAME} (DISPLAY is <${DISPLAY}>)"
+			echo "    Viewing $f with ${viewer_short_name} (DISPLAY is <${DISPLAY}>)"
 		fi
 
-		if [ ${MULTI_WIN} -eq 0 ] ; then
+		if [ ${multi_win} -eq 0 ] ; then
 
-			if [ "${VIEWER_SHORT_NAME}" = "emacs" ] ; then
+			if [ "${viewer_short_name}" = "emacs" ] ; then
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
-				${VIEWER} $f 1>/dev/null 2>&1 &
+				${viewer} ${viewer_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
 				# apparently may freeze emacs to death, loosing all pending
@@ -349,20 +474,29 @@ applyViewer()
 				sleep 1
 
 			else
-				${VIEWER} $f 2>/dev/null &
+				${viewer} ${viewer_opt} $f 2>/dev/null &
 
 			fi
 
-			if [ "{VIEWER_SHORT_NAME}" = "nedit" ] ; then
+			if [ "{viewer_short_name}" = "nedit" ] ; then
 				sleep 1
 			fi
 
 		else
 
-			# Note: not all tools can be run in background
-			# (add relevant tests?)
-			#
-			${VIEWER} "$f" 2>/dev/null &
+			# As not all tools can/shall be run in background:
+
+			if [ $run_in_background -eq 0 ] ; then
+
+				#echo "Running ${viewer} in background..."
+				${viewer} ${viewer_opt} "$f" 2>/dev/null &
+
+			else
+
+				#echo "Running ${viewer} ${viewer_opt} in foreground..."
+				${viewer} ${viewer_opt} "$f"
+
+			fi
 
 		fi
 
@@ -407,15 +541,16 @@ do_X=0
 do_show=1
 do_force_nedit=1
 do_find=1
+do_locate=1
 
 
-if [ "$1" = "${NO_X_OPT}" ] ; then
+if [ "$1" = "${no_x_opt}" ] ; then
 	do_X=1
 	shift
 fi
 
 
-if [ "$1" = "${SHOW_OPT}" ] ; then
+if [ "$1" = "${show_opt}" ] ; then
 	do_show=0
 	shift
 fi
@@ -444,26 +579,24 @@ fi
 
 if [ "$1" = "-f" ] || [ "$1" = "--find" ] ; then
 	do_find=0
+	shift
+fi
 
+if [ "$1" = "-l" ] || [ "$1" = "--locate" ] ; then
+	do_locate=0
 	shift
 fi
 
 
-if [ "$1" = "--help" ] ; then
-	echo "${USAGE}"
-	exit 0
-fi
-
-
-if [ "$1" = "-h" ] ; then
-	echo "${USAGE}"
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+	echo "${usage}"
 	exit 0
 fi
 
 
 if [ -z "$1" ] ; then
 	if [ ${do_show} -eq 1 ] ; then
-		echo "${USAGE}"
+		echo "${usage}"
 		exit 1
 	fi
 fi
@@ -473,16 +606,25 @@ if [ ${do_show} -eq 0 ] ; then
 	displayViewers
 fi
 
+# A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
+# then apparently there is no easy way in sh to preserve that space (the script
+# will understand that two files are listed, 'hello' and 'world.txt').
+#
+# See
+# https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters for more details.
 
 
 # Assigned only here to take into account the previous shifts:
-REMAINING_PARAMETERS="$*"
-#echo "REMAINING_PARAMETERS = $REMAINING_PARAMETERS"
 
-PARAMETERS=""
+# Not done anymore, as loses spaces:
+#remaining_parameters="$@"
+#echo "remaining_parameters = $remaining_parameters"
+
+parameters=""
 
 # Last filtering:
-for arg in $REMAINING_PARAMETERS ; do
+#for arg in $remaining_parameters ; do
+for arg in "$@" ; do
 
 	if [ "$arg" = "-s" ] ; then
 
@@ -490,13 +632,19 @@ for arg in $REMAINING_PARAMETERS ; do
 
 	else
 
-		PARAMETERS="$PARAMETERS $arg"
+		# Here $arg is still right:
+		#echo "arg=$arg"
+
+		# But then the information is lost when:
+		parameters="$parameters ${arg}"
 
 	fi
 
 done
 
-#echo "PARAMETERS = $PARAMETERS"
+# Last test regarding bloody spaces included in filenames:
+#for p in ${parameters} ; do echo "- parameter: '$p'" ; done
+#exit
 
 if [ $standalone -eq 0 ] ; then
 
@@ -508,10 +656,11 @@ fi
 if [ $do_find -eq 0 ] ; then
 
 	# Single file assumed, any initial whitespace removed:
-	target_file=$(echo "${PARAMETERS}" | sed 's|^ ||1' | sed 's|:.*$||1')
+	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
 	#echo "target_file = $target_file"
 
 	target_path=$(find . -name $target_file)
+
 	if [ -z "${target_path}" ] ; then
 
 		echo "  (file '$target_file' not found, nothing done)"
@@ -522,77 +671,177 @@ if [ $do_find -eq 0 ] ; then
 
 	fi
 
-	PARAMETERS="${target_path}"
+	parameters="${target_path}"
 
 fi
+
+
+if [ $do_locate -eq 0 ] ; then
+
+	# Single file assumed, any initial whitespace removed:
+	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
+	#echo "target_file = $target_file"
+
+	target_path=$(/bin/locate --limit 1 --existing ${target_file})
+
+	if [ -z "${target_path}" ] ; then
+
+		echo "  (file '$target_file' not found, nothing done)"
+
+	else
+
+		echo "  (file '$target_file' found as '$target_path')"
+
+	fi
+
+	parameters="${target_path}"
+
+fi
+
+
 
 
 # Default:
-MULTI_WIN=1
-
-EXTENSION=$(echo $1| sed 's|^.*\.||1')
-
-if [ "${EXTENSION}" = "traces" ] ; then
-
-	chooseLogMX
-	applyViewer
-	exit 0
-
-fi
-
-if [ "${EXTENSION}" = "pdf" ] ; then
-
-	VIEWER=$(which evince)
-	VIEWER_SHORT_NAME="evince"
-	applyViewer
-	exit 0
-
-fi
+multi_win=1
 
 
-if [ "${EXTENSION}" = "png" ] ; then
-
-	VIEWER=$(which eog)
-	VIEWER_SHORT_NAME="eog"
-	applyViewer
-	exit 0
-
-fi
-
-
-if [ "${EXTENSION}" = "jpeg" -o "${EXTENSION}" = "jpg" ] ; then
-
-	VIEWER=$(which eog)
-	VIEWER_SHORT_NAME="eog"
-	applyViewer
-	exit 0
-
-fi
-
-# Disabled now, as we want to be able to *edit* HTML files:
-#if [ "${EXTENSION}" = "html" ] ; then
+# In case of a *list* of filenames, the detected extension will be the one of
+# the last filename:
 #
-#      VIEWER=$(which firefox)
-#      VIEWER_SHORT_NAME="firefox"
-#      applyViewer
-#      exit 0
+extension=$(echo $parameters| sed 's|^.*\.||1')
+#extension=$(echo $1| sed 's|^.*\.||1')
+
+
+#echo "parameters = $parameters"
+#echo "extension = $extension"
+
+
+
+# Deactivated for the moment:
+#
+#if [ "${extension}" = "erl" ] ; then
+#
+#	chooseJedit
+#	applyViewer
+#	exit 0
 #
 #fi
 
-if [ "${EXTENSION}" = "mp3" ] || [ "${EXTENSION}" = "mp4" ] ; then
+if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 
-	VIEWER=$(which mplayer)
-	VIEWER_SHORT_NAME="mplayer"
+	chooseEvince
+	applyViewer
+	exit 0
+
+fi
+
+if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+
+	chooseLibreOffice
+	applyViewer
+	exit 0
+
+fi
+
+if [ "${extension}" = "png" ] ; then
+
+	chooseEog
 	applyViewer
 	exit 0
 
 fi
 
 
-if [ "${EXTENSION}" = "dia" ] ; then
+if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
 
-	VIEWER=$(which dia)
-	VIEWER_SHORT_NAME="dia"
+	chooseEog
+	applyViewer
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "svg" -o "${extension}" = "svgz" ] ; then
+
+	chooseEog
+	applyViewer
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ] ; then
+
+	viewer=$(which jq)
+	viewer_opt="."
+	viewer_short_name="jq"
+	applyViewer
+	exit 0
+
+fi
+
+
+
+if [ "${extension}" = "html" ] ; then
+
+	chooseFirefox
+	applyViewer
+	exit 0
+
+fi
+
+if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] ; then
+
+	# Another option is: vlc.
+
+	chooseMplayer
+
+	# Otherwise difficult to control/stop:
+	run_in_background=1
+
+	applyViewer
+
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "dia" ] ; then
+
+	viewer=$(which dia)
+	viewer_short_name="dia"
+	applyViewer
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ] ; then
+
+	# Is it a compressed trace file?
+	if echo $parameters| grep '.traces' 1>/dev/null ; then
+		# In this case trigger next clause, as LogMX can handle it:
+		extension="traces"
+	fi
+
+fi
+
+
+if [ "${extension}" = "traces" ] ; then
+
+	LOGMX=$(which logmx.sh)
+
+	if [ ! -x "${LOGMX}" ] ; then
+
+		echo "  (no LogMX found, using default viewer for traces)"
+
+	else
+
+		viewer="${LOGMX}"
+		viewer_short_name="LogMX"
+
+	fi
+
 	applyViewer
 	exit 0
 
@@ -603,20 +852,21 @@ autoSelectViewer
 
 if [ ${do_show} -eq 0 ] ; then
 
-	echo "Chosen viewer: ${VIEWER_SHORT_NAME}"
-	echo "Complete viewer command: ${VIEWER}"
-	echo "Multiwin: ${MULTI_WIN}"
+	echo "Chosen viewer: ${viewer_short_name}"
+	echo "Complete viewer command: ${viewer} ${viewer_opt}"
+	echo "Multiwin: ${multi_win}"
 	exit
 
 fi
 
 
-if [ -z "${VIEWER}" ] ; then
+if [ -z "${viewer}" ] ; then
 
-	echo "Error, none of the registered viewers (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
+	echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
 	exit 1
 
 fi
 
+#echo "Applying finally the viewer"
 
 applyViewer
