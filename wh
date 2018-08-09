@@ -2,14 +2,15 @@
 
 
 USAGE="
- Usage: wh [-h|--help] [--verbose] [--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
- Searches all files and directories matching <filePattern> from <startingDirectory> if specified, otherwise from current directory
+ Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
+ Searches all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
    Options:
-	 --no-path: returns the filenames with any leading path
-	 --exclude: excludes a directory from search"
+	 [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in \$(wh -q 'foo*'); do...)
+	 --no-path: returns the filenames without any leading path
+	 --exclude-path DIR: excludes specified directory DIR from search"
 
 
-FIND_GNU="/usr/bin/find"
+find_gnu="/usr/bin/find"
 
 verbose=1
 quiet=1
@@ -32,7 +33,7 @@ while [ $token_eaten -eq 0 ] ; do
 		echo "Verbose mode activated."
 		shift
 
-	elif [ "$1" = "--quiet" ]; then
+	elif [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
 
 		quiet=0
 		#echo "Quiet mode activated."
@@ -65,48 +66,54 @@ done
 #echo "Remaining parameters: $*"
 
 
-if [ $# -eq 1 ]; then
+if [ $# -eq 0 ]; then
 
-	startingDir=`pwd`
+	echo " Error, at least one parameter must be specified.$USAGE
+	" 1>&2
+	exit 10
+
+elif [ $# -eq 1 ]; then
+
+	starting_dir=$(pwd)
 
 elif [ $# -eq 2 ]; then
 
-	startingDir=$2
+	starting_dir=$2
 
 else
 	echo " Error, too many parameters specified: $*.$USAGE
 	" 1>&2
-	exit 2
+	exit 15
 fi
 
 
-if [ ! -d "$startingDir" ]; then
-	echo " Error, no such directory: $startingDir.$USAGE
+if [ ! -d "$starting_dir" ]; then
+	echo " Error, no such directory: '$starting_dir'.$USAGE
 	" 1>&2
-	exit 3
+	exit 20
 else
-	cd "$startingDir"
+	cd "$starting_dir"
 fi
 
 
 
-if [ -x "$FIND_GNU" ]; then
-	FIND="$FIND_GNU"
+if [ -x "$find_gnu" ]; then
+	find="$find_gnu"
 else
-	FIND=`which find 2>/dev/null | grep -v ridiculously`
+	find=$(which find 2>/dev/null | grep -v ridiculously)
 fi
 
-[ $verbose -eq 1 ] || echo "FIND is $FIND"
+[ $verbose -eq 1 ] || echo "find is $find"
 
 
 
 targetPattern=$1
 
 [ $quiet -eq 0 ] || echo "
-Looking for all files and directories matching <$targetPattern>, starting from directory <$startingDir>
+Looking for all files and directories matching <$targetPattern>, starting from directory <$starting_dir>
 "
 
-[ $verbose -eq 1 ] || echo "Current directory is: `pwd`"
+[ $verbose -eq 1 ] || echo "Current directory is: $(pwd)"
 
 
 # For an unknown reason, 'cd XXX ; find . YYY' seems to work better than
@@ -114,15 +121,15 @@ Looking for all files and directories matching <$targetPattern>, starting from d
 
 if [ $no_path -eq 0 ] ; then
 
-	[ $verbose -eq 1 ] || echo "No path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 
-	$FIND . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	$find . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 
 else
 
-	[ $verbose -eq 1 ] || echo "With path case, run from "`pwd`": command is: $FIND . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
+	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
 
-	$FIND . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	$find . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
 
 fi
 
