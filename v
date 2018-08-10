@@ -162,7 +162,7 @@ chooseNedit()
 
 	if [ -x "${NEDIT}" ] ; then
 		viewer="${NEDIT} ${NEDIT_FAMILY_OPT}"
-		viewer_short_name="nedit"
+		viewer_short_name="Nedit"
 		multi_win=0
 	fi
 
@@ -170,7 +170,7 @@ chooseNedit()
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
 			viewer="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-			viewer_short_name="nc"
+			viewer_short_name="Nc"
 			multi_win=0
 	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
@@ -178,13 +178,13 @@ chooseNedit()
 
 	if [ -x "${NEDITC_GENTOO}" ] ; then
 		viewer="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
-		viewer_short_name="neditc"
+		viewer_short_name="Neditc"
 		multi_win=0
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ] ; then
 		viewer="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-		viewer_short_name="nedit-nc"
+		viewer_short_name="Nedit-nc"
 		multi_win=0
 	fi
 
@@ -208,7 +208,7 @@ chooseXemacs()
 
 	if [ -x "${XEMACS}" ] ; then
 		viewer="${XEMACS} --geometry=83x60 "
-		viewer_short_name="xemacs"
+		viewer_short_name="XEmacs"
 		multi_win=0
 	fi
 
@@ -248,7 +248,7 @@ chooseEmacs()
 
 			# Default:
 			viewer="${EMACS_CLIENT}"
-			viewer_opt="--alternate-viewer=emacs"
+			viewer_opt="--alternate-editor=emacs"
 
 		else
 
@@ -269,7 +269,7 @@ chooseEmacs()
 
 		fi
 
-		viewer_short_name="emacs"
+		viewer_short_name="Emacs"
 
 		multi_win=0
 
@@ -288,7 +288,7 @@ chooseNano()
 	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	viewer="${NANO}"
-	viewer_short_name="nano"
+	viewer_short_name="Nano"
 	multi_win=1
 
 }
@@ -304,7 +304,7 @@ chooseVim()
 	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	viewer="${VIM}"
-	viewer_short_name="vim"
+	viewer_short_name="Vim"
 	multi_win=1
 
 }
@@ -320,7 +320,7 @@ chooseVi()
 	VI=$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	viewer="${VI}"
-	viewer_short_name="vi"
+	viewer_short_name="Vi"
 	multi_win=1
 
 }
@@ -456,15 +456,21 @@ applyViewer()
 		if [ -z "${DISPLAY}" ] ; then
 			echo "    Viewing $f with ${viewer_short_name} (no DISPLAY set)"
 		else
-			echo "    Viewing $f with ${viewer_short_name} (DISPLAY is <${DISPLAY}>)"
+			if [ "${DISPLAY}" = ":0.0" ] ; then
+				# No need to remind if default:
+				echo "    Viewing $f with ${viewer_short_name}"
+			else
+				echo "    Viewing $f with ${viewer_short_name} (DISPLAY is <${DISPLAY}>)"
+			fi
 		fi
 
 		if [ ${multi_win} -eq 0 ] ; then
 
-			if [ "${viewer_short_name}" = "emacs" ] ; then
+			if [ "${viewer_short_name}" = "Emacs" ] ; then
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
+				#echo ${viewer} ${viewer_opt} $f
 				${viewer} ${viewer_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
@@ -478,7 +484,7 @@ applyViewer()
 
 			fi
 
-			if [ "{viewer_short_name}" = "nedit" ] ; then
+			if [ "{viewer_short_name}" = "Nedit" ] ; then
 				sleep 1
 			fi
 
@@ -489,7 +495,7 @@ applyViewer()
 			if [ $run_in_background -eq 0 ] ; then
 
 				#echo "Running ${viewer} in background..."
-				${viewer} ${viewer_opt} "$f" 2>/dev/null &
+				${viewer} ${viewer_opt} $f 2>/dev/null &
 
 			else
 
