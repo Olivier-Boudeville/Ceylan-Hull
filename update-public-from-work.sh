@@ -1,75 +1,75 @@
 #!/bin/sh
 
 
-USAGE="  Usage: $(basename $0) WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one."
+usage="  Usage: $(basename $0) WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one, using for that the currently selected branches of specified clones. One should ensure beforehand that all source and target repositories are fully up to date (ex: committed and pushed)."
 
 
 if [ ! $# -eq 2 ] ; then
 
-	echo "$USAGE" 1>&2
+	echo "$usage" 1>&2
 	exit 10
 
 fi
 
 current_dir=$(pwd)
 
-WORK_ROOT="$1"
+work_root="$1"
 
-if [ ! -d "$WORK_ROOT" ] ; then
+if [ ! -d "$work_root" ] ; then
 
-	echo "  Error, work root ($WORK_ROOT) is not an existing directory.
-$USAGE" 1>&2
+	echo "  Error, work root ($work_root) is not an existing directory.
+$usage" 1>&2
 	exit 15
 
 fi
 
 
-WORK_TEST_DIR="$WORK_ROOT/mock-simulators"
+work_test_dir="$work_root/mock-simulators"
 
-if [ ! -d "$WORK_TEST_DIR" ] ; then
+if [ ! -d "$work_test_dir" ] ; then
 
-	echo "  Error, work root ($WORK_ROOT) does not seem to be a suitable work root ($WORK_TEST_DIR not found).
-$USAGE" 1>&2
+	echo "  Error, work root ($work_root) does not seem to be a suitable work root ($work_test_dir not found).
+$usage" 1>&2
 	exit 20
 
 fi
 
 
 # To convert any relative directory into an absolute one:
-cd "$WORK_ROOT"
-WORK_ROOT=$(pwd)
+cd "$work_root"
+work_root=$(pwd)
 cd $current_dir
 
 
-PUBLIC_ROOT="$2"
-if [ ! -d "$PUBLIC_ROOT" ] ; then
+public_root="$2"
+if [ ! -d "$public_root" ] ; then
 
-	echo "  Error, public root ($PUBLIC_ROOT) is not an existing directory.
-$USAGE" 1>&2
+	echo "  Error, public root ($public_root) is not an existing directory.
+$usage" 1>&2
 	exit 25
 
 fi
 
 
-PUBLIC_TEST_DIR="$PUBLIC_ROOT/Ceylan-Myriad"
+public_test_dir="$public_root/Ceylan-Myriad"
 
-if [  ! -d "$PUBLIC_TEST_DIR" ] ; then
+if [  ! -d "$public_test_dir" ] ; then
 
-	echo "  Error, public root ($PUBLIC_ROOT) does not seem to be a suitable public root ($PUBLIC_TEST_DIR not found).
-$USAGE" 1>&2
+	echo "  Error, public root ($public_root) does not seem to be a suitable public root ($public_test_dir not found).
+$usage" 1>&2
 	exit 30
 
 fi
 
 # To convert any relative directory into an absolute one:
-cd "$PUBLIC_ROOT"
-PUBLIC_ROOT=$(pwd)
+cd "$public_root"
+public_root=$(pwd)
 cd $current_dir
 
 
-RSYNC=$(which rsync)
+rsync=$(which rsync)
 
-if [ ! -x "$RSYNC" ] ; then
+if [ ! -x "$rsync" ] ; then
 
 	echo "  Error, no rsync found." 1>&2
 	exit 35
@@ -78,9 +78,9 @@ fi
 
 
 # Not relying on timestamps (no --update):
-RSYNC_OPT="--recursive --links"
+rsync_opt="--recursive --links"
 
-cd $WORK_ROOT
+cd $work_root
 
 echo
 echo " + real-cleaning work directory"
@@ -89,53 +89,53 @@ make -s real-clean 1>/dev/null
 echo
 echo " + cleaning public repositories"
 
-cd ${PUBLIC_ROOT}/Ceylan-Myriad
+cd ${public_root}/Ceylan-Myriad
 make -s clean 1>/dev/null
 
-cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+cd ${public_root}/Ceylan-WOOPER
 make -s clean 1>/dev/null
 
-cd ${PUBLIC_ROOT}/Ceylan-Traces
+cd ${public_root}/Ceylan-Traces
 make -s clean 1>/dev/null
 
 
-cd $WORK_ROOT
+cd $work_root
 
 echo " + checking GIT status of work directory"
 git status
 
 
-echo " + updating Ceylan-Myriad from common"
-cd common
+echo " + updating Ceylan-Myriad from myriad"
+cd myriad
 
-${RSYNC} ${RSYNC_OPT} . ${PUBLIC_ROOT}/Ceylan-Myriad
+${rsync} ${rsync_opt} . ${public_root}/Ceylan-Myriad
 
 
 echo " + status of Ceylan-Myriad:"
-cd ${PUBLIC_ROOT}/Ceylan-Myriad
+cd ${public_root}/Ceylan-Myriad
 git status
-cd ${WORK_ROOT}
+cd ${work_root}
 
 
 echo " + updating Ceylan-WOOPER from wooper"
 cd wooper
 
-${RSYNC} ${RSYNC_OPT} . ${PUBLIC_ROOT}/Ceylan-WOOPER
+${rsync} ${rsync_opt} . ${public_root}/Ceylan-WOOPER
 
 echo " + status of Ceylan-WOOPER:"
-cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+cd ${public_root}/Ceylan-WOOPER
 git status
-cd ${WORK_ROOT}
+cd ${work_root}
 
 
 echo " + updating Ceylan-Traces from traces"
 cd traces
 
-${RSYNC} ${RSYNC_OPT} . ${PUBLIC_ROOT}/Ceylan-Traces
+${rsync} ${rsync_opt} . ${public_root}/Ceylan-Traces
 echo " + status of Ceylan-Traces:"
-cd ${PUBLIC_ROOT}/Ceylan-Traces
+cd ${public_root}/Ceylan-Traces
 git status
-cd ${WORK_ROOT}
+cd ${work_root}
 
 
 
@@ -143,4 +143,4 @@ echo
 echo "Public repositories have been updated from work one."
 
 echo
-echo "One may then use: 'cd ${PUBLIC_ROOT} && for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push ) ; done'"
+echo "One may then use: 'cd ${public_root} && for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push ) ; done'"

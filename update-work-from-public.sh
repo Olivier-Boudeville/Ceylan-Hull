@@ -1,12 +1,12 @@
 #!/bin/sh
 
 
-USAGE="  Usage: $(basename $0) PUBLIC_ROOT WORK_ROOT: updates base work repository from all public Ceylan-* repositories."
+usage="  Usage: $(basename $0) PUBLIC_ROOT WORK_ROOT updates base work repository from all public Ceylan-* repositories, using for that the currently selected branches of specified clones. One should ensure beforehand that all source and target repositories are fully up to date (ex: committed and pushed)."
 
 
 if [ ! $# -eq 2 ] ; then
 
-	echo "$USAGE" 1>&2
+	echo "$usage" 1>&2
 	exit 10
 
 fi
@@ -15,67 +15,67 @@ fi
 current_dir=$(pwd)
 
 
-PUBLIC_ROOT="$1"
+public_root="$1"
 
-if [ ! -d "$PUBLIC_ROOT" ] ; then
+if [ ! -d "$public_root" ] ; then
 
-	echo "  Error, public root ($PUBLIC_ROOT) is not an existing directory.
-$USAGE" 1>&2
+	echo "  Error, public root ($public_root) is not an existing directory.
+$usage" 1>&2
 	exit 25
 
 fi
 
 
-PUBLIC_TEST_DIR="$PUBLIC_ROOT/Ceylan-Myriad"
+public_test_dir="$public_root/Ceylan-Myriad"
 
-if [  ! -d "$PUBLIC_TEST_DIR" ] ; then
+if [  ! -d "$public_test_dir" ] ; then
 
-	echo "  Error, public root ($PUBLIC_ROOT) does not seem to be a suitable public root ($PUBLIC_TEST_DIR not found).
-$USAGE" 1>&2
+	echo "  Error, public root ($public_root) does not seem to be a suitable public root ($public_test_dir not found).
+$usage" 1>&2
 	exit 30
 
 fi
 
 
 # To convert any relative directory into an absolute one:
-cd "$PUBLIC_ROOT"
-PUBLIC_ROOT=$(pwd)
+cd "$public_root"
+public_root=$(pwd)
 cd $current_dir
 
 
 
-WORK_ROOT="$2"
+work_root="$2"
 
-if [ ! -d "$WORK_ROOT" ] ; then
+if [ ! -d "$work_root" ] ; then
 
-	echo "  Error, work root ($WORK_ROOT) is not an existing directory.
-$USAGE" 1>&2
+	echo "  Error, work root ($work_root) is not an existing directory.
+$usage" 1>&2
 	exit 15
 
 fi
 
 
-WORK_TEST_DIR="$WORK_ROOT/mock-simulators"
+work_test_dir="$work_root/mock-simulators"
 
-if [  ! -d "$WORK_TEST_DIR" ] ; then
+if [  ! -d "$work_test_dir" ] ; then
 
-	echo "  Error, work root ($WORK_ROOT) does not seem to be a suitable work root ($WORK_TEST_DIR not found).
-$USAGE" 1>&2
+	echo "  Error, work root ($work_root) does not seem to be a suitable work root ($work_test_dir not found).
+$usage" 1>&2
 	exit 20
 
 fi
 
 
 # To convert any relative directory into an absolute one:
-cd "$WORK_ROOT"
-WORK_ROOT=$(pwd)
+cd "$work_root"
+work_root=$(pwd)
 cd $current_dir
 
 
 
-RSYNC=$(which rsync)
+rsync=$(which rsync)
 
-if [ ! -x "$RSYNC" ] ; then
+if [ ! -x "$rsync" ] ; then
 
 	echo "  Error, no rsync found." 1>&2
 	exit 35
@@ -84,23 +84,23 @@ fi
 
 
 # Not relying on timestamps (no --update):
-RSYNC_OPT="--recursive --links"
+rsync_opt="--recursive --links"
 
 
 echo
 echo " + cleaning public repositories"
 
-cd ${PUBLIC_ROOT}/Ceylan-Myriad
+cd ${public_root}/Ceylan-Myriad
 make -s clean 1>/dev/null
 
-cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+cd ${public_root}/Ceylan-WOOPER
 make -s clean 1>/dev/null
 
-cd ${PUBLIC_ROOT}/Ceylan-Traces
+cd ${public_root}/Ceylan-Traces
 make -s clean 1>/dev/null
 
 
-cd $WORK_ROOT
+cd $work_root
 
 
 echo " + real-cleaning work directory"
@@ -108,44 +108,44 @@ make -s real-clean 1>/dev/null
 
 
 echo " + checking GIT status of Ceylan-Myriad"
-cd ${PUBLIC_ROOT}/Ceylan-Myriad
+cd ${public_root}/Ceylan-Myriad
 git status
 
 echo " + checking GIT status of Ceylan-WOOPER"
-cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+cd ${public_root}/Ceylan-WOOPER
 git status
 
 echo " + checking GIT status of Ceylan-Traces"
-cd ${PUBLIC_ROOT}/Ceylan-Traces
+cd ${public_root}/Ceylan-Traces
 git status
 
 
-echo " + updating common from Ceylan-Myriad"
-cd ${PUBLIC_ROOT}/Ceylan-Myriad
+echo " + updating myriad from Ceylan-Myriad"
+cd ${public_root}/Ceylan-Myriad
 
-${RSYNC} ${RSYNC_OPT} . ${WORK_ROOT}/myriad
+${rsync} ${rsync_opt} . ${work_root}/myriad
 
 
 echo " + updating wooper from Ceylan-WOOPER"
-cd ${PUBLIC_ROOT}/Ceylan-WOOPER
+cd ${public_root}/Ceylan-WOOPER
 
-${RSYNC} ${RSYNC_OPT} . ${WORK_ROOT}/wooper
+${rsync} ${rsync_opt} . ${work_root}/wooper
 
 
 echo " + updating traces from Ceylan-Traces"
-cd ${PUBLIC_ROOT}/Ceylan-Traces
+cd ${public_root}/Ceylan-Traces
 
-${RSYNC} ${RSYNC_OPT} . ${WORK_ROOT}/traces
+${rsync} ${rsync_opt} . ${work_root}/traces
 
 
 echo " + performing final cleanings"
-cd ${WORK_ROOT}
+cd ${work_root}
 #/bin/rm -f */.gitignore */README.md 2>/dev/null
 /bin/rm -rf */.git 2>/dev/null
 
 
 echo " + status of work repository:"
-cd ${WORK_ROOT}
+cd ${work_root}
 git status
 
 
