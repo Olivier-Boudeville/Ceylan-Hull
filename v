@@ -327,6 +327,23 @@ chooseVi()
 
 
 
+chooseMore()
+{
+
+	#echo "Choosing more"
+
+	MORE=$(which more 2>/dev/null | grep -v ridiculously 2>/dev/null)
+
+	viewer="${MORE}"
+	viewer_short_name="more"
+	multi_win=0
+
+}
+
+
+
+
+
 autoSelectViewer()
 {
 
@@ -335,80 +352,82 @@ autoSelectViewer()
 	viewer=""
 	viewer_short_name=""
 
-	multi_win=1
+	chooseMore
+
+	# multi_win=1
 
 
-	if [ "${do_X}" -eq 0 ] ; then
+	# if [ "${do_X}" -eq 0 ] ; then
 
-		if [ $prefer_emacs -eq 0 ] ; then
+	#	if [ $prefer_emacs -eq 0 ] ; then
 
-			if [ -z "$viewer" ] ; then
-				chooseEmacs
-			fi
+	#		if [ -z "$viewer" ] ; then
+	#			chooseEmacs
+	#		fi
 
-			if [ -z "$viewer" ] ; then
-				chooseXemacs
-			fi
+	#		if [ -z "$viewer" ] ; then
+	#			chooseXemacs
+	#		fi
 
-			if [ -z "$viewer" ] ; then
-				chooseNedit
-			fi
+	#		if [ -z "$viewer" ] ; then
+	#			chooseNedit
+	#		fi
 
-		else
+	#	else
 
-			if [ $prefer_nedit -eq 0 ] ; then
+	#		if [ $prefer_nedit -eq 0 ] ; then
 
-				if [ -z "$viewer" ] ; then
-					chooseNedit
-				fi
+	#			if [ -z "$viewer" ] ; then
+	#				chooseNedit
+	#			fi
 
-				if [ -z "$viewer" ] ; then
-					chooseEmacs
-				fi
+	#			if [ -z "$viewer" ] ; then
+	#				chooseEmacs
+	#			fi
 
-				if [ -z "$viewer" ] ; then
-					chooseXemacs
-				fi
+	#			if [ -z "$viewer" ] ; then
+	#				chooseXemacs
+	#			fi
 
-			else
+	#		else
 
-				chooseEmacs
+	#			chooseEmacs
 
-				if [ -z "$viewer" ] ; then
-					chooseXemacs
-				fi
+	#			if [ -z "$viewer" ] ; then
+	#				chooseXemacs
+	#			fi
 
-				if [ -z "$viewer" ] ; then
-					chooseNedit
-				fi
+	#			if [ -z "$viewer" ] ; then
+	#				chooseNedit
+	#			fi
 
-			fi
+	#		fi
 
-		fi
+	#	fi
 
-	fi
+	# fi
 
-	if [ -n "$viewer" ] ; then
-		return
-	fi
-
-
-	if [ -x "${NANO}" ] ; then
-		chooseNano
-		return
-	fi
+	# if [ -n "$viewer" ] ; then
+	#	return
+	# fi
 
 
-	if [ -x "${VIM}" ] ; then
-		chooseVim
-		return
-	fi
+	# if [ -x "${NANO}" ] ; then
+	#	chooseNano
+	#	return
+	# fi
 
 
-	if [ -x "${VI}" ] ; then
-		chooseVi
-		return
-	fi
+	# if [ -x "${VIM}" ] ; then
+	#	chooseVim
+	#	return
+	# fi
+
+
+	# if [ -x "${VI}" ] ; then
+	#	chooseVi
+	#	return
+	# fi
 
 }
 
@@ -480,7 +499,8 @@ applyViewer()
 				sleep 1
 
 			else
-				${viewer} ${viewer_opt} $f 2>/dev/null &
+				#${viewer} ${viewer_opt} $f 2>/dev/null &
+				${viewer} ${viewer_opt} $f 2>/dev/null
 
 			fi
 
@@ -534,6 +554,7 @@ displayViewers()
 	echo "NANO          = ${NANO}"
 	echo "VIM           = ${VIM}"
 	echo "VI            = ${VI}"
+	echo "MORE          = ${MORE}"
 	echo
 
 }
@@ -868,7 +889,7 @@ fi
 
 if [ -z "${viewer}" ] ; then
 
-	echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
+	echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim, vi or more) can be used. Stopping now." 1>&2
 	exit 1
 
 fi
