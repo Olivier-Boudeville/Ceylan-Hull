@@ -147,7 +147,9 @@ connect()
 test_link()
 {
 
-	sleep 1
+	# Otherwise could be too early for a ping to succeed:
+	sleep 2
+
 	ping -c 1 google.com 1>/dev/null 2>&1
 	return $?
 }
