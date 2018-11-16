@@ -412,9 +412,13 @@ applyEditor()
 
 			# Sometimes a filename followed by some garbage is specified
 			# (ex: a regrep might return "class_X.erl:construct");
-			# Here we try to fix the filename:
+			# Here we try to fix the filename - should such a file exist:
 
 			new_f=$(echo "$f"| sed 's|:.*$||1')
+
+			#echo "- specified filename: ${f}"
+			#echo "- translated filename: ${new_f}"
+			#exit
 
 			if [ -f "$new_f" ] ; then
 
@@ -698,7 +702,7 @@ if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 fi
 
 
-if [ "${extension}" = "odg" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+if [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 	chooseLibreOffice
 	applyEditor
