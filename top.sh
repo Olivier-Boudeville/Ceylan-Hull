@@ -1,11 +1,11 @@
 #!/bin/sh
 
 
-# Best 'top' available: triggers an appropriate tool to monitor processes and
-# system resources.
+# Triggers the best 'top' available: triggers an appropriate tool to monitor
+# processes and system resources.
 
 
-atop=$(which atop)
+atop=$(which atop 2>/dev/null)
 #echo "atop = ${atop}"
 
 
