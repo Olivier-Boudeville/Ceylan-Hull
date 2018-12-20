@@ -100,7 +100,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
 # 's' is for server (log prefix must be shorter than 29 characters):
-version="s-15"
+version="s-16"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -131,6 +131,10 @@ enable_orge=false
 
 # Tells whether IPTV (TV on the Internet thanks to a box) should be allowed:
 enable_iptv=false
+
+
+# Tells whether a SMTP server can be used:
+enable_smtp=false
 
 
 # The general approach here is based on whitelisting: by default everything is
@@ -498,11 +502,49 @@ start_it_up()
 
 
 	## Mail stuff:
-	#${iptables} -A INPUT -p tcp --dport 25  -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
+
+	# All mail-related ports are TCP ones.
+
+	# Sending emails:
+
+	smtp_port=25
+
+	# SMTPS is obsolete:
+	smtp_secure_port=465
+
+	# STARTTLS over SMTP is the proper way of securing SMTP:
+	msa_port=587
+
+	if [ "$enable_smtp" = "true" ] ; then
+
+		# Basic setting:
+
+		# Allowed from all interfaces:
+		${iptables} -A INPUT -p tcp --dport ${msa_port} -m state --state NEW -j ACCEPT
+
+		# IMAP is a protocol which runs on 143 and 993 (SSL) ports
+
+		# Ex: Dovecot:
+
+		#${iptables} -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
+		#${iptables} -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
+
+		#${iptables} -A INPUT -p tcp --dport 110 -m state --state NEW -j ACCEPT
+		#${iptables} -A INPUT -p tcp --dport 995 -m state --state NEW -j ACCEPT
+
+	fi
+
+
+	# Receiving emails:
+
+	pop3_port=110
+
+	# POP3S:
+	pop3_secure_port=995
+
+	imap_port=143
+	imap_secure_port=993
+
 
 	# Allow UDP & TCP packets to the DNS server from LAN clients (only needed if
 	# this gateway is a LAN DNS server, for example with dnsmasq).
