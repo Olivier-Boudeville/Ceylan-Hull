@@ -79,13 +79,15 @@ for f in $photos; do
 
 	if [ $string_len -eq 8 ]; then
 
+		suffix="EXIF"
 		date="${exif_date}"
-		echo "Date extracted from EXIF information: '${date}'."
+		#echo "Date extracted from EXIF information: '${date}'."
 
 	else
 
-		echo "No suitable date could be found in EXIF information (got '${exif_date}'), using default date (${default_date}) instead."
+		suffix="default"
 		date="${default_date}"
+		#echo "No suitable date could be found in EXIF information (got '${exif_date}'), using default date (${default_date}) instead."
 
 	fi
 
@@ -100,6 +102,8 @@ for f in $photos; do
 
 	else
 
+		# To remove useless './'s:
+		message=$(echo "  $f -> $target_file ($suffix)"| sed 's|./||g')
 		/bin/mv "$f" "$target_file"
 
 		if [ ! $? -eq 0 ] ; then
@@ -113,5 +117,5 @@ for f in $photos; do
 done
 
 echo "  Snapshots successfully fixed!"
-echo "  New snapshot filenames are:
-$(ls)"
+#echo "  New snapshot filenames are:
+#$(ls)"
