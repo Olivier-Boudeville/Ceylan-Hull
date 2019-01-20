@@ -74,7 +74,12 @@ while true ; do
 
 	  echo
 	  echo "- regenerating ${target_file} on $(date)"
+
+	  # Note: the local GNUmakefile shall include
+	  # Ceylan-Myriad/doc/GNUmakerules-docutils.inc.
+	  #
 	  make ${target_file} && echo "  (${target_file} regenerated)"
+
 	  ${waiter} -e modify ${source_file} 1>/dev/null 2>&1
 
 done
