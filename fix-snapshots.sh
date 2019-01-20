@@ -1,9 +1,11 @@
 #!/bin/sh
 
+current_date=$(date '+%Y%m%d')
+
 USAGE="
-Usage: $(basename $0) OLD_PREFIX NEW_PREFIX [DATE]: takes care of all snapshots found from current directory, so that they respect better conventions.
+Usage: $(basename $0) OLD_PREFIX NEW_PREFIX [DEFAULT_DATE]: takes care of all snapshots found from current directory, so that they respect better conventions.
 Ex: '$(basename $0) P1010 hello 20101023' will transform picture filenames like P1010695.JPG into 20101023-hello-695.jpeg, and will ensure it is not an executable file.
-Should no date be specified, the current day will be used instead.
+If a creation timestamp can be found among the image EXIF metadata, it will be retained, otherwise the specified date will be used, otherwise the current date (${current_date}) will be.
 "
 
 if [ $# -ge 4 ] ; then
@@ -43,22 +45,54 @@ photos=$(find . -iname '*.JPG' -o -iname '*.jpeg')
 #echo "photos = $photos"
 
 
-# You can also override it with a constant date:
-date="$3"
+# Any user-specified date as default:
+default_date="$3"
 
-if [ -z "$date" ] ; then
-	date=$(date '+%Y%m%d')
-	echo "
-  Warning: no date specified, using current day ($date) instead."
+if [ -z "${default_date}" ] ; then
+
+	echo "No date specified, the default will be the current one, ${current_date}."
+	default_date="${current_date}"
+
+else
+
+	string_len=$(echo -n ${default_date} | wc -m)
+
+	if [ ! $string_len -eq 8 ]; then
+
+		echo "  Error, default date expected to be 8-character long (had '${date}')." 1>&2
+		exit 8
+
+	fi
+
 fi
 
-echo "  Renaming now snapshots bearing old prefix '$old_prefix' into ones with new prefix '$new_prefix' and time-stamp '$date'."
+
+
+echo "  Renaming now snapshots bearing old prefix '$old_prefix' into ones with new prefix '$new_prefix' and default timestamp '$default_date'."
 
 for f in $photos; do
 
+	exif_date=$(file "$f"|sed 's|.* datetime=||1' | sed 's| .*$||1' | sed 's|:||g')
+
+	# We expect the date to be like "20181020", hence to be 8-character long:
+	string_len=$(echo -n ${exif_date} | wc -m)
+
+	if [ $string_len -eq 8 ]; then
+
+		date="${exif_date}"
+		echo "Date extracted from EXIF information: '${date}'."
+
+	else
+
+		echo "No suitable date could be found in EXIF information (got '${exif_date}'), using default date (${default_date}) instead."
+		date="${default_date}"
+
+	fi
+
 	chmod -x $f
-	# 'I' means 'case insensitive' as 'JPG' *and* 'jpg' are interesting us:
-	target_file=$(echo $f | sed 's|.JPG$|.jpeg|1' | sed 's|.jpg$|.jpeg|1' | sed "s|$old_prefix|$date-$new_prefix-|1")
+
+	target_file=$(echo $f | sed 's|.JPG$|.jpeg|1' | sed 's|.JPEG$|.jpeg|1' | sed 's|.jpg$|.jpeg|1' | sed "s|$old_prefix|$date-$new_prefix-|1")
+
 
 	if [ "$f" = "$target_file" ] ; then
 
