@@ -103,7 +103,9 @@ for f in $photos; do
 	else
 
 		# To remove useless './'s:
-		message=$(echo "  $f -> $target_file ($suffix)"| sed 's|./||g')
+		message=$(echo "    $f -> $target_file ($suffix)"| sed 's|./||g')
+		echo "${message}"
+
 		/bin/mv "$f" "$target_file"
 
 		if [ ! $? -eq 0 ] ; then
