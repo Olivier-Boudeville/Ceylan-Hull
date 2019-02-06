@@ -1,11 +1,12 @@
 #!/bin/sh
 
 USAGE="
-Usage: "`basename $0`" <previous text> <new text> FILE
-	replaces in FILE <previous text> by <new text>
+Usage: $(basename $0) <previous text> <new text> FILE
+		Replaces in FILE <previous text> by <new text>.
 
-Example:
-	"`basename $0`" 'MAKE=' 'MAKE=/usr/bin/make' myFile"
+Example: $(basename $0) 'MAKE=' 'MAKE=/usr/bin/make' myFile"
+
+# See also: replace-lines-starting-by.sh
 
 
 if [ $# != 3 ]; then
