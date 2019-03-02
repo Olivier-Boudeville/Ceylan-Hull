@@ -1,13 +1,13 @@
 #!/bin/sh
 
-USAGE="  Usage: "`basename $0`" FILE1 [FILE2 ...]
+USAGE="  Usage: $(basename $0) FILE1 [FILE2 ...]
   Encrypts specified files, and removes their unencrypted sources. See also: decrypt.sh."
 
 
 
 crypt_tool_name="gpg"
 
-crypt_tool=`which $crypt_tool_name 2>/dev/null`
+crypt_tool=$(which $crypt_tool_name 2>/dev/null)
 
 if [ ! -x "$crypt_tool" ] ; then
 
