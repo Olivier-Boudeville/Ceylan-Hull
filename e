@@ -136,7 +136,8 @@ chooseNedit()
 	NEDIT_NC_OPT="-noask"
 
 	if [ -x "${NEDIT}" ] ; then
-		editor="${NEDIT} ${NEDIT_FAMILY_OPT}"
+		editor="${NEDIT}"
+		editor_opt="${NEDIT_FAMILY_OPT}"
 		editor_short_name="Nedit"
 		multi_win=0
 	fi
@@ -144,21 +145,25 @@ chooseNedit()
 	if [ -x "${NC}" ] ; then
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
-			editor="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+			editor="${NC}"
+			editor_opt="${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
 			editor_short_name="Nc"
 			multi_win=0
-	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
+		# else: the nc being detected is netcat, not nedit tool: do nothing
+		# here.
 		fi
 	fi
 
 	if [ -x "${NEDITC_GENTOO}" ] ; then
-		editor="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
+		editor="${NEDITC_GENTOO}"
+		editor_opt="${NEDIT_FAMILY_OPT}"
 		editor_short_name="Neditc"
 		multi_win=0
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ] ; then
-		editor="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+		editor="${NEDITC_DEBIAN}"
+		editor_opt="${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
 		editor_short_name="Nedit-nc"
 		multi_win=0
 	fi
@@ -182,7 +187,8 @@ chooseXemacs()
 	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
 	if [ -x "${XEMACS}" ] ; then
-		editor="${XEMACS} --geometry=83x60 "
+		editor="${XEMACS}"
+		editor_opt="--geometry=83x60 "
 		editor_short_name="XEmacs"
 		multi_win=0
 	fi
@@ -223,25 +229,43 @@ chooseEmacs()
 
 			# Default:
 			editor="${EMACS_CLIENT}"
-			# Tried with no luck: -a '' or --daemon, or --alternate-editor=emacs:
-			editor_opt="--create-frame"
+			# Tried with no luck: -a '' or --daemon:
+			editor_opt="--create-frame --alternate-editor=emacs"
 
 		else
 
-			if [ ! -x "${EMACS}" ] ; then
+			# if [ ! -x "${EMACS}" ] ; then
 
-				EMACS="/usr/bin/emacs"
+			#	EMACS="/usr/bin/emacs"
 
-				if [ ! -x "${EMACS}" ] ; then
+			#	if [ ! -x "${EMACS}" ] ; then
 
-					echo " Error, no (standalone) emacs available." 1>&2
-					exit 56
+			#		echo " Error, no (standalone) emacs available." 1>&2
+			#		exit 56
+
+			#	fi
+
+			# fi
+
+			EMACS_CLIENT="/bin/emacsclient"
+
+			if [ ! -x "${EMACS_CLIENT}" ] ; then
+
+				EMACS_CLIENT="/usr/bin/emacsclient"
+
+				if [ ! -x "${EMACS_CLIENT}" ] ; then
+
+					echo " Error, no emacs client available." 1>&2
+					exit 55
 
 				fi
 
 			fi
 
-			editor="${EMACS}"
+			# Default:
+			editor="${EMACS_CLIENT}"
+			#editor="${EMACS}"
+			editor_opt="--alternate-editor=emacs"
 
 		fi
 
@@ -398,7 +422,7 @@ applyEditor()
 
 	if [ ! -x "${editor}" ] ; then
 
-		echo "  Error, the '${editor_short_name}' tool is not available." 1>&2
+		echo "  Error, the '${editor_short_name}' tool is not available (no '${editor}')." 1>&2
 
 		exit 10
 
