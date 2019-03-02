@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2018 Olivier Boudeville
+# Copyright (C) 2010-2019 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -204,7 +204,7 @@ chooseEmacs()
 
 	if [ -x "${EMACS}" ] ; then
 
-		if [ $standalone -eq 1 ] ; then
+		if [ $standalone -eq 0 ] ; then
 
 			EMACS_CLIENT="/bin/emacsclient"
 
@@ -223,7 +223,8 @@ chooseEmacs()
 
 			# Default:
 			editor="${EMACS_CLIENT}"
-			editor_opt="--alternate-editor=emacs"
+			# Tried with no luck: -a '' or --daemon, or --alternate-editor=emacs:
+			editor_opt="--create-frame"
 
 		else
 
