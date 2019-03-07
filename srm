@@ -43,8 +43,8 @@ if [ -n "$*" ] ; then
 
 		fi
 
-		# File or symbolic link:
-		if [ -e "${elem}" ] ; then
+		# File or (possibly dead) symbolic link:
+		if [ -e "${elem}" ] || [ -h "${elem}" ] ; then
 
 			if [ -e "${TRASH}/${actual_elem}" ] ; then
 
@@ -87,7 +87,7 @@ if [ -n "$*" ] ; then
 
 	# Better displayed in all cases:
 	echo "Deleting finished"
-	echo
+	#echo
 
 else
 

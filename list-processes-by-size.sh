@@ -3,7 +3,7 @@
 # Sizes are expressed in kilobytes.
 
 # Ex:
-# $ listProcessesBySize.sh
+# $ list-processes-by-size.sh
 #
 #   VSZ CMD
 # 196972 konsole

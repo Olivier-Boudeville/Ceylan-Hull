@@ -79,9 +79,13 @@ if [ -z "$arg" ] || [ "$arg" = "status" ]; then
 
 elif [ "$arg" = "start" ] ; then
 
-	echo "Setting wireless interface $IF up."
 	$RFKILL unblock wifi
-	$IP link set $IF up
+
+	# Disabled as it resulted in netctl failing, expecting the interface to be
+	# down:
+	#echo "Setting wireless interface $IF up."
+	#$IP link set $IF up
+
 	#$IW dev $IF link
 
 elif [ "$arg" = "stop" ] ; then

@@ -70,11 +70,27 @@ if [ -f "${target_file}" ] ; then
 fi
 
 
+if [ "${target_ext}" = "pdf" ]; then
+
+	message="  (${target_file} regenerated)"
+
+else
+
+	message="  (${target_file} regenerated, reload this page on your browser!)"
+
+fi
+
+
 while true ; do
 
 	  echo
 	  echo "- regenerating ${target_file} on $(date)"
-	  make ${target_file} && echo "  (${target_file} regenerated)"
+
+	  # Note: the local GNUmakefile shall include
+	  # Ceylan-Myriad/doc/GNUmakerules-docutils.inc.
+	  #
+	  make ${target_file} && echo "${message}"
+
 	  ${waiter} -e modify ${source_file} 1>/dev/null 2>&1
 
 done
