@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+# (not sh, as we prefer 'read' to support a "no echo" option)
 
 USAGE="  Usage: $(basename $0)
   Unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh."
