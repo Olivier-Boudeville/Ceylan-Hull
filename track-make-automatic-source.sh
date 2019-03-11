@@ -89,7 +89,7 @@ while true ; do
 	  # Note: the local GNUmakefile shall include
 	  # Ceylan-Myriad/doc/GNUmakerules-docutils.inc.
 	  #
-	  make ${target_file} && echo "${message}"
+	  make -s ${target_file} && echo "${message}"
 
 	  ${waiter} -e modify ${source_file} 1>/dev/null 2>&1
 
