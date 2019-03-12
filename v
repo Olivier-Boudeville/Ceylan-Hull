@@ -817,7 +817,7 @@ if [ "${extension}" = "html" ] ; then
 
 fi
 
-if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] ; then
+if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ]; then
 
 	# Another option is: vlc.
 
