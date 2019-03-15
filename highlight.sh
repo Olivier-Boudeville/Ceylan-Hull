@@ -11,6 +11,7 @@ fi
 
 if [ $# -ge 1 -a -f "$1" ]; then
 
+	# From file:
 	input="$1"
 
 	# Cannot check like that, otherwise, once piped, the first pattern would be
@@ -27,16 +28,18 @@ if [ $# -ge 1 -a -f "$1" ]; then
 
 else
 
+	# From stdin:
 	input="-"
 
 fi
 
 raw_patterns="$*"
 
+# Patterns are separated with pipes with sed:
 patterns=$(echo ${raw_patterns}|sed 's| |\\\||g')
 
 #echo "- input: ${input}"
 #echo "- raw patterns: ${raw_patterns}"
 #echo "- patterns: ${patterns}"
 
-grep --color "${patterns}\|$" ${input}
+grep --color "${patterns}\|$" "${input}"
