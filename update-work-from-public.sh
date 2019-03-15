@@ -72,7 +72,6 @@ work_root=$(pwd)
 cd $current_dir
 
 
-
 rsync=$(which rsync)
 
 if [ ! -x "$rsync" ] ; then
@@ -86,6 +85,7 @@ fi
 # Not relying on timestamps (no --update):
 rsync_opt="--recursive --links"
 
+git_opt="-c color.status=always"
 
 echo
 echo " + cleaning public repositories"
@@ -109,15 +109,15 @@ make -s real-clean 1>/dev/null
 
 echo " + checking GIT status of Ceylan-Myriad"
 cd ${public_root}/Ceylan-Myriad
-git status
+git ${git_opt} status
 
 echo " + checking GIT status of Ceylan-WOOPER"
 cd ${public_root}/Ceylan-WOOPER
-git status
+git ${git_opt} status
 
 echo " + checking GIT status of Ceylan-Traces"
 cd ${public_root}/Ceylan-Traces
-git status
+git ${git_opt} status
 
 
 echo " + updating myriad from Ceylan-Myriad"
@@ -146,7 +146,7 @@ cd ${work_root}
 
 echo " + status of work repository:"
 cd ${work_root}
-git status
+git ${git_opt} status
 
 
 echo

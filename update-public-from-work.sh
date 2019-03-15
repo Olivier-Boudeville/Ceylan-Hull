@@ -101,8 +101,12 @@ make -s clean 1>/dev/null
 
 cd $work_root
 
-echo " + checking GIT status of work directory"
-git status
+
+git_opt="-c color.status=always"
+
+
+echo " + checking git ${git_opt} status of work directory"
+git ${git_opt} status
 
 
 echo " + updating Ceylan-Myriad from myriad"
@@ -113,7 +117,7 @@ ${rsync} ${rsync_opt} . ${public_root}/Ceylan-Myriad
 
 echo " + status of Ceylan-Myriad:"
 cd ${public_root}/Ceylan-Myriad
-git status
+git ${git_opt} status
 cd ${work_root}
 
 
@@ -124,7 +128,7 @@ ${rsync} ${rsync_opt} . ${public_root}/Ceylan-WOOPER
 
 echo " + status of Ceylan-WOOPER:"
 cd ${public_root}/Ceylan-WOOPER
-git status
+git ${git_opt} status
 cd ${work_root}
 
 
@@ -134,7 +138,7 @@ cd traces
 ${rsync} ${rsync_opt} . ${public_root}/Ceylan-Traces
 echo " + status of Ceylan-Traces:"
 cd ${public_root}/Ceylan-Traces
-git status
+git ${git_opt} status
 cd ${work_root}
 
 
