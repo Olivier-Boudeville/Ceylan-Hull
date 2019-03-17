@@ -137,7 +137,7 @@ $crypt_tool -c ${crypt_opts} --output ${locked_file} ${unlocked_file} 1>/dev/nul
 res="$?"
 
 unset passphrase
-chmod 600 ${locked_file}
+chmod 000 ${locked_file}
 
 if [ $res -eq 0 ] ; then
 
