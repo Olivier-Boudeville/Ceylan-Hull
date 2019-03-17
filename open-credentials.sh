@@ -91,6 +91,8 @@ echo
 
 crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
 
+# Enable read operations on the locked version:
+chmod 400 ${locked_file}
 
 #echo "crypt_opts=$crypt_opts"
 
@@ -102,8 +104,6 @@ if [ $res -eq 0 ] ; then
 
 	#echo "(credentials unlocked in ${unlocked_file})"
 	echo "(credentials unlocked)"
-
-	chmod 600 ${unlocked_file}
 
 	${shred_tool} --force --remove --zero "${locked_file}"
 	res="$?"
@@ -137,6 +137,7 @@ $crypt_tool -c ${crypt_opts} --output ${locked_file} ${unlocked_file} 1>/dev/nul
 res="$?"
 
 unset passphrase
+
 chmod 000 ${locked_file}
 
 if [ $res -eq 0 ] ; then
