@@ -42,4 +42,7 @@ patterns=$(echo ${raw_patterns}|sed 's| |\\\||g')
 #echo "- raw patterns: ${raw_patterns}"
 #echo "- patterns: ${patterns}"
 
-grep --color "${patterns}\|$" "${input}"
+# 'always' allows to pipe with a color-enabled pager afterwards:
+# (ex: with 'less -r -X')
+#
+grep --color=always "${patterns}\|$" "${input}"
