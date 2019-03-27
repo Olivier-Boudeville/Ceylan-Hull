@@ -1,11 +1,20 @@
 #!/bin/sh
 
-usage="$(basename $0) [FILENAME] PATTERNS: hightlights, in specified data (either the specified file or the standard input, when used through a pipe), the specified pattern(s).\n\n  Examples:\n    $(basename $0) my_file.txt dog wolf\n    echo \"aaabbaaccc\" | $(basename $0) bb c\n"
+usage="$(basename $0) [FILENAME] [-i|--ignore-case] PATTERNS: hightlights, in specified data (either the specified file or the standard input, when used through a pipe), the specified pattern(s), in a case-insensitive manner if requested.\n\n  Examples:\n    $(basename $0) my_file.txt dog wolf\n    echo \"aaaBBaaccc\" | $(basename $0) -i bb c\n"
 
 if [ $# -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ] ; then
 
 	printf "\n  Usage: ${usage}"
 	exit 0
+
+fi
+
+case_opt=""
+
+if [ $1 = "-i" ] || [ $1 = "--ignore-case" ] ; then
+
+	case_opt="$1"
+	shift
 
 fi
 
@@ -45,4 +54,4 @@ patterns=$(echo ${raw_patterns}|sed 's| |\\\||g')
 # 'always' allows to pipe with a color-enabled pager afterwards:
 # (ex: with 'less -r -X')
 #
-grep --color=always "${patterns}\|$" "${input}"
+grep ${case_opt} --color=always "${patterns}\|$" "${input}"
