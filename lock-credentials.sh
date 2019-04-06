@@ -31,7 +31,7 @@ if [ ! -x "$shred_tool" ] ; then
 fi
 
 
-env_file="$HOME/.ceylan-setting.txt"
+env_file="$HOME/.ceylan-settings.txt"
 
 if [ ! -f "${env_file}" ]; then
 
@@ -40,7 +40,7 @@ if [ ! -f "${env_file}" ]; then
 
 fi
 
-source "${env_file}"
+MAIN_CREDENTIALS_PATH=$(/bin/cat ${env_file} | grep main_credentials_path | sed 's|.*, "||1' | sed 's|" }.$||1')
 
 if [ -z "${MAIN_CREDENTIALS_PATH}" ] ; then
 
