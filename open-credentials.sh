@@ -44,12 +44,12 @@ fi
 # Used to rely on a shell-compliant syntax, now Erlang one:
 #source "${env_file}"
 
-MAIN_CREDENTIALS_PATH=$(/bin/cat ${env_file} | grep main_credentials_path | sed 's|.*, "||1' | sed 's|" }.$||1')
+MAIN_CREDENTIALS_PATH=$(/bin/cat ${env_file} | grep -v % | grep main_credentials_path | sed 's|.*, "||1' | sed 's|" }.$||1')
 
 
 if [ -z "${MAIN_CREDENTIALS_PATH}" ] ; then
 
-	echo "  Error, no MAIN_CREDENTIALS_PATH variable defined in environment file (${env_file}) found." 1>&2
+	echo "  Error, no usable main_credentials_path key entry found in environment file (${env_file})." 1>&2
 	exit 6
 
 fi
