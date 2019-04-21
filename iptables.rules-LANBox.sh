@@ -91,8 +91,10 @@ fi
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
 # to check whether rules are up-to-date.
+#
 # 'c' is for client (log prefix must be shorter than 29 characters):
-version="c-10"
+#
+version="c-11"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -130,11 +132,15 @@ if [ -z "$lan_if" ] ; then
 fi
 
 
+# Logic of toggle variables: they are to be compared to "true" or "false"
+# (clearer than, respectively, 0 or 1).
+
+
 # UPnp/DLNA section.
 #
 # Set to true iff this LAN computer is to host a DLNA server (ex: minidlna):
 #
-use_dlna="true"
+allow_dlna="true"
 
 # For trivnet1 (TCP):
 trivnet1_tcp_port=8200
@@ -150,7 +156,7 @@ ssdp_udp_port=1900
 
 
 # By default, we do *not* filter out EPMD traffic (i.e. we accept it):
-filter_epmd=1
+allow_epmd="true"
 
 # Over TCP:
 epmd_default_port=4369
@@ -167,6 +173,28 @@ enable_unfiltered_tcp_range=0
 # TCP unfiltered window (ex: for passive FTP and BEAM port ranges):
 tcp_unfiltered_low_port=50000
 tcp_unfiltered_high_port=55000
+
+
+# By default, we allow RTSP traffic (ex: to receive streams from CCTVs):
+#
+# (RTSP is only a stream *control* protocol, not a stream *delivery* protocol -
+# RTP often plays that role; RTP and RTCP typically use unprivileged UDP ports).
+#
+# So, in general, the LAN box is to send a (TCP) RTSP connection to a camera,
+# they will exchange over this control channel, and the camera will send its
+# video stream through RTP, on UDP unprivileged ports that cannot be anticipated
+# (short of listening to the RTSP exchanges).
+#
+allow_rtsp="true"
+
+# Connections to be initiated by this (trusted) LAN box, so not needed:
+#rtsp_tcp_port=554
+
+# Faulty, hacky liblive555 used by VLC:
+live555_udp_port=15947
+
+#rtsp_server="10.0.77.103"
+#rtp_server_udp_port_range="1024:65535"
 
 
 
@@ -335,7 +363,7 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
 
-	if [ "$use_dlna" = "true" ] ; then
+	if [ "$allow_dlna" = "true" ] ; then
 
 		$echo " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}"
 
@@ -350,6 +378,23 @@ start_it_up()
 
 	fi
 
+
+	if [ "$allow_rtsp" = "true" ] ; then
+
+		$echo " - enabling RTSP service at UDP port ${rtsp_udp_port}"
+
+		# Thought that was needed, but apparently not:
+		#${iptables} -A INPUT -p udp -m udp -s ${rtsp_server} -j ACCEPT
+
+		# Note: live555 must be sending a broadcast packet, with no specific
+		# emitter, so adding '-s ${rtsp_server}' would disallow the right
+		# packet(s) to be received:
+		#
+		${iptables} -A INPUT -p udp -m udp --dport ${live555_udp_port} -j ACCEPT
+
+	fi
+
+
 	# Filter out (other) broadcasts:
 	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
@@ -361,9 +406,9 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-	if [ $filter_epmd -eq 1 ] ; then
+	if [ ${allow_epmd} = "true" ] ; then
 
-		$echo " - enabling EPMD at TCP port ${epmd_port}"
+		$echo " - allowing EPMD at TCP port ${epmd_port}"
 		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
