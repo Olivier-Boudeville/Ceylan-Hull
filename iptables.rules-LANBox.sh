@@ -43,20 +43,32 @@
 
 # To use it in the context of Arch Linux:
 #
-#  - run this script as root, with: ./iptables.rules-LANBox.sh start
+# Current approach is using a simple systemd unit that we wrote,
+# i.e. /etc/systemd/system/iptables.rules-LAN.service.
+#
+# Check its actual support with 'systemctl is-enabled
+# iptables.rules-LAN.service' (should return 'enabled'); then run 'systemctl
+# restart iptables.rules-LAN.service ; systemctl status
+# iptables.rules-LAN.service' to check.
+#
+#
+# Former approach was using the 'iptables' systemd built-in *service* (now not
+# enabled anymore):
+#
+#  - run this script as root, with: 'iptables.rules-LANBox.sh start'
 #
 #  - copy the resulting state of iptables in the relevant file (note: this
 # filename cannot be changed, it is a system convention):
+#   'iptables-save > /etc/iptables/iptables.rules'
 #
-# iptables-save > /etc/iptables/iptables.rules
+#  - restart the firewall: 'systemctl restart iptables ; systemctl status iptables'
 #
-#  - restart the firewall: systemctl stop iptables ; systemctl start iptables ;
-# systemctl status iptables
+#  - check it just for this session: 'iptables -L' (can any changes be found?)
 #
-#  - check it just for this session: iptables -L
-#
-#  - check that iptables is meant to be started at boot: systemctl is-enabled
-# iptables.service ; if not, run: systemctl enable iptables.service
+#  - check that iptables is meant to be started at boot:
+#  'systemctl is-enabled iptables.service'; if not, run:
+# 'systemctl enable iptables.service'
+
 
 # Note: for IPv6, use 'ip6tables' instead of 'iptables'.
 
@@ -381,7 +393,7 @@ start_it_up()
 
 	if [ "$allow_rtsp" = "true" ] ; then
 
-		$echo " - enabling RTSP service at UDP port ${rtsp_udp_port}"
+		$echo " - enabling RTSP/RTP service at UDP port ${live555_udp_port}"
 
 		# Thought that was needed, but apparently not:
 		#${iptables} -A INPUT -p udp -m udp -s ${rtsp_server} -j ACCEPT
@@ -408,7 +420,7 @@ start_it_up()
 
 	if [ ${allow_epmd} = "true" ] ; then
 
-		$echo " - allowing EPMD at TCP port ${epmd_port}"
+		$echo " - enabling EPMD at TCP port ${epmd_port}"
 		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
