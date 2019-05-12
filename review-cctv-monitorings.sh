@@ -19,11 +19,11 @@ for f in $(/bin/ls *.mkv 2>/dev/null) ; do
 
 		echo " - viewing $f"
 
-		mplayer -speed 6 $f 1>/dev/null 2>&1
+		mplayer -speed 8 $f 1>/dev/null 2>&1
 
 		#cvlc $f 1>/dev/null
 
-		echo "Select action: [D: Delete, R: Replay, S: Store, L: Leave as it is, S: Stop the review]"
+		echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
 		read answer
 
 		if [ $answer = "d" ] || [ $answer = "D" ]; then
@@ -41,14 +41,14 @@ for f in $(/bin/ls *.mkv 2>/dev/null) ; do
 		fi
 
 
-		if [ $answer = "s" ] || [ $answer = "S" ]; then
+		if [ $answer = "m" ] || [ $answer = "M" ]; then
 
-			echo "  Enter a prefix to apply to this file to store:"
+			echo "  Enter a prefix to apply to this file to be moved:"
 			read prefix
 
 			new_file="${HOME}/${prefix}-$f"
 			/bin/mv "$f" "${new_file}"
-			echo "  ('$f' stored as '${new_file}')"
+			echo "  ('$f' moved to '${new_file}')"
 
 		fi
 
