@@ -2,11 +2,11 @@
 
 USAGE="Usage:"$(basename $0)
 
-# Archives properly user mails (typically: thunderbird local state).
+# Archives properly user emails (typically: thunderbird local state).
 
-# Note: one should have cleaned up one's mail base first (removing useless mails
-# and larger attachments, emptying the trash, compacting folders, etc.) and shut
-# down one's mail client.
+# Note: one should have cleaned up one's email base first (removing useless
+# emails and larger attachments, emptying the trash, compacting folders, etc.)
+# and shut down one's email client.
 
 if [ ! $# -eq 0 ] ; then
 
@@ -18,7 +18,7 @@ fi
 
 if ps -edf| grep thunderbird | grep -v grep 1>/dev/null 2>&1 ; then
 
-	echo "   Error, your mail client (thunderbird) seems to \
+	echo "   Error, your email client (thunderbird) seems to \
 be still running." 1>&2
 	exit 5
 
@@ -27,12 +27,12 @@ fi
 
 cd ~
 
-mail_root="./.thunderbird"
+email_root="./.thunderbird"
 
-if [ ! -d "$mail_root" ] ; then
+if [ ! -d "$email_root" ] ; then
 
-	echo "   Error, no root directory of mail client found \
-($mail_root)." 1>&2
+	echo "   Error, no root directory of email client found \
+($email_root)." 1>&2
 	exit 10
 
 fi
@@ -46,8 +46,8 @@ if [ ! -x "$archive_tool" ] ; then
 
 fi
 
-echo "   Archiving now the current mail base...."
-$archive_tool $mail_root
+echo "   Archiving now the current email base...."
+$archive_tool $email_root
 
 if [ ! $? -eq 0 ] ; then
 
@@ -79,11 +79,11 @@ mv -f $generated_file "$target_path"
 size=$(du -sh "$target_path" | cut -f 1)
 
 echo
-echo "Mails have been successfully archived in $target_dir/$target_file - \
+echo "Emails have been successfully archived in $target_dir/$target_file - \
 whose size is $size."
 
-if [ -n "${TO_MAIL_ARCHIVE}" ] ; then
+if [ -n "${TO_EMAIL_ARCHIVE}" ] ; then
 
-	/bin/scp $SP "$target_path" "${TO_MAIL_ARCHIVE}" && echo "Mail archive also transferred to ${TO_MAIL_ARCHIVE}."
+	/bin/scp $SP "$target_path" "${TO_EMAIL_ARCHIVE}" && echo "Email archive also transferred to ${TO_EMAIL_ARCHIVE}."
 
 fi
