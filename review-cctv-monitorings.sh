@@ -9,7 +9,14 @@ usage="$(basename $0): allows to review more conveniently a set of CCTV recordin
 echo "Use '}' to fast forward."
 
 
-for f in $(/bin/ls *.mkv 2>/dev/null) ; do
+recordings=$(/bin/ls *.mkv 2>/dev/null)
+
+count=$(echo ${recordings} | wc -w)
+
+
+echo "${count} recordings found."
+
+for f in ${recordings} ; do
 
 	done=1
 
@@ -19,47 +26,68 @@ for f in $(/bin/ls *.mkv 2>/dev/null) ; do
 
 		echo " - viewing $f"
 
-		mplayer -speed 8 $f 1>/dev/null 2>&1
+		mplayer -speed 15 $f 1>/dev/null 2>&1
 
 		#cvlc $f 1>/dev/null
 
-		echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
-		read answer
+		understood=1
 
-		if [ $answer = "d" ] || [ $answer = "D" ]; then
+		while [ $understood -eq 1 ] ; do
 
-			/bin/rm -f "$f"
-			echo "  ('$f' deleted)"
+			echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
+			read answer
 
-		fi
+			if [ $answer = "d" ] || [ $answer = "D" ]; then
 
-		if [ $answer = "r" ] || [ $answer = "R" ]; then
+				/bin/rm -f "$f"
+				echo "  ('$f' deleted)"
+				understood=0
 
-			echo "  (replaying '$f')"
-			done=1
+			fi
 
-		fi
+			if [ $answer = "r" ] || [ $answer = "R" ]; then
+
+				echo "  (replaying '$f')"
+				understood=0
+				done=1
+
+			fi
 
 
-		if [ $answer = "m" ] || [ $answer = "M" ]; then
+			if [ $answer = "m" ] || [ $answer = "M" ]; then
 
-			echo "  Enter a prefix to apply to this file to be moved:"
-			read prefix
+				echo "  Enter a prefix to apply to this file to be moved:"
+				read prefix
 
-			new_file="${HOME}/${prefix}-$f"
-			/bin/mv "$f" "${new_file}"
-			echo "  ('$f' moved to '${new_file}')"
+				new_file="${HOME}/${prefix}-$f"
+				/bin/mv "$f" "${new_file}"
+				echo "  ('$f' moved to '${new_file}')"
 
-		fi
+				understood=0
 
-		# L is automatic
+			fi
 
-		if [ $answer = "s" ] || [ $answer = "S" ]; then
+			if [ $answer = "l" ] || [ $answer = "L" ]; then
 
-			echo "  (review requested to stop)"
-			exit 0
+				understood=0
 
-		fi
+			fi
+
+			if [ $answer = "s" ] || [ $answer = "S" ]; then
+
+				echo "  (review requested to stop)"
+				#(understood=0)
+				exit 0
+
+			fi
+
+			if [ $understood -eq 1 ] ; then
+
+				echo "  Error, command not recognised." 1>&2
+
+			fi
+
+		done
 
 	done
 
