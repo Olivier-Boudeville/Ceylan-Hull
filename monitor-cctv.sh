@@ -14,6 +14,7 @@ usage="  Usage: $(basename $0) [${full_opt}]
 full_requested=1
 
 if [ "$1" = "${full_opt}" ] ; then
+	echo "(higher-resolution stream with audio requested)"
 	full_requested=0
 	shift
 
@@ -27,7 +28,8 @@ if [ ! $# -eq 0 ] ; then
 fi
 
 
-client_tool_name="cvlc"
+#client_tool_name="cvlc"
+client_tool_name="mplayer"
 
 client_tool=$(which $client_tool_name 2>/dev/null)
 
@@ -159,13 +161,13 @@ rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/cam/realm
 
 #echo "rstp_url = ${rstp_url}"
 
-verbose_opt="--verbose 0"
+#verbose_opt="--verbose 0"
 
 # Only the most precise hostname wanted (FQDN too long):
 camera_short_name=$(echo "${camera_hostname}" | sed 's|\..*$||')
 
-snapshot_prefix_opt="--snapshot-prefix=camera-${camera_short_name}-"
+#snapshot_prefix_opt="--snapshot-prefix=camera-${camera_short_name}-"
 
 echo "  Monitoring now camera '${camera_description}'..."
 
-${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} 1>/dev/null 2>&1 &
+${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
