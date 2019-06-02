@@ -37,7 +37,7 @@ for f in ${recordings} ; do
 			echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
 			read answer
 
-			if [ $answer = "d" ] || [ $answer = "D" ]; then
+			if [ "$answer" = "d" ] || [ "$answer" = "D" ]; then
 
 				/bin/rm -f "$f"
 				echo "  ('$f' deleted)"
@@ -45,7 +45,7 @@ for f in ${recordings} ; do
 
 			fi
 
-			if [ $answer = "r" ] || [ $answer = "R" ]; then
+			if [ "$answer" = "r" ] || [ "$answer" = "R" ]; then
 
 				echo "  (replaying '$f')"
 				understood=0
@@ -54,7 +54,7 @@ for f in ${recordings} ; do
 			fi
 
 
-			if [ $answer = "m" ] || [ $answer = "M" ]; then
+			if [ "$answer" = "m" ] || [ "$answer" = "M" ]; then
 
 				echo "  Enter a prefix to apply to this file to be moved:"
 				read prefix
@@ -67,13 +67,13 @@ for f in ${recordings} ; do
 
 			fi
 
-			if [ $answer = "l" ] || [ $answer = "L" ]; then
+			if [ "$answer" = "l" ] || [ "$answer" = "L" ]; then
 
 				understood=0
 
 			fi
 
-			if [ $answer = "s" ] || [ $answer = "S" ]; then
+			if [ "$answer" = "s" ] || [ "$answer" = "S" ]; then
 
 				echo "  (review requested to stop)"
 				#(understood=0)
