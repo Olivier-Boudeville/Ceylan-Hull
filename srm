@@ -46,6 +46,9 @@ if [ -n "$*" ] ; then
 		# File or (possibly dead) symbolic link:
 		if [ -e "${elem}" ] || [ -h "${elem}" ] ; then
 
+			# No need to have specific rights such as reading or writing in
+			# order to move it (no chmod needed).
+
 			if [ -e "${TRASH}/${actual_elem}" ] ; then
 
 				new_elem="${actual_elem}-$(date +'%Y%m%d-%Hh%Mm%Ss')"
