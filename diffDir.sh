@@ -1,11 +1,12 @@
 #!/bin/sh
 
 # diffDir.sh operates only on the direct entries of a directory.
+#
 # See diffTree.sh for a recursive comparison.
 
 
 USAGE="
-Usage: `basename $0` <first path (main one)> <second path (to be integrated into first one)> [--svn] [ -v ] [ -a ] [ -h ]: compares thanks to diff all files which are present both in first and second directories, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
+Usage: $(basename $0) <first path (main one)> <second path (to be integrated into first one)> [--svn] [ -v ] [ -a ] [ -h ]: compares thanks to diff all files which are present both in first and second directories, and warns if they are not identical. Warns too if some files are in one directory but not in the other.
    The --svn option stands for SVN (Subversion) mode, where SVN informations are ignored (only focusing on file content)
    The -v option stands for verbose mode, where identical files are notified too.
    The -s option stands for short mode, shorter messages are output.
@@ -14,7 +15,7 @@ Usage: `basename $0` <first path (main one)> <second path (to be integrated into
 
 
 if [ -z "$2" ] ; then
-	echo "Error, not enough arguments specified. $USAGE" 1>&2
+	echo "  Error, not enough arguments specified. $USAGE" 1>&2
 	exit 1
 fi
 
@@ -26,12 +27,12 @@ PREFIX_IDEN="     "
 PREFIX_DIFF="[00;30;43m---> "
 PREFIX_NOEX="[00;37;41m#### "
 
-MERGE_TOOL=`which tkdiff|grep -v ridiculously 2>/dev/null`
+MERGE_TOOL=$(which tkdiff|grep -v ridiculously 2>/dev/null)
 
 if [ -x "$EDITOR" ]; then
 	EDITOR_TOOL=$EDITOR
 else
-	EDITOR_TOOL=`which nedit|grep -v ridiculously 2>/dev/null`
+	EDITOR_TOOL=$(which nedit|grep -v ridiculously 2>/dev/null)
 fi
 
 be_verbose=1
@@ -43,12 +44,12 @@ shorter_messages=1
 
 
 if [ ! -d "$firstDir" ] ; then
-	echo "Error, first directory specified ($firstDir) does not exist. $USAGE" 1>&2
+	echo "  Error, first directory specified ($firstDir) does not exist. $USAGE" 1>&2
 	exit 2
 fi
 
 if [ ! -d "$secondDir" ] ; then
-	echo "Error, second directory specified ($secondDir) does not exist. $USAGE" 1>&2
+	echo "  Error, second directory specified ($secondDir) does not exist. $USAGE" 1>&2
 	exit 3
 fi
 
@@ -108,12 +109,12 @@ done
 if [ $auto_edit -eq 0 ] ; then
 
 	if [ ! -x "$MERGE_TOOL" ] ; then
-		echo "Error, no executable merge tool found ($MERGE_TOOL), automatic diff editing disabled." 1>&2
+		echo "  Error, no executable merge tool found ($MERGE_TOOL), automatic diff editing disabled." 1>&2
 		auto_edit=1
 	fi
 
 	if [ ! -x "$EDITOR_TOOL" ] ; then
-		echo "Error, no executable editor found ($EDITOR_TOOL), automatic diff editing disabled." 1>&2
+		echo "  Error, no executable editor found ($EDITOR_TOOL), automatic diff editing disabled." 1>&2
 		auto_edit=1
 	fi
 
@@ -125,7 +126,7 @@ fi
 
 if [ $be_verbose -eq 0 ] ; then
 
-    # Preferably disabled, as otherwise inserts a blank line:
+	# Preferably disabled, as otherwise inserts a blank line:
 	echo ${DEFAULT_TEXT}
 
 fi
@@ -137,9 +138,9 @@ if [ $be_quiet -eq 1 ] ; then
 fi
 
 
-for f in `/bin/ls $firstDir`; do
+for f in $(/bin/ls $firstDir); do
 
-	if [ $ignore_svn -eq 1 ] || [ `basename $f` != ".svn" ] ; then
+	if [ $ignore_svn -eq 1 ] || [ $(basename $f) != ".svn" ] ; then
 
 		if [ ! -e "$secondDir/$f" ] ; then
 
@@ -176,7 +177,7 @@ for f in `/bin/ls $firstDir`; do
 done
 
 
-for f in `/bin/ls $secondDir`; do
+for f in $(/bin/ls $secondDir); do
 
 	if [ ! -e "$firstDir/$f" ] ; then
 		if [ $shorter_messages -eq 0 ] ; then
