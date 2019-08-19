@@ -31,12 +31,15 @@ update()
 
 }
 
-echo "Note that init.el must be modified so that it references the Erlang version you are using (ex: .../lib/tools-x.y.z/emacs)."
+
+# Not useful anymore as our install-erlang.sh script takes care of it:
+#
+#echo "Note that init.el must be modified so that it references the Erlang version you are using (ex: .../lib/tools-x.y.z/emacs)."
 # Fetch from the Erlang install, not from the net anymore:
 #update erlang.el http://www.erlang.org/download/contrib/erlang.el
-ln -s ~/Software/Erlang/Erlang-current-install/lib/erlang/lib/tools-*/emacs/erlang.el
+#ln -s ~/Software/Erlang/Erlang-current-install/lib/erlang/lib/tools-*/emacs/erlang.el
 
-update flyspell-guess http://www.emacswiki.org/emacs/download/flyspell-guess.el
+update flyspell http://www.emacswiki.org/emacs/download/flyspell.el
 
 # Useless now, since done by whitespace
 # (see http://www.emacswiki.org/emacs/HighlightLongLines)
@@ -56,4 +59,3 @@ update whitespace http://www.emacswiki.org/emacs/download/whitespace.el
 
 # For a correct right-mouse text search:
 update acme-search http://www.emacswiki.org/emacs/download/acme-search.el
-
