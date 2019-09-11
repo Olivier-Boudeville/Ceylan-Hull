@@ -79,14 +79,14 @@ if [ $(id -u) -eq 0 ] ; then
 	fi
 
 	# Erases the previous log as well, to avoid accumulation:
-	echo "Updating the distribution now..." 1>${log_file}
+	echo "Updating the distribution now, at $(date)..." 1>${log_file}
 
 	case "${distro_type}" in
 
 		"Debian")
 			if [ $quiet -eq 1 ] ; then
 
-				( apt-get update && apt-get -y upgrade ) 2>&1 | tee ${log_file}
+				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a  ${log_file}
 
 			else
 
@@ -104,7 +104,7 @@ if [ $(id -u) -eq 0 ] ; then
 			if [ $quiet -eq 1 ] ; then
 
 				# To be run from the command-line:
-				pacman ${PACMAN_OPT} 2>&1 | tee ${log_file}
+				pacman ${PACMAN_OPT} 2>&1 | tee -a ${log_file}
 
 			else
 
