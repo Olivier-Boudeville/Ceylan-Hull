@@ -42,6 +42,7 @@ cd $current_dir
 
 
 public_root="$2"
+
 if [ ! -d "$public_root" ] ; then
 
 	echo "  Error, public root ($public_root) is not an existing directory.
@@ -51,7 +52,7 @@ $usage" 1>&2
 fi
 
 
-public_test_dir="$public_root/Ceylan-Myriad"
+public_test_dir="$public_root/myriad"
 
 if [  ! -d "$public_test_dir" ] ; then
 
@@ -80,64 +81,63 @@ fi
 # Not relying on timestamps (no --update):
 rsync_opt="--recursive --links"
 
-cd $work_root
+git_opt="-c color.status=always"
+
+cd "$work_root"
 
 echo
-echo " + real-cleaning work directory"
+echo " + real-cleaning work directory (in $(pwd))"
 make -s real-clean 1>/dev/null
 
 echo
-echo " + cleaning public repositories"
+echo " + cleaning public repositories (in ${public_root})"
 
-cd ${public_root}/Ceylan-Myriad
+cd ${public_root}/myriad
 make -s clean 1>/dev/null
 
-cd ${public_root}/Ceylan-WOOPER
+cd ${public_root}/wooper
 make -s clean 1>/dev/null
 
-cd ${public_root}/Ceylan-Traces
+cd ${public_root}/traces
 make -s clean 1>/dev/null
 
 
 cd $work_root
-
-
-git_opt="-c color.status=always"
 
 
 echo " + checking git ${git_opt} status of work directory"
 git ${git_opt} status
 
 
-echo " + updating Ceylan-Myriad from myriad"
+echo " + updating public myriad from local one"
 cd myriad
 
-${rsync} ${rsync_opt} . ${public_root}/Ceylan-Myriad
+${rsync} ${rsync_opt} . ${public_root}/myriad
 
-
-echo " + status of Ceylan-Myriad:"
-cd ${public_root}/Ceylan-Myriad
+echo " + status of public myriad:"
+cd ${public_root}/myriad
 git ${git_opt} status
 cd ${work_root}
 
 
-echo " + updating Ceylan-WOOPER from wooper"
+echo " + updating public wooper from local one"
 cd wooper
 
-${rsync} ${rsync_opt} . ${public_root}/Ceylan-WOOPER
+${rsync} ${rsync_opt} . ${public_root}/wooper
 
-echo " + status of Ceylan-WOOPER:"
-cd ${public_root}/Ceylan-WOOPER
+echo " + status of public wooper:"
+cd ${public_root}/wooper
 git ${git_opt} status
 cd ${work_root}
 
 
-echo " + updating Ceylan-Traces from traces"
+echo " + updating public traces from local one"
 cd traces
 
-${rsync} ${rsync_opt} . ${public_root}/Ceylan-Traces
-echo " + status of Ceylan-Traces:"
-cd ${public_root}/Ceylan-Traces
+${rsync} ${rsync_opt} . ${public_root}/traces
+
+echo " + status of public traces:"
+cd ${public_root}/traces
 git ${git_opt} status
 cd ${work_root}
 
@@ -147,4 +147,4 @@ echo
 echo "Public repositories have been updated from work one."
 
 echo
-echo "One may then use: 'cd ${public_root} && for p in Myriad WOOPER Traces ; do ( cd Ceylan-\$p ; git add -u && git commit -m \"Synchronisation update.\" && git push ) ; done'"
+echo "One may then use: 'cd ${public_root} && for p in myriad wooper traces ; do ( cd \$p ; git add -u && git commit -m \"Synchronisation update.\" && git push ) ; done'"
