@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-usage="  Usage: $(basename $0) PUBLIC_ROOT WORK_ROOT updates base work repository from all public Ceylan-* repositories, using for that the currently selected branches of specified clones. One should ensure beforehand that all source and target repositories are fully up to date (ex: committed and pushed)."
+usage="  Usage: $(basename $0) PUBLIC_ROOT WORK_ROOT: updates base work repository from all public Ceylan-* repositories, using for that the currently selected branches of specified clones. One should ensure beforehand that all source and target repositories are fully up to date (ex: committed and pushed)."
 
 
 if [ ! $# -eq 2 ] ; then
@@ -14,7 +14,6 @@ fi
 
 current_dir=$(pwd)
 
-
 public_root="$1"
 
 if [ ! -d "$public_root" ] ; then
@@ -26,9 +25,9 @@ $usage" 1>&2
 fi
 
 
-public_test_dir="$public_root/Ceylan-Myriad"
+public_test_dir="$public_root/myriad"
 
-if [  ! -d "$public_test_dir" ] ; then
+if [ ! -d "$public_test_dir" ] ; then
 
 	echo "  Error, public root ($public_root) does not seem to be a suitable public root ($public_test_dir not found).
 $usage" 1>&2
@@ -41,7 +40,6 @@ fi
 cd "$public_root"
 public_root=$(pwd)
 cd $current_dir
-
 
 
 work_root="$2"
@@ -90,13 +88,13 @@ git_opt="-c color.status=always"
 echo
 echo " + cleaning public repositories"
 
-cd ${public_root}/Ceylan-Myriad
+cd ${public_root}/myriad
 make -s clean 1>/dev/null
 
-cd ${public_root}/Ceylan-WOOPER
+cd ${public_root}/wooper
 make -s clean 1>/dev/null
 
-cd ${public_root}/Ceylan-Traces
+cd ${public_root}/traces
 make -s clean 1>/dev/null
 
 
@@ -107,33 +105,33 @@ echo " + real-cleaning work directory"
 make -s real-clean 1>/dev/null
 
 
-echo " + checking GIT status of Ceylan-Myriad"
-cd ${public_root}/Ceylan-Myriad
+echo " + checking GIT status of public myriad"
+cd ${public_root}/myriad
 git ${git_opt} status
 
-echo " + checking GIT status of Ceylan-WOOPER"
-cd ${public_root}/Ceylan-WOOPER
+echo " + checking GIT status of public wooper"
+cd ${public_root}/wooper
 git ${git_opt} status
 
-echo " + checking GIT status of Ceylan-Traces"
-cd ${public_root}/Ceylan-Traces
+echo " + checking GIT status of public traces"
+cd ${public_root}/traces
 git ${git_opt} status
 
 
-echo " + updating myriad from Ceylan-Myriad"
-cd ${public_root}/Ceylan-Myriad
+echo " + updating local myriad from public one"
+cd ${public_root}/myriad
 
 ${rsync} ${rsync_opt} . ${work_root}/myriad
 
 
-echo " + updating wooper from Ceylan-WOOPER"
-cd ${public_root}/Ceylan-WOOPER
+echo " + updating local wooper from public one"
+cd ${public_root}/wooper
 
 ${rsync} ${rsync_opt} . ${work_root}/wooper
 
 
-echo " + updating traces from Ceylan-Traces"
-cd ${public_root}/Ceylan-Traces
+echo " + updating local traces from public one"
+cd ${public_root}/traces
 
 ${rsync} ${rsync_opt} . ${work_root}/traces
 
