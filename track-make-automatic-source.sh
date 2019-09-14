@@ -62,7 +62,9 @@ fi
 
 echo "Will track ${source_file}: at each of its modifications the generation of ${target_file} will requested..."
 
-# To force a first build (better than a touch detected by the editor):
+# To force a first build (better than a touch of the source file, which would be
+# detected by the text editor):
+#
 if [ -f "${target_file}" ] ; then
 
 	/bin/rm -f "${target_file}"
@@ -85,6 +87,9 @@ while true ; do
 
 	  echo
 	  echo "- regenerating ${target_file} on $(date)"
+
+	  # Overcome any faulty regeneration dependency management:
+	  /bin/rm -f "${target_file}"
 
 	  # Note: the local GNUmakefile shall include
 	  # Ceylan-Myriad/doc/GNUmakerules-docutils.inc.
