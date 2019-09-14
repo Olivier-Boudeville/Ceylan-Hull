@@ -1,11 +1,11 @@
 #!/bin/sh
 
 
-USAGE="  Usage: "`basename $0`"  [--play-back] [--verbose] AUDIO_FILENAME
+usage="  Usage: $(basename $0) [--play-back] [--verbose] AUDIO_FILENAME
 
   Encodes specified sound file in OggVorbis after having removed any leading and ending silences, adjusting volume.
-      --play-back: enables play-back of the generated sound
-      --verbose: be verbose
+	  --play-back: enables play-back of the generated sound
+	  --verbose: be verbose
 "
 
 # Regarding size, quality, sample rates:
@@ -70,8 +70,8 @@ playback_tool_exec=`which $playback_tool`
 
 
 while [ $# -gt 0 ] ; do
-	token_eaten=1
 
+	token_eaten=1
 
 	if [ "$1" = "--play-back" ] ; then
 		play_back=0
@@ -86,7 +86,7 @@ while [ $# -gt 0 ] ; do
 
 
 	if [ "$1" = "-h" -o "$1" = "--help" ] ; then
-		echo "${USAGE}"
+		echo "${usage}"
 		exit
 		token_eaten=0
 	fi
@@ -98,7 +98,7 @@ while [ $# -gt 0 ] ; do
 			input_file="$1"
 		else
 			echo "Error, too many remaining arguments ($*)." 1>&2
-			echo "${USAGE}" 1>&2
+			echo "${usage}" 1>&2
 			exit 5
 		fi
 
@@ -112,7 +112,7 @@ effective_target="$input_file"
 
 if [ -z "$effective_target" ] ; then
 	echo "Error, no input sound file specified." 1>&2
-	echo "${USAGE}" 1>&2
+	echo "${usage}" 1>&2
 	exit 6
 
 fi
@@ -178,7 +178,7 @@ if [ $play_back -eq 0 ] ; then
 	echo "Error, playback tool not found (${playback_tool})." 1>&2
 		exit 16
 
-    fi
+	fi
 
 fi
 
@@ -186,8 +186,8 @@ fi
 
 if [ ! -f "$effective_target" ] ; then
 
-    echo "Error, specified input file not found ($effective_target)." 1>&2
-    exit 17
+	echo "Error, specified input file not found ($effective_target)." 1>&2
+	exit 17
 
 fi
 
@@ -195,7 +195,7 @@ fi
 
 if [ $verbose -eq 0 ] ; then
 
-    echo " - input file: $effective_target"
+	echo " - input file: $effective_target"
 
 
 	if [ $trim_silences -eq 0 ] ; then
@@ -216,7 +216,7 @@ if [ $verbose -eq 0 ] ; then
 	echo " - no volume adjustment will be performed"
 	fi
 
-    echo " - encoding to OggVorbis quality $ogg_quality will be performed"
+	echo " - encoding to OggVorbis quality $ogg_quality will be performed"
 
 	if [ $play_back -eq 0 ] ; then
 	echo " - play-back selected"
@@ -242,7 +242,7 @@ if [ $trim_silences -eq 0 ] ; then
 
 	${trimmer} "$copied_source"
 
-    if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ] ; then
 		echo "Error, trimming of $effective_target failed." 1>&2
 		/bin/rm -f "$copied_source"
 		exit 13
@@ -258,7 +258,7 @@ if [ $resample -eq 0 ] ; then
 
 	${resample_tool} --target-sample-rate ${target_frequency} $effective_target
 
-    if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ] ; then
 		echo "Error, resampling of $effective_target failed." 1>&2
 		exit 14
 	fi
@@ -286,7 +286,7 @@ if [ $adjust_volume -eq 0 ] ; then
 
 	${sox_tool} ${effective_target} ${ajusted_version} gain -n ${norm_level}
 
-    if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ] ; then
 		echo "Error, adjusting the volume of $effective_target failed." 1>&2
 		exit 15
 	fi
@@ -312,7 +312,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
 	${encoder_tool} "$effective_target" --discard-comments --quality=${ogg_quality} --output="$target_ogg" 1>/dev/null 2>&1
 
-    if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ] ; then
 		echo "Error, encoding of $effective_target failed." 1>&2
 		exit 20
 	fi
@@ -322,7 +322,7 @@ if [ $ogg_encoding -eq 0 ] ; then
 		/bin/rm -f "$effective_target"
 	fi
 
-    effective_target="$target_ogg"
+	effective_target="$target_ogg"
 
 	echo "Encoding of $effective_target succeeded."
 
@@ -333,7 +333,7 @@ if [ $play_back -eq 0 ] ; then
 
 	${playback_tool} "$effective_target"
 
-    if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ] ; then
 		echo "Error, playback failed." 1>&2
 	fi
 
