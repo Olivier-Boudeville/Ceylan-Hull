@@ -143,7 +143,11 @@ res="$?"
 
 unset passphrase
 
-chmod 000 ${locked_file}
+# Re-enabled read operations (more discrete, and needed by GIT to commit newer
+# versions):
+#
+#chmod 000 ${locked_file}
+chmod 400 ${locked_file}
 
 if [ $res -eq 0 ] ; then
 
