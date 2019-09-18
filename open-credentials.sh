@@ -58,81 +58,102 @@ fi
 unlocked_file="${MAIN_CREDENTIALS_PATH}.dat"
 locked_file="${MAIN_CREDENTIALS_PATH}"
 
+
+# Expected to be found locked:
+already_unlocked=1
+
+
 if [ ! -f "${locked_file}" ] ; then
 
 	if [ -f "${unlocked_file}" ] ; then
 
-		echo "  Error, the credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') is already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist)." 1>&2
-		exit 20
+		echo "  Warning: the credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist)." 1>&2
+		# This happens whenever left in a terminal, being forgotten, or closing
+		# the terminal while still opened:
+		#
+		already_unlocked=0
 
-	fi
+	else
 
-	echo "  Error, no credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') can be found (neither in a locked version, i.e. as '${locked_file}', nor in an unlocked version, i.e. as '${unlocked_file}')." 1>&2
+		echo "  Error, no credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') can be found (neither in a locked version, i.e. as '${locked_file}', nor in an unlocked version, i.e. as '${unlocked_file}')." 1>&2
 
-	exit 21
-
-fi
-
-# So here the locked file exists.
-
-if [ -f "${unlocked_file}" ] ; then
-
-	echo "  Error, the credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') exists both in its locked version ('${locked_file}') and in its unlocked version ('${unlocked_file}'), this is abnormal." 1>&2
-
-	exit 22
-
-fi
-
-# And here the unlocked file does not exist yet.
-
-
-#echo "Unlocking credentials: from ${locked_file} to ${unlocked_file}."
-
-read -p  "Enter lock password:" -s passphrase
-
-#echo "passphrase = '${passphrase}'"
-
-echo
-
-crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
-
-# Enable read operations on the locked version:
-chmod 400 ${locked_file}
-
-#echo "crypt_opts=$crypt_opts"
-
-$crypt_tool -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1
-
-res="$?"
-
-if [ $res -eq 0 ] ; then
-
-	#echo "(credentials unlocked in ${unlocked_file})"
-	echo "(credentials unlocked)"
-
-	${shred_tool} --force --remove --zero "${locked_file}"
-	res="$?"
-
-	if [ ! $res -eq 0 ] ; then
-
-		echo "Error, shredding of '${locked_file}' failed (code: $res), removing it." 1>&2
-		/bin/rm -f "${locked_file}"
-
-		exit 10
+		exit 21
 
 	fi
 
 else
 
-	echo "Error, unlocking failed (code: $res), stopping, locked file '${locked_file}' left as it is." 1>&2
+	# So here the locked file exists.
 
-	exit 11
+	if [ -f "${unlocked_file}" ] ; then
+
+		echo "  Error, the credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') exists both in its locked version ('${locked_file}') and in its unlocked version ('${unlocked_file}'), this is abnormal." 1>&2
+
+		exit 22
+
+	fi
+
+fi
+
+# And here the unlocked file does not exist yet.
+
+if [ $already_unlocked -eq 1 ] ; then
+
+	#echo "Unlocking credentials: from ${locked_file} to ${unlocked_file}."
+
+	read -p  "Enter lock password:" -s passphrase
+
+	#echo "passphrase = '${passphrase}'"
+
+	echo
+
+	crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
+
+	# Enable read operations on the locked version:
+	chmod 400 ${locked_file}
+
+	#echo "crypt_opts=$crypt_opts"
+
+	$crypt_tool -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1
+
+	res="$?"
+
+	if [ $res -eq 0 ] ; then
+
+		#echo "(credentials unlocked in ${unlocked_file})"
+		echo "(credentials unlocked)"
+
+		${shred_tool} --force --remove --zero "${locked_file}"
+		res="$?"
+
+		if [ ! $res -eq 0 ] ; then
+
+			echo "Error, shredding of '${locked_file}' failed (code: $res), removing it." 1>&2
+			/bin/rm -f "${locked_file}"
+
+			exit 10
+
+		fi
+
+	else
+
+		echo "Error, unlocking failed (code: $res), stopping, locked file '${locked_file}' left as it is." 1>&2
+
+		exit 11
+
+	fi
+
+else
+
+	echo "(opening unlocked credentials)"
 
 fi
 
 #echo "Use lock-credentials.sh to perform the reverse operation."
 
 emacsclient --create-frame "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
+
+echo "(locking now the credentials)"
 
 # No passphrase wanted to be specified on the command-line:
 #lock-credentials.sh [{passphrase}]
