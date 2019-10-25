@@ -1,11 +1,10 @@
 #!/bin/sh
 
-
 USAGE="Usage: "$(basename $0)" [ status | start | scan | stop | isolate | --help | -h ]:
   - without argument or with 'status': returns status
-  - with 'start': put the wireless interface up
-  - with 'scan': scan for wireless access points (once started)
-  - with 'stop': put the wireless interface down"
+  - with 'start': put the (guessed) wifi interface up
+  - with 'scan': scan for wifi access points (once started)
+  - with 'stop': put the (guessed) wifi interface down"
 
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ] ; then
@@ -60,12 +59,12 @@ IF=$($IW dev|grep Interface | sed 's|.*Interface ||')
 
 if [ -n "$IF" ] ; then
 
-	echo "Guessed wireless interface: $IF"
+	echo "Guessed wifi interface: $IF"
 
 else
 
 	IF="wlo1"
-	echo "Unable to guess wireless interface, assuming $IF."
+	echo "Unable to guess wifi interface, assuming $IF."
 
 fi
 
@@ -75,7 +74,7 @@ arg="$1"
 if [ -z "$arg" ] || [ "$arg" = "status" ]; then
 
 	$RFKILL list
-	echo "Status of wireless interface $IF: "$($IW dev $IF link)
+	echo "Status of wifi interface $IF: "$($IW dev $IF link)
 
 elif [ "$arg" = "start" ] ; then
 
@@ -83,14 +82,14 @@ elif [ "$arg" = "start" ] ; then
 
 	# Disabled as it resulted in netctl failing, expecting the interface to be
 	# down:
-	#echo "Setting wireless interface $IF up."
+	#echo "Setting wifi interface $IF up."
 	#$IP link set $IF up
 
 	#$IW dev $IF link
 
 elif [ "$arg" = "stop" ] ; then
 
-	echo "Setting wireless interface $IF down."
+	echo "Setting wifi interface $IF down."
 	$IP link set $IF down
 	$RFKILL block wifi
 
@@ -98,7 +97,7 @@ elif [ "$arg" = "stop" ] ; then
 
 elif [ "$arg" = "scan" ] ; then
 
-	echo "Scanning for wireless networks with interface $IF, found following SSIDs:"
+	echo "Scanning for wifi networks with interface $IF, found following SSIDs:"
 	$IW dev $IF scan | grep SSID | sort | uniq | sed 's|.*SSID: | - |1'
 
 elif [ "$arg" = "isolate" ] ; then
