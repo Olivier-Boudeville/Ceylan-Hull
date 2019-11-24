@@ -67,7 +67,7 @@ if [ ! -f "${locked_file}" ] ; then
 
 	if [ -f "${unlocked_file}" ] ; then
 
-		echo "  Warning: the credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist)." 1>&2
+		echo "  Warning: the credentials file (as defined in the MAIN_CREDENTIALS_PATH variable of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist). As a result, a password (to be chosen identical to the usual one) will be requested (twice) when closing this file." 1>&2
 		# This happens whenever left in a terminal, being forgotten, or closing
 		# the terminal while still opened:
 		#
@@ -163,6 +163,15 @@ $crypt_tool -c ${crypt_opts} --output ${locked_file} ${unlocked_file} 1>/dev/nul
 res="$?"
 
 unset passphrase
+
+if [ ! $res -eq 0 ] ; then
+
+	echo "Error, locking failed (code: $res), stopping, unlocked file '${unlocked_file}' left as it is, please lock it manually." 1>&2
+
+	exit 11
+
+fi
+
 
 # Re-enabled read operations (more discrete, and needed by GIT to commit newer
 # versions):
