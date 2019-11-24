@@ -66,4 +66,4 @@ else
 
 fi
 
-${rsync} -avz -e ${ssh_opt} --safe-links "${source_tree_location}" "${target_tree_location}" && echo "  Transfer succeeded!"
+${rsync} -avz -e "${ssh_opt}" --safe-links "${source_tree_location}" "${target_tree_location}" && echo "  Transfer succeeded!"
