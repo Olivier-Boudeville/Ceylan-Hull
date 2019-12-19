@@ -1,43 +1,55 @@
 #!/bin/sh
 
-USAGE="Usage: `basename $0` <expression to watch in running processes>.\nExample: `basename $0` AP2 to track all processes which have AP2 in their command or arguments."
+usage="Usage: $(basename $0) <expression to watch in running processes>.\nExample: $(basename $0) AP2 to track all processes which have AP2 in their command or arguments."
+
 
 if [ -z "$1" ] ; then
-	echo -e "\nError, no expression to watch.\n\t$USAGE."
-	exit 1
+
+	echo -e "\nError, no expression to watch.\n\t$usage."
+
+	exit 5
+
 fi
 
-WATCH_FILE="watch-result.txt"
 
-#LOCAL_USER="$USER"
-LOCAL_USER=`whoami`
+watch_file="watch-result.txt"
 
-PS_CMD="ps -edf | grep $LOCAL_USER"
-#PS_CMD="ps -ed -o comm"
+#local_user="$USER"
+local_user=$(whoami)
 
 #echo "search expression: $1"
-#echo "user: $LOCAL_USER"
-#echo "script: "`basename $0`
+#echo "user: $local_user"
+#echo "script: $(basename $0)"
 
-show_full_cmd=0
+# Default: %CPU, %MEM and short command:
+show_full_cmd=1
+
+if [ $show_full_cmd -eq 0 ] ; then
+
+	ps_opt="-o comm,args"
+
+else
+
+	ps_opt="-o pcpu,pmem,args"
+
+fi
+
+
+# To display the relevant header once, first:
+
+ps -ed ${ps_opt} | head --lines=1
+
 
 stop=1
 
 while [ $stop -eq 1 ] ; do
 
+	# Useful to show the user that not stuck:
 	echo "   Watching $1..."
 
-	if [ ${show_full_cmd} -eq 0 ]; then
-
-		# Full command:
-		ps -ed -o comm,args | grep -v `basename $0` | grep -v grep | grep -i "$1"
-	else
-
-		# Command filtered by user:
-		ps -edf | grep "$LOCAL_USER" | grep -v `basename $0` | grep -v grep | grep -i "$1"
-	fi
+	ps -ed ${ps_opt} | grep "$local_user" | grep -v $(basename $0) | grep -v grep | grep -i "$1"
 
 	echo
 	sleep 1
 
-done 2>&1 | tee ${WATCH_FILE}
+done 2>&1 | tee ${watch_file}
