@@ -1,5 +1,7 @@
 #!/bin/bash
 
+usage="Usage: $(basename $0) [--rm]"
+
 
 # This script makes the shortcut links to pre-made html scripts.
 
