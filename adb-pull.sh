@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: allows to download, in the current directory, files based on expressions (typically wildcards) whereas adb pull does not support that.\nEx: $(basename $0) /sdcard/IMG_20191124*jpg"
+usage="Usage: $(basename $0) EXPR: allows to download in the current directory, from the already connected and authorizing Android device (typically mobile phone), files based on the specified expression(s) (typically wildcards) whereas adb pull does not support that.\nEx: $(basename $0) /sdcard/IMG_20191124*jpg"
 
 adb_exec=$(which adb 2>/dev/null)
 
