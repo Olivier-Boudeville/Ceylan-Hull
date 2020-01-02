@@ -448,7 +448,8 @@ start_it_up()
 	#${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
 
 	## ident, if we drop these packets we may need to wait for the timeouts
-	# e.g. on ftp servers
+	# e.g. on ftp servers:
+	#
 	${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 	## FTP:
@@ -460,11 +461,16 @@ start_it_up()
 
 	# Orge section:
 
+	# Erlang default:
+	default_epmd_port=4369
+
+	orge_epmd_port=4506
+
 	if [ "$enable_orge" = "true" ] ; then
 
 		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
-		epmd_port=4506
-		#${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW -j ACCEPT
+
+		#${iptables} -A INPUT -p tcp --dport ${orge_epmd_port} -m state --state NEW -j ACCEPT
 
 		# For the listening socket of TCP Orge server:
 		${iptables} -A INPUT -p tcp --dport 9512 -m state --state NEW -j ACCEPT
@@ -476,6 +482,20 @@ start_it_up()
 		${iptables} -A INPUT -p udp --dport 9512 -m state --state NEW -j ACCEPT
 
 	fi
+
+	if [ $orge_epmd_port -eq $default_epmd_port ]; then
+
+		echo "Warning: Orge using the default Erlang EPMD port ($default_epmd_port), this is strongly discouraged." 1>&2
+
+	else
+
+		# We explicitly filter out the *default* EPMD port, to avoid any
+		# security hazard at this level:
+		#
+		${iptables} -A INPUT -p tcp --dport $default_epmd_port -m state --state NEW -j REJECT
+
+	fi
+
 
 	## SSH:
 
