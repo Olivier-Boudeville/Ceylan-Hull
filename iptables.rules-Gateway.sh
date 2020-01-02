@@ -68,7 +68,11 @@
 # An alternate, preferred method is to rely on a
 # /etc/systemd/system/iptables.rules-Gateway.service file, which is to recreate
 # from scratch (based on code rather than data) the targeted rules.
-
+#
+# Check (including regarding the rules version) with:
+#    systemctl is-enabled iptables.rules-Gateway.service
+# and
+#    systemctl status iptables.rules-Gateway.service
 
 
 # Note: for IPv6, use 'ip6tables' instead of 'iptables'.
@@ -635,7 +639,11 @@ start_it_up()
 	${iptables} -nvL --line-numbers >> $log_file
 	$echo "# ---- End of gateway rules, on $(date)." >> $log_file
 
-	$echo "iptables rules applied; to enforce them durably, update /etc/iptables/iptables.rules (see script comments for that)."
+	# Not true anymore if, as recommended, using now
+	# iptables.rules-Gateway.service (updating Ceylan-Hull shall be enough
+	# then):
+
+	#$echo "iptables rules applied; to enforce them durably, update /etc/iptables/iptables.rules (see script comments for that)."
 
 }
 
