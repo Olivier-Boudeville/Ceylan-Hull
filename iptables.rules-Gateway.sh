@@ -12,9 +12,8 @@
 ### END INIT INFO
 
 
-# This script configures the firewall for a gateway
-# (ex: between an ADSL or optic fiber connection providing an Internet
-# connection, and the LAN).
+# This script configures the firewall for a gateway (ex: between an ADSL or
+# optic fiber connection providing an Internet connection, and the LAN).
 
 # Written by Robert Penz (robert.penz@outertech.com).
 # This script is under GPL.
@@ -46,25 +45,31 @@
 # Adapted from script 'iptables.rules.ppp' by Olivier Boudeville, 2003, June 22.
 
 
-# To use it in the context of Arch Linux (first method):
+# To use it in the context of Arch Linux (first method, deprecated in favor of
+# the next one):
 #
 #  - test it with the automatic support disabled: 'systemctl stop iptables'
 #
 #  - run this script as root, with: ./iptables.rules-Gateway.sh restart
 #
-#  - copy the resulting state of iptables in the relevant file: iptables-save >
-# /etc/iptables/iptables.rules
+#  - copy the resulting state of iptables in the relevant file ('|' used to
+#    overwrite any pre-existing file):
+#       iptables-save >| /etc/iptables/iptables.rules
 #
-#  - reload the firewall: systemctl reload iptables
+#  - starts the firewall: systemctl start iptables
 #
 #  - check it just for this session: iptables -L
 #
-#  - check that iptables is meant to be started at boot: systemctl is-enabled
-#    iptables.service ; if not, run: systemctl enable iptables.service
+#  - check that iptables is meant to be started at boot:
+#        systemctl is-enabled iptables.service
+#      if not, run: systemctl enable iptables.service
+
 
 # An alternate, preferred method is to rely on a
 # /etc/systemd/system/iptables.rules-Gateway.service file, which is to recreate
 # from scratch (based on code rather than data) the targeted rules.
+
+
 
 # Note: for IPv6, use 'ip6tables' instead of 'iptables'.
 
@@ -100,7 +105,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
 # 's' is for server (log prefix must be shorter than 29 characters):
-version="s-16"
+version="s-17"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -153,16 +158,21 @@ start_it_up()
 	#	$rmmod ipchains
 	#fi
 
+	# Note: if modprobe fails, it is quite likely that the corresponding module
+	# is more recent on disc than the currently running kernel (there may have
+	# been a distribution update since last boot). Warning: if this module is
+	# not auto-loaded at boot, it may be not available at all here!
+
 	# Load appropriate modules:
-	${modprobe} ip_tables
+	${modprobe} ip_tables 2>/dev/null
 
 	# So that filtering rules can be commented:
-	${modprobe} xt_comment
+	${modprobe} xt_comment 2>/dev/null
 
 	# We load these modules as we want to do stateful firewalling:
-	${modprobe} ip_conntrack
-	#${modprobe} ip_conntrack_ftp
-	#${modprobe} ip_conntrack_irc
+	${modprobe} ip_conntrack 2>/dev/null
+	#${modprobe} ip_conntrack_ftp 2>/dev/null
+	#${modprobe} ip_conntrack_irc 2>/dev/null
 
 	# Starts by disabling IP forwarding:
 	$echo "0" > /proc/sys/net/ipv4/ip_forward
@@ -625,6 +635,8 @@ start_it_up()
 	${iptables} -nvL --line-numbers >> $log_file
 	$echo "# ---- End of gateway rules, on $(date)." >> $log_file
 
+	$echo "iptables rules applied; to enforce them durably, update /etc/iptables/iptables.rules (see script comments for that)."
+
 }
 
 
@@ -636,10 +648,10 @@ shut_it_down()
 	# whose connection will be lost after this call, preventing from restarting
 	# the service again...
 
-	$echo "Disabling Gateway firewall rules, version $version (DANGER!)."
+	$echo "Disabling Gateway firewall rules (DANGER!)."
 
 	# Load appropriate modules:
-	${modprobe} ip_tables
+	${modprobe} ip_tables 2>/dev/null
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
 	# counters before we implement new rules:
