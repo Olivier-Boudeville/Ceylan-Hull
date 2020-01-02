@@ -6,7 +6,7 @@ do_debug=1
 
 #new_year=$(date '+%Y')
 
-USAGE="
+usage="
 Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
 Updates the copyright notices of code of specified type found from specified root directory.
 
@@ -35,7 +35,7 @@ if [ $# -eq 5 ] ; then
 
 	else
 
-		echo "  Error, unknown '$1' option. $USAGE" 1>&2
+		echo "  Error, unknown '$1' option. $usage" 1>&2
 		exit 2
 
 	fi
@@ -46,7 +46,7 @@ fi
 if [ ! $# -eq 4 ] ; then
 
 		echo "  Error, exactly four parameters are required.
-$USAGE" 1>&2
+$usage" 1>&2
 		exit 5
 
 fi
@@ -66,7 +66,7 @@ case $code_type in
 
    *)
 		echo "  Error, unknown code type ($code_type).
-$USAGE" 1>&2
+$usage" 1>&2
 		exit 10
 		;;
 
@@ -78,18 +78,18 @@ root_dir=$2
 
 if [ -z "$root_dir" ] ; then
 
-		echo "  Error, no root directory specified.
-$USAGE" 1>&2
-		exit 10
+	echo "  Error, no root directory specified.
+$usage" 1>&2
+	exit 10
 
 fi
 
 
 if [ ! -d "$root_dir" ] ; then
 
-		echo "  Error, specified root directory ($root_dir) does not exist.
-$USAGE" 1>&2
-		exit 15
+	echo "  Error, specified root directory ($root_dir) does not exist.
+$usage" 1>&2
+	exit 15
 
 fi
 
