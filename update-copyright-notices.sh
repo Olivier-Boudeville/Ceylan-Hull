@@ -11,7 +11,7 @@ Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_N
 Updates the copyright notices of code of specified type found from specified root directory.
 
 CODE_TYPE is among:
-  - 'C++', for *.h, *.h.in, *.cc, *.cpp files
+  - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
   - 'Erlang', for *.hrl, *.erl files
 
 Ex: $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
@@ -127,8 +127,8 @@ if [ $code_type -eq 1 ] ; then
 
 elif [ $code_type -eq 2 ] ; then
 
-	# C++:
-	target_files=$(find -L . -name '*.h' -o -name '*.h.in' -o -name '*.cc' -o -name '*.cpp')
+	# C/C++:
+	target_files=$(find -L . -name '*.h' -o -name '*.h.in' -o -name '*.cc' -o -name '*.cpp' -o -name '*.c')
 	target_pattern="^ \* Copyright (C) $old_notice"
 	replacement_pattern=" * Copyright (C) $new_notice"
 

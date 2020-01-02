@@ -6,7 +6,7 @@ Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 Updates the copyright notices of code of specified type found from specified root directory, based on the specified years.
 
 CODE_TYPE is among:
-  - 'C++', for *.h, *.h.in, *.cc, *.cpp files
+  - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
   - 'Erlang', for *.hrl, *.erl files
 
 Ex: $(basename $0) Erlang $HOME/My-program-tree 2001 2013 \"Foobar Ltd\"
