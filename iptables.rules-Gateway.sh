@@ -287,6 +287,10 @@ start_it_up()
 	done
 
 	# Log spoofed packets, source routed packets, redirect packets:
+	#
+	# (note: adding a specific rejection rule for a martian source will not
+	# prevent it to be logged in the journal)
+	#
 	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Finally, make sure that IP forwarding is turned on, as it is a gateway:
