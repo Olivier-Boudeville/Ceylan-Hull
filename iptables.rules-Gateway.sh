@@ -14,8 +14,27 @@
 
 # This script configures the firewall for a gateway (ex: between an ADSL or
 # optic fiber connection providing an Internet connection, and the LAN).
+#
+# The "DMZ" corresponds here to the link between the Gateway and the Internet
+# device (ex: telecom set-top box):
+#
+# Client computer - (LAN) - Gateway - (DMZ) - Internet device - (Internet)
 
-# Written by Robert Penz (robert.penz@outertech.com).
+
+# Design rules:
+#
+# - trust the LAN: allow outgoing traffic, provided in its initiated internally
+# - distrust the Internet: by default, block new incoming traffic
+# - prefer droping packets to rejecting them
+#
+# As a consequence, unless specified otherwise (thanks to a specific rule), a
+# program running on the gateway (ex: BEAM or EPMD) will be able to send data to
+# whomever it wants on the Internet and receive answers, yet *not* be able to
+# listen to incoming traffic as it will receive none (that traffic being
+# blocked).
+
+
+# Original version written by Robert Penz (robert.penz@outertech.com).
 # This script is under GPL.
 
 # Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14 (article
@@ -109,7 +128,7 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
 # 's' is for server (log prefix must be shorter than 29 characters):
-version="s-17"
+version="s-18"
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -120,12 +139,13 @@ rmmod=/sbin/rmmod
 
 log_file=/root/.lastly-gateway-firewalled.touched
 
-# Local (LAN) interface:
+
+# Local (LAN) interface, the one we trust:
 #lan_if=eth1
 lan_if=enp2s0
 
 
-# Internet (WAN) interface:
+# Internet (WAN) interface, the one we distrust:
 
 # For PPP ADSL connections:
 #net_if=ppp0
@@ -144,6 +164,18 @@ enable_iptv=false
 
 # Tells whether a SMTP server can be used:
 enable_smtp=false
+
+
+# Typically a set-top box from one's ISP:
+
+# Classical example:
+#telecom_box="192.168.1.254"
+
+# Pseudo-public (actually intercepted by the Freebox, and directed to
+# itself, remaining purely local):
+#
+telecom_box="212.27.38.253"
+
 
 
 # The general approach here is based on whitelisting: by default everything is
@@ -202,7 +234,7 @@ start_it_up()
 	# default DROP policy), what happens is that there is a small time period
 	# when packets are denied until the new rules are back in place.
 	#
-	# There is no period, however small, when packets we do not want are
+	# There is no period, however small, when packets that we do not want are
 	# allowed.
 	#
 	${iptables} -P INPUT DROP
@@ -306,9 +338,9 @@ start_it_up()
 
 	# ----------------  FORWARD ---------------------
 
-	# To inspect the exchanges made by a multimedia box with following
+	# To inspect the exchanges made by a (in-LAN) multimedia box with following
 	# statically-assigned IP:
-
+	#
 	multimedia_box=10.0.100.1
 
 	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -s ${multimedia_box} -j LOG --log-prefix "[FW-Box-out] "
@@ -344,7 +376,7 @@ start_it_up()
 
 	# Packets from the Internet interface to the LAN one must not be new unknown
 	# connections:
-
+	#
 	${iptables} -A FORWARD -i ${net_if} -o ${lan_if} -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 
@@ -425,11 +457,16 @@ start_it_up()
 
 	# Drops directly connections coming from the Internet with unroutable
 	# (private) addresses:
+	#
 	${iptables} -A INPUT -i ${net_if} -s 10.0.0.0/8     -j DROP
 	${iptables} -A INPUT -i ${net_if} -s 127.0.0.0/8    -j DROP
 	${iptables} -A INPUT -i ${net_if} -s 172.16.0.0/12  -j DROP
 
-	# If the DMZ is 192.168.0.1/24 for example:
+	# If the IP of the gateway interface on the DMZ is assigned by a telecom box
+	# in router mode (hence IP-leve, not frame-level when in bridge mode)
+	# through DHCP (for example in the 192.168.0.0/24 range, say 192.168.0.1),
+	# in order to silence any input traffic afterwards:
+	#
 	${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/24 -j DROP
 
 
@@ -455,11 +492,11 @@ start_it_up()
 	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: fragments] "
 	${iptables} -A INPUT -f -j DROP
 
-	 ## HTTP (web server):
+	 ## HTTP (for webserver):
 	${iptables} -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
 
-	# HTTPS:
-	#${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
+	# HTTPS (for webserver as well):
+	${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
 
 	## ident, if we drop these packets we may need to wait for the timeouts
 	# e.g. on ftp servers:
@@ -588,8 +625,8 @@ start_it_up()
 
 
 	# NUT, for UPS monitoring:
-	#${iptables} -A INPUT -i ${lan_if} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
-	#${iptables} -A INPUT -i ${lan_if} -p udp --dport 3493 -m state --state NEW -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p udp --dport 3493 -m state --state NEW -j ACCEPT
 
 
 	# Squid (only local)
@@ -718,11 +755,11 @@ case "$1" in
 	if [ -z "$NAME" ] ; then
 		# Launched from the command-line:
 		#
-		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status}" >&2
+		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
 
 	else
 
-		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status|disable}" >&2
 
 	fi
 
