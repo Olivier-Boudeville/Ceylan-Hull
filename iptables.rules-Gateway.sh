@@ -13,7 +13,7 @@
 
 
 # This script configures the firewall for a gateway (ex: between an ADSL or
-# optic fiber connection providing an Internet connection, and the LAN).
+# optic fiber connection providing an Internet connection and the LAN).
 #
 # The "DMZ" corresponds here to the link between the Gateway and the Internet
 # device (ex: telecom set-top box):
@@ -23,15 +23,20 @@
 
 # Design rules:
 #
+# The general approach here is based on whitelisting: by default everything is
+# rejected, then only specific elements are allowed.
+#
+# More precisely:
 # - trust the LAN: allow outgoing traffic, provided in its initiated internally
 # - distrust the Internet: by default, block new incoming traffic
-# - prefer droping packets to rejecting them
+# - prefer droping packets to rejecting them (less information given)
 #
 # As a consequence, unless specified otherwise (thanks to a specific rule), a
 # program running on the gateway (ex: BEAM or EPMD) will be able to send data to
 # whomever it wants on the Internet and receive answers, yet *not* be able to
-# listen to incoming traffic as it will receive none (that traffic being
-# blocked).
+# listen to incoming traffic as it will receive none (since that inbound new
+# traffic will be blocked).
+
 
 
 # Original version written by Robert Penz (robert.penz@outertech.com).
@@ -40,28 +45,17 @@
 # Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14 (article
 # written by Christophe Grenier, grenier@cgsecurity.org)
 
-# To debug this kind of firewall script, one may use:
-# sh -x /path/to/this/file
 
 # For older distributions, this script is meant to be copied in /etc/init.d, to
 # be set as executable, and to be registered for future automatic launches by
 # using: 'update-rc.d iptables.rules-Gateway defaults' (better than being
 # directly set as the target of a symbolic link in: cd /etc/rc2.d && ln -s
 # ../init.d/iptables.rules-Gateway.sh).
-
-
-# Note: if 'modprobe iptables' fails because of tables not being found, it is
-# the sign that the corresponding kernel modules could not be loaded. This often
-# happens when the kernel modules on disk have been already updated while the
-# currently running kernel, dating from latest boot, is lingering
-# behind. Solution: rebooting and ensuring these kernel modules are loaded at
-# boot (see /etc/modules-load.d/ for that).
-
-
+#
+# Most current distributions rely on Systemd now.
+#
 # Adapted for Arch Linux and Systemd (see
 # https://wiki.archlinux.org/index.php/Iptables).
-
-# Adapted from script 'iptables.rules.ppp' by Olivier Boudeville, 2003, June 22.
 
 
 # To use it in the context of Arch Linux (first method, deprecated in favor of
@@ -94,9 +88,27 @@
 #    systemctl status iptables.rules-Gateway.service
 
 
+# Modprobe notes: if 'modprobe iptables' fails because of some tables not being
+# found, it is the sign that the corresponding kernel modules could not be
+# loaded. This often happens when the kernel modules on disk have been already
+# updated while the currently running kernel, dating from latest boot, is
+# lingering behind. Solution: rebooting and ensuring that these kernel modules
+# are loaded at boot (see /etc/modules-load.d/ for that).
+
+
 # Note: for IPv6, use 'ip6tables' instead of 'iptables'.
 
 # A 'logdrop' rule could be defined.
+
+# To debug more easily, by printing each line being executed first:
+#set -x
+
+# Or:
+# sh -x /path/to/this/file
+
+# Causes the script to exit on error as soon as a command failed.
+# Disabled, as some commands may fail (ex: modprobe)
+#set -e
 
 
 if [ ! $(id -u) -eq 0 ] ; then
@@ -106,14 +118,6 @@ if [ ! $(id -u) -eq 0 ] ; then
 	exit 10
 
 fi
-
-
-# To debug more easily, by printing each line being executed first:
-#set -x
-
-# Causes the script to exit on error as soon as a command failed.
-# Disabled, as some commands may fail (ex: modprobe)
-#set -e
 
 
 # Not used anymore by distros like Arch:
@@ -127,8 +131,15 @@ fi
 
 # Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
 # whether rules are up-to-date.
+#
+# One may also use: 'journalctl -kf' to monitor live the corresponding kernel
+# logs.
+#
 # 's' is for server (log prefix must be shorter than 29 characters):
-version="s-18"
+#
+version="s-19"
+
+
 
 # Full path of the programs we need, change them to your needs:
 iptables=/sbin/iptables
@@ -155,6 +166,10 @@ lan_if=enp2s0
 net_if=enp4s0
 
 
+# IP of a test client (to avoid too many logs, selecting only related events):
+#test_client_ip="xxx"
+
+
 # Tells whether Orge traffic should be allowed:
 enable_orge=false
 
@@ -166,7 +181,8 @@ enable_iptv=false
 enable_smtp=false
 
 
-# Typically a set-top box from one's ISP:
+# Typically a set-top box from one's ISP (defined as a possibly log match
+# criteria):
 
 # Classical example:
 #telecom_box="192.168.1.254"
@@ -174,12 +190,8 @@ enable_smtp=false
 # Pseudo-public (actually intercepted by the Freebox, and directed to
 # itself, remaining purely local):
 #
-telecom_box="212.27.38.253"
+#telecom_box="212.27.38.253"
 
-
-
-# The general approach here is based on whitelisting: by default everything is
-# rejected, then only specific elements are allowed.
 
 start_it_up()
 {
@@ -194,10 +206,7 @@ start_it_up()
 	#	$rmmod ipchains
 	#fi
 
-	# Note: if modprobe fails, it is quite likely that the corresponding module
-	# is more recent on disc than the currently running kernel (there may have
-	# been a distribution update since last boot). Warning: if this module is
-	# not auto-loaded at boot, it may be not available at all here!
+	# Note: see modprobe notes above.
 
 	# Load appropriate modules:
 	${modprobe} ip_tables 2>/dev/null
@@ -249,10 +258,12 @@ start_it_up()
 
 	# Enable response to ping in the kernel, but we will only answer if the rule
 	# at the bottom of the file let us:
+	#
 	$echo "0" > /proc/sys/net/ipv4/icmp_echo_ignore_all
 
 	# Disable response to broadcasts.
 	# You do not want yourself becoming a Smurf amplifier:
+	#
 	$echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 
 	# Do not accept source routed packets.
@@ -261,10 +272,12 @@ start_it_up()
 	# inside your network, but which is routed back along the path from which it
 	# came, namely outside, so attackers can compromise your network. Source
 	# routing is rarely used for legitimate purposes:
+	#
 	$echo "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
 
 	# Disable ICMP redirect acceptance. ICMP redirects can be used to alter your
 	# routing tables, possibly to a bad end:
+	#
 	$echo "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
 
 	# Enable bad error message protection:
@@ -281,17 +294,19 @@ start_it_up()
 	# or if you operate a non-routing host which has several IP addresses on
 	# different interfaces.
 	#
-	# Note: if you turn on IP forwarding, you will also get this:
+	# Note: if you turn on IP forwarding, you will also get this.
+	#
 	for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do
 		$echo "1" > ${interface}
 	done
+
 
 	# Log spoofed packets, source routed packets, redirect packets:
 	#
 	# (note: adding a specific rejection rule for a martian source will not
 	# prevent it to be logged in the journal)
 	#
-	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
+	#$echo "0" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Finally, make sure that IP forwarding is turned on, as it is a gateway:
 	$echo "1" > /proc/sys/net/ipv4/ip_forward
@@ -299,6 +314,24 @@ start_it_up()
 
 	## ============================================================
 	# RULES
+
+
+	# ---------------- DEBUG BASED ON LOGS -------------------
+
+	# These log rules will not affect the destiny of any packet:
+
+	# All interfaces, all states:
+	#${iptables} -A FORWARD -p tcp --dport 80 -s ${test_client_ip} -j LOG --log-prefix "[FW-FWD-O] "
+	#${iptables} -A FORWARD -p tcp --sport 80 -d ${test_client_ip} -j LOG --log-prefix "[FW-FWD-I] "
+
+	# All interfaces, all states:
+	#${iptables} -A OUTPUT -p tcp --dport 80 -s ${test_client_ip} -j LOG --log-prefix "[FW-OUT-O] "
+	#${iptables} -A OUTPUT -p tcp --sport 80 -d ${test_client_ip} -j LOG --log-prefix "[FW-OUT-I] "
+
+	# All interfaces, all states:
+	#${iptables} -A INPUT -p tcp --dport 80 -s ${test_client_ip} -j LOG --log-prefix "[FW-IN-O] "
+	#${iptables} -A INPUT -p tcp --sport 80 -d ${test_client_ip} -j LOG --log-prefix "[FW-IN-I] "
+
 
 
 	# ---------------- PRIVACY  -------------------
@@ -342,10 +375,12 @@ start_it_up()
 
 	# ----------------  FORWARD ---------------------
 
+	${iptables} -A FORWARD -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+
 	# To inspect the exchanges made by a (in-LAN) multimedia box with following
 	# statically-assigned IP:
 	#
-	multimedia_box=10.0.100.1
+	#multimedia_box=10.0.100.1
 
 	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -s ${multimedia_box} -j LOG --log-prefix "[FW-Box-out] "
 	#${iptables} -A FORWARD -i ${net_if} -o ${lan_if} -d ${multimedia_box} -j LOG --log-prefix "[FW-Box-in]"
@@ -392,33 +427,34 @@ start_it_up()
 	#
 	#${iptables} -t nat -A PREROUTING -i ${lan_if} -p tcp --dport 80 -j REDIRECT --to-port ${AD_FILTER_PORT}
 
-	# To access from the LAN to a box with such IP:
-	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -d 192.168.1.254 -j ACCEPT
+	# To access from the LAN  (ex: a multimedia box, or a local computer
+	# to tune the telecom box) to a telecom box with such IP (may be superfluous):
+	#
+	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -d ${telecom_box} -j ACCEPT
 
 
 
 	# ----------------  OUTPUT ---------------------
 
-	# To allow packets from the LAN (ex: a multimedia box, or a local computer
-	# to tune the network box) to reach the networking box:
-
-
-	#${iptables} -A OUTPUT -o ${net_if} -d 192.168.1.254 -j ACCEPT
+	# To allow packets from the gateway to reach that telecom box:
+	#${iptables} -A OUTPUT -o ${net_if} -d ${telecom_box} -j ACCEPT
 
 	# No unroutable (private) adddress should be output by the gateway:
-
 	${iptables} -A OUTPUT -o ${net_if} -d 10.0.0.0/8     -j REJECT
 	${iptables} -A OUTPUT -o ${net_if} -d 127.0.0.0/8    -j REJECT
 	${iptables} -A OUTPUT -o ${net_if} -d 172.16.0.0/12  -j REJECT
 
-	# Now the DMZ is 192.168.0.0/16:
+	# Now the DMZ is 192.168.0.0/16, so we cannot reject anymore with:
 	#${iptables} -A OUTPUT -o ${net_if} -d 192.168.0.0/16 -j REJECT
+
 
 	# Protect the LAN:
 	${iptables} -A OUTPUT -o ${lan_if} -d 192.168.0.0/16 -j REJECT
 
 	# Second rule is to let packets through which belong to established or
-	# related connections and we let all traffic out, as we trust ourself:
+	# related connections and we let all traffic out, as we trust ourself
+	# (i.e. what we run from the gateway):
+	#
 	${iptables} -A OUTPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
@@ -466,12 +502,21 @@ start_it_up()
 	${iptables} -A INPUT -i ${net_if} -s 127.0.0.0/8    -j DROP
 	${iptables} -A INPUT -i ${net_if} -s 172.16.0.0/12  -j DROP
 
+
 	# If the IP of the gateway interface on the DMZ is assigned by a telecom box
-	# in router mode (hence IP-leve, not frame-level when in bridge mode)
+	# in router mode (hence IP-level, not frame-level like when in bridge mode)
 	# through DHCP (for example in the 192.168.0.0/24 range, say 192.168.0.1),
-	# in order to silence any input traffic afterwards:
+	# one may would like to block incoming traffic that would originate from
+	# that box.
 	#
-	${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/24 -j DROP
+	# However this rule shall remain *deactivated*, otherwise web access to the
+	# gateway public address from the LAN will fail; presumably because the
+	# connection goes from the LAN client through the gateway (forward), and the
+	# telecom box sees a TCP connection from its DMZ interface to its own public
+	# address, which it routes back to the gateway with its own LAN address
+	# (thus in 192.168.0.0/24); so we must let this traffic exist:
+	#
+	#${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/24 -j DROP
 
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
@@ -493,14 +538,15 @@ start_it_up()
 	#
 	# We are not going to trust any fragments.
 	# Log fragments just to see if we get any, and deny them too.
+	#
 	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: fragments] "
 	${iptables} -A INPUT -f -j DROP
 
-	 ## HTTP (for webserver):
-	${iptables} -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
+	# HTTP (for webservers):
+	${iptables} -A INPUT -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 
-	# HTTPS (for webserver as well):
-	${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
+	# HTTPS (for webservers as well):
+	${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 	## ident, if we drop these packets we may need to wait for the timeouts
 	# e.g. on ftp servers:
@@ -558,10 +604,12 @@ start_it_up()
 	#ssh_port=22
 	ssh_port=44324
 
-	# Unlimited input from LAN:
-	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m state --state NEW -j ACCEPT
+	# Unlimited input from LAN (trying to resist any loss of connection/firewall
+	# reload):
+	#
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m state --state NEW,ESTABLISHED -j ACCEPT
 
-	# This rules allow to prevent brute-force SSH attacks by limiting the
+	# These rules allow to prevent brute-force SSH attacks by limiting the
 	# frequency of attempts coming from the Internet:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them:
@@ -646,19 +694,24 @@ start_it_up()
 	#${iptables} -A INPUT -p udp --dport 5000:5006 -j ACCEPT
 
 	## LOOPBACK
+
 	# Allow unlimited traffic on the loopback interface, e.g. needed for KDE,
 	# Gnome, etc.:
+	#
 	${iptables} -A INPUT  -i lo -j ACCEPT
 	${iptables} -A OUTPUT -o lo -j ACCEPT
 
 
 	# ---------------- ICMP ---------------------
 
-	# Everybody from the LAN can ping me (but no one from the Internet - however
+	# Everybody from the LAN can ping me (but no one from the Internet; however
 	# the network box may answer instead):
-
-	# Comment that line if no one should be able to ping you:
+	#
+	# Comment that line if no one should be able to ping you from the LAN:
 	${iptables} -A INPUT -i ${lan_if} -p icmp --icmp-type ping -j ACCEPT
+
+	# No Internet ping:
+	${iptables} -A INPUT -i ${net_if} -p icmp --icmp-type ping -j DROP
 
 
 	# ---------------- NTP ---------------------
@@ -676,6 +729,7 @@ start_it_up()
 	#
 	#${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
+
 	$echo "Set rules are:" >> $log_file
 	${iptables} -nvL --line-numbers >> $log_file
 	$echo "# ---- End of gateway rules, on $(date)." >> $log_file
@@ -683,7 +737,7 @@ start_it_up()
 	# Not true anymore if, as recommended, using now
 	# iptables.rules-Gateway.service (updating Ceylan-Hull shall be enough
 	# then):
-
+	#
 	#$echo "iptables rules applied; to enforce them durably, update /etc/iptables/iptables.rules (see script comments for that)."
 
 }
@@ -702,8 +756,9 @@ shut_it_down()
 	# Load appropriate modules:
 	${modprobe} ip_tables 2>/dev/null
 
-	# We remove all rules and pre-exisiting user defined chains and zero the
+	# We remove all rules and pre-existing user-defined chains, and zero the
 	# counters before we implement new rules:
+	#
 	${iptables} -F
 	${iptables} -X
 	${iptables} -Z
@@ -718,17 +773,21 @@ shut_it_down()
 script_name=$(basename $0)
 
 case "$1" in
+
   start)
 	start_it_up
-  ;;
+	;;
+
   stop)
 	shut_it_down
-  ;;
+	;;
+
   reload|force-reload)
 	echo "(reloading)"
 	shut_it_down
 	start_it_up
-  ;;
+	;;
+
   restart)
 	echo "(restarting)"
 	# Note: at least in general, using the 'restart' option will not break a
@@ -736,11 +795,13 @@ case "$1" in
 	#
 	shut_it_down
 	start_it_up
-  ;;
+	;;
+
   status)
 	echo "(status)"
 	${iptables} -L
-  ;;
+	;;
+
   disable)
 	echo "Disabling all rules (hence disabling the firewall)"
 	${iptables} -F INPUT
@@ -751,14 +812,13 @@ case "$1" in
 
 	${iptables} -F OUTPUT
 	${iptables} -P OUTPUT ACCEPT
-  ;;
-  *)
+	;;
 
+  *)
 	echo " Error, no appropriate action specified." >&2
 
 	if [ -z "$NAME" ] ; then
 		# Launched from the command-line:
-		#
 		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
 
 	else
