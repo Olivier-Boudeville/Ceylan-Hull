@@ -325,6 +325,18 @@ chooseVi()
 
 
 
+chooseGanttproject()
+{
+
+	GANTTPROJECT=$(which ganttproject 2>/dev/null | grep -v ridiculously 2>/dev/null)
+
+	editor="${GANTTPROJECT}"
+	editor_short_name="Ganttproject"
+	multi_win=1
+
+}
+
+
 autoSelectEditor()
 {
 
@@ -638,11 +650,19 @@ for arg in "$@" ; do
 		#echo "arg=$arg"
 
 		# But then the information is lost when:
-		parameters="$parameters ${arg}"
+		# (avoiding any intial space)
+		#
+		if [ -z "${parameters}" ] ; then
+			parameters="${arg}"
+		else
+			parameters="$parameters ${arg}"
+		fi
 
 	fi
 
 done
+
+#echo "A: parameters = '$parameters'"
 
 # Last test regarding bloody spaces included in filenames:
 #for p in ${parameters} ; do echo "- parameter: '$p'" ; done
@@ -701,6 +721,7 @@ if [ $do_locate -eq 0 ] ; then
 fi
 
 
+#echo "B: parameters = '$parameters'"
 
 
 # Default:
@@ -714,8 +735,8 @@ extension=$(echo $parameters| sed 's|^.*\.||1')
 #extension=$(echo $1| sed 's|^.*\.||1')
 
 
-#echo "parameters = $parameters"
-#echo "extension = $extension"
+#echo "C: parameters = '$parameters'"
+#echo "C: extension = '$extension'"
 
 
 if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
@@ -743,7 +764,6 @@ if [ "${extension}" = "png" ] ; then
 	exit 0
 
 fi
-
 
 if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
 
@@ -835,6 +855,25 @@ if [ "${extension}" = "traces" ] ; then
 		editor_short_name="LogMX"
 
 	fi
+
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "gan" ] ; then
+
+	chooseGanttproject
+
+	# Supposing a single filename (otherwise will look up files in
+	# /opt/ganttproject rather than in current directory):
+
+	#echo "D: parameters = '${parameters}'"
+
+	parameters="$PWD/${parameters}"
+
+	#echo "E: parameters = '${parameters}'"
 
 	applyEditor
 	exit 0

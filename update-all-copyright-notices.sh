@@ -1,12 +1,12 @@
 #!/bin/sh
 
-USAGE="
+usage="
 Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
 Updates the copyright notices of code of specified type found from specified root directory, based on the specified years.
 
 CODE_TYPE is among:
-  - 'C++', for *.h, *.h.in, *.cc, *.cpp files
+  - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
   - 'Erlang', for *.hrl, *.erl files
 
 Ex: $(basename $0) Erlang $HOME/My-program-tree 2001 2013 \"Foobar Ltd\"
@@ -34,7 +34,7 @@ Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 2010
 if [ ! $# -eq 5 ] ; then
 
 	echo "  Error, exactly five parameters are required.
-$USAGE" 1>&2
+$usage" 1>&2
 	exit 5
 
 fi
@@ -52,7 +52,7 @@ case $code_type in
 
    *)
 		echo "  Error, unknown code type ($code_type).
-$USAGE" 1>&2
+$usage" 1>&2
 		exit 10
 		;;
 
@@ -63,18 +63,18 @@ root_dir=$2
 
 if [ -z "$root_dir" ] ; then
 
-		echo "  Error, no root directory specified.
-$USAGE" 1>&2
-		exit 10
+	echo "  Error, no root directory specified.
+$usage" 1>&2
+	exit 10
 
 fi
 
 
 if [ ! -d "$root_dir" ] ; then
 
-		echo "  Error, specified root directory ($root_dir) does not exist.
-$USAGE" 1>&2
-		exit 15
+	echo "  Error, specified root directory ($root_dir) does not exist.
+$usage" 1>&2
+	exit 15
 
 fi
 

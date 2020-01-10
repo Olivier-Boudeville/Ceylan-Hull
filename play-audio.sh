@@ -7,6 +7,8 @@ usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [fi
 	  --quiet: not console output wanted
 	  --recursive: (also) select audio files automatically and recursively, from the current directory
   (default: no announce, not quiet, not recursive - unless no files are specified)
+
+  Note: the underlying audio player remains responsive (console-level interaction, for example to pause it).
 "
 
 # See also: just-listen-no-video.sh.
@@ -19,7 +21,7 @@ say()
 {
 
 	#echo "$*"
-	${espeak} "$*"
+	${espeak} --punct="" "$*" 2>/dev/null
 
 }
 
@@ -108,7 +110,10 @@ for f in ${files} ; do
 
 		if [ $do_announce -eq 0 ] ; then
 
-			say "Playing ${f}"
+			say_name=$(basename ${f}|sed 's|\..*$||1')
+			#echo "say_name = ${say_name}"
+
+			say "Playing " ${say_name}
 
 		fi
 
