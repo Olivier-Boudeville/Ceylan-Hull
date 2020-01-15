@@ -590,10 +590,11 @@ start_it_up()
 
 	else
 
-		# We explicitly filter out the *default* EPMD port, to avoid any
-		# security hazard at this level:
+		# We explicitly filter out the *default* EPMD port, on the WAN interface
+		# only (still wanting to be able to launch named nodes from that
+		# gateway), to avoid any security hazard at this level:
 		#
-		${iptables} -A INPUT -p tcp --dport $default_epmd_port -m state --state NEW -j REJECT
+		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -m state --state NEW -j REJECT
 
 	fi
 
@@ -779,7 +780,14 @@ case "$1" in
 	;;
 
   stop)
-	shut_it_down
+	  echo "Warning: if this script is executed remotely (ex: through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (ex: 'systemctl restart iptables.rules-Gateway.service') would be then a better solution."
+	  echo "Proceed anyway? [y/n] (default: n)"
+	  read answer
+	  if [ "${answer}" = "y" ] ; then
+		  shut_it_down
+	  else
+		  echo "(stop aborted)"
+	  fi
 	;;
 
   reload|force-reload)
