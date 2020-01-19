@@ -594,7 +594,10 @@ start_it_up()
 		# only (still wanting to be able to launch named nodes from that
 		# gateway), to avoid any security hazard at this level:
 		#
-		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -m state --state NEW -j REJECT
+		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -j REJECT
+
+		# For any additional safety thereof:
+		${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j REJECT
 
 	fi
 
