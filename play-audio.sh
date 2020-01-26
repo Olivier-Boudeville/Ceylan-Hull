@@ -52,7 +52,10 @@ be_recursive=1
 
 if [ "${player_name}" = "mplayer" ] ; then
 
-	echo " (enter 'U' at any moment to stop current playback and jump to any next one)"
+	echo "  Using mplayer, hence one may enter:"
+	echo "    - <space> to pause/unpause the current playblack"
+	echo "    - 'U' at any moment to stop current playback and jump to any next one"
+	echo "    - <CTRL-C> to stop all playbacks"
 
 fi
 
