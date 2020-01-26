@@ -258,11 +258,11 @@ start_it_up()
 	$echo "Setting Gateway firewall rules, version $version."
 
 	$echo >> "${log_file}"
-	$echo "# ---- Setting Gateway firewall rules, version $version, on $(date)." >> $log_file
+	$echo "# ---- Setting Gateway firewall rules, version $version, on $(date)." >> "${log_file}"
 	$echo >> "${log_file}"
 
 
-	$echo "Interfaces: LAN is ${lan_if}, Internet is ${net_if}." >> $log_file
+	$echo "Interfaces: LAN is ${lan_if}, Internet is ${net_if}." >> "${log_file}"
 	$echo "Services: Orge is '${enable_orge}' (port: ${orge_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), IPTV is '${enable_iptv}', SMTP is '${enable_smtp}', SSH port is '${ssh_port}'." >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
