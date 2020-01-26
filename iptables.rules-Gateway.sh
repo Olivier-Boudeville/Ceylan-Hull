@@ -137,7 +137,7 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-19"
+version="s-20"
 
 
 
@@ -148,49 +148,88 @@ echo=/bin/echo
 lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
-log_file=/root/.lastly-gateway-firewalled.touched
+
+# Now the settings are not embedded anymore in this script, meant to be sourced:
+setting_file="/etc/iptables.settings-Gateway.sh"
 
 
-# Local (LAN) interface, the one we trust:
-#lan_if=eth1
-lan_if=enp2s0
+if [ ! -f "${setting_file}" ] ; then
+
+	$echo " Error, setting file ('${setting_file}) not found." 1>&2
+
+	exit 15
+
+fi
+
+. "${setting_file}"
 
 
-# Internet (WAN) interface, the one we distrust:
+if [ -z "${log_file}" ] ; then
 
-# For PPP ADSL connections:
-#net_if=ppp0
+	$echo " Error, log_file not defined." 1>&2
 
-# For direct connection to a set-top (telecom) box from your provider:
-#net_if=eth0
-net_if=enp4s0
+	exit 16
 
-
-# IP of a test client (to avoid too many logs, selecting only related events):
-#test_client_ip="xxx"
+fi
 
 
-# Tells whether Orge traffic should be allowed:
-enable_orge=false
+if [ -z "${lan_if}" ] ; then
 
-# Tells whether IPTV (TV on the Internet thanks to a box) should be allowed:
-enable_iptv=false
+	$echo " Error, lan_if not defined." 1>&2
 
+	exit 16
 
-# Tells whether a SMTP server can be used:
-enable_smtp=false
+fi
 
 
-# Typically a set-top box from one's ISP (defined as a possibly log match
-# criteria):
+if [ -z "${net_if}" ] ; then
 
-# Classical example:
-#telecom_box="192.168.1.254"
+	$echo " Error, net_if not defined." 1>&2
 
-# Pseudo-public (actually intercepted by the Freebox, and directed to
-# itself, remaining purely local):
-#
-#telecom_box="212.27.38.253"
+	exit 17
+
+fi
+
+
+if [ -z "${enable_orge}" ] ; then
+
+	$echo " Error, enable_orge not defined." 1>&2
+
+	exit 18
+
+fi
+
+
+if [ -z "${enable_iptv}" ] ; then
+
+	echo " Error, enable_iptv not defined." 1>&2
+
+	exit 19
+
+fi
+
+
+if [ -z "${enable_smtp}" ] ; then
+
+	$echo " Error, enable_smtp not defined." 1>&2
+
+	exit 20
+
+fi
+
+
+if [ -z "${ssh_port}" ] ; then
+
+	$echo " Error, ssh_port not defined." 1>&2
+
+	exit 21
+
+fi
+
+
+# Not all settings tested.
+
+
 
 
 start_it_up()
@@ -213,6 +252,9 @@ start_it_up()
 
 	# So that filtering rules can be commented:
 	${modprobe} xt_comment 2>/dev/null
+
+	# To be able to use port range:
+	${modprobe} xt_multiport 2>/dev/null
 
 	# We load these modules as we want to do stateful firewalling:
 	${modprobe} ip_conntrack 2>/dev/null
@@ -348,7 +390,7 @@ start_it_up()
 
 		if [ -f "${ban_file}" ] ; then
 
-			$echo "Adding ban rules from '${ban_file}'."
+			$echo "Adding ban rules from '${ban_file}'." >> $log_file
 
 			. "${ban_file}"
 
@@ -356,7 +398,7 @@ start_it_up()
 
 			if [ ! $res -eq 0 ] ; then
 
-				echo "  Error, the addition of ban rules failed." 1>&2
+				$echo "  Error, the addition of ban rules failed." 1>&2
 
 				exit 60
 
@@ -364,7 +406,7 @@ start_it_up()
 
 		else
 
-			echo "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
+			$echo "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
 
 			exit 61
 
@@ -480,15 +522,6 @@ start_it_up()
 
 	fi
 
-
-	# DHT subsection, for P2P exchanges:
-	# More infos: https://github.com/rakshasa/rtorrent/wiki/Using-DHT
-
-	dht_udp_port=7881
-
-	#use_dht="true"
-	use_dht="false"
-
 	if [ "$use_dht" = "true" ] ; then
 
 		${iptables} -A INPUT -i ${net_if} -p udp -m udp --dport ${dht_udp_port} -j ACCEPT
@@ -501,6 +534,21 @@ start_it_up()
 	${iptables} -A INPUT -i ${net_if} -s 10.0.0.0/8     -j DROP
 	${iptables} -A INPUT -i ${net_if} -s 127.0.0.0/8    -j DROP
 	${iptables} -A INPUT -i ${net_if} -s 172.16.0.0/12  -j DROP
+
+
+	# If an (optional) TCP port range is specified, accepts corresponding
+	# LAN-originating packets addressed to this gateway:
+	#
+	# Ex: lan_tcp_port_range="40000:45000"
+	if [ -n "${lan_tcp_port_range}" ] ; then
+
+		$echo "Enabling TCP port range ${lan_tcp_port_range}." >> $log_file
+		${iptables} -A INPUT -i ${lan_if} -p tcp -m multiport --dports ${lan_tcp_port_range} -j ACCEPT
+
+		# If not having the xt_multiport module, do not restrict ports:
+		#${iptables} -A INPUT -i ${lan_if} -p tcp -j ACCEPT
+
+	fi
 
 
 	# If the IP of the gateway interface on the DMZ is assigned by a telecom box
@@ -562,11 +610,6 @@ start_it_up()
 
 	# Orge section:
 
-	# Erlang default:
-	default_epmd_port=4369
-
-	orge_epmd_port=4506
-
 	if [ "$enable_orge" = "true" ] ; then
 
 		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
@@ -604,10 +647,6 @@ start_it_up()
 
 	## SSH:
 
-	# One may use a non-standard port:
-	#ssh_port=22
-	ssh_port=44324
-
 	# Unlimited input from LAN (trying to resist any loss of connection/firewall
 	# reload):
 	#
@@ -634,14 +673,6 @@ start_it_up()
 
 	# Sending emails:
 
-	smtp_port=25
-
-	# SMTPS is obsolete:
-	smtp_secure_port=465
-
-	# STARTTLS over SMTP is the proper way of securing SMTP:
-	msa_port=587
-
 	if [ "$enable_smtp" = "true" ] ; then
 
 		# Basic setting:
@@ -663,14 +694,6 @@ start_it_up()
 
 
 	# Receiving emails:
-
-	pop3_port=110
-
-	# POP3S:
-	pop3_secure_port=995
-
-	imap_port=143
-	imap_secure_port=993
 
 
 	# Allow UDP & TCP packets to the DNS server from LAN clients (only needed if
