@@ -25,8 +25,9 @@ say()
 
 }
 
+player_name="mplayer"
 
-player=$(which mplayer 2>/dev/null)
+player=$(which ${player_name} 2>/dev/null)
 player_opt="-novideo"
 
 #player=$(which cvlc 2>/dev/null)
@@ -47,6 +48,13 @@ mplayer_cmd="${player} -msglevel identify=6 $f |grep -e '^ID_'|grep -v ID_AUDIO_
 do_announce=1
 be_quiet=1
 be_recursive=1
+
+
+if [ "${player_name}" = "mplayer" ] ; then
+
+	echo " (enter 'U' at any moment to stop current playback and jump to any next one)"
+
+fi
 
 
 while [ ! $# -eq 0 ] ; do
