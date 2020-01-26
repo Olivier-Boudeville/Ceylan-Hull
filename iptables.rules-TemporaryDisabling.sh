@@ -24,22 +24,15 @@ fi
 
 echo "Disabling temporarily ALL iptables rules (beware, all traffic accepted!)"
 
-# Mangle removed, to avoid:
+iptables=/sbin/iptables
 
-#iptables v1.4.20: can't initialize iptables table `mangle': Table does not exist (do you need to insmod?)
-#Perhaps iptables or your kernel needs to be upgraded.
-
-# With mangle:
-#iptables -X && iptables -t nat -F && iptables -t nat -X && iptables -t mangle -F && iptables -t mangle -X && iptables -P INPUT ACCEPT && iptables -P FORWARD ACCEPT && iptables -P OUTPUT ACCEPT
-
-# Without mangle:
-iptables -X && iptables -t nat -F && iptables -t nat -X && iptables -P INPUT ACCEPT && iptables -P FORWARD ACCEPT && iptables -P OUTPUT ACCEPT
+${iptables} -F && ${iptables} -X && ${iptables} -Z && ${iptables} -F -t nat && ${iptables} -X -t nat && ${iptables} -Z -t nat && ${iptables} -P INPUT ACCEPT &&	${iptables} -P FORWARD ACCEPT && ${iptables} -P OUTPUT ACCEPT
 
 
 if [ ! $? -eq 0 ] ; then
 
 	echo "
-	Error, disabling failed, trying to reset directly the (gateway) rules." 1>&2
+	Error, disabling failed, trying to reset directly the base (gateway) rules." 1>&2
 	${firewall_script}
 
 	exit 15
@@ -57,6 +50,6 @@ sleep_duration=1200
 echo "Sleeping for $sleep_duration seconds..."
 sleep $sleep_duration
 
-echo "...awoken, reseting rules with $firewall_script..."
+echo "...awoken, restoring rules with $firewall_script..."
 
-${firewall_script} && echo "... done!"
+${firewall_script} && echo "... restored!"
