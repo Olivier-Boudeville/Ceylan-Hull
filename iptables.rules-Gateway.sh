@@ -111,9 +111,17 @@
 #set -e
 
 
+# Full path of the programs we need, change them to your needs:
+iptables=/sbin/iptables
+modprobe=/sbin/modprobe
+echo=/bin/echo
+lsmod=/sbin/lsmod
+rmmod=/sbin/rmmod
+
+
 if [ ! $(id -u) -eq 0 ] ; then
 
-	echo "  Error, firewall rules can only be applied by root." 1>&2
+	$echo "  Error, firewall rules can only be applied by root." 1>&2
 
 	exit 10
 
@@ -121,11 +129,11 @@ fi
 
 
 # Not used anymore by distros like Arch:
-init_file="/lib/lsb/init-functions"
+#init_file="/lib/lsb/init-functions"
 
-if [ -f "$init_file" ] ; then
-	. "$init_file"
-fi
+#if [ -f "$init_file" ] ; then
+#	. "$init_file"
+#fi
 
 
 
@@ -137,19 +145,12 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-20"
+version="s-21"
 
 
-
-# Full path of the programs we need, change them to your needs:
-iptables=/sbin/iptables
-modprobe=/sbin/modprobe
-echo=/bin/echo
-lsmod=/sbin/lsmod
-rmmod=/sbin/rmmod
-
-
-# Now the settings are not embedded anymore in this script, meant to be sourced:
+# Now the settings are not embedded anymore in this script, but in the next
+# file, meant to be sourced:
+#
 setting_file="/etc/iptables.settings-Gateway.sh"
 
 
@@ -160,6 +161,10 @@ if [ ! -f "${setting_file}" ] ; then
 	exit 15
 
 fi
+
+
+# Logic of toggle variables: they are to be compared to "true" or "false"
+# (clearer than, respectively, 0 or 1).
 
 . "${setting_file}"
 
@@ -173,11 +178,22 @@ if [ -z "${log_file}" ] ; then
 fi
 
 
+if [ -f "${log_file}" ] ; then
+
+	/bin/rm -f "${log_file}"
+
+fi
+
+
+# From now on, log-related echos can be done in the log file:
+$echo > "${log_file}"
+
+
 if [ -z "${lan_if}" ] ; then
 
 	$echo " Error, lan_if not defined." 1>&2
 
-	exit 16
+	exit 17
 
 fi
 
@@ -186,7 +202,7 @@ if [ -z "${net_if}" ] ; then
 
 	$echo " Error, net_if not defined." 1>&2
 
-	exit 17
+	exit 18
 
 fi
 
@@ -195,16 +211,16 @@ if [ -z "${enable_orge}" ] ; then
 
 	$echo " Error, enable_orge not defined." 1>&2
 
-	exit 18
+	exit 19
 
 fi
 
 
 if [ -z "${enable_iptv}" ] ; then
 
-	echo " Error, enable_iptv not defined." 1>&2
+	$echo " Error, enable_iptv not defined." 1>&2
 
-	exit 19
+	exit 20
 
 fi
 
@@ -213,7 +229,7 @@ if [ -z "${enable_smtp}" ] ; then
 
 	$echo " Error, enable_smtp not defined." 1>&2
 
-	exit 20
+	exit 21
 
 fi
 
@@ -222,7 +238,7 @@ if [ -z "${ssh_port}" ] ; then
 
 	$echo " Error, ssh_port not defined." 1>&2
 
-	exit 21
+	exit 22
 
 fi
 
@@ -230,13 +246,24 @@ fi
 # Not all settings tested.
 
 
+# Not a parameter:
+
+# Erlang default:
+default_epmd_port=4369
 
 
 start_it_up()
 {
 
 	$echo "Setting Gateway firewall rules, version $version."
-	$echo "# ---- Setting Gateway firewall rules, version $version, on $(date)." > $log_file
+
+	$echo >> "${log_file}"
+	$echo "# ---- Setting Gateway firewall rules, version $version, on $(date)." >> $log_file
+	$echo >> "${log_file}"
+
+
+	$echo "Interfaces: LAN is ${lan_if}, Internet is ${net_if}." >> $log_file
+	$echo "Services: Orge is '${enable_orge}' (port: ${orge_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), IPTV is '${enable_iptv}', SMTP is '${enable_smtp}', SSH port is '${ssh_port}'." >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
@@ -253,8 +280,8 @@ start_it_up()
 	# So that filtering rules can be commented:
 	${modprobe} xt_comment 2>/dev/null
 
-	# To be able to use port range:
-	${modprobe} xt_multiport 2>/dev/null
+	# Not necessary to be able to use continuous port range:
+	#${modprobe} xt_multiport 2>/dev/null
 
 	# We load these modules as we want to do stateful firewalling:
 	${modprobe} ip_conntrack 2>/dev/null
@@ -267,7 +294,7 @@ start_it_up()
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
 	#
-	# We want to remove all rules and pre-exisiting user defined chains, and to
+	# We want to remove all rules and pre-existing user defined chains, and to
 	# zero the counters before we implement new rules:
 	#
 	${iptables} -F
@@ -381,16 +408,11 @@ start_it_up()
 	# This is an exception section, having mixed INPUT and OUTPUT rules.
 	# It shall come first!
 
-	use_ban_rules="true"
-	#use_ban_rules="false"
-
-	ban_file="/etc/ban-rules.iptables"
-
 	if [ "$use_ban_rules" = "true" ] ; then
 
 		if [ -f "${ban_file}" ] ; then
 
-			$echo "Adding ban rules from '${ban_file}'." >> $log_file
+			$echo " - adding ban rules from '${ban_file}'" >> "${log_file}"
 
 			. "${ban_file}"
 
@@ -539,14 +561,11 @@ start_it_up()
 	# If an (optional) TCP port range is specified, accepts corresponding
 	# LAN-originating packets addressed to this gateway:
 	#
-	# Ex: lan_tcp_port_range="40000:45000"
-	if [ -n "${lan_tcp_port_range}" ] ; then
+	if [ "$enable_unfiltered_tcp_range" = "true" ] ; then
 
-		$echo "Enabling TCP port range ${lan_tcp_port_range}." >> $log_file
-		${iptables} -A INPUT -i ${lan_if} -p tcp -m multiport --dports ${lan_tcp_port_range} -j ACCEPT
+		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 
-		# If not having the xt_multiport module, do not restrict ports:
-		#${iptables} -A INPUT -i ${lan_if} -p tcp -j ACCEPT
+		${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -j ACCEPT
 
 	fi
 
@@ -627,9 +646,10 @@ start_it_up()
 
 	fi
 
-	if [ $orge_epmd_port -eq $default_epmd_port ]; then
+	# String comparison as may not be defined:
+	if [ "$orge_epmd_port" = "$default_epmd_port" ]; then
 
-		echo "Warning: Orge using the default Erlang EPMD port ($default_epmd_port), this is strongly discouraged." 1>&2
+		$echo "Warning: Orge is using the default Erlang EPMD port ($default_epmd_port); this is strongly discouraged." 1>&2
 
 	else
 
@@ -757,9 +777,9 @@ start_it_up()
 	#${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
 
-	$echo "Set rules are:" >> $log_file
-	${iptables} -nvL --line-numbers >> $log_file
-	$echo "# ---- End of gateway rules, on $(date)." >> $log_file
+	$echo "Set rules are:" >> "${log_file}"
+	${iptables} -nvL --line-numbers >> "${log_file}"
+	$echo "# ---- End of gateway rules, on $(date)." >> "${log_file}"
 
 	# Not true anymore if, as recommended, using now
 	# iptables.rules-Gateway.service (updating Ceylan-Hull shall be enough
@@ -806,24 +826,24 @@ case "$1" in
 	;;
 
   stop)
-	  echo "Warning: if this script is executed remotely (ex: through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (ex: 'systemctl restart iptables.rules-Gateway.service') would be then a better solution."
-	  echo "Proceed anyway? [y/n] (default: n)"
+	  $echo "Warning: if this script is executed remotely (ex: through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (ex: 'systemctl restart iptables.rules-Gateway.service') would be then a better solution."
+	  $echo "Proceed anyway? [y/n] (default: n)"
 	  read answer
 	  if [ "${answer}" = "y" ] ; then
 		  shut_it_down
 	  else
-		  echo "(stop aborted)"
+		  $echo "(stop aborted)"
 	  fi
 	;;
 
   reload|force-reload)
-	echo "(reloading)"
+	$echo "(reloading)"
 	shut_it_down
 	start_it_up
 	;;
 
   restart)
-	echo "(restarting)"
+	$echo "(restarting)"
 	# Note: at least in general, using the 'restart' option will not break a
 	# remote SSH connection issuing that command.
 	#
@@ -832,12 +852,12 @@ case "$1" in
 	;;
 
   status)
-	echo "(status)"
+	$echo "(status)"
 	${iptables} -L
 	;;
 
   disable)
-	echo "Disabling all rules (hence disabling the firewall)"
+	$echo "Disabling all rules (hence disabling the firewall)"
 	${iptables} -F INPUT
 	${iptables} -P INPUT ACCEPT
 
@@ -849,15 +869,15 @@ case "$1" in
 	;;
 
   *)
-	echo " Error, no appropriate action specified." >&2
+	$echo " Error, no appropriate action specified." >&2
 
 	if [ -z "$NAME" ] ; then
 		# Launched from the command-line:
-		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
+		$echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
 
 	else
 
-		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status|disable}" >&2
+		$echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status|disable}" >&2
 
 	fi
 
@@ -866,5 +886,9 @@ case "$1" in
   ;;
 
 esac
+
+$echo
+$echo "The content of log file ('${log_file}') follows:"
+/bin/cat "${log_file}"
 
 exit 0
