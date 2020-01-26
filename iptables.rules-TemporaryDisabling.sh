@@ -2,14 +2,13 @@
 
 
 firewall_script_name="iptables.rules-Gateway.sh"
-firewall_script=`which ${firewall_script_name}`
+firewall_script=$(which ${firewall_script_name})
 
-if [ ! `id -u` -eq 0 ] ; then
+if [ ! $(id -u) -eq 0 ] ; then
 
 	echo "
 	Error, you must be root, aborting." 1>&2
-
-	exit 1
+	exit 5
 
 fi
 
@@ -19,7 +18,7 @@ if [ ! -x "${firewall_script}" ] ; then
 	echo "
 	Error, no firewall script found to set back the firewall (${firewall_script_name}), aborting." 1>&2
 
-	exit 5
+	exit 10
 
 fi
 
@@ -45,9 +44,16 @@ if [ ! $? -eq 0 ] ; then
 
 	exit 15
 
+else
+
+	echo "(reported success)"
+
 fi
 
-sleep_duration=1000
+
+# 20 minutes:
+sleep_duration=1200
+
 echo "Sleeping for $sleep_duration seconds..."
 sleep $sleep_duration
 
