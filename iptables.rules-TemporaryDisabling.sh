@@ -22,11 +22,13 @@ if [ ! -x "${firewall_script}" ] ; then
 
 fi
 
+
 echo "Disabling temporarily ALL iptables rules (beware, all traffic accepted!)"
+
 
 iptables=/sbin/iptables
 
-${iptables} -F && ${iptables} -X && ${iptables} -Z && ${iptables} -F -t nat && ${iptables} -X -t nat && ${iptables} -Z -t nat && ${iptables} -P INPUT ACCEPT &&	${iptables} -P FORWARD ACCEPT && ${iptables} -P OUTPUT ACCEPT
+${iptables} -F && ${iptables} -X && ${iptables} -Z && ${iptables} -F -t nat && ${iptables} -X -t nat && ${iptables} -Z -t nat && ${iptables} -P INPUT ACCEPT && ${iptables} -P FORWARD ACCEPT && ${iptables} -P OUTPUT ACCEPT
 
 
 if [ ! $? -eq 0 ] ; then
