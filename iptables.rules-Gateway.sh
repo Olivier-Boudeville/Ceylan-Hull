@@ -511,9 +511,10 @@ start_it_up()
 	# Now the DMZ is 192.168.0.0/16, so we cannot reject anymore with:
 	#${iptables} -A OUTPUT -o ${net_if} -d 192.168.0.0/16 -j REJECT
 
-
-	# Protect the LAN:
+	# Protect the LAN also:
 	${iptables} -A OUTPUT -o ${lan_if} -d 192.168.0.0/16 -j REJECT
+	${iptables} -A OUTPUT -o ${lan_if} -d 172.16.0.0/12  -j REJECT
+	${iptables} -A OUTPUT -o ${lan_if} -d 127.0.0.0/8    -j REJECT
 
 	# Second rule is to let packets through which belong to established or
 	# related connections and we let all traffic out, as we trust ourself
@@ -659,8 +660,16 @@ start_it_up()
 		#
 		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -j REJECT
 
-		# For any additional safety thereof:
-		${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j REJECT
+		# If our own EPMD port is set, we explicitly prevent anyone but the LAN
+		# to access it:
+		#
+		if [ -n "${orge_epmd_port}" ] ; then
+
+			${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j REJECT
+
+			${iptables} -A INPUT -i ${lan_if} -p tcp --dport $orge_epmd_port -j ACCEPT
+
+		fi
 
 	fi
 
