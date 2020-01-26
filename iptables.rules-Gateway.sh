@@ -29,7 +29,7 @@
 # More precisely:
 # - trust the LAN: allow outgoing traffic, provided in its initiated internally
 # - distrust the Internet: by default, block new incoming traffic
-# - prefer droping packets to rejecting them (less information given)
+# - prefer dropping packets to rejecting them (less information given)
 #
 # As a consequence, unless specified otherwise (thanks to a specific rule), a
 # program running on the gateway (ex: BEAM or EPMD) will be able to send data to
@@ -137,8 +137,10 @@ fi
 
 
 
-# Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
+# Useful with iptables --list|grep '\[v' or iptables -nL |grep '\[v' to check
 # whether rules are up-to-date.
+#
+# Very useful as well: iptables -S
 #
 # One may also use: 'journalctl -kf' to monitor live the corresponding kernel
 # logs.
@@ -439,7 +441,8 @@ start_it_up()
 
 	# ----------------  FORWARD ---------------------
 
-	${iptables} -A FORWARD -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+	# Commented-out, apparently useless and with no known purpose:
+	#${iptables} -A FORWARD -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 
 	# To inspect the exchanges made by a (in-LAN) multimedia box with following
 	# statically-assigned IP:
@@ -590,7 +593,11 @@ start_it_up()
 	# Avoid stealth TCP port scans if SYN is not set properly:
 	${iptables} -A INPUT -m state --state NEW,RELATED -p tcp ! --tcp-flags ALL SYN -j DROP
 
-	# Rejects directly 'auth/ident' obsolete requests:
+	# Rejects directly 'auth/ident' (port 113) obsolete requests:
+	#
+	#(if we drop these packets we may need to wait for the timeouts e.g. on ftp
+	# servers, so we just reject them)
+	#
 	${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
 
 	# Accept non-new inputs:
@@ -615,11 +622,6 @@ start_it_up()
 
 	# HTTPS (for webservers as well):
 	${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-
-	## ident, if we drop these packets we may need to wait for the timeouts
-	# e.g. on ftp servers:
-	#
-	${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 	## FTP:
 	# (not used anymore - prefer SFTP, hence on the same port as SSH, instead)
@@ -658,14 +660,14 @@ start_it_up()
 		# only (still wanting to be able to launch named nodes from that
 		# gateway), to avoid any security hazard at this level:
 		#
-		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -j REJECT
+		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -j DROP
 
 		# If our own EPMD port is set, we explicitly prevent anyone but the LAN
 		# to access it:
 		#
 		if [ -n "${orge_epmd_port}" ] ; then
 
-			${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j REJECT
+			${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j DROP
 
 			${iptables} -A INPUT -i ${lan_if} -p tcp --dport $orge_epmd_port -j ACCEPT
 
@@ -727,6 +729,8 @@ start_it_up()
 
 	# Allow UDP & TCP packets to the DNS server from LAN clients (only needed if
 	# this gateway is a LAN DNS server, for example with dnsmasq).
+	#
+	# (53 corresponds to 'domain')
 	#
 	${iptables} -A INPUT -i ${lan_if} -p tcp --dport 53 -m state --state NEW -j ACCEPT
 	${iptables} -A INPUT -i ${lan_if} -p udp --dport 53 -m state --state NEW -j ACCEPT
