@@ -50,21 +50,17 @@ be_quiet=1
 be_recursive=1
 
 
-if [ "${player_name}" = "mplayer" ] ; then
-
-	echo "  Using mplayer, hence one may enter:"
-	echo "    - <space> to pause/unpause the current playblack"
-	echo "    - 'U' at any moment to stop current playback and jump to any next one"
-	echo "    - <CTRL-C> to stop all playbacks"
-
-fi
-
 
 while [ ! $# -eq 0 ] ; do
+
+	token_eaten=1
+
+	#echo "(examining $1)"
 
 	if [ "$1" = "--announce" -o "$1" = "-a" ] ; then
 
 		shift
+		token_eaten=0
 
 		if [ ! -x "${espeak}" ] ; then
 
@@ -80,13 +76,23 @@ while [ ! $# -eq 0 ] ; do
 
 	if [ "$1" = "--quiet" -o "$1" = "-q" ] ; then
 		shift
+		token_eaten=0
 		be_quiet=0
 	fi
 
 
 	if [ "$1" = "--recursive" -o "$1" = "-r" ] ; then
 		shift
+		token_eaten=0
 		be_recursive=0
+	fi
+
+	if [ $token_eaten -eq 1 ] ; then
+
+		#echo "Adding $1"
+		files="${files} $1"
+		shift
+
 	fi
 
 done
@@ -96,7 +102,16 @@ done
 #echo "be_quiet=${be_quiet}"
 #echo "be_recursive=${be_recursive}"
 
-files="$*"
+
+if [ "${player_name}" = "mplayer" ] ; then
+
+	echo "  Using mplayer, hence one may enter:"
+	echo "    - <space> to pause/unpause the current playblack"
+	echo "    - 'U' at any moment to stop current playback and jump to any next one"
+	echo "    - <CTRL-C> to stop all playbacks"
+
+fi
+
 
 if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
 
