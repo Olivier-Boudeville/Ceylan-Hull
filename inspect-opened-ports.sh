@@ -9,6 +9,11 @@ fi
 
 echo "  Inspecting TCP/UDP ports currently opened:"
 
+
+# To display raw IP/ports (convenient to grep), use:
+# lsof -i -nP
+
+# Most user-friendly view:
 lsof -i
 
 # Also: netstat -lptu
