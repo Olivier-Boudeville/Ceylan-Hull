@@ -1,31 +1,31 @@
 #!/bin/sh
 
 # Absolutely needed, as otherwise sed will fail when using "é" as a parameter, in
-# ${SED} 's|é|e|g...
+# ${sed} 's|é|e|g...
 export LANG=
 
-SED=$(which sed | grep -v ridiculously)
-MV=$(which mv | grep -v ridiculously)
+sed=$(which sed | grep -v ridiculously)
+mv=$(which mv | grep -v ridiculously)
 
-USAGE="
+usage="
 Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
 
 if [ $# -eq 0 ] ; then
 	echo "
 
-	Error, no argument given. $USAGE
+	Error, no argument given. $usage
 
 	" 1>&2
 	exit 1
 fi
 
 
-ORIGINAL_NAME="$*"
+original_name="$*"
 
-if [ ! -e "${ORIGINAL_NAME}" ] ; then
+if [ ! -e "${original_name}" ] ; then
 	echo "
 
-	Error, no entry named <${ORIGINAL_NAME}> exists. $USAGE
+	Error, no entry named <${original_name}> exists. $usage
 
 	" 1>&2
 
@@ -33,31 +33,31 @@ if [ ! -e "${ORIGINAL_NAME}" ] ; then
 
 fi
 
-#echo "Original name is: <${ORIGINAL_NAME}>"
+#echo "Original name is: <${original_name}>"
 
 
 
-CORRECTED_NAME=$(echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|é|e|g' | ${SED} 's|è|e|g' | ${SED} 's|ê|e|g' | ${SED} 's|à|a|g' | ${SED} 's|â|a|g' | ${SED} 's|à|a|g' | ${SED} 's|î|i|g' | ${SED} 's|û|u|g' | ${SED} 's|ù|u|g' | ${SED} 's|ô|o|g'  | ${SED} 's|ò|o|g' | ${SED} 's|\[|-|g' | ${SED} 's|\]|-|g' | ${SED} 's|(||g'| ${SED} 's|)||g' | ${SED} 's|\.\.|.|g'| ${SED} 's|\,|.|g' | ${SED} 's|\.-|.|g' | ${SED} 's|!|-|g' | ${SED} "s|'|-|g " | ${SED} 's|--|-|g' | ${SED} 's|-\.|-|1' | ${SED} 's|-$||1')
+corrected_name=$(echo "${original_name}" | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g'  | ${sed} 's|ò|o|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|-|1' | ${sed} 's|-$||1')
 
 
-#echo "Corrected name is: <${CORRECTED_NAME}>"
+#echo "Corrected name is: <${corrected_name}>"
 
 
-if [ "${ORIGINAL_NAME}" != "${CORRECTED_NAME}" ]; then
+if [ "${original_name}" != "${corrected_name}" ]; then
 
-	if [ -f "${CORRECTED_NAME}" ]; then
+	if [ -f "${corrected_name}" ]; then
 		echo "
 
-		Error, an entry named <${CORRECTED_NAME}> already exists, corrected name for <${ORIGINAL_NAME}> collides with it, remove <${CORRECTED_NAME}> first.
+		Error, an entry named <${corrected_name}> already exists, corrected name for <${original_name}> collides with it, remove <${corrected_name}> first.
 		" 1>&2
 		exit 3
 	fi
 
-	echo "  '${ORIGINAL_NAME}' renamed to '${CORRECTED_NAME}'"
-	${MV} -f "${ORIGINAL_NAME}" "${CORRECTED_NAME}"
+	echo "  '${original_name}' renamed to '${corrected_name}'"
+	${mv} -f "${original_name}" "${corrected_name}"
 
 #else
 
-#	echo "  (<${ORIGINAL_NAME}> left unchanged)"
+#	echo "  (<${original_name}> left unchanged)"
 
 fi
