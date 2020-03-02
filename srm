@@ -33,7 +33,7 @@ if [ -n "$*" ] ; then
 
 		#echo "elem = ${elem}"
 
-		actual_elem=$(basename ${elem} 2>/dev/null)
+		actual_elem=$(basename "${elem}" 2>/dev/null)
 		#echo "actual_elem = ${actual_elem}"
 
 		if [ -z "${actual_elem}" ] ; then
