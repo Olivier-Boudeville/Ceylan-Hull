@@ -20,7 +20,17 @@ if [ ! -x "${CTRL}" ] ; then
 
 fi
 
+
 level="$1"
+
+if [ "${level}" = "-h" ] ; then
+
+	echo ${usage}
+
+	exit 0
+
+fi
+
 
 if [ -z "${level}" ] ; then
 
