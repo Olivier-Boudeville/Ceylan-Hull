@@ -439,7 +439,10 @@ start_it_up()
 	fi
 
 
+
 	# ----------------  FORWARD ---------------------
+	# For packets from an host to another, with this gateway in-between.
+
 
 	# Commented-out, apparently useless and with no known purpose:
 	#${iptables} -A FORWARD -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
@@ -501,7 +504,10 @@ start_it_up()
 
 
 
+
 	# ----------------  OUTPUT ---------------------
+	# For packets originating from this gateway.
+
 
 	# To allow packets from the gateway to reach that telecom box:
 	#${iptables} -A OUTPUT -o ${net_if} -d ${telecom_box} -j ACCEPT
@@ -528,6 +534,7 @@ start_it_up()
 
 
 	# ----------------  INPUT ---------------------
+	# For packets directly targeted at this gateway.
 
 	# To log all input packets:
 	#${iptables} -A INPUT -i ${net_if} -j LOG --log-prefix "[FW-all-I] "
@@ -589,6 +596,8 @@ start_it_up()
 	#
 	#${iptables} -A INPUT -i ${net_if} -s 192.168.0.0/24 -j DROP
 
+	# Conversely, needed for clients, should this gateway be a DHCP server:
+	${iptables} -I INPUT -i ${lan_if} -p udp --dport 67:68 --sport 67:68 -j ACCEPT
 
 	# Avoid stealth TCP port scans if SYN is not set properly:
 	${iptables} -A INPUT -m state --state NEW,RELATED -p tcp ! --tcp-flags ALL SYN -j DROP
