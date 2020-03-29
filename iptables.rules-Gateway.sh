@@ -545,7 +545,9 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
 
-	# Filter out broadcasts:
+	# Filter out broadcasts (must include DHCP ones, hence the other rule
+	# below):
+	#
 	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
 	if [ "$enable_iptv" = "true" ] ; then
