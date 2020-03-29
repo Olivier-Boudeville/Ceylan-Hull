@@ -77,4 +77,4 @@ echo -e "\tListing running processes by decreasing ${mem_name} size in RAM (tota
 #echo "(see also: atop -m)"
 
 #--no-headers
-ps -e -o pid,${mem_code},args --sort -${mem_code} | head -n ${max_process_count}
+ps -e -o ${mem_code},pid,args --sort -${mem_code} | head -n ${max_process_count}
