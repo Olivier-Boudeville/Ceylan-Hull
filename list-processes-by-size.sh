@@ -1,7 +1,7 @@
 #!/bin/sh
 
-#max_process_count=20
-max_process_count=3
+max_process_count=15
+
 
 # The right metric:
 rss_mem_type=0
