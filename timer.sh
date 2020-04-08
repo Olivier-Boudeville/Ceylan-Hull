@@ -1,25 +1,25 @@
 #!/bin/sh
 
-USAGE="Usage: $(basename $0) <waiting time in minutes>. Will play bong when time is elapsed, useful for cooking."
+usage="Usage: $(basename $0) <waiting time in minutes>. Will play bong when time is elapsed, useful for cooking."
 
 if [ -z "$1" ] ; then
-	echo "$USAGE"
+	echo "$usage"
 	exit 1
 fi
 
 
-WAVE_PLAYER_ONE=$(which playwave 2>/dev/null)
-WAVE_PLAYER_TWO=$(which wavplay 2>/dev/null)
-WAVE_PLAYER_THREE=$(which mplayer 2>/dev/null)
+first_audio_player=$(which playwave 2>/dev/null)
+second_audio_player=$(which wavplay 2>/dev/null)
+third_audio_player=$(which mplayer 2>/dev/null)
 
-if [ -x "${WAVE_PLAYER_ONE}" ]; then
-	WAVE_PLAYER=${WAVE_PLAYER_ONE}
+if [ -x "${first_audio_player}" ]; then
+	audio_player=${first_audio_player}
 else
-	if [ -x "${WAVE_PLAYER_TWO}" ]; then
-		WAVE_PLAYER=${WAVE_PLAYER_TWO}
+	if [ -x "${second_audio_player}" ]; then
+		audio_player=${second_audio_player}
 	else
-		if [ -x "${WAVE_PLAYER_THREE}" ]; then
-			WAVE_PLAYER=${WAVE_PLAYER_THREE}
+		if [ -x "${third_audio_player}" ]; then
+			audio_player=${third_audio_player}
 		fi
 	fi
 fi
@@ -39,7 +39,7 @@ bong_count=1
 
 bong()
 {
-	${WAVE_PLAYER} ${bong_sound} 1>/dev/null 2>&1 &
+	${audio_player} ${bong_sound} 1>/dev/null 2>&1 &
 	echo "Bong! "
 }
 
@@ -48,14 +48,14 @@ bong()
 dinnerIsReady()
 {
 
-	${WAVE_PLAYER} ${time_out_sound} 1>/dev/null 2>&1
+	${audio_player} ${time_out_sound} 1>/dev/null 2>&1
 	#echo "Dinner is ready!"
 	echo "Time has come!"
 
 }
 
 
-if [ ! -x "$WAVE_PLAYER" ] ; then
+if [ ! -x "$audio_player" ] ; then
 
 	echo "  Error, no executable wave player found." 1>&2
 	exit 2
@@ -114,6 +114,7 @@ while [ "$count" -le "$bong_count" ] ; do
 
 done
 
-dinnerIsReady
+# Would be too noisy:
+#dinnerIsReady
 
 echo ".... time is up!!!!"
