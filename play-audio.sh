@@ -28,7 +28,11 @@ say()
 player_name="mplayer"
 
 player=$(which ${player_name} 2>/dev/null)
-player_opt="-novideo"
+
+# In many cases this will not work, use '-vc null -vo null' instead:
+#player_opt="-novideo -quiet"
+player_opt="-vc null -vo null -quiet"
+
 
 #player=$(which cvlc 2>/dev/null)
 #player_opt="--novideo"
@@ -42,7 +46,7 @@ if [ ! -x "${player}" ] ; then
 fi
 
 # Could be used with mplayer:
-mplayer_cmd="${player} -msglevel identify=6 $f |grep -e '^ID_'|grep -v ID_AUDIO_ID |grep -v ID_DEMUXER |grep -v ID_FILENAME |grep -v ALSA"
+#mplayer_cmd="${player} -msglevel identify=6 $f |grep -e '^ID_'|grep -v ID_AUDIO_ID |grep -v ID_DEMUXER |grep -v ID_FILENAME |grep -v ALSA"
 
 
 do_announce=1
