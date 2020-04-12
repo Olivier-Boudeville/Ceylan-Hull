@@ -12,6 +12,9 @@ USAGE="
 
 find_gnu="/usr/bin/find"
 
+# Follow symbolic links:
+find_opt="-L"
+
 verbose=1
 quiet=1
 no_path=1
@@ -123,13 +126,13 @@ if [ $no_path -eq 0 ] ; then
 
 	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 
-	$find . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	$find ${find_opt} . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 
 else
 
 	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
 
-	$find . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	$find ${find_opt} . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
 
 fi
 
