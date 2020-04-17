@@ -782,28 +782,7 @@ if [ "${extension}" = "svg" -o "${extension}" = "svgz" ] ; then
 
 fi
 
-
-if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ] ; then
-
-	editor=$(which jq 2>/dev/null)
-
-	if [ -x "${editor}" ] ; then
-		editor_opt="."
-		editor_short_name="jq"
-		applyEditor
-		exit 0
-
-	else
-
-		echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
-		chooseEmacs
-		applyEditor
-		exit 0
-
-	fi
-
-fi
-
+# No json-specified rule (ex: 'jq' just a viewer).
 
 # HTML files are to be edited (hence no special case here)
 

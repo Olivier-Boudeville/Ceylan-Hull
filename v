@@ -799,11 +799,22 @@ fi
 
 if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ] ; then
 
-	viewer=$(which jq)
-	viewer_opt="."
-	viewer_short_name="jq"
-	applyViewer
-	exit 0
+	viewer=$(which jq 2>/dev/null)
+
+	if [ -x "${viewer}" ] ; then
+		viewer_opt="."
+		viewer_short_name="jq"
+		applyViewer
+		exit 0
+
+	else
+
+		echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
+		chooseEmacs
+		applyViewer
+		exit 0
+
+	fi
 
 fi
 

@@ -1,5 +1,8 @@
 #!/bin/sh
 
-# Compares current (committed) version with previous one:
+usage="Usage: $(basename $0) [FILES]: compares current (committed) version with previous one, for specified file(s)"
 
-svn diff -r PREV:BASE $* | more
+#svn diff -r PREV:BASE $* | more
+
+# See https://stackoverflow.com/questions/10176601/git-diff-file-against-its-last-change/:
+git log -p -1 $*
