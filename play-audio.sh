@@ -1,12 +1,13 @@
 #!/bin/sh
 
-usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file1 file2 ...]
+usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file1/directory1 file/directory2 ...]
 
-  Playbacks audio files as specified:
+  Playbacks audio files and directories as specified:
 	  --announce: announce the filename that will be played immediatly (with espeak)
 	  --quiet: not console output wanted
 	  --recursive: (also) select audio files automatically and recursively, from the current directory
-  (default: no announce, not quiet, not recursive - unless no files are specified)
+  (default: no announce, not quiet, not recursive - unless no files nor
+directories are specified)
 
   Note: the underlying audio player remains responsive (console-level interaction, for example to pause it).
 "
@@ -130,30 +131,39 @@ fi
 
 for f in ${files} ; do
 
-	if [ ! -f "${f}" ] ; then
+	# If a directory is specified, just recurse and play everything found:
+	if [ -d "${f}" ] ; then
 
-		echo "  (file ${f} not found, thus skipped)" 1>&2
+		cd "${f}" && $0
 
 	else
 
-		[ $be_quiet -eq 0 ] || echo "  - playing now ${f}"
+		if [ ! -f "${f}" ] ; then
 
-		if [ $do_announce -eq 0 ] ; then
+			echo "  (file ${f} not found, thus skipped)" 1>&2
 
-			say_name=$(basename ${f}|sed 's|\..*$||1')
-			#echo "say_name = ${say_name}"
+		else
 
-			say "Playing " ${say_name}
+			[ $be_quiet -eq 0 ] || echo "  - playing now ${f}"
 
-		fi
+			if [ $do_announce -eq 0 ] ; then
 
-		${player} ${player_opt} ${f} 1>/dev/null 2>&1
+				say_name=$(basename ${f}|sed 's|\..*$||1')
+				#echo "say_name = ${say_name}"
 
-		# Useful to stop the overall reading as a whole:
-		if [ ! $? -eq 0 ] ; then
+				say "Playing " ${say_name}
 
-			echo "Playback of ${f} failed, stopping." 1>&2
-			exit 20
+			fi
+
+			${player} ${player_opt} ${f} 1>/dev/null 2>&1
+
+			# Useful to stop the overall reading as a whole:
+			if [ ! $? -eq 0 ] ; then
+
+				echo "Playback of ${f} failed, stopping." 1>&2
+				exit 20
+
+			fi
 
 		fi
 
