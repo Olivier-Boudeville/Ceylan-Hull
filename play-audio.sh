@@ -2,17 +2,14 @@
 
 usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file1/directory1 file/directory2 ...]
 
-  Playbacks audio files and directories as specified:
+  Performs an audio-only playback of specified content files (including video ones) and directories:
 	  --announce: announce the filename that will be played immediatly (with espeak)
-	  --quiet: not console output wanted
-	  --recursive: (also) select audio files automatically and recursively, from the current directory
-  (default: no announce, not quiet, not recursive - unless no files nor
-directories are specified)
+	  --quiet: no console output wanted
+	  --recursive: (also) select content files automatically and recursively, from the current directory
+  (default: no announce, not quiet, not recursive - unless no files nor directories are specified)
 
   Note: the underlying audio player remains responsive (console-level interaction, for example to pause it).
 "
-
-# See also: just-listen-no-video.sh.
 
 
 espeak=$(which espeak 2>/dev/null)
@@ -35,8 +32,9 @@ player=$(which ${player_name} 2>/dev/null)
 player_opt="-vc null -vo null -quiet"
 
 
+# cvlc does not seem as easy to control from the command-line:
 #player=$(which cvlc 2>/dev/null)
-#player_opt="--novideo"
+#player_opt="--quiet --novideo"
 
 
 if [ ! -x "${player}" ] ; then
@@ -122,7 +120,7 @@ if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
 
 	echo " (playing recursively from $(pwd))"
 
-	files="${files} $(find . -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' 2>/dev/null)"
+	files="${files} $(find . -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' -o -iname '*.mp4' -o -iname '*.avi' 2>/dev/null)"
 
 fi
 
