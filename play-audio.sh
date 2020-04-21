@@ -90,6 +90,18 @@ while [ ! $# -eq 0 ] ; do
 		be_recursive=0
 	fi
 
+
+	if [ "$1" = "--help" -o "$1" = "-h" ] ; then
+
+		shift
+		token_eaten=0
+
+		echo "${usage}"
+		exit 0
+
+	fi
+
+
 	if [ $token_eaten -eq 1 ] ; then
 
 		#echo "Adding $1"
@@ -108,10 +120,11 @@ done
 
 if [ "${player_name}" = "mplayer" ] ; then
 
-	echo "  Using mplayer, hence one may enter:"
-	echo "    - <space> to pause/unpause the current playblack"
-	echo "    - 'U' at any moment to stop current playback and jump to any next one"
-	echo "    - <CTRL-C> to stop all playbacks"
+	echo " Using mplayer, hence one may enter:"
+	echo "  - <space> to pause/unpause the current playblack"
+	echo "  - 'U' at any moment to stop current playback and jump to any next one"
+	echo "  - <CTRL-C> to stop all playbacks"
+	echo
 
 fi
 
@@ -142,7 +155,7 @@ for f in ${files} ; do
 
 		else
 
-			[ $be_quiet -eq 0 ] || echo "  - playing now ${f}"
+			[ $be_quiet -eq 0 ] || echo " - playing now ${f}"
 
 			if [ $do_announce -eq 0 ] ; then
 
