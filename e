@@ -741,9 +741,21 @@ extension=$(echo $parameters| sed 's|^.*\.||1')
 
 if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
 
-	chooseLibreOffice
-	applyEditor
-	exit 0
+	echo "  Warning: do you really want to *edit* this PDF file (not just display it)? (y/n) [n]"
+	read answer
+	if [ "${answer}" = "y" ] || [ "${answer}" = "Y" ] ; then
+
+		chooseLibreOffice
+		applyEditor
+		exit 0
+
+	else
+
+		# Just a display then:
+		v ${parameters}
+		exit 0
+
+	fi
 
 fi
 
