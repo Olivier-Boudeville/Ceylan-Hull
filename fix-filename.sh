@@ -2,10 +2,15 @@
 
 # Absolutely needed, as otherwise sed will fail when using "י" as a parameter, in
 # ${sed} 's|י|e|g...
+#
 export LANG=
+
+# Necessary for iconv to handle properly 'י' for example:
+export LC_ALL=fr_FR.UTF-8
 
 sed=$(which sed | grep -v ridiculously)
 mv=$(which mv | grep -v ridiculously)
+#tr=$(which tr | grep -v ridiculously)
 
 usage="
 Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
@@ -35,13 +40,22 @@ fi
 
 #echo "Original name is: <${original_name}>"
 
+# More efficient:
+# sed -e 's|[טיךכ]|e|' -e 's|[אבגדהו]|a|'
 
+# Tested yet not working:
+#
+# iconv -f $enc -t ASCII//TRANSLIT for all enc in $(iconv --list)
+# iso-8859-1 or iso-8859-15
 
-corrected_name=$(echo "${original_name}" | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|י|e|g' | ${sed} 's|ט|e|g' | ${sed} 's|ך|e|g' | ${sed} 's|א|a|g' | ${sed} 's|ג|a|g' | ${sed} 's|א|a|g' | ${sed} 's|מ|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ש|u|g' | ${sed} 's|פ|o|g'  | ${sed} 's|ע|o|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|-|1' | ${sed} 's|-$||1')
+# tr 'י' 'e'
 
+#corrected_name=$(echo "${original_name}" | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|י|e|g' | ${sed} 's|ט|e|g' | ${sed} 's|ך|e|g' | ${sed} 's|א|a|g' | ${sed} 's|ג|a|g' | ${sed} 's|א|a|g' | ${sed} 's|מ|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ש|u|g' | ${sed} 's|פ|o|g'  | ${sed} 's|ע|o|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|-|1' | ${sed} 's|-$||1')
+
+# This has been a nightmare to obtain (see fr_FR.UTF-8 above):
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT)
 
 #echo "Corrected name is: <${corrected_name}>"
-
 
 if [ "${original_name}" != "${corrected_name}" ]; then
 
