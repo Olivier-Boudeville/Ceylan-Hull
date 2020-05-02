@@ -769,7 +769,7 @@ if [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" =
 fi
 
 
-if [ "${extension}" = "png" ] ; then
+if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ] ; then
 
 	chooseGimp
 	applyEditor
