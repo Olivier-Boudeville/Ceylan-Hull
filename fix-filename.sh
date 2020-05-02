@@ -50,10 +50,14 @@ fi
 
 # tr 'é' 'e'
 
-#corrected_name=$(echo "${original_name}" | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g'  | ${sed} 's|ò|o|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|-|1' | ${sed} 's|-$||1')
 
-# This has been a nightmare to obtain (see fr_FR.UTF-8 above):
-corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT)
+# This iconv command has been a nightmare to obtain (see fr_FR.UTF-8 above).
+#
+#  Useless then:
+#
+# | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g'  | ${sed} 's|ò|o|g'
+#
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|-|1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
 
 #echo "Corrected name is: <${corrected_name}>"
 
