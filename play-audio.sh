@@ -11,6 +11,7 @@ usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [fi
   Note: the underlying audio player remains responsive (console-level interaction, for example to pause it).
 "
 
+# Hidden option, useful for recursive uses: "--no-header"
 
 espeak=$(which espeak 2>/dev/null)
 
@@ -51,7 +52,7 @@ fi
 do_announce=1
 be_quiet=1
 be_recursive=1
-
+display_header=0
 
 
 while [ ! $# -eq 0 ] ; do
@@ -91,6 +92,13 @@ while [ ! $# -eq 0 ] ; do
 	fi
 
 
+	if [ "$1" = "--no-header" ] ; then
+		shift
+		token_eaten=0
+		display_header=1
+	fi
+
+
 	if [ "$1" = "--help" -o "$1" = "-h" ] ; then
 
 		shift
@@ -116,15 +124,19 @@ done
 #echo "do_announce=${do_announce}"
 #echo "be_quiet=${be_quiet}"
 #echo "be_recursive=${be_recursive}"
+#echo "display_header=${display_header}"
 
+if [ $display_header -eq 0 ] ; then
 
-if [ "${player_name}" = "mplayer" ] ; then
+	if [ "${player_name}" = "mplayer" ] ; then
 
-	echo " Using mplayer, hence one may enter:"
-	echo "  - <space> to pause/unpause the current playblack"
-	echo "  - 'U' at any moment to stop current playback and jump to any next one"
-	echo "  - <CTRL-C> to stop all playbacks"
-	echo
+		echo " Using mplayer, hence one may enter:"
+		echo "  - <space> to pause/unpause the current playblack"
+		echo "  - 'U' at any moment to stop current playback and jump to any next one"
+		echo "  - <CTRL-C> to stop all playbacks"
+		echo
+
+	fi
 
 fi
 
@@ -145,7 +157,12 @@ for f in ${files} ; do
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ] ; then
 
-		cd "${f}" && $0
+		cd "${f}" && $0 --no-header
+
+	elif echo "${f}" | grep -q ".*\.m3u" ; then
+
+		echo "(going through playlist in '${f}')"
+		$0 --no-header $(/bin/cat "${f}")
 
 	else
 
