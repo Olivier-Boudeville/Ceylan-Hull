@@ -1,4 +1,7 @@
 #!/bin/sh
 
+# Prefer the brave-bin variant, as compiling from sources is awfully long:
+# yay -S brave
+
 echo "  Launching Brave browser"
-brave $* 1>/dev/null 2>&1
+/usr/bin/brave $* 1>/dev/null 2>&1 &
