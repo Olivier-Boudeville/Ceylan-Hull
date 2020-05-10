@@ -11,7 +11,7 @@ usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [fi
   Note: the underlying audio player remains responsive (console-level interaction, for example to pause it).
 "
 
-# Hidden option, useful for recursive uses: "--no-header"
+# Hidden option, useful for recursive uses: "--no-notification"
 
 espeak=$(which espeak 2>/dev/null)
 
@@ -52,7 +52,7 @@ fi
 do_announce=1
 be_quiet=1
 be_recursive=1
-display_header=0
+display_notification=0
 
 
 while [ ! $# -eq 0 ] ; do
@@ -92,10 +92,10 @@ while [ ! $# -eq 0 ] ; do
 	fi
 
 
-	if [ "$1" = "--no-header" ] ; then
+	if [ "$1" = "--no-notification" ] ; then
 		shift
 		token_eaten=0
-		display_header=1
+		display_notification=1
 	fi
 
 
@@ -124,9 +124,9 @@ done
 #echo "do_announce=${do_announce}"
 #echo "be_quiet=${be_quiet}"
 #echo "be_recursive=${be_recursive}"
-#echo "display_header=${display_header}"
+#echo "display_notification=${display_notification}"
 
-if [ $display_header -eq 0 ] ; then
+if [ $display_notification -eq 0 ] ; then
 
 	if [ "${player_name}" = "mplayer" ] ; then
 
@@ -157,12 +157,12 @@ for f in ${files} ; do
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ] ; then
 
-		cd "${f}" && $0 --no-header
+		cd "${f}" && $0 --no-notification
 
 	elif echo "${f}" | grep -q ".*\.m3u" ; then
 
 		echo "(going through playlist in '${f}')"
-		$0 --no-header $(/bin/cat "${f}")
+		$0 --no-notification $(/bin/cat "${f}")
 
 	else
 
@@ -199,4 +199,10 @@ for f in ${files} ; do
 
 done
 
-echo " (end of playback)"
+
+# Allows to avoid having several of these lines accumulate:
+if [ $display_notification -eq 0 ] ; then
+
+	echo " (end of playback)"
+
+fi
