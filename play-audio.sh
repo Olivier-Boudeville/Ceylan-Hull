@@ -130,10 +130,11 @@ if [ $display_notification -eq 0 ] ; then
 
 	if [ "${player_name}" = "mplayer" ] ; then
 
-		echo " Using mplayer, hence one may enter:"
-		echo "  - <space> to pause/unpause the current playblack"
-		echo "  - 'U' at any moment to stop current playback and jump to any next one"
+		echo " Using mplayer, hence one may hit:"
+		echo "  - <space> to pause/unpause the current playback"
+		echo "  - 'U' at any moment to stop the current playback and jump to any next one"
 		echo "  - <CTRL-C> to stop all playbacks"
+		echo "  - left and right arrow keys to go backward/forward in the current playback"
 		echo
 
 	fi
