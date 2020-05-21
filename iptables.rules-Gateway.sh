@@ -410,6 +410,7 @@ start_it_up()
 	# This is an exception section, having mixed INPUT and OUTPUT rules.
 	# It shall come first!
 
+	# Typically defined in ${setting_file}:
 	if [ "$use_ban_rules" = "true" ] ; then
 
 		if [ -f "${ban_file}" ] ; then
