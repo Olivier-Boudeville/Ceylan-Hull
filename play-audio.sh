@@ -162,7 +162,9 @@ for f in ${files} ; do
 	elif echo "${f}" | grep -q ".*\.m3u" ; then
 
 		echo "(going through playlist in '${f}')"
-		$0 --no-notification $(/bin/cat "${f}")
+
+		# Stripping comment-based annotations such as #EXTM3U or #EXTINF:
+		$0 --no-notification $(/bin/cat "${f}" | grep -v '^#')
 
 	else
 
