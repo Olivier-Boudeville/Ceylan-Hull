@@ -146,7 +146,11 @@ if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
 
 	echo " (playing recursively from $(pwd))"
 
-	files="${files} $(find . -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' -o -iname '*.mp4' -o -iname '*.avi' 2>/dev/null)"
+	# A sort is performed, as otherwise the 'find' order is pretty meaningless,
+	# whereas quite often songs of an album have a common prefix then their
+	# number in the series than a siffix (ex: My_GROUP-MY_ALBUM-07-Mantract.mp3)
+	#
+	files="${files} $(find . -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' -o -iname '*.mp4' -o -iname '*.avi' | sort 2>/dev/null)"
 
 fi
 
