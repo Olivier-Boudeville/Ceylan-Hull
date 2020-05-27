@@ -7,7 +7,7 @@ $(basename $0): recursive grep for the ones that lack it.
 	-v or --verbose: be specifically verbose
 	-q or --quiet: be specifically quiet, just listing matches
 	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
-	-i or --insensitive: perform case-insensitive searches
+	-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
 	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
   Example: $(basename $0) -i 'little red rooster' '*.txt'"
 
@@ -43,6 +43,7 @@ filenames_only=1
 # A useless file to ensure grep always has multiple files to scan.
 # Done to force grep to display the filename (otherwise it will not)
 # No need to create it, however.
+#
 force_multi_files="$HOME/.regrep.toDelete.tmp"
 
 name_opt="-name"
@@ -174,7 +175,7 @@ if [ -z "$filter_on_file" ] ; then
 
 	else
 
-		# Note filter specified, using '*.rst':
+		# No filter specified, using '*.rst':
 		$find . -name tmp-rst -prune -o ${name_opt} '*.rst' -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
 	fi
