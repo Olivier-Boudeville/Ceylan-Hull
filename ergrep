@@ -113,6 +113,7 @@ if [ -z "$read_parameter" ] ; then
 	exit 3
 fi
 
+
 searched_expression="$read_parameter"
 #echo "searched_expression = $searched_expression"
 
@@ -127,17 +128,19 @@ fi
 
 base_grep_opt="--color"
 
-search_erl="'*.?rl'"
+# NEVER surround these single quotes by double ones:
+filter_erl='*.?rl'
 
-search_expr="${name_opt} ${search_erl}"
-
+filter_expr="${name_opt} ${filter_erl}"
 
 if [ $verbose -eq 0 ] ; then
 
 	echo "Will search in following files:"
-	$find . -exec /bin/ls '{}' $force_multi_files ';' 2>/dev/null
+	$find . ${filter_expr}
 
 fi
+
+
 
 [ $quiet -eq 0 ] || echo "
 	Recursive grep for expression <${searched_expression}> in all Erlang files:
@@ -145,11 +148,11 @@ fi
 
 if [ $filenames_only -eq 1 ] ; then
 
-	$find . ${search_erl} -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
+	$find . ${filter_expr} -exec $grep ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' $force_multi_files ';' 2>/dev/null
 
 else
 
-	$find . ${search_erl} -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+	$find . ${filter_expr} -exec $grep ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 fi
 
