@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-USAGE="  Usage: "`basename $0`" --voice-id <voice identifier> --speech-prefix <speech identifier> --message <message> [--no-play-back] [--ogg-encoding] [--verbose]
+USAGE="  Usage: $(basename $0) --voice-id <voice identifier> --speech-prefix <speech identifier> --message <message> [--no-play-back] [--ogg-encoding] [--verbose]
 
   Records the specified speech with specified voice in specified prefixed filename (default: WAV format), removes leading and ending silences, and plays it back to check it.
 	  --voice-id <voice identifier>: the ID of the voice to be used (see Asset-Indexing/audio/speech-synthesis/Voice-index.rst)
@@ -35,10 +35,10 @@ trim_silences=0
 verbose=1
 
 playback_tool="play-sounds.sh"
-playback_tool_exec=`which $playback_tool 2>/dev/null`
+playback_tool_exec=$(which $playback_tool 2>/dev/null)
 
 encoder_tool="oggenc"
-encoder_tool_exec=`which $encoder_tool 2>/dev/null`
+encoder_tool_exec=$(which $encoder_tool 2>/dev/null)
 
 
 voice_id=0
@@ -137,7 +137,7 @@ fi
 if [ $trim_silences -eq 0 ] ; then
 
 	trimmer_tool="trimSilence.sh"
-	trimmer=`which ${trimmer_tool} 2>/dev/null`
+	trimmer=$(which ${trimmer_tool} 2>/dev/null)
 
 	if [ ! -x "${trimmer}" ] ; then
 
@@ -153,7 +153,7 @@ fi
 if [ $resample -eq 0 ] ; then
 
 	resample_tool="resample.sh"
-	resampler=`which ${resample_tool} 2>/dev/null`
+	resampler=$(which ${resample_tool} 2>/dev/null)
 
 	if [ ! -x "${resampler}" ] ; then
 
