@@ -131,12 +131,14 @@ base_grep_opt="--color"
 # NEVER surround these single quotes by double ones:
 filter_erl='*.?rl'
 
-filter_expr="${name_opt} ${filter_erl}"
+# Unable to properly define a correctly-protected variable:
+#filter_expr="${name_opt} ${filter_erl}"
 
 if [ $verbose -eq 0 ] ; then
 
-	echo "Will search in following files:"
-	$find . ${filter_expr}
+	#echo "Will search in following files based on: $find . ${filter_expr}:"
+	echo "Will search in following files based on: $find . ${name_opt} ${filter_erl}:"
+	$find . ${name_opt} "${filter_erl}"
 
 fi
 
@@ -148,11 +150,12 @@ fi
 
 if [ $filenames_only -eq 1 ] ; then
 
-	$find . ${filter_expr} -exec $grep ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' $force_multi_files ';' 2>/dev/null
+	# Most usual case:
+	$find . ${name_opt} "${filter_erl}" -exec $grep ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' $force_multi_files ';' 2>/dev/null
 
 else
 
-	$find . ${filter_expr} -exec $grep ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+	$find . ${name_opt} "${filter_erl}" -exec $grep ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' $force_multi_files ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 fi
 
