@@ -421,7 +421,7 @@ echo "Generation of '${target_file}' succeeded!"
 if [ $display_pdf -eq 0 ]; then
 
 	echo "Displaying '${target_file}'..."
-	${pdf_viewer} "${target_file}" 1>/dev/null 2>&1
+	${pdf_viewer} "${target_file}" 1>/dev/null 2>&1 &
 
 	if [ ! $? -eq 0 ]; then
 
