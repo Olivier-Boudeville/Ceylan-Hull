@@ -463,6 +463,20 @@ applyEditor()
 
 				   f=$new_f
 
+			else
+
+				# In some cases (ex: find-record-definition.sh) we have a
+				# trailing dash to remove:
+				#
+				new_f=$(echo "$f"| sed 's|-.*$||1')
+
+				if [ -f "$new_f" ] ; then
+
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+
+				   f=$new_f
+				fi
+
 			fi
 
 		fi
