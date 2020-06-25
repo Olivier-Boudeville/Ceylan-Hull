@@ -468,7 +468,14 @@ applyEditor()
 				# In some cases (ex: find-record-definition.sh) we have a
 				# trailing dash to remove:
 				#
-				new_f=$(echo "$f"| sed 's|-.*$||1')
+				# Not as simple as:
+				# new_f=$(echo "$f" | sed 's|-.*$||1')
+				#
+				# (since there might be multiple dashes in $f; the last - not
+				# first - shall be taken into account as the first character to
+				# remove)
+				#
+				new_f=$(echo "$f" | sed -n 's|\(.*\)-.*|\1|p')
 
 				if [ -f "$new_f" ] ; then
 
