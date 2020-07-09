@@ -1,50 +1,55 @@
 #!/bin/sh
 
-SED=$(which sed | grep -v ridiculously)
-MV=$(which mv | grep -v ridiculously)
+usage="Usage: $(basename $0) <root of tree whose entry names should be corrected>: renames recursively the files and directories from specified tree root to 'corrected' paths, i.e. without space (replaced with '-'), nor accentuated characters in them, etc.
+Note: this script might have to be run more than once so that the names of all directories and files are full fixed."
 
-USAGE="Usage: $(basename $0) <root of tree whose entry names should be corrected>: renames recursively the files and directories from specified tree root to 'corrected' paths, i.e. without space, replaced by '-', nor accentuated characters in them."
 
 if [ ! $# -eq 1 ] ; then
 
 	echo "  Error, exactly one parameter expected.
-  $USAGE
+  $usage
 	" 1>&2
-	exit 1
+	exit 5
 
 fi
 
 
-CORRECTER=$(dirname $0)/fix-filename.sh
+correcter_script=$(dirname $0)/fix-filename.sh
 
-if [ ! -x "${CORRECTER}" ] ; then
+if [ ! -x "${correcter_script}" ] ; then
 	echo "
 
-	Error, no executable correcter script found (searched ${CORRECTER}).
+	Error, no executable correcter script found (searched ${correcter_script}).
 
 	" 1>&2
-	exit 1
+	exit 10
 
 fi
 
 
-TREE_ROOT="$1"
+tree_root="$1"
 
-if [ ! -d "${TREE_ROOT}" ] ; then
+if [ ! -d "${tree_root}" ] ; then
 	echo "
-  Error, no directory named <${TREE_ROOT}> exists.
-  $USAGE
+  Error, no directory named <${tree_root}> exists.
+  $usage
 	" 1>&2
-	exit 2
+	exit 15
 fi
 
-echo "  Fixing all paths in tree '$(realpath ${TREE_ROOT})'..."
+echo "  Fixing all paths in tree '$(realpath ${tree_root})'..."
 
 # A problem is that renaming a base directory while iterating in it would result
 # in faulty subpaths to be searched afterwards (a solution being then to run
-# that script more than once). Instead a "depth-first" traversal is done:
+# that script more than once).
 #
-find "${TREE_ROOT}" -depth -type d -exec ${CORRECTER} '{}' ';'
-find "${TREE_ROOT}" -type f -exec ${CORRECTER} '{}' ';'
+# Instead a "depth-first" traversal is done; it is not sufficient yet so we
+# perform multiple traversals:
+#
+find "${tree_root}" -depth -type d -exec ${correcter_script} '{}' ';'
+find "${tree_root}" -depth -type d -exec ${correcter_script} '{}' ';'
+find "${tree_root}" -depth -type d -exec ${correcter_script} '{}' ';'
+
+find "${tree_root}" -type f -exec ${correcter_script} '{}' ';'
 
 echo "  Tree fixed."

@@ -21,7 +21,7 @@ if [ $# -eq 0 ] ; then
 	Error, no argument given. $usage
 
 	" 1>&2
-	exit 1
+	exit 20
 fi
 
 
@@ -34,7 +34,7 @@ if [ ! -e "${original_name}" ] ; then
 
 	" 1>&2
 
-	exit 2
+	exit 25
 
 fi
 
@@ -57,7 +57,11 @@ fi
 #
 # | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g'  | ${sed} 's|ò|o|g'
 #
-corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|-|1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
+# 's|-\.|-|1' replaced with 's|-\.|.|1' to better manage extensions (preferring
+# '*.pdf' to '*-pdf').
+#
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|.|1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
+
 
 #echo "Corrected name is: <${corrected_name}>"
 
@@ -68,7 +72,7 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 
 		Error, an entry named <${corrected_name}> already exists, corrected name for <${original_name}> collides with it, remove <${corrected_name}> first.
 		" 1>&2
-		exit 3
+		exit 30
 	fi
 
 	echo "  '${original_name}' renamed to '${corrected_name}'"
