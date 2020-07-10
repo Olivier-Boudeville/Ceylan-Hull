@@ -7,9 +7,9 @@ More information: https://mermaid-js.github.io/mermaid/"
 # Obtained on Arch with:
 #  - first, as root: pacman -Sy yarn
 #  - then, as user: mkcd ~/${mermaid_cli_root} && yarn add mermaid.cli
-#
 mermaid_cli_root="${HOME}/Software/mermaid/"
 
+# Use '~/Software/mermaid/node_modules/.bin/mmdc --version' to obtain version.
 
 
 img_generator="${mermaid_cli_root}/node_modules/.bin/mmdc"
@@ -27,7 +27,7 @@ if [ ! $# -eq 1 ]; then
 	echo "  Error, a single argument expected.
 $usage" 1>&2
 
-	exit 5
+	exit 10
 
 fi
 
@@ -39,6 +39,12 @@ if [ $1 = "-h" ] || [ $1 = "--help" ]; then
 	exit 0
 
 fi
+
+
+
+# General Mermaid options:
+base_size=2000
+mermaid_opts="--width ${base_size} --height ${base_size}"
 
 
 # Ex: foobar.mmd
@@ -55,11 +61,11 @@ if [ "${target_file}" = "${source_file}" ]; then
 
 	echo "  Error, invalid input file ('${source_file}'), expecting *.mmd." 1>&2
 
-	exit 10
+	exit 15
 
 fi
 
-${img_generator} -i "${source_file}" -o "${target_file}"
+${img_generator} ${mermaid_opts} -i "${source_file}" -o "${target_file}"
 
 if [ $? -eq 0 ]; then
 
