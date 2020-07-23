@@ -5,11 +5,15 @@ More information: https://mermaid-js.github.io/mermaid/"
 
 
 # Obtained on Arch with:
-#  - first, as root: pacman -Sy yarn
+#  - first, as root: pacman --needed -Sy yarn
 #  - then, as user: mkcd ~/${mermaid_cli_root} && yarn add mermaid.cli
 mermaid_cli_root="${HOME}/Software/mermaid/"
 
 # Use '~/Software/mermaid/node_modules/.bin/mmdc --version' to obtain version.
+
+# If your local mmdc is stuck at a given, older version (ex: 0.5.1), you may
+# rely on 'https://mermaid-js.github.io/mermaid-live-editor/#/edit' (then click
+# 'Download PNG').
 
 
 img_generator="${mermaid_cli_root}/node_modules/.bin/mmdc"
