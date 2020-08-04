@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# Allows to avoid creating a /tmp/yay directory possibly owned by root and thus
+# not removable by the expected normal user:
+#
+if [ $(id -u) -eq 0 ]; then
+
+	echo "  Error, this script must be run as a normal user, not as root!" 1>&2
+	exit 5
+
+fi
+
 
 echo "  Updating yay AUR installer"
 
@@ -8,8 +18,15 @@ echo "  Updating yay AUR installer"
 
 makepkg_opts="--needed --noconfirm"
 
+cd /tmp
 
-cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg ${makepkg_opts} -si && echo && echo "Yay successfully updated!" && cd .. && rm -rf yay
+if [ -d "yay" ]; then
+
+	/bin/rm -rf yay
+
+fi
+
+git clone https://aur.archlinux.org/yay.git && cd yay && makepkg ${makepkg_opts} -si && echo && echo "Yay successfully updated!" && cd .. && rm -rf yay
 
 
 # echo "  Updating yaourt AUR installer"
