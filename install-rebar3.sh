@@ -5,8 +5,8 @@ use_prebuilt=1
 
 prebuilt_opt="--prebuilt"
 
-usage="Usage: $(basename $0) [-h|--help] [${prebuilt_opt}]: installs properly a recent version of rebar3, by default from its sources.
-If the '${prebuilt_opt}' option is specified, downloads and installs a prebuilt version of rebar3 instead."
+usage="Usage: $(basename $0) [-h|--help] [-p|${prebuilt_opt}]: installs properly a recent version of rebar3, by default from its sources.
+If the '-p' or '${prebuilt_opt}' option is specified, downloads and installs a prebuilt version of rebar3 instead."
 
 # See https://www.rebar3.org/docs/getting-started
 
@@ -20,7 +20,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
-if [ "$1" = "${prebuilt_opt}" ]; then
+if [ "$1" = "-p" ] || [ "$1" = "${prebuilt_opt}" ]; then
 
 	use_prebuilt=0
 	echo "A prebuilt version of rebar3 will be installed."
@@ -44,19 +44,19 @@ fi
 software_dir="${HOME}/Software"
 
 
-rebar_target_dir="${software_dir}/rebar3"
-
-if [ -d "${rebar_target_dir}" ]; then
-
-	echo "  Error, a '${rebar_target_dir}' target directory already exists, please remove it first." 1>&2
-
-	exit 10
-
-fi
-
-
-
 if [ $use_prebuilt -eq 0 ]; then
+
+	dir_name="rebar3-prebuilt"
+
+	rebar_target_dir="${software_dir}/${dir_name}"
+
+	if [ -d "${rebar_target_dir}" ]; then
+
+		echo "  Error, a '${rebar_target_dir}' target directory already exists, please remove it first." 1>&2
+
+		exit 10
+
+	fi
 
 	prebuilt_rebar3_url="https://s3.amazonaws.com/rebar3/rebar3"
 
@@ -80,6 +80,18 @@ if [ $use_prebuilt -eq 0 ]; then
 
 else
 
+	dir_name="rebar3-from-sources"
+
+	rebar_target_dir="${software_dir}/${dir_name}"
+
+	if [ -d "${rebar_target_dir}" ]; then
+
+		echo "  Error, a '${rebar_target_dir}' target directory already exists, please remove it first." 1>&2
+
+		exit 20
+
+	fi
+
 	clone_url="https://github.com/erlang/rebar3.git"
 
 	echo " Installing rebar3 from sources (${clone_url})."
@@ -88,7 +100,7 @@ else
 
 	cd "${software_dir}"
 
-	git clone ${clone_url} && cd rebar3 && ./bootstrap
+	git clone ${clone_url} ${dir_name} && cd ${dir_name} && ./bootstrap
 
 	if [ ! $? -eq 0 ]; then
 
@@ -100,6 +112,8 @@ else
 
 fi
 
-echo " Installation success, please ensure that the '${rebar_target_dir}' directory is in your PATH for good."
+cd .. && ln -sf ${dir_name} rebar3
+
+echo " Installation success, please ensure that the '${software_dir}/rebar3' directory is in your PATH for good; installed version: $(./rebar3/rebar3 -v)."
 
 exit 0
