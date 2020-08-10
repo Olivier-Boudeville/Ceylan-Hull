@@ -112,7 +112,14 @@ else
 
 fi
 
-cd .. && ln -sf ${dir_name} rebar3
+cd ..
+
+# To prevent the next link to be created in any prior rebar3 directory:
+if [ -L "rebar3" ]; then
+	/bin/rm -f rebar3
+fi
+
+ln -sf ${dir_name} rebar3
 
 echo " Installation success, please ensure that the '${software_dir}/rebar3' directory is in your PATH for good; installed version: $(./rebar3/rebar3 -v)."
 
