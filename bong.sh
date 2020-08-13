@@ -1,34 +1,48 @@
 #!/bin/sh
 
-USAGE="Usage: $(basename $0): makes a bong sound."
-
-
-
-WAVE_PLAYER=$(which playwave 2>/dev/null)
-
-if [ ! -x "${WAVE_PLAYER}" ] ; then
-	WAVE_PLAYER=$(which mplayer 2>/dev/null)
-fi
-
-BONG_SOUND="${LOANI_REPOSITORY}/OSDL-data/gong.wav"
-BONG_COUNT=5
+usage="Usage: $(basename $0) [COUNT]: plays COUNT (default: 1) bong sound(s)."
 
 
 bong()
 {
-	${WAVE_PLAYER} ${BONG_SOUND} 1>/dev/null 2>&1
-	echo "Bong ! "
+	${audio_player} ${bong_sound} 1>/dev/null 2>&1
+	echo "Bong!"
 }
 
 
-if [ ! -x "$WAVE_PLAYER" ] ; then
-	echo "No executable wave player found."
+audio_player=$(which playwave 2>/dev/null)
+
+bong_sound="${LOANI_REPOSITORY}/OSDL-data/gong.wav"
+
+bong_count="$1"
+
+if [ -z "${bong_count}" ]; then
+	bong_count=1
+fi
+
+
+if [ ! -x "${audio_player}" ] ; then
+	audio_player=$(which mplayer 2>/dev/null)
+fi
+
+
+if [ ! -x "$audio_player" ] ; then
+	echo "No executable audio player found."
 	exit 2
 fi
 
-if [ ! -f "$BONG_SOUND" ] ; then
-	echo "Gong sound file not found ($BONG_SOUND)."
+if [ ! -f "$bong_sound" ] ; then
+	echo "Gong sound file not found ($bong_sound)."
 	exit 3
 fi
 
-bong
+
+count=1
+
+while [ "$count" -le "$bong_count" ] ; do
+
+	bong
+	sleep 1
+	count=$(($count+1))
+
+done
