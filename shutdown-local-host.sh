@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="${basename $0}: shutdowns current, local host after having any relevant system update."
+usage="$(basename $0): shutdowns current, local host after having any relevant system update."
 
 
 if [ ! $(id -u) -eq 0 ]; then
