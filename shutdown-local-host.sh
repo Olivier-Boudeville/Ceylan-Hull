@@ -1,5 +1,8 @@
 #!/bin/sh
 
+usage="${basename $0}: shutdowns current, local host after having any relevant system update."
+
+
 if [ ! $(id -u) -eq 0 ]; then
 
 	echo "  Error, this script must be run as root." 1>&2
@@ -16,7 +19,7 @@ System will shutdown now host $(hostname -s), after a possible update (including
 read -e -p "  Press Enter key to continue (CTRL-C to abort)" value
 
 
-# Basic update:
+echo " - performing first a general system update"
 pacman --noconfirm -Sy
 
 if [ ! $? -eq 0 ]; then
@@ -31,6 +34,7 @@ fi
 #
 # (overrides any IgnorePkg directive in /etc/pacman.conf)
 #
+echo " - performing then any kernel (with headers) update"
 pacman --noconfirm --needed -Sy linux linux-headers
 
 if [ ! $? -eq 0 ]; then
@@ -40,7 +44,7 @@ if [ ! $? -eq 0 ]; then
 
 fi
 
-echo "Stopping now."
+echo "Stopping now for good."
 shutdown -h now
 
 # Not expected to be seen:
