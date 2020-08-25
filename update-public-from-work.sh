@@ -4,7 +4,7 @@
 usage="  Usage: $(basename $0) WORK_ROOT PUBLIC_ROOT: updates all public Ceylan-* repositories from base work one, using for that the currently selected branches of specified clones. One should ensure beforehand that all source and target repositories are fully up to date (ex: committed and pushed)."
 
 
-if [ ! $# -eq 2 ] ; then
+if [ ! $# -eq 2 ]; then
 
 	echo "$usage" 1>&2
 	exit 10
@@ -15,7 +15,7 @@ current_dir=$(pwd)
 
 work_root="$1"
 
-if [ ! -d "$work_root" ] ; then
+if [ ! -d "$work_root" ]; then
 
 	echo "  Error, work root ($work_root) is not an existing directory.
 $usage" 1>&2
@@ -26,7 +26,7 @@ fi
 
 work_test_dir="$work_root/mock-simulators"
 
-if [ ! -d "$work_test_dir" ] ; then
+if [ ! -d "$work_test_dir" ]; then
 
 	echo "  Error, work root ($work_root) does not seem to be a suitable work root ($work_test_dir not found).
 $usage" 1>&2
@@ -43,7 +43,7 @@ cd $current_dir
 
 public_root="$2"
 
-if [ ! -d "$public_root" ] ; then
+if [ ! -d "$public_root" ]; then
 
 	echo "  Error, public root ($public_root) is not an existing directory.
 $usage" 1>&2
@@ -54,7 +54,7 @@ fi
 
 public_test_dir="$public_root/myriad"
 
-if [  ! -d "$public_test_dir" ] ; then
+if [  ! -d "$public_test_dir" ]; then
 
 	echo "  Error, public root ($public_root) does not seem to be a suitable public root ($public_test_dir not found).
 $usage" 1>&2
@@ -70,7 +70,7 @@ cd $current_dir
 
 rsync=$(which rsync)
 
-if [ ! -x "$rsync" ] ; then
+if [ ! -x "$rsync" ]; then
 
 	echo "  Error, no rsync found." 1>&2
 	exit 35
