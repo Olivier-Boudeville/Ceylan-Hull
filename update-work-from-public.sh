@@ -81,7 +81,7 @@ fi
 
 
 # Not relying on timestamps (no --update):
-rsync_opt="--recursive --links"
+rsync_opt="--recursive --links --exclude '_checkouts'"
 
 git_opt="-c color.status=always"
 
