@@ -1,6 +1,17 @@
 #!/bin/sh
 
-usage="$(basename $0): allows to review more conveniently a set of CCTV recordings"
+usage="$(basename $0): [-a|--autoplay] allows to review more conveniently a set of CCTV recordings. With autoplay, recordings are automatically deleted once played."
+
+# Deactivated by default:
+auto_play=1
+
+if [ $1 = "-a" ] || [ $1 = "--autoplay" ]; then
+
+	echo "Autoplay activated."
+	auto_play=0
+
+fi
+
 
 
 # VLC: echo "Use '+' to fast forward."
@@ -20,7 +31,7 @@ for f in ${recordings} ; do
 
 	done=1
 
-	while [ $done -eq 1 ] ; do
+	while [ $done -eq 1 ]; do
 
 		done=0
 
@@ -30,64 +41,73 @@ for f in ${recordings} ; do
 
 		#cvlc $f 1>/dev/null
 
-		understood=1
+		if [ $auto_play -eq 0 ]; then
 
-		while [ $understood -eq 1 ] ; do
+			/bin/rm -f "$f"
+			echo "  (autoplay: '$f' deleted)"
 
-			echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
-			read answer
+		else
 
-			if [ "$answer" = "d" ] || [ "$answer" = "D" ]; then
+			understood=1
 
-				/bin/rm -f "$f"
-				echo "  ('$f' deleted)"
-				understood=0
+			while [ $understood -eq 1 ]; do
 
-			fi
+				echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
+				read answer
 
-			if [ "$answer" = "r" ] || [ "$answer" = "R" ]; then
+				if [ "$answer" = "d" ] || [ "$answer" = "D" ]; then
 
-				echo "  (replaying '$f')"
-				understood=0
-				done=1
+					/bin/rm -f "$f"
+					echo "  ('$f' deleted)"
+					understood=0
 
-			fi
+				fi
+
+				if [ "$answer" = "r" ] || [ "$answer" = "R" ]; then
+
+					echo "  (replaying '$f')"
+					understood=0
+					done=1
+
+				fi
 
 
-			if [ "$answer" = "m" ] || [ "$answer" = "M" ]; then
+				if [ "$answer" = "m" ] || [ "$answer" = "M" ]; then
 
-				echo "  Enter a prefix to apply to this file to be moved:"
-				read prefix
+					echo "  Enter a prefix to apply to this file to be moved:"
+					read prefix
 
-				new_file="${HOME}/${prefix}-$f"
-				/bin/mv "$f" "${new_file}"
-				echo "  ('$f' moved to '${new_file}')"
+					new_file="${HOME}/${prefix}-$f"
+					/bin/mv "$f" "${new_file}"
+					echo "  ('$f' moved to '${new_file}')"
 
-				understood=0
+					understood=0
 
-			fi
+				fi
 
-			if [ "$answer" = "l" ] || [ "$answer" = "L" ]; then
+				if [ "$answer" = "l" ] || [ "$answer" = "L" ]; then
 
-				understood=0
+					understood=0
 
-			fi
+				fi
 
-			if [ "$answer" = "s" ] || [ "$answer" = "S" ]; then
+				if [ "$answer" = "s" ] || [ "$answer" = "S" ]; then
 
-				echo "  (review requested to stop)"
-				#(understood=0)
-				exit 0
+					echo "  (review requested to stop)"
+					#(understood=0)
+					exit 0
 
-			fi
+				fi
 
-			if [ $understood -eq 1 ] ; then
+				if [ $understood -eq 1 ]; then
 
-				echo "  Error, command not recognised." 1>&2
+					echo "  Error, command not recognised." 1>&2
 
-			fi
+				fi
 
-		done
+			done
+
+		fi
 
 	done
 
