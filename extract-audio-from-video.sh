@@ -1,6 +1,9 @@
 #!/bin/sh
 
 
+usage="Usage: $(basename $0) MP4_FILE: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified)."
+
+
 # Same content being playback, knowing the actual CPU time used by a process is
 # user+sys:
 #
@@ -35,11 +38,25 @@ fi
 
 audio_file=$(echo "${video_file}" | sed 's|\.mp4|.ogg|1')
 
-echo "video file:${video_file}, audio one: ${audio_file}"
+echo " Generating from video file '${video_file}' following audio one: '${audio_file}'..."
 
 # -vn: disable video recording
 # -acodec: set thes audio codec
 # -y: overwrite output files without asking.
 # -aq: set the audio quality; http://wiki.hydrogenaud.io/index.php?title=Recommended_Ogg_Vorbis#Recommended_Encoder_Settings
 #
-${encoder} -i "${video_file}" -vn -acodec libvorbis -aq 5 -y "${audio_file}"
+${encoder} -i "${video_file}" -vn -acodec libvorbis -aq 5 -y -loglevel warning "${audio_file}"
+
+if [ $? -eq 0 ]; then
+
+	echo
+	echo "Generation of '${audio_file}' successful."
+
+else
+
+	echo
+	echo "Generation of '${audio_file}' failed!" 1>&2
+
+	exit 10
+
+fi
