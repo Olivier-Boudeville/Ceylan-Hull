@@ -218,11 +218,11 @@ for f in ${recordings} ; do
 
 			done
 
+			echo
+
 		fi
 
 	done
-
-	echo
 
 done
 
@@ -234,7 +234,8 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 	if [ ! "$answer" = "n" ]; then
 
-		echo "Deleting as a whole ${recordings}"
+		#echo "Deleting as a whole ${recordings}"
+		echo "Deleting as a whole these local recordings."
 		/bin/rm -f ${recordings} && echo "Deleted!"
 
 		rmdir -p "${review_dir}" 2>/dev/null
