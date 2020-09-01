@@ -101,13 +101,14 @@ if [ $do_fetch -eq 0 ]; then
 	yesterday=$(date -d '-1 day' '+%Y%m%d')
 	day_minus_two=$(date -d '-2 day' '+%Y%m%d')
 	day_minus_three=$(date -d '-3 day' '+%Y%m%d')
+	day_minus_four=$(date -d '-4 day' '+%Y%m%d')
 
-	echo "Fetching CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the two days before (i.e. ${day_minus_two} and ${day_minus_three}):"
+	echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the three days before (i.e. ${day_minus_two}, ${day_minus_three} and ${day_minus_four}):"
 
-	${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv . 2>/dev/null
+	${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_four}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv . 2>/dev/null
 
-	# Disabled, as return an error as soon as there is no recording for at least
-	# one of these days (which is however normal):
+	# Disabled, as returns an error as soon as there is no recording for at
+	# least one of these days (which is however normal):
 	#
 	#if [ ! $? -eq 0 ]; then
 	#
