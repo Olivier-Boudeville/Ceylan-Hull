@@ -2,7 +2,7 @@
 
 usage="Usage: $(basename $0): [-nf|--no-fetch] [-na|--no-autoplay]: allows to (possibly) fetch from server and review conveniently any set of CCTV recordings dating back from yesterday and the three days before.
   Without fetching, CCTV recordings are expected to be already available in the current directory.
-  With autoplay, recordings are displayed in a row, and offered to be deleted as a whole afterwards. Without autoplay, they are displayed one by one, the user being asked what to do with each of them in turn."
+  With autoplay, recordings are displayed in a row, and offered to be deleted as a whole afterwards (locally and/or on the server). Without autoplay, they are displayed one by one, the user being asked what to do with each of them in turn."
 
 # Enabled by default:
 do_fetch=0
@@ -235,15 +235,51 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 	if [ ! "$answer" = "n" ]; then
 
-		#echo "Deleting as a whole ${recordings}"
+		#echo "Deleting as a whole local ${recordings}"
 		echo "Deleting as a whole these local recordings."
+
 		/bin/rm -f ${recordings} && echo "Deleted!"
 
 		rmdir -p "${review_dir}" 2>/dev/null
 
 	else
 
-		echo "No deletion performed."
+		echo "No local deletion performed."
+
+	fi
+
+	echo "Deleting all *remote* (on ${CCTV_SERVER}) CCTV recordings just displayed? (y/n) [y]"
+
+	read answer
+
+	if [ ! "$answer" = "n" ]; then
+
+		#echo "Deleting as a whole remote ${recordings}"
+		echo "Deleting as a whole these remote recordings."
+
+		# SSH option:
+		if [ -n "${SSH_PORT}" ]; then
+			ssh_opt="-p ${SSH_PORT}"
+		fi
+
+		ssh=$(which ssh)
+
+		remote_recordings=""
+		for f in ${recordings}; do
+			remote_recordings="${remote_recordings} ${CCTV_BASE_PATH}/$f"
+		done
+
+		${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${remote_recordings}
+
+		if [ $? -eq 0 ]; then
+
+			echo "Deleted!"
+
+		fi
+
+	else
+
+		echo "No remote deletion performed."
 
 	fi
 
