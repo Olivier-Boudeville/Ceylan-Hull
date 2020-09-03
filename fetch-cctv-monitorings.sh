@@ -1,6 +1,27 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user."
+usage="Usage: $(basename $0) [-q|--quiet]: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
+  Option -q / --quiet prevents any normal output so that "
+
+# We need first to gather the necessary settings.
+
+# As crontab does not use an interactive shell:
+shell_init="${HOME}/.bashrc"
+
+if [ -f "${shell_init}" ]; then
+	. "${shell_init}"
+fi
+
+
+is_quiet=1
+
+if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
+
+	# Ahah: echo "Quiet mode activated."
+	is_quiet=0
+
+fi
+
 
 review_dir="${HOME}/cctv-recordings-to-review"
 
@@ -50,7 +71,12 @@ day_minus_two=$(date -d '-2 day' '+%Y%m%d')
 day_minus_three=$(date -d '-3 day' '+%Y%m%d')
 day_minus_four=$(date -d '-4 day' '+%Y%m%d')
 
-echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the three days before (i.e. ${day_minus_two}, ${day_minus_three} and ${day_minus_four}):"
+if [ $is_quiet -eq 1 ]; then
+
+	echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the three days before (i.e. ${day_minus_two}, ${day_minus_three} and ${day_minus_four}):"
+
+fi
+
 
 ${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_four}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv . 2>/dev/null
 
