@@ -16,7 +16,7 @@ usage="Usage: $(basename $0) EXPR: allows to download in the current directory, 
 adb_exec=$(which adb 2>/dev/null)
 
 
-if [ ! -x "${adb_exec}" ] ; then
+if [ ! -x "${adb_exec}" ]; then
 
 	echo "  Error, adb tool not found." 1>&2
 	exit 5
@@ -26,7 +26,7 @@ fi
 
 args="$*"
 
-if [ -z "${args}" ] ; then
+if [ -z "${args}" ]; then
 
 	echo -e "  Error, no argument specified.\n ${usage}" 1>&2
 	exit 15
