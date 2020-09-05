@@ -1,12 +1,21 @@
 #!/bin/sh
 
-usage="Usage: '$(basename $0) DURATION', i.e. requests to trigger a timer in DURATION, which is expressed as:
+usage="Usage: '$(basename $0) [-h|--help] DURATION', i.e. requests to trigger a timer notification in DURATION, which is expressed as:
  MINUTES or MINUTES:SECONDS or HOURS:MINUTES:SECONDS
-Will play bong when duration is elapsed; useful for example for cooking.
+Will play bong when specified duration is elapsed; useful for example for cooking.
+Ex: '$(basename $0) 15' will notify noisily once 15 minutes have elapsed.
 See also: timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)."
 
-if [ -z "$1" ]; then
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	echo "$usage"
+	exit
+fi
+
+
+if [ -z "$1" ]; then
+	echo "  Error, no target duration specified.
+$usage"
 	exit 1
 fi
 
@@ -80,6 +89,11 @@ if [ ! -f "$bong_sound" ]; then
 
 fi
 
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+	echo "$usage"
+	exit
+fi
 
 duration_str="$1"
 
