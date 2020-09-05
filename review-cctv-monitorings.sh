@@ -240,7 +240,10 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 		/bin/rm -f ${recordings} && echo "Deleted!"
 
-		rmdir -p "${review_dir}" 2>/dev/null
+		# Leaving as is the current directory (script may be launched repeatedly
+		# from it):
+		#
+		#rmdir -p "${review_dir}" 2>/dev/null
 
 	else
 
