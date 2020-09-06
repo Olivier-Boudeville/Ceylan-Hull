@@ -4,7 +4,10 @@ usage="Usage: '$(basename $0) [-h|--help] DURATION', i.e. requests to trigger a 
  MINUTES or MINUTES:SECONDS or HOURS:MINUTES:SECONDS
 Will play bong when specified duration is elapsed; useful for example for cooking.
 Ex: '$(basename $0) 15' will notify noisily once 15 minutes have elapsed.
-See also: timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)."
+See also:
+   timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)
+   timer-every.sh for a periodical timer
+   "
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -162,6 +165,7 @@ esac
 bong 1>/dev/null
 
 echo "  Will wait for a duration of ${user_duration} after this initial bong, and will make noise when time is up...."
+
 current_sec=$(date +%s)
 stop_sec=$(expr ${current_sec} + ${duration_secs})
 stop_time=$(date --date="@${stop_sec}" +%H:%M:%S)

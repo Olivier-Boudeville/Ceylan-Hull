@@ -12,11 +12,12 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
-timer_in_script="timer-in.sh"
+timer_in_script_name="timer-in.sh"
+timer_in_script=$(which ${timer_in_script_name} 2>/dev/null)
 
 if [ ! -x "${timer_in_script}" ]; then
 
-	echo "  Error, no executable '${timer_in_script}' script found." 1>&2
+	echo "  Error, no executable '${timer_in_script_name}' script found." 1>&2
 	exit 5
 
 fi
@@ -105,4 +106,4 @@ diff_min=$(expr ${diff_secs} / 60)
 diff_min_as_secs=$(expr ${diff_min} \* 60 )
 extra_secs=$(expr ${diff_secs} - ${diff_min_as_secs})
 
-timer-in.sh ${diff_min}:${extra_secs}
+${timer_in_script} ${diff_min}:${extra_secs}
