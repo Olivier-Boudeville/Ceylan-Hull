@@ -39,8 +39,32 @@ $usage"
 	exit 1
 fi
 
+extra=""
 
-echo "  Will notify each time (and until end of time) that a duration of ${duration_str} elapsed...."
+colon_count=$(echo "${duration_str}" | awk -F":" '{print NF-1}')
+#echo "colon_count = ${colon_count}"
+
+case $colon_count in
+
+	0)
+		extra="minutes"
+		;;
+	1)
+		extra="(MM:SS)"
+		;;
+
+	2)
+		extra="(HH:MM:SS)"
+		;;
+
+	*)
+		echo "Invalid timestamp '${duration_str}'." 1>&2
+		exit 20
+		;;
+
+esac
+
+echo "  Will notify each time (and until end of time) that a duration of ${duration_str} ${extra} elapsed...."
 
 while true; do
 
