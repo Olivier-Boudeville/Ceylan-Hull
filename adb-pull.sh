@@ -1,6 +1,7 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: allows to download in the current directory, from the already connected and authorizing Android device (typically mobile phone), files based on the specified expression(s) (typically wildcards), knowing that adb pull does not support that.\nEx: $(basename $0) /sdcard/DCIM/Camera/IMG_20200530*.jpg"
+usage="Usage: $(basename $0) EXPR: allows to download in the current directory, from the already connected and authorizing Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards), knowing that adb pull does not support that.\nEx: $(basename $0) /sdcard/DCIM/Camera/IMG_20200530*.jpg"
+
 
 # To find content (ex: snapshots) in mobile phone:
 # $ adb shell
@@ -21,6 +22,12 @@ if [ ! -x "${adb_exec}" ]; then
 	echo "  Error, adb tool not found." 1>&2
 	exit 5
 
+fi
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+	echo "$usage"
+	exit
 fi
 
 
