@@ -44,7 +44,7 @@ colon_count=$(echo "${target_timestamp}" | awk -F":" '{print NF-1}')
 #echo "colon_count = ${colon_count}"
 
 
-if [ ! $colon_count -eq 1 ] &&  [ ! $colon_count -eq 2 ]; then
+if [ ! $colon_count -eq 1 ] && [ ! $colon_count -eq 2 ]; then
 
 	echo "  Error, specified timestamp ('${target_timestamp}') is invalid." 1>&2
 	exit 10
