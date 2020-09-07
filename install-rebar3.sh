@@ -119,7 +119,7 @@ if [ -L "rebar3" ]; then
 	/bin/rm -f rebar3
 fi
 
-ln -sf ${dir_name} rebar3
+ln -sf --no-target-directory ${dir_name} rebar3
 
 echo " Installation success, please ensure that the '${software_dir}/rebar3' directory is in your PATH for good; installed version: $(./rebar3/rebar3 -v)."
 
