@@ -59,21 +59,37 @@ if [ ! -x "${wget}" ]; then
 
 fi
 
+# Tries to be a good (not so bad at least) netizen.
+#
+
+log_suffix=$(echo "${url}" | sed 's|^.*://||1')
+
+log_file="$(date '+%Y%m%d-%Hh%Mm%S')-wget-for-${log_suffix}.log"
+
 
 echo "  Fetching content from ${url}..."
+echo "(corresponding log stored in ${log_file})"
 
-# Tries to be a good (not so bad at least) netizen:
-${wget} -e robots=off --no-check-certificate --no-proxy --mirror --recursive --level=inf --convert-links --backup-converted --page-requisites --adjust-extension --wait=${wait_time} --random-wait --limit-rate=${max_rate} --no-verbose --user-agent=${user_agent} ${url} 2>&1 | tee wget.log
+# A problem was that even with:
+# ( ${wget} [...] 2>&1 || exit 15 ) | tee --output-error wget.log
+# the whole was always reporting a success because of tee, despite wget failing.
+#
+# So:
+#
+set -o pipefail
+
+${wget} -e robots=off --no-check-certificate --no-proxy --mirror --recursive --level=inf --convert-links --backup-converted --page-requisites --adjust-extension --continue --connect-timeout=45 --waitretry=65 --force-directories --ignore-length --wait=${wait_time} --random-wait --limit-rate=${max_rate} --no-verbose --user-agent="${user_agent}" ${url} 2>&1 | tee ${log_file}
+
 
 if [ $? -eq 0 ]; then
 
 	echo "Fetch success."
-	say.sh "Website fetch success."
+	notify.sh "Website fetch success."
 
 else
 
 	echo "Fetch failure!" 1>&2
-	say.sh "Website fetch failure."
+	notify.sh "Website fetch failure."
 
 	exit 100
 
