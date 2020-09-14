@@ -1,8 +1,8 @@
 #!/bin/sh
 
-usage="Usage: '$(basename $0) [-h|--help] DURATION', i.e. requests to trigger a timer notification in DURATION, which is expressed as:
+usage="Usage: '$(basename $0) [-h|--help] DURATION [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) in DURATION, which is expressed as:
  MINUTES or MINUTES:SECONDS or HOURS:MINUTES:SECONDS
-Will play bong when specified duration is elapsed; useful for example for cooking.
+Will issue such a notification when specified duration is elapsed; useful for example for cooking.
 Ex: '$(basename $0) 15' will notify noisily once 15 minutes have elapsed.
 See also:
    timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)
@@ -20,6 +20,15 @@ if [ -z "$1" ]; then
 	echo "  Error, no target duration specified.
 $usage"
 	exit 1
+fi
+
+
+if [ -z "$3" ]; then
+	title="Time is up"
+	message="$2"
+else
+	title="$2"
+	message="$3"
 fi
 
 
@@ -48,7 +57,8 @@ bong_sound="${LOANI_REPOSITORY}/OSDL-data/gong.wav"
 # record-speech.sh --voice-id 33 --speech-prefix "timer-end" --message 'The timer says: time is up!!!!'
 time_out_sound="${LOANI_REPOSITORY}/OSDL-data/timer-end.wav"
 
-bong_count=1
+#bong_count=1
+bong_count=0
 
 
 
@@ -65,7 +75,7 @@ dinnerIsReady()
 
 	${audio_player} ${time_out_sound} 1>/dev/null 2>&1
 	#echo "Dinner is ready!"
-	echo "Time has come!"
+	#echo "Time has come!"
 
 }
 
@@ -176,7 +186,7 @@ sleep ${duration_secs}
 
 actual_stop_time=$(date '+%H:%M:%S')
 
-echo ".... time is up!"
+#echo ".... time is up!"
 
 count=1
 
@@ -186,7 +196,7 @@ while [ "$count" -le "$bong_count" ]; do
 	count=$(($count+1))
 done
 
-echo ".... time is up!"
+#echo ".... time is up!"
 dinnerIsReady
 
 count=1
@@ -202,6 +212,14 @@ done
 # Would be too noisy:
 #dinnerIsReady
 
-echo ".... time is up!!!!"
+# Enforce default:
+if [ -z "${title}" ]; then
+	title="Time is up"
+	message="After ${user_duration}, at ${actual_stop_time}."
+fi
+
+#echo "Notifying with title='${title}' and message='${message}'."
+
+notify.sh "${title}" "${message}" time
 
 echo "(actual stopping time: ${actual_stop_time})"

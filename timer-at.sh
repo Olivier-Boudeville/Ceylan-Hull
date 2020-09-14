@@ -1,7 +1,7 @@
 #!/bin/sh
 
-usage="Usage: '$(basename $0) [-h|--help] TIMESTAMP', i.e. requests to trigger a timer notification at specified TIMESTAMP, which is expressed as HOURS:MINUTES or HOURS:MINUTES:SECONDS.
-Will play bong when specified time is reached; useful typically to respect fixed schedules.
+usage="Usage: '$(basename $0) [-h|--help] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES or HOURS:MINUTES:SECONDS.
+Will issue such a notification when specified time is reached; useful typically to respect fixed schedules.
 Ex: '$(basename $0) 12:05' will notify noisily once this time is reached.
 See also: timer-in.sh for a timer based on a duration from current time rather than on an absolute timestamp."
 
@@ -31,6 +31,7 @@ fi
 
 target_timestamp="$1"
 #echo target_timestamp="$target_timestamp"
+
 
 # Current time, since the Epoch:
 start_secs=$(date +%s)
@@ -76,7 +77,9 @@ fi
 
 #fi
 
+#echo "date for finish_secs: ${target_hours}:${target_minutes}"
 #finish_secs=$(date --date "${target_hours}:${target_minutes}" +%s)
+
 finish_secs=$(date --date "${target_timestamp}" +%s)
 #echo "finish_secs = ${finish_secs}"
 
@@ -94,7 +97,7 @@ if [ $diff_secs -lt 0 ]; then
 fi
 
 if [ $diff_secs -lt 0 ]; then
-	echo "Error when determining duration (got $diff_secs seconds despite offset)."
+	echo "  Error when determining duration (got $diff_secs seconds despite offset)." 1>&2
 	exit 50
 fi
 
@@ -106,4 +109,5 @@ diff_min=$(expr ${diff_secs} / 60)
 diff_min_as_secs=$(expr ${diff_min} \* 60 )
 extra_secs=$(expr ${diff_secs} - ${diff_min_as_secs})
 
-${timer_in_script} ${diff_min}:${extra_secs}
+#echo ${timer_in_script} ${diff_min}:${extra_secs}
+${timer_in_script} ${diff_min}:${extra_secs} "$2" "$3"

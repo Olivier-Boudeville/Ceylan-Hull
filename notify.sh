@@ -31,6 +31,8 @@ fi
 # Ex: a light bulb.
 default_category="dialog-information"
 
+#echo "1: '${1}', 2: '${2}', 3: '${3}'"
+
 
 if [ $# -eq 1 ]; then
 	title=""
@@ -67,7 +69,8 @@ $usage" 1>&2
 	exit 5
 fi
 
-#echo "title=${title}, message=${message}, icon=${icon}"
+#echo "title='${title}', message='${message}', icon='${icon}'"
+
 
 notify_tool=$(which notify-send 2>/dev/null)
 
@@ -90,12 +93,19 @@ fi
 
 # First the sound, if ever the notify-send happened to block....
 
+if [ -z "${message}" ]; then
+	full_message="${title}"
+else
+	full_message="${title}: ${message}"
+fi
+
+
 if [ -z "${icon}" ]; then
 	echo "[notification] ${message}"
-	${tts_tool} "${message}"
+	${tts_tool} "${full_message}"
 	${notify_tool} "${message}"
 else
-	echo "[${category}] ${title}: ${message}"
-	${tts_tool} "${title}: ${message}"
+	echo "[${category}] ${full_message}"
+	${tts_tool} "${full_message}"
 	${notify_tool} "${title}" "${message}" "--icon=${icon}"
 fi
