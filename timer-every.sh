@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: '$(basename $0) [-h|--help] DURATION', i.e. requests to trigger (indefinitely, just use CTRL-C to stop) a timer notification every DURATION, which is expressed as:
+usage="Usage: '$(basename $0) [-h|--help] DURATION [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger (indefinitely, just use CTRL-C to stop) a timer notification  (based on MESSAGE, if specified; possibly with a TITLE) every DURATION, which is expressed as:
  MINUTES or MINUTES:SECONDS or HOURS:MINUTES:SECONDS
 Will play bong each time the specified duration is elapsed; useful for example for exercising.
 Ex: '$(basename $0) 20' will notify noisily every 20 minutes elapsed.
@@ -68,7 +68,7 @@ echo "  Will notify each time (and until end of time) that a duration of ${durat
 
 while true; do
 
-	${timer_in_script} ${duration_str} 1>/dev/null
+	${timer_in_script} ${duration_str} "$2" "$3" 1>/dev/null
 	echo "(waiting again for ${duration_str})"
 
 done
