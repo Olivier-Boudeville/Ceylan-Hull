@@ -144,7 +144,8 @@ fi
 
 
 
-# VLC: echo "Use '+' to fast forward."
+# VLC:
+#echo "Use '+' to fast forward."
 
 # Mplayer:
 echo "Use '}' to fast forward."
@@ -311,7 +312,9 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 fi
 
-if [ ${do_fetch} -eq 0 ]; then
+
+# As with auto-play, server files were already managed:
+if [ $do_fetch -eq 0 ] && [ ${auto_play} -eq 1 ] && [ -n "${recordings}" ]; then
 
 	echo "Shall the displayed CCTV recordings be deleted *on the server* (i.e. on ${CCTV_SERVER})? (y/n) [n]"
 
