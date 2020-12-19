@@ -6,7 +6,7 @@ $(basename $0): recursive grep in Erlang source files, either from TARGET_BASE_D
   Options:
 	-v or --verbose: be specifically verbose
 	-q or --quiet: be specifically quiet, just listing matches
-	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
+	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet); useful for scripts
 	-i or --insensitive: perform case-insensitive searches in the content of files, and also in the searched Erlang filenames
   Example: $(basename $0) -i 'list_to_form(' /tmp"
 
@@ -114,15 +114,16 @@ if [ -z "${read_parameter}" ]; then
 fi
 
 
+# full_base_dir is meant to be longer (too long to display before matches) yet more precise:
 target_base_dir="$1"
 
 if [ -z "${target_base_dir}" ]; then
-	target_base_dir="$(realpath .)"
-	[ ${verbose} -eq 0 ] || echo "Proceeding from current directory ('${target_base_dir}')."
-
+	target_base_dir="."
+	full_base_dir="$(realpath .)"
+	#[ ${verbose} -eq 0 ] || echo "Proceeding from current directory ('${full_base_dir}')."
 else
-	target_base_dir=$(realpath "${target_base_dir}")
-	[ ${verbose} -eq 0 ] || echo "Proceeding from specified directory ('${target_base_dir}')."
+	full_base_dir=$(realpath "${target_base_dir}")
+	#[ ${verbose} -eq 0 ] || echo "Proceeding from specified directory ('${full_base_dir}')."
 	shift
 fi
 
@@ -161,14 +162,14 @@ if [ ${verbose} -eq 0 ]; then
 
 	#echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${filter_expr}:"
 	echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${name_opt} ${filter_erl}:"
-	${find} . ${name_opt} "${filter_erl}"
+	${find} "${target_base_dir}" ${name_opt} "${filter_erl}"
 
 fi
 
 
 
 [ ${quiet} -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all Erlang files from '${target_base_dir}':
+  Recursive grep for expression <${searched_expression}> in all Erlang files from '${full_base_dir}' (i.e. '${target_base_dir}'):
 	"
 
 if [ ${filenames_only} -eq 1 ]; then
