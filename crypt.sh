@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) [-h|--help] FILE1 [FILE2 ...]
-Encrypts as strongly as reasonably possible the specified files, and removes their unencrypted sources.
+Encrypts as strongly as reasonably possible the specified file(s), and removes their unencrypted sources.
 See also the decrypt.sh counterpart script."
 
 
@@ -14,11 +14,11 @@ fi
 
 crypt_tool_name="gpg"
 
-crypt_tool=$(which $crypt_tool_name 2>/dev/null)
+crypt_tool=$(which ${crypt_tool_name} 2>/dev/null)
 
-if [ ! -x "$crypt_tool" ]; then
+if [ ! -x "${crypt_tool}" ]; then
 
-	echo "  Error, no encryption tool not found (no $crypt_tool_name)." 1>&2
+	echo "  Error, no encryption tool not found (no ${crypt_tool_name})." 1>&2
 	exit 5
 
 fi
@@ -27,7 +27,7 @@ fi
 if [ $# -lt 1 ]; then
 
 	echo "  Error, no file to encrypt specified.
-$usage" 1>&2
+${usage}" 1>&2
 	exit 6
 
 fi
@@ -44,11 +44,11 @@ for f in $*; do
 
 	if [ -f "$f" ]; then
 
-		res_file="$f.gpg"
+		res_file="${f}.gpg"
 
 		echo " - encrypting file '$f'"
-		$crypt_tool $crypt_opt $f
-		res="$?"
+		${crypt_tool} ${crypt_opt} "${f}"
+		res=$?
 
 		if [ $res -eq 0 ]; then
 
