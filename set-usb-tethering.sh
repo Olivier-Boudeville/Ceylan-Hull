@@ -1,107 +1,117 @@
 #!/bin/sh
 
-USAGE="Usage: $(basename $0) [--stop]: sets (or stops) USB tethering on local host, typically so that a linked smartphone provides it with an Internet access."
+usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host."
 
-#echo $USAGE
 
-if [ ! $(id -u) -eq 0 ] ; then
+if [ ! $(id -u) -eq 0 ]; then
 
-	echo "  Error, you must be root." 1>&2
+	echo "  Error, you must be root.
+${usage}" 1>&2
 	exit 5
 
 fi
 
-IP=$(which ip 2>/dev/null)
+ip=$(which ip 2>/dev/null)
 
-if [ ! -x "${IP}" ] ; then
+if [ ! -x "${ip}" ]; then
 
 	echo "  Error, 'ip' tool not available." 1>&2
 	exit 10
 
 fi
 
-DHCPCD=$(which dhcpcd 2>/dev/null)
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-if [ ! -x "${DHCPCD}" ] ; then
+	echo "${usage}"
+	exit
+
+fi
+
+
+dhcpcd=$(which dhcpcd 2>/dev/null)
+
+if [ ! -x "${dhcpcd}" ]; then
 
 	echo "  Error, 'dhcpcd' tool not available." 1>&2
 	exit 15
 
 fi
 
-ESPEAK=$(which espeak 2>/dev/null)
+espeak=$(which espeak 2>/dev/null)
 
 notify()
 {
 
-	MESSAGE="$1"
+	message="$1"
 
-	echo "${MESSAGE}"
+	echo "${message}"
 
-	if [ -x "${ESPEAK}" ] ; then
-		${ESPEAK} -v female1 "${MESSAGE}" 1>/dev/null 2>&1
+	if [ -x "${espeak}" ]; then
+		${espeak} -v female1 "${message}" 1>/dev/null 2>&1
 	fi
 
 }
 
 
-# Extract for example 'enp0s18f2u1' from '24: enp0s18f2u1: <BROADCAST,MULTICAST...'
-IF_NAME=$($IP addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')
+# Extract for example 'enp0s18f2u1' from '24: enp0s18f2u1:
+# <BROADCAST,MULTICAST...'
+#
+if_name=$(${ip} addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')
 
-if [ -z "${IF_NAME}" ] ; then
+if [ -z "${if_name}" ]; then
 
-	echo " Error, no relevant network interface found (is USB tethering activated?)." 1>&2
+	echo " Error, no relevant network interface found (is USB tethering activated on the phone, typically, for Android ones, in: Settings -> Networks and Internet -> Acces Point and Connection Sharing -> Via USB)?" 1>&2
 	#ip addr 1>&2
 	exit 18
 
 fi
 
 
-#echo "IF_NAME = $IF_NAME"
+#echo "if_name = ${if_name}"
 
 
 if [ "$1" = "--stop" ]; then
 
-	echo "Disabling connection on auto-detected interface $IF_NAME..."
+	echo "Disabling connection on auto-detected interface ${if_name}..."
 
-	${IP} link set dev ${IF_NAME} down && echo "...done"
+	${ip} link set dev ${if_name} down && echo "...done"
 
 	exit 0
 
 fi
 
-if [ -n "$1" ] ; then
+if [ -n "$1" ]; then
 
 	echo "  Error, parameter '$1' not supported.
-$USAGE" 1>&2
+$usage" 1>&2
 	exit 25
 
 fi
 
 
+echo "Enabling connection using auto-detected interface ${if_name}..."
 
-echo "Enabling connection using auto-detected interface $IF_NAME..."
-
-
-RETRIES=3
-
+retries=3
 
 
 connect()
 {
 
 	# Ensures that the daemon is not already runnning:
-	$DHCPCD -k $IF_NAME 1>/dev/null 2>&1
+	${dhcpcd} -k ${if_name} 1>/dev/null 2>&1
 
-	$DHCPCD $IF_NAME 1>/dev/null
+	# Any past default route could still apply and remain the first, so:
+	${ip} route del default 2>/dev/null
 
-	if [ $? -eq 0 ] ; then
+	${dhcpcd} ${if_name} 1>/dev/null
+
+	if [ $? -eq 0 ]; then
 
 		# Fix routes (only gateway needed, not full network):
-		ip route del 192.168.0.0/24 dev $IF_NAME
-		ip route add 192.168.0.1 dev $IF_NAME
+		${ip} route del 192.168.0.0/24 dev ${if_name}
+		${ip} route add 192.168.0.1 dev ${if_name}
 
-		if test_link ; then
+		if test_link; then
 
 			notify "Connection up and running. Enjoy!"
 
@@ -109,7 +119,7 @@ connect()
 
 		else
 
-			if [ $RETRIES -eq 0 ] ; then
+			if [ ${retries} -eq 0 ]; then
 
 				echo " Error, connection established yet does not seem functional, all retries failed, giving up." 1>&2
 				exit 20
@@ -117,7 +127,7 @@ connect()
 			else
 
 				echo " Connection established yet does not seem functional, retrying..."
-				RETRIES=$(($RETRIES-1))
+				retries=$((${retries}-1))
 				connect
 
 			fi
@@ -126,15 +136,15 @@ connect()
 
 	else
 
-		if [ $RETRIES -eq 0 ] ; then
+		if [ ${retries} -eq 0 ]; then
 
-			notify " Error, unable to obtain an IP address from interface, all retries failed, giving up." 1>&2
+			notify " Error, unable to obtain an ip address from interface, all retries failed, giving up." 1>&2
 			exit 25
 
 		else
 
-			echo "  Unable to obtain an IP address from interface, retrying..."
-			RETRIES=$(($RETRIES-1))
+			echo "  Unable to obtain an ip address from interface, retrying..."
+			retries=$((${retries}-1))
 			connect
 
 		fi
@@ -150,6 +160,7 @@ test_link()
 	# Otherwise could be too early for a ping to succeed:
 	sleep 2
 
+	# Both IP and DNS tested (otherwise: 8.8.8.8)
 	ping -c 1 google.com 1>/dev/null 2>&1
 	return $?
 }
