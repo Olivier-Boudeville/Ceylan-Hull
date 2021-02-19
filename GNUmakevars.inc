@@ -7,7 +7,7 @@
 
 # PROJECT_NAME should be defined on a per-project basis.
 ifndef PROJECT_NAME
-	PROJECT_NAME := Ceylan-HULL
+	PROJECT_NAME := Ceylan-Hull
 endif
 
 

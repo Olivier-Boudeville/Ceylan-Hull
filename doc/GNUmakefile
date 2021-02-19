@@ -41,7 +41,7 @@ GITHUB_PAGES_BASE := $(shell basename "$(HULL_WEB_MIRROR_BRANCH)")
 doc:
 
 all:
-	@echo "  Run 'make full-doc' to generate the manual of the 'HULL' layer."
+	@echo "  Run 'make full-doc' to generate the manual of the 'Hull' layer."
 
 
 full-doc: $(DOC_GENERATED_FILES)
@@ -58,7 +58,7 @@ pdf: clean-doc $(PDF_TARGET)
 # (please then remove all initial content of that branch)
 #
 clone-mirror:
-	@cd ../../ && git clone https://github.com/Olivier-Boudeville/Ceylan-HULL.git $(GITHUB_PAGES_BASE) && cd $(GITHUB_PAGES_BASE) && git checkout -b gh-pages
+	@cd ../../ && git clone https://github.com/Olivier-Boudeville/Ceylan-Hull.git $(GITHUB_PAGES_BASE) && cd $(GITHUB_PAGES_BASE) && git checkout -b gh-pages
 
 
 export-doc: clean-doc full-doc export-to-official export-to-mirror
@@ -68,16 +68,16 @@ export-doc: clean-doc full-doc export-to-official export-to-mirror
 #
 # rsync would not, but requires a different source layout (copies a full tree,
 # not a set of files), so currently not used:
-# rsync -avze "ssh $(SP)" $(SOME_WEB_TREE) $(WEB_SRV):$(WEB_ROOT)/HULL/
+# rsync -avze "ssh $(SP)" $(SOME_WEB_TREE) $(WEB_SRV):$(WEB_ROOT)/Hull/
 #
 export-to-official: $(DOC_GENERATED_FILES)
-	@echo "   Exporting HULL documentation to official website ($(WEB_SRV))"
-	@/bin/scp $(SP) $(WEB_CONTENT) $(WEB_SRV):$(WEB_ROOT)/HULL/
+	@echo "   Exporting Hull documentation to official website ($(WEB_SRV))"
+	@/bin/scp $(SP) $(WEB_CONTENT) $(WEB_SRV):$(WEB_ROOT)/Hull/
 
 
 export-to-mirror: $(DOC_GENERATED_FILES)
-	@echo "   Exporting HULL documentation to mirror website in $(HULL_WEB_MIRROR_BRANCH)"
-	@/bin/cp -f $(WEB_CONTENT) $(HULL_WEB_MIRROR_BRANCH) && cd $(HULL_WEB_MIRROR_BRANCH) && git add . && git merge -s ours && git commit -m "HULL doc updated." && git push && git pull --ff-only
+	@echo "   Exporting Hull documentation to mirror website in $(HULL_WEB_MIRROR_BRANCH)"
+	@/bin/cp -f $(WEB_CONTENT) $(HULL_WEB_MIRROR_BRANCH) && cd $(HULL_WEB_MIRROR_BRANCH) && git add . && git merge -s ours && git commit -m "Hull doc updated." && git push && git pull --ff-only
 
 
 
