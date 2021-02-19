@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<title>Welcome to the Ceylan-Hull 1.0 documentation</title>
+<meta content="Hull, shell, scripts, sh, bash" name="keywords" />
+<link rel="stylesheet" href="pygments-default.css" type="text/css" />
+<link rel="stylesheet" href="hull.css" type="text/css" />
+<link href="hull-icon.png" rel="icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="document">
+
+
+<span class="target" id="top"></span><p><span class="raw-html"><a name="hull_top"></a></span></p>
+<p><span class="raw-html"><div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/index.html">browse mirror</a> <a href="hull.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div></span></p>
+<p><span class="raw-html"><center><img src="hull-title.png" width="20%"></img></center></span>
+</p>
+<div class="section" id="a-collection-of-all-kinds-of-shell-scripts">
+<h1><a class="toc-backref" href="#id9"><em>A collection of all kinds of shell scripts</em></a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Organisation:</th><td class="field-body">Copyright (C) 2008-2021 Olivier Boudeville</td>
+</tr>
+<tr class="field"><th class="field-name">Contact:</th><td class="field-body">about (dash) hull (at) esperide (dot) com</td>
+</tr>
+<tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
+</tr>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Friday, February 19, 2021</td>
+</tr>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.1</td>
+</tr>
+<tr class="field"><th class="field-name">Dedication:</th><td class="field-body">Users and maintainers of <tt class="docutils literal"><span class="pre">Ceylan-Hull</span></tt>, version 1.0.</td>
+</tr>
+<tr class="field"><th class="field-name">Abstract:</th><td class="field-body">The role of <tt class="docutils literal">Hull</tt> is to concentrate various, generic-purpose convenience shell scripts, on behalf of the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan">Ceylan</a> project.</td>
+</tr>
+</tbody>
+</table>
+<p>The latest version of this documentation is to be found at the <a class="reference external" href="http://hull.esperide.org">official Ceylan-Hull website</a> (<tt class="docutils literal"><span class="pre">http://hull.esperide.org</span></tt>).</p>
+<p><span class="raw-html">This Hull documentation is also available in the PDF format (see <a href="hull.pdf">hull.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/hull.html">here</a>.</span></p>
+<p></p>
+<div class="section" id="overview">
+<h2><a class="toc-backref" href="#id10">Overview</a></h2>
+<p>Here are <strong>a few scripts, sorted by themes, that may be convenient for at least some users</strong>.</p>
+<p>Many of them can display their intended usage on the console by specifying them the <tt class="docutils literal"><span class="pre">-h</span></tt> / <tt class="docutils literal"><span class="pre">--help</span></tt> command-line option.</p>
+<p>In each category, scripts are roughly sorted by decreasing interest/update status. The scripts that we deem the most useful are described more precisely at the end of this document.</p>
+<p>As much as possible, we try to name these scripts functionally rather than in terms of tools, so that the implementation they rely upon can be updated as transparently as possible (i.e. with as little change as possible in the user's habits).</p>
+<p>Each script entry is a link pointing directly to the script itself.</p>
+<p>Most of them are certainly not rocket science.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Many of these scripts may be a bit outdated, as only a small subset of them are routinely used; rely on them with caution!</p>
+<p class="last">And tell us if you would like some of them to be updated.</p>
+</div>
+<p></p>
+<div class="contents topic" id="id1">
+<span id="table-of-contents"></span><p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#a-collection-of-all-kinds-of-shell-scripts" id="id9"><em>A collection of all kinds of shell scripts</em></a><ul>
+<li><a class="reference internal" href="#overview" id="id10">Overview</a></li>
+<li><a class="reference internal" href="#listing-of-the-recommended-shell-scripts-per-usage" id="id11">Listing of the recommended shell scripts per usage</a><ul>
+<li><a class="reference internal" href="#related-to-filesystems" id="id12">Related to Filesystems</a><ul>
+<li><a class="reference internal" href="#to-search-for-files-and-content" id="id13">To search for files and content</a></li>
+<li><a class="reference internal" href="#to-list-filesystem-elements" id="id14">To list filesystem elements</a></li>
+<li><a class="reference internal" href="#to-fix-names-paths-permissions-content" id="id15">To fix names, paths, permissions, content</a></li>
+<li><a class="reference internal" href="#to-inspect-file-and-directory-content" id="id16">To inspect file and directory content</a></li>
+<li><a class="reference internal" href="#to-compare-files-and-trees" id="id17">To compare files and trees</a></li>
+<li><a class="reference internal" href="#to-copy-transfer" id="id18">To copy/transfer</a></li>
+<li><a class="reference internal" href="#to-remove-filesystem-elements" id="id19">To remove filesystem elements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#process-related" id="id20">Process-related</a></li>
+<li><a class="reference internal" href="#network-related" id="id21">Network-related</a></li>
+<li><a class="reference internal" href="#for-development" id="id22">For Development</a></li>
+<li><a class="reference internal" href="#replacement-related" id="id23">Replacement-related</a></li>
+<li><a class="reference internal" href="#multimedia-related" id="id24">Multimedia-related</a><ul>
+<li><a class="reference internal" href="#for-audio" id="id25">For Audio</a></li>
+<li><a class="reference internal" href="#for-voice-synthesis-text-to-speech" id="id26">For Voice Synthesis / Text-To-Speech</a></li>
+<li><a class="reference internal" href="#for-video" id="id27">For Video</a></li>
+<li><a class="reference internal" href="#for-snapshots-camera-pictures" id="id28">For Snapshots (Camera Pictures)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#cctv-related" id="id29">CCTV-related</a></li>
+<li><a class="reference internal" href="#document-related" id="id30">Document-related</a></li>
+<li><a class="reference internal" href="#for-version-control-system-vcs" id="id31">For Version Control System (VCS)</a></li>
+<li><a class="reference internal" href="#system-related" id="id32">System-related</a><ul>
+<li><a class="reference internal" href="#admin-related" id="id33">Admin-related</a></li>
+<li><a class="reference internal" href="#to-install-software" id="id34">To install software</a></li>
+<li><a class="reference internal" href="#system-information-related" id="id35">System information-related</a></li>
+<li><a class="reference internal" href="#convenience-related" id="id36">Convenience-related</a></li>
+<li><a class="reference internal" href="#distribution-related" id="id37">Distribution-related</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#for-encryption" id="id38">For encryption</a></li>
+<li><a class="reference internal" href="#for-security" id="id39">For security</a></li>
+<li><a class="reference internal" href="#firewall-configuration" id="id40">Firewall configuration</a></li>
+<li><a class="reference internal" href="#for-smartphones" id="id41">For smartphones</a></li>
+<li><a class="reference internal" href="#for-archive-management" id="id42">For archive management</a></li>
+<li><a class="reference internal" href="#web-related-facilities" id="id43">Web-related facilities</a></li>
+<li><a class="reference internal" href="#for-user-notifications" id="id44">For user notifications</a></li>
+<li><a class="reference internal" href="#shell-helpers" id="id45">Shell Helpers</a></li>
+<li><a class="reference internal" href="#about-configuration" id="id46">About Configuration</a><ul>
+<li><a class="reference internal" href="#for-keyboards" id="id47">For keyboards</a></li>
+<li><a class="reference internal" href="#of-environment-and-related" id="id48">Of Environment and related</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#script-related" id="id49">Script-related</a></li>
+<li><a class="reference internal" href="#launch-related" id="id50">Launch-related</a></li>
+<li><a class="reference internal" href="#miscellaneous" id="id51">Miscellaneous</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#detailed-description-of-some-frequently-used-scripts" id="id52">Detailed description of some frequently-used scripts</a></li>
+<li><a class="reference internal" href="#see-also" id="id53">See also</a></li>
+<li><a class="reference internal" href="#support" id="id54">Support</a></li>
+<li><a class="reference internal" href="#please-react" id="id55">Please React!</a></li>
+<li><a class="reference internal" href="#ending-word" id="id56">Ending Word</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p></p>
+</div>
+<div class="section" id="listing-of-the-recommended-shell-scripts-per-usage">
+<h2><a class="toc-backref" href="#id11">Listing of the recommended shell scripts per usage</a></h2>
+<div class="section" id="related-to-filesystems">
+<h3><a class="toc-backref" href="#id12">Related to Filesystems</a></h3>
+<div class="section" id="to-search-for-files-and-content">
+<h4><a class="toc-backref" href="#id13">To search for files and content</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh">wh</a> (&quot;where&quot;) : a more convenient &quot;find&quot;; see the <a class="reference internal" href="#wh-full-usage">wh full usage</a></li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep">regrep</a>: recursive grep for the ones that lack it; see the <a class="reference internal" href="#regrep-full-usage">regrep full usage</a></li>
+</ul>
+</div>
+<div class="section" id="to-list-filesystem-elements">
+<h4><a class="toc-backref" href="#id14">To list filesystem elements</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-filesystem-entries-by-size.sh">list-filesystem-entries-by-size.sh</a>: lists, from any specified directory otherwise from the current one, the direct filesystem entries (local files and directories), sorted by decreasing size of their content</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-files-in-tree-by-size.sh">list-files-in-tree-by-size.sh</a>: lists, from any specified directory otherwise from the current one, all files in tree, sorted by decreasing size of their content</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-files-in-tree-by-most-recent-modification-time.sh">list-files-in-tree-by-most-recent-modification-time.sh</a>: lists, from any specified directory otherwise from the current one, all files in tree, sorted from the most recently modified to the least</li>
+</ul>
+</div>
+<div class="section" id="to-fix-names-paths-permissions-content">
+<h4><a class="toc-backref" href="#id15">To fix names, paths, permissions, content</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-filename.sh">fix-filename.sh</a>: &quot;corrects&quot; the name of the specified file (or directory), to remove spaces and quotes (replaced by '-'), accentuated characters in it, etc.</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-paths-in-tree.sh">fix-paths-in-tree.sh</a>: does the same as <tt class="docutils literal"><span class="pre">fix-filename.sh</span></tt>, yet in a tree</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-file-permissions.sh">fix-file-permissions.sh</a>: corrects, for all files in the current directory, the UNIX permissions for the most common file extensions</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-files-unexecutable-in-tree.sh">set-files-unexecutable-in-tree.sh</a>: ensures that all files found recursively from the current directory are not executable</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces.sh">fix-unbreakable-spaces.sh</a>: removes any unbreakable space in specified file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces-in-source-tree.sh">fix-unbreakable-spaces-in-source-tree.sh</a>: removes any unbreakable space in specified tree</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh">fix-whitespaces.sh</a>: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as editor</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh">rename-files-in-tree.sh</a> (just an example of pattern substitution in filenames)</li>
+</ul>
+</div>
+<div class="section" id="to-inspect-file-and-directory-content">
+<h4><a class="toc-backref" href="#id16">To inspect file and directory content</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/compute-checksum-in-tree.sh">compute-checksum-in-tree.sh</a>: computes the checksum of all files in specified tree and stores them in the specified text output file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-tree-stats.sh">display-tree-stats.sh</a>: displays simple, key stats about the specified tree (typically in order to compare merged trees)</li>
+</ul>
+</div>
+<div class="section" id="to-compare-files-and-trees">
+<h4><a class="toc-backref" href="#id17">To compare files and trees</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-dir.sh">diff-dir.sh</a>: performs a (single-level, non-recursive) comparison of the content of the two specified directories</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-tree.sh">diff-tree.sh</a>: compares all files that are present both in first and second trees, and warns if they are not identical; warns too if some files are in one directory but not in the other</li>
+</ul>
+<p>See also: Myriad's <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/apps/merge-tool/merge.sh">merge.sh</a> script, a considerably more powerful tool for merging trees.</p>
+</div>
+<div class="section" id="to-copy-transfer">
+<h4><a class="toc-backref" href="#id18">To copy/transfer</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/transfer-tree.sh">transfer-tree.sh</a>: copies (possibly through the network) a tree existing in one location to another one, in a merge-friendly manner</li>
+</ul>
+</div>
+<div class="section" id="to-remove-filesystem-elements">
+<h4><a class="toc-backref" href="#id19">To remove filesystem elements</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a> (for &quot;secure rm&quot;): stores deleted files in a trash directory, instead of deleting them directly; see the <a class="reference internal" href="#srm-full-usage">srm full usage</a></li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/empty-trash.sh">empty-trash.sh</a>: empties the trash directory that can be filled thanks to our <tt class="docutils literal">srm</tt> script</li>
+</ul>
+</div>
+</div>
+<div class="section" id="process-related">
+<h3><a class="toc-backref" href="#id20">Process-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/top.sh">top.sh</a>: triggers the best &quot;top&quot; available, to monitor processes and system resources</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh">watch.sh</a>: to track (over time) processes that may be transient</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-size.sh">list-processes-by-size.sh</a>: lists processes by decreasing size in RAM</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-cpu-use.sh">list-processes-by-cpu-use.sh</a>: lists processes by decreasing use of CPU</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-every.sh">kill-every.sh</a>: kills all processes that match specified name pattern</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-always.sh">kill-always.sh</a>: as long as this script is kept running, kills any process matching the specified name</li>
+</ul>
+</div>
+<div class="section" id="network-related">
+<h3><a class="toc-backref" href="#id21">Network-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh">test-network.sh</a>: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/manage-wifi.sh">manage-wifi.sh</a>: starts/gets status/scans/stops the wifi support</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-scan.sh">ip-scan.sh</a>: scans all IPs with any specified prefix, searching for ICMP ping answers (useful to locate some devices in a local network)</li>
+</ul>
+</div>
+<div class="section" id="for-development">
+<h3><a class="toc-backref" href="#id22">For Development</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-copyright-notices.sh">update-copyright-notices.sh</a>: updates the copyright notices of code of specified type found from specified root directory (to run at each new year)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-all-copyright-notices.sh">update-all-copyright-notices.sh</a>: updates the copyright notices of code of specified type found from specified root directory, based on the specified year range</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/add-header-to-files.sh">add-header-to-files.sh</a>: adds specified header to specified files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remake.sh">remake.sh</a>: forces a remake of specified generated file (ex: <tt class="docutils literal">.o</tt> or <tt class="docutils literal">.beam</tt>)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-core-dumps-in-tree.sh">list-core-dumps-in-tree.sh</a>: locates all core dump files in current tree</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-with-valgrind.sh">test-with-valgrind.sh</a>: uses Valgrind to perform quality test on the specified executable</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style.sh">reformat-source-style.sh</a>: applies some style change to specified file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style-in-tree.sh">reformat-source-style-in-tree.sh</a>: applies some style change to C/C++ files in specified tree</li>
+</ul>
+</div>
+<div class="section" id="replacement-related">
+<h3><a class="toc-backref" href="#id23">Replacement-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-file.sh">replace-in-file.sh</a>: replaces in specified file the specified target pattern with the replacement one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-tree.sh">replace-in-tree.sh</a>: replaces, in files matching the specified pattern found from the current directory, the specified target pattern with the replacement one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-file.sh">substitute-pattern-in-file.sh</a> (possible duplicate): replaces in specified file every source pattern by specified target one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-tree.sh">substitute-pattern-in-tree.sh</a> (possible duplicate): substitutes every source pattern by specified target one in all files, starting recursively from current directory</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-lines-starting-by.sh">replace-lines-starting-by.sh</a>: replaces in specified file every line starting with the specified pattern by the specified full line</li>
+</ul>
+</div>
+<div class="section" id="multimedia-related">
+<h3><a class="toc-backref" href="#id24">Multimedia-related</a></h3>
+<div class="section" id="for-audio">
+<h4><a class="toc-backref" href="#id25">For Audio</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh">play-audio.sh</a>: performs an audio-only playback of specified content files (including video ones) and directories</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh">extract-audio-from-video.sh</a>: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/resample.sh">resample.sh</a>: resamples the target audio file to the specified frequency, keeping the same bitdepth</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ogg-encode.sh">ogg-encode.sh</a>: encodes specified sound file in OggVorbis after having removed any leading and ending silences, adjusting volume</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-to-mp3.sh">convert-vorbis-to-mp3.sh</a>: converts a Vorbis-encoded Ogg file to MP3 (sometimes it is useful to use older players)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-tree-to-mp3.sh">convert-vorbis-tree-to-mp3.sh</a>: converts all Vorbis-encoded Ogg files to MP3 in specified tree</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/trim-silence-in.sh">trim-silence-in.sh</a>: removes any silence at begin and end of specified file, which is updated (initial content is thus not kept)</li>
+</ul>
+</div>
+<div class="section" id="for-voice-synthesis-text-to-speech">
+<h4><a class="toc-backref" href="#id26">For Voice Synthesis / Text-To-Speech</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/say.sh">say.sh</a>: says specified text, based on text to speech</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-speech.sh">record-speech.sh</a>: records the specified speech with specified voice in the specified prefixed filename</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-speech-syntheses.sh">install-speech-syntheses.sh</a>: installs all listed voices for speech synthesis</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-and-install-MBROLA-and-voices.sh">get-and-install-MBROLA-and-voices.sh</a>: installs MBROLA and corresponding voices</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-espeak-voices.sh">test-espeak-voices.sh</a>: tests the voices supported by espeak</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-voices.sh">test-voices.sh</a>: tests all supported voices</li>
+</ul>
+</div>
+<div class="section" id="for-video">
+<h4><a class="toc-backref" href="#id27">For Video</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh">convert-mov-to-x264-mp4.sh</a>: converts specified MOV file to MP4</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh">fix-video-mode.sh</a>: forces a specified video resolution</li>
+</ul>
+</div>
+<div class="section" id="for-snapshots-camera-pictures">
+<h4><a class="toc-backref" href="#id28">For Snapshots (Camera Pictures)</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh">rename-snapshot.sh</a>: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh">rename-snapshots.sh</a>: renames snapshots found from current directory, so that they respect better naming conventions</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-image.sh">generate-lighter-image.sh</a>: generates a lighter (smaller and of decreased quality) version of the specified image</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-images.sh">generate-lighter-images.sh</a>: reduces the size of image files found in current directory</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cctv-related">
+<h3><a class="toc-backref" href="#id29">CCTV-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh">monitor-cctv.sh</a>: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh">fetch-cctv-monitorings.sh</a>: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh">review-cctv-monitorings.sh</a>: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before</li>
+</ul>
+</div>
+<div class="section" id="document-related">
+<h3><a class="toc-backref" href="#id30">Document-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh">check-rst-includes.sh</a>: checks that all RST files found from current directory are included once and only once in the sources found</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh">convert-rst-to-mediawiki.sh</a>: converts specified RST source file in a mediawiki counterpart file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh">generate-mermaid-diagram.sh</a>: generates a PNG file corresponding to the specified file describing a Mermaid diagram</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh">generate-pdf-from-latex.sh</a>: generates a PDF file from a LaTeX one, and displays it</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh">regenerate-rst-files.sh</a>: updates generated files from more recent docutils files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh">track-rst-updates.sh</a>: tracks changes in the specified RST source file in order to regenerate the target file accordingly</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh">spell-check-rst-tree.sh</a>: spellchecks all RST files found from current directory</li>
+</ul>
+</div>
+<div class="section" id="for-version-control-system-vcs">
+<h3><a class="toc-backref" href="#id31">For Version Control System (VCS)</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci">dci</a>: assists efficiently and conveniently the commit of specified file(s)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci-all">dci-all</a>: selects recursively from current directory the files that should be committed (either added or modified), and commits them; for each of the modified files, shows the diff with previous version before requesting a commit message</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif">dif</a>: shows on the console the differences between the current versions of the (possibly specified) files on the filesystem and the staged ones (i.e. the changes that might be added)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difg">difg</a>: graphical version of <tt class="docutils literal">dif</tt></li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif-prev.sh">dif-prev.sh</a>: compares the current (committed) version of specified file(s) with their previous one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difs">difs</a>: shows the differences between the staged files and their committed version</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/st">st</a>: shows the current VCS status of the specified files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/up">up</a>: updates the current local version of the VCS repository</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh">show-branch-hierarchy.sh</a>: shows the hierarchy of the branches in the current VCS repository</li>
+</ul>
+</div>
+<div class="section" id="system-related">
+<h3><a class="toc-backref" href="#id32">System-related</a></h3>
+<div class="section" id="admin-related">
+<h4><a class="toc-backref" href="#id33">Admin-related</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-filesystem.sh">check-filesystem.sh</a>: checks for errors, and repairs if needed, the specified  filesystem</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-ntp.sh">check-ntp.sh</a>: reports the current, local NTP status</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-time-and-date-by-ntp.sh">set-time-and-date-by-ntp.sh</a>: sets time and date by NTP thanks to specified or default server</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-ups-status.sh">display-ups-status.sh</a>: displays the status of specified UPS</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-raid-disk-status.sh">report-raid-disk-status.sh</a>: reports the status of the specified RAID array (script for automation)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-disk-smart-monitoring.sh">report-disk-smart-monitoring.sh</a>: reports a state change of the specified SMART-compliant disk (script for automation)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-ups-status.sh">report-ups-status.sh</a>: reports a state change of the specified UPS (script for automation)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-system-settings.sh">record-system-settings.sh</a>: records in-file the main system settings of the local host</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-host-information.sh">get-host-information.sh</a> (possible duplicate): returns the main system settings of the local host, and stores them in-file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/shutdown-local-host.sh">shutdown-local-host.sh</a>: shutdowns current, local host after having performed any relevant system update</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-locate-database.sh">update-locate-database.sh</a>: updates the 'locate' database, for faster look-ups in filesystems</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-encrypted-usb-key.sh">mount-encrypted-usb-key.sh</a>: mounts specified LUKS-encrypted USB key, as root or as a normal user</li>
+</ul>
+</div>
+<div class="section" id="to-install-software">
+<h4><a class="toc-backref" href="#id34">To install software</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-rebar3.sh">install-rebar3.sh</a>: installs the rebar3 Erlang build tool</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-godot.sh">install-godot.sh</a>: installs the Godot 3D engine</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-unity3d.sh">install-unity3d.sh</a>: install the Unity3D engine</li>
+</ul>
+</div>
+<div class="section" id="system-information-related">
+<h4><a class="toc-backref" href="#id35">System information-related</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-opengl-information.sh">display-opengl-information.sh</a>: displays information regarding the local OpenGL support</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-raid-status.sh">display-raid-status.sh</a>: displays information regarding a local RAID array.</li>
+</ul>
+</div>
+<div class="section" id="convenience-related">
+<h4><a class="toc-backref" href="#id36">Convenience-related</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/activate-keyboard-backlighting.sh">activate-keyboard-backlighting.sh</a>: (des)activates (per-level) the keyboard backlighting</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/disable-touchpad-if-mouse-available.sh">disable-touchpad-if-mouse-available.sh</a>: ensures that the touchpad (if any) is enabled iff there is no mouse connected</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/toggle-touchpad-enabling.sh">toggle-touchpad-enabling.sh</a>: toggles the touchpad activation state</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-to-video-projector.sh">display-to-video-projector.sh</a>: displays a screen to a video projector (various examples thereof)</li>
+</ul>
+</div>
+<div class="section" id="distribution-related">
+<h4><a class="toc-backref" href="#id37">Distribution-related</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro.sh">update-distro.sh</a>: updates the current distribution, and traces it</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-aur-installer.sh">update-aur-installer.sh</a>: updates the local AUR (Arch User Repository) installer</li>
+</ul>
+</div>
+</div>
+<div class="section" id="for-encryption">
+<h3><a class="toc-backref" href="#id38">For encryption</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh">crypt.sh</a>: encrypts as strongly as reasonably possible the specified file(s), and removes their unencrypted sources</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/decrypt.sh">decrypt.sh</a>: decrypts specified file(s) (does not remove their encrypted version)</li>
+</ul>
+</div>
+<div class="section" id="for-security">
+<h3><a class="toc-backref" href="#id39">For security</a></h3>
+<ul class="simple">
+<li>for the management of credentials (i.e. sets of login/password):<ul>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/open-credentials.sh">open-credentials.sh</a>: unlocks (decrypts) the credential file whose path is read from the user environment, and opens it; once closed, re-locks it (with the same passphrase)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-credentials.sh">lock-credentials.sh</a>: locks (encrypts) the credential file whose path is read from the user environment</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unlock-credentials.sh">unlock-credentials.sh</a>: unlocks (decrypts) the credential file whose path is read from the user environment</li>
+</ul>
+</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-screen.sh">lock-screen.sh</a>: locks immediately the screen</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/inspect-opened-ports.sh">inspect-opened-ports.sh</a>: lists the local TCP/UDP ports that are currently opened</li>
+</ul>
+</div>
+<div class="section" id="firewall-configuration">
+<h3><a class="toc-backref" href="#id40">Firewall configuration</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Gateway.sh">iptables.rules-Gateway.sh</a>: manages a well-configured firewall suitable for a gateway host with masquerading and various services</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Minimal-gateway.sh">iptables.rules-Minimal-gateway.sh</a>: sets up a minimal yet functional firewall suitable for a gateway host</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-LANBox.sh">iptables.rules-LANBox.sh</a>: manages a well-configured firewall suitable for a LAN host</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-inspect.sh">iptables.rules-inspect.sh</a>: lists the currently-used firewall rules</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-FullDisabling.sh">iptables.rules-FullDisabling.sh</a>: disables all firewall rules</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-TemporaryDisabling.sh">iptables.rules-TemporaryDisabling.sh</a>: disables temporarily all firewall rules</li>
+</ul>
+</div>
+<div class="section" id="for-smartphones">
+<h3><a class="toc-backref" href="#id41">For smartphones</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/adb-pull.sh">adb-pull.sh</a>: uploads specified local files, possibly based on expressions to the already connected and authorizing Android device</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/adb-push.sh">adb-push.sh</a>: downloads in the current directory, from the already connected and authorizing Android device, files and directories (recursively)</li>
+</ul>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-usb-tethering.sh">set-usb-tethering.sh</a>: sets (or stops) USB tethering on local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host</li>
+</ul>
+</div>
+<div class="section" id="for-archive-management">
+<h3><a class="toc-backref" href="#id42">For archive management</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/archive-emails.sh">archive-emails.sh</a>: archives properly and reliably (compressed, cyphered, possibly transferred) the user emails</li>
+<li>Manages reference version of files, by storing them in a &quot;vault&quot;:<ul>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/catch.sh">catch.sh</a>: stores a file in a vault directory and makes a symbolic link to it, so that even if current tree is removed, this file will not be lost</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/retrieve.sh">retrieve.sh</a>: retrieves at least one file already stored in vault by creating link towards it, from current directory</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-directory-from-vault.sh">update-directory-from-vault.sh</a>: updates all files in specified directory from their vault counterparts</li>
+</ul>
+</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/make-git-archive.sh">make-git-archive.sh</a>: makes a backup (as an archived GIT bundle) of specified project directory, stored in specified archive directory</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/snapshot.sh">snapshot.sh</a>: performs a snapshot (tar.xz.gpg archive) of specified directory</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-for-backup.sh">list-for-backup.sh</a>: enumerates in current directory all files, specifies their name, size and MD5 sum, and stores the result in a relevant file</li>
+</ul>
+</div>
+<div class="section" id="web-related-facilities">
+<h3><a class="toc-backref" href="#id43">Web-related facilities</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-html-map.sh">generate-html-map.sh</a>: generates a simple HTML map with links from the available pages in specified web root</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/backup-directory.sh">backup-directory.sh</a>: backups specified directory to specified backup directory on the specified server, using specified SSH port</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-website.sh">fetch-website.sh</a>: downloads correctly, recursively (fully but slowly) web content accessible from the specified URL</li>
+</ul>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-awstats-report.sh">generate-awstats-report.sh</a>: to trigger the generation of an Awstats report (prefer using <a class="reference external" href="http://us-web.esperide.org">US-Web</a> instead)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/">make-markup-shortcut-links.sh</a>: creates shortcuts (symlinks) for the <tt class="docutils literal"><span class="pre">put-*-markup.sh</span></tt> micro-scripts, in order to assist a bit the user of following languages:<ul>
+<li>for HTML: <tt class="docutils literal">bold</tt>, <tt class="docutils literal">box</tt>, <tt class="docutils literal">cent</tt>, <tt class="docutils literal">code</tt>, <tt class="docutils literal">def</tt>, <tt class="docutils literal">defel</tt>, <tt class="docutils literal">em</tt>, <tt class="docutils literal">img</tt>, <tt class="docutils literal">linked</tt>, <tt class="docutils literal">lnk</tt>, <tt class="docutils literal">ordered</tt>, <tt class="docutils literal">para</tt>, <tt class="docutils literal">sni</tt>, <tt class="docutils literal">strong</tt>, <tt class="docutils literal">table</tt>, <tt class="docutils literal">tit</tt>, <tt class="docutils literal">toc</tt></li>
+<li>for RST: <tt class="docutils literal">imgr</tt>, <tt class="docutils literal">linkr</tt></li>
+<li>in general: <tt class="docutils literal">fuda</tt>, <tt class="docutils literal">newda</tt></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="for-user-notifications">
+<h3><a class="toc-backref" href="#id44">For user notifications</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/notify.sh">notify.sh</a>: notifies the user about specified message, possibly with a title and a category</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-at.sh">timer-at.sh</a>: requests to trigger a timer notification at specified (absolute) timestamp</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-in.sh">timer-in.sh</a>: requests to trigger a timer notification in specified duration</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-every.sh">timer-every.sh</a>: requests to trigger (indefinitely, just use CTRL-C to stop) a timer notification every specified duration</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/start-jam-session.sh">start-jam-session.sh</a>: starts a jam session interrupted by a notification every period, to avoid remaining still for too long</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/bong.sh">bong.sh</a>: plays the specified number of bong sound(s)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/beep.sh">beep.sh</a>: plays a beep to notify the user of an event</li>
+</ul>
+</div>
+<div class="section" id="shell-helpers">
+<h3><a class="toc-backref" href="#id45">Shell Helpers</a></h3>
+<p>To facilitate shell sessions:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mo">mo</a>: shorthand for a relevant version of <tt class="docutils literal">more</tt></li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/hide.sh">hide.sh</a>: hides specified file or directory (simply by adding a <tt class="docutils literal">.orig</tt> extension to its name)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-display.sh">set-display.sh</a>: sets the X display to specified host; if none is specified, sets it to the local one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-date.sh">get-date.sh</a>: returns the current date in our standard short format (ex: <tt class="docutils literal">20210219</tt>)</li>
+</ul>
+</div>
+<div class="section" id="about-configuration">
+<h3><a class="toc-backref" href="#id46">About Configuration</a></h3>
+<div class="section" id="for-keyboards">
+<h4><a class="toc-backref" href="#id47">For keyboards</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reset-keyboard-mode.sh">reset-keyboard-mode.sh</a>: resets the keyboard mode, typically should it have been modified by a misbehaving program</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-keyboard-layout.sh">set-keyboard-layout.sh</a>: sets the X keyboard layout</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-french-keyboard.sh">set-french-keyboard.sh</a>: sets the keyboard layout to the French (for all X)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-auto-repeat.sh">set-auto-repeat.sh</a>: enables the keyboard auto-repeat mode (to issue multiple characters in case of longer keypresses)</li>
+</ul>
+</div>
+<div class="section" id="of-environment-and-related">
+<h4><a class="toc-backref" href="#id48">Of Environment and related</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unset-all-environment-variables.sh">unset-all-environment-variables.sh</a>: unsets all environment variables, typically to rule out stranger account-related side-effects</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-emacs-modules.sh">update-emacs-modules.sh</a>: updates the basic Emacs modules that we use</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-local-environment.sh">set-local-environment.sh</a>: sets up a few installation conventions</li>
+</ul>
+</div>
+</div>
+<div class="section" id="script-related">
+<h3><a class="toc-backref" href="#id49">Script-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/protect-special-characters.sh">protect-special-characters.sh</a>: prevents special characters in specified expression from being interpreted by tools like sed</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/encode-to-rot13.sh">encode-to-rot13.sh</a>: returns a ROT13-encoded version of specified parameters</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/default-locations.sh">default-locations.sh</a>: detects the path of the most common UNIX-related tools (this script shall be sourced, not executed)</li>
+</ul>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/term-utils.sh">term-utils.sh</a>: defines facilities to make a better use of terminals, as a very basic, limited text user interface (this script shall be sourced, not executed)</li>
+</ul>
+</div>
+<div class="section" id="launch-related">
+<h3><a class="toc-backref" href="#id50">Launch-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e">e</a>: to edit (i.e. open potentially for updating) all kinds of files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v">v</a>: to view (i.e. open for reading only) all kinds of files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/masteremail.sh/">email.sh</a> / <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh">courriels.sh</a>: to launch a suitable e-mail client</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh">launch-irc.sh</a>: to launch a suitable IRC client</li>
+</ul>
+</div>
+<div class="section" id="miscellaneous">
+<h3><a class="toc-backref" href="#id51">Miscellaneous</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/eat-CPU-cycles.sh">eat-CPU-cycles.sh</a>: generates some CPU load</li>
+</ul>
+<p></p>
+</div>
+</div>
+<div class="section" id="detailed-description-of-some-frequently-used-scripts">
+<span id="srm-full-usage"></span><span id="regrep-full-usage"></span><span id="wh-full-usage"></span><h2><a class="toc-backref" href="#id52">Detailed description of some frequently-used scripts</a></h2>
+<dl class="docutils">
+<dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh">wh</a></dt>
+<dd><p class="first">wh (for &quot;where&quot;): searches (as a more user-friendly 'find') all files and directories matching &lt;filePattern&gt;, from &lt;starting_directory&gt; if specified, otherwise from current directory.</p>
+<p>Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path &lt;a directory&gt;] &lt;filePattern&gt; [&lt;startingDirectory&gt;]</p>
+<p>Options:</p>
+<blockquote class="last">
+<div class="line-block">
+<div class="line">[-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in $(wh -q 'foo*'); do...)</div>
+<div class="line">--no-path: returns the filenames without any leading path</div>
+<div class="line">--exclude-path DIR: excludes specified directory DIR from search</div>
+</div>
+</blockquote>
+</dd>
+<dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep">regrep</a></dt>
+<dd><p class="first">regrep: recursive grep for the ones that lack it.</p>
+<p>Usage: regrep [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] &lt;Expression to be found in files&gt; [&lt;Filter on files&gt;]</p>
+<p>Options:</p>
+<blockquote>
+<div class="line-block">
+<div class="line">-v or --verbose: be specifically verbose</div>
+<div class="line">-q or --quiet: be specifically quiet, just listing matches</div>
+<div class="line">-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)</div>
+<div class="line">-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames</div>
+<div class="line">-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only <a href="#id4"><span class="problematic" id="id5">*</span></a>.rst files)</div>
+</div>
+</blockquote>
+<p class="last">Example: regrep -i 'little red rooster' '<a href="#id6"><span class="problematic" id="id7">*</span></a>.txt'</p>
+</dd>
+<dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a></dt>
+<dd><p class="first">srm (for &quot;secure rm&quot;): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.</p>
+<p>Usage: srm &lt;files to delete securely&gt;</p>
+<p class="last">See also: emptyTrash.sh</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="see-also">
+<h2><a class="toc-backref" href="#id53">See also</a></h2>
+<ul class="simple">
+<li>the <tt class="docutils literal">tests</tt> subdirectory, for a few tests of specific facilities provided here</li>
+<li>the <tt class="docutils literal"><span class="pre">mostly-obsolete</span></tt> subdirectory, for the scripts we deprecated</li>
+</ul>
+</div>
+<div class="section" id="support">
+<h2><a class="toc-backref" href="#id54">Support</a></h2>
+<p>Bugs, questions, remarks, patches, requests for enhancements, etc. are to be reported to the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull">project interface</a> (typically <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/issues">issues</a>) or directly at the email address mentioned at the beginning of this longer document.</p>
+</div>
+<div class="section" id="please-react">
+<h2><a class="toc-backref" href="#id55">Please React!</a></h2>
+<p>If you have information more detailed or more recent than those presented in this document, if you noticed errors, neglects or points insufficiently discussed, drop us a line! (for that, follow the <a class="reference internal" href="#support">Support</a> guidelines).</p>
+</div>
+<div class="section" id="ending-word">
+<h2><a class="toc-backref" href="#id56">Ending Word</a></h2>
+<p>Have fun with Hull!</p>
+<div class="figure align-center">
+<img alt="Hull logo" src="hull-title.png" style="width: 20%;" />
+</div>
+<p><span class="raw-html"><a name="hull_bottom"></a></span></p>
+</div>
+</div>
+</div>
+</body>
+</html>
