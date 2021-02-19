@@ -21,7 +21,7 @@
 
 :raw-html:`<a name="hull_top"></a>`
 
-:raw-html:`<div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/index.html">browse mirror</a> <a href="hull.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div>`
+:raw-html:`<div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/index.html">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div>`
 
 
 
@@ -56,7 +56,7 @@
 
 The latest version of this documentation is to be found at the `official Ceylan-Hull website <http://hull.esperide.org>`_ (``http://hull.esperide.org``).
 
-:raw-html:`This Hull documentation is also available in the PDF format (see <a href="hull.pdf">hull.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/hull.html">here</a>.`
+:raw-html:`This Hull documentation is also available in the PDF format (see <a href="Ceylan-Hull-technical-manual-english.pdf">Ceylan-Hull-technical-manual-english.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/hull.html">here</a>.`
 
 :raw-latex:`The documentation is also mirrored \href{https://olivier-boudeville.github.io/Ceylan-Hull/hull.html}{here}.`
 
