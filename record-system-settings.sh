@@ -1,6 +1,8 @@
 #!/bin/sh
 
-if [ ! $(id -u) -eq 0 ] ; then
+usage="Usage: $(basename $0): records in-file the main system settings of the local host."
+
+if [ ! $(id -u) -eq 0 ]; then
 	echo "Error, only root can do that."
 	exit
 fi
@@ -27,7 +29,7 @@ exec_cmd()
 
 	${cmd} >> ${TARGET_FILE}
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 
 		echo "  Error, command '${cmd}' failed." 1>&2
 		exit 50

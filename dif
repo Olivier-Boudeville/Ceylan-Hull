@@ -1,19 +1,17 @@
 #!/bin/sh
 
-# By default, shows the differences between the current versions of the files on
-# the filesystem and the staged ones (i.e. the changes that might be added).
+usage="Usage: $(basename $0): shows on the console the differences between the current versions of the (possibly specified) files on the filesystem and the staged ones (i.e. the changes that might be added)."
 
-
-# See also: 'difs'.
+# Textual version of 'dif'.
 
 
 # Select relevant version control client:
 
-if [ -d 'CVS' ] ; then
+if [ -d 'CVS' ]; then
 
 	cvs diff $* | more
 
-elif [ -d '.svn' ] ; then
+elif [ -d '.svn' ]; then
 
 	svn diff $* | more
 
@@ -25,10 +23,11 @@ else
 	#
 	args="$*"
 
-	if [ -z "${args}" ] ; then
+	if [ -z "${args}" ]; then
 
 		# We find it more convenient to only start from the current directory,
 		# rather than inspecting the full repository (hence the dot):
+		#
 		git diff .
 
 	else

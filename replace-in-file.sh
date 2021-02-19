@@ -1,8 +1,8 @@
 #!/bin/sh
 
-USAGE="
+usage="
 Usage: $(basename $0) <previous text> <new text> FILE
-		Replaces in FILE <previous text> by <new text>.
+		Replaces in specified file the specified target pattern with the replacement one.
 
 Example: $(basename $0) 'MAKE=' 'MAKE=/usr/bin/make' myFile"
 
@@ -10,7 +10,7 @@ Example: $(basename $0) 'MAKE=' 'MAKE=/usr/bin/make' myFile"
 
 
 if [ $# != 3 ]; then
-	echo "$USAGE" 1>&2
+	echo "${usage}" 1>&2
 	exit 1
 fi
 

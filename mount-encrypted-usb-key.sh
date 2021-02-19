@@ -1,12 +1,12 @@
 #!/bin/sh
 
-usage="Mounts specified LUKS-encrypted USB key, as root or as a normal user.
-Usage: $(basename $0) PARTITION_NAME
+usage="Usage: $(basename $0) PARTITION_NAME
+  Mounts specified LUKS-encrypted USB key, as root or as a normal user.
   Example: $(basename $0) /dev/sdb2"
 
 actual_partition="$1"
 
-if [ -z "$actual_partition" ] ; then
+if [ -z "${actual_partition}" ]; then
 
 	echo "  Error, no partition specified. $usage" 1>&2
 	exit 5
@@ -14,9 +14,9 @@ if [ -z "$actual_partition" ] ; then
 
 fi
 
-if [ ! -e "$actual_partition" ] ; then
+if [ ! -e "${actual_partition}" ]; then
 
-	echo "  Error, the specified partition '$actual_partition' does not exist. $usage" 1>&2
+	echo "  Error, the specified partition '${actual_partition}' does not exist. $usage" 1>&2
 	exit 10
 
 fi
@@ -24,15 +24,15 @@ fi
 
 # Two code paths, depending on being root or not (preferred approach now):
 
-if [ $(id -u) = "0" ] ; then
+if [ $(id -u) -eq 0 ]; then
 
 	# We are root here:
 	# Expected to be already declared in /etc/fstab as well:
 	device_name=my-encrypted-usb-key
 	mount_point=/mnt/usbstick-encrypted
 
-	cryptsetup luksOpen $actual_partition $device_name
-	if [ ! $? -eq 0 ] ; then
+	cryptsetup luksOpen ${actual_partition} ${device_name}
+	if [ ! $? -eq 0 ]; then
 
 		echo "  Error, the unlocking of the container failed." 1>&2
 
@@ -40,9 +40,9 @@ if [ $(id -u) = "0" ] ; then
 
 	fi
 
-	mount /dev/mapper/$device_name $mount_point
+	mount /dev/mapper/${device_name} ${mount_point}
 
-	echo "To unmount (still as root): umount $mount_point && cryptsetup luksClose $device_name"
+	echo "To unmount (still as root): umount ${mount_point} && cryptsetup luksClose ${device_name}"
 
 
 else
@@ -51,7 +51,7 @@ else
 
 	disk_tool=$(which udisksctl 2>/dev/null)
 
-	if [ ! -x "${disk_tool}" ] ; then
+	if [ ! -x "${disk_tool}" ]; then
 
 		echo "  Error, the 'udisksctl' tool is not available (use 'pacman -Sy udisks2')." 1>&2
 		exit 15
@@ -62,14 +62,14 @@ else
 	unencrypted_device=$( ${disk_tool} unlock -b ${actual_partition} | grep Unlocked | sed 's|.*as ||1' | sed 's|\.$||1')
 
 
-	if [ -z "${unencrypted_device}" ] ; then
+	if [ -z "${unencrypted_device}" ]; then
 
 		echo "  Error, the unlocking of '${actual_partition}' failed (wrong passphrase?)." 1>&2
 		exit 25
 
 	fi
 
-	if [ ! -e "${unencrypted_device}" ] ; then
+	if [ ! -e "${unencrypted_device}" ]; then
 
 		echo "  Error, the unlocking of '${actual_partition}' failed (no device found)." 1>&2
 		exit 30
@@ -88,7 +88,7 @@ else
 	# /dev/mapper/luks-ab2e31d1-0305-424d-aee3-e16df2d915a0 /mnt/tmp" works
 	# (also the same with cryptsetup/mount works as root also).
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 
 		echo "  Error, mounting '${unencrypted_device}' failed." 1>&2
 		exit 35

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+script_opts="{start|stop|reload|restart|force-reload|status|disable}"
+
+usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall suitable for a LAN host."
+
 
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-LANBox
@@ -62,7 +66,8 @@
 # filename cannot be changed, it is a system convention):
 #   'iptables-save > /etc/iptables/iptables.rules'
 #
-#  - restart the firewall: 'systemctl restart iptables ; systemctl status iptables'
+#  - restart the firewall: 'systemctl restart iptables ; systemctl status
+#  iptables'
 #
 #  - check it just for this session: 'iptables -L' (can any changes be found?)
 #
@@ -94,7 +99,7 @@ lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
 
-if [ ! $(id -u) -eq 0 ] ; then
+if [ ! $(id -u) -eq 0 ]; then
 
 	$echo "  Error, firewall rules can only be applied by root." 1>&2
 
@@ -106,7 +111,7 @@ fi
 # Not used anymore by distros like Arch:
 #init_file="/lib/lsb/init-functions"
 
-#if [ -f "$init_file" ] ; then
+#if [ -f "$init_file" ]; then
 #	. "$init_file"
 #fi
 
@@ -129,7 +134,7 @@ version="c-12"
 setting_file="/etc/iptables.settings-LANBox.sh"
 
 
-if [ ! -f "${setting_file}" ] ; then
+if [ ! -f "${setting_file}" ]; then
 
 	$echo " Error, setting file ('${setting_file}) not found." 1>&2
 
@@ -144,7 +149,7 @@ fi
 . "${setting_file}"
 
 
-if [ -z "${log_file}" ] ; then
+if [ -z "${log_file}" ]; then
 
 	$echo " Error, log_file not defined." 1>&2
 
@@ -153,7 +158,7 @@ if [ -z "${log_file}" ] ; then
 fi
 
 
-if [ -f "${log_file}" ] ; then
+if [ -f "${log_file}" ]; then
 
 	/bin/rm -f "${log_file}"
 
@@ -164,13 +169,13 @@ fi
 $echo > "${log_file}"
 
 
-if [ -z "${lan_if}" ] ; then
+if [ -z "${lan_if}" ]; then
 
 	$echo "No LAN interface set, trying to auto-detect it." >> "${log_file}"
 
 	detected_if=$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')
 
-	if [ -z "$detected_if" ] ; then
+	if [ -z "$detected_if" ]; then
 
 		$echo "  No LAN interface found!" 1>&2
 		exit 25
@@ -187,7 +192,7 @@ if [ -z "${lan_if}" ] ; then
 	$echo >> "${log_file}"
 	$echo "* selected LAN interface: $lan_if" >> "${log_file}"
 
-	if [ -z "$lan_if" ] ; then
+	if [ -z "$lan_if" ]; then
 
 		$echo "  No LAN interface selected!" 1>&2
 		exit 30
@@ -201,7 +206,7 @@ else
 fi
 
 
-if [ -z "${ssh_port}" ] ; then
+if [ -z "${ssh_port}" ]; then
 
 	$echo " Error, ssh_port not defined." 1>&2
 
@@ -339,9 +344,9 @@ start_it_up()
 	# This is an exception section, having mixed INPUT and OUTPUT rules.
 	# It shall come first!
 
-	if [ "$use_ban_rules" = "true" ] ; then
+	if [ "$use_ban_rules" = "true" ]; then
 
-		if [ -f "${ban_file}" ] ; then
+		if [ -f "${ban_file}" ]; then
 
 			$echo " - adding ban rules from '${ban_file}'" >> "${log_file}"
 
@@ -350,7 +355,7 @@ start_it_up()
 
 			res=$?
 
-			if [ ! $res -eq 0 ] ; then
+			if [ ! $res -eq 0 ]; then
 
 				$echo "  Error, the addition of ban rules failed." 1>&2
 
@@ -387,7 +392,7 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
 
-	if [ "$allow_dlna" = "true" ] ; then
+	if [ "$allow_dlna" = "true" ]; then
 
 		$echo " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}" >> "${log_file}"
 
@@ -403,7 +408,7 @@ start_it_up()
 	fi
 
 
-	if [ "$allow_rtsp" = "true" ] ; then
+	if [ "$allow_rtsp" = "true" ]; then
 
 		$echo " - enabling RTSP/RTP service at UDP port ${live555_udp_port}" >> "${log_file}"
 
@@ -430,7 +435,7 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-	if [ "${allow_epmd}" = "true" ] ; then
+	if [ "${allow_epmd}" = "true" ]; then
 
 		$echo " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
@@ -438,7 +443,7 @@ start_it_up()
 	fi
 
 
-	if [ "$enable_unfiltered_tcp_range" = "true" ] ; then
+	if [ "$enable_unfiltered_tcp_range" = "true" ]; then
 
 		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
@@ -610,13 +615,13 @@ case "$1" in
 	$echo >&2
 	$echo " Error, no appropriate action specified." >&2
 
-	if [ -z "$NAME" ] ; then
+	if [ -z "$NAME" ]; then
 		# Launched from the command-line:
-		$echo "Usage: $script_name {start|stop|reload|restart|force-reload|status}" >&2
+		$echo "${usage}" >&2
 
 	else
 
-		$echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+		$echo "Usage: /etc/init.d/$NAME ${script_opts}" >&2
 
 	fi
 

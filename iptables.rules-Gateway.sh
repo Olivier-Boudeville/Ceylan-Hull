@@ -1,5 +1,9 @@
 #!/bin/sh
 
+script_opts="{start|stop|reload|restart|force-reload|status|disable}"
+
+usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall suitable for a gateway host with masquerading and various services."
+
 
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-Gateway
@@ -119,7 +123,7 @@ lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
 
-if [ ! $(id -u) -eq 0 ] ; then
+if [ ! $(id -u) -eq 0 ]; then
 
 	$echo "  Error, firewall rules can only be applied by root." 1>&2
 
@@ -131,7 +135,7 @@ fi
 # Not used anymore by distros like Arch:
 #init_file="/lib/lsb/init-functions"
 
-#if [ -f "$init_file" ] ; then
+#if [ -f "$init_file" ]; then
 #	. "$init_file"
 #fi
 
@@ -156,7 +160,7 @@ version="s-21"
 setting_file="/etc/iptables.settings-Gateway.sh"
 
 
-if [ ! -f "${setting_file}" ] ; then
+if [ ! -f "${setting_file}" ]; then
 
 	$echo " Error, setting file ('${setting_file}) not found." 1>&2
 
@@ -171,7 +175,7 @@ fi
 . "${setting_file}"
 
 
-if [ -z "${log_file}" ] ; then
+if [ -z "${log_file}" ]; then
 
 	$echo " Error, log_file not defined." 1>&2
 
@@ -180,7 +184,7 @@ if [ -z "${log_file}" ] ; then
 fi
 
 
-if [ -f "${log_file}" ] ; then
+if [ -f "${log_file}" ]; then
 
 	/bin/rm -f "${log_file}"
 
@@ -191,7 +195,7 @@ fi
 $echo > "${log_file}"
 
 
-if [ -z "${lan_if}" ] ; then
+if [ -z "${lan_if}" ]; then
 
 	$echo " Error, lan_if not defined." 1>&2
 
@@ -200,7 +204,7 @@ if [ -z "${lan_if}" ] ; then
 fi
 
 
-if [ -z "${net_if}" ] ; then
+if [ -z "${net_if}" ]; then
 
 	$echo " Error, net_if not defined." 1>&2
 
@@ -209,7 +213,7 @@ if [ -z "${net_if}" ] ; then
 fi
 
 
-if [ -z "${enable_orge}" ] ; then
+if [ -z "${enable_orge}" ]; then
 
 	$echo " Error, enable_orge not defined." 1>&2
 
@@ -218,7 +222,7 @@ if [ -z "${enable_orge}" ] ; then
 fi
 
 
-if [ -z "${enable_iptv}" ] ; then
+if [ -z "${enable_iptv}" ]; then
 
 	$echo " Error, enable_iptv not defined." 1>&2
 
@@ -227,7 +231,7 @@ if [ -z "${enable_iptv}" ] ; then
 fi
 
 
-if [ -z "${enable_smtp}" ] ; then
+if [ -z "${enable_smtp}" ]; then
 
 	$echo " Error, enable_smtp not defined." 1>&2
 
@@ -236,7 +240,7 @@ if [ -z "${enable_smtp}" ] ; then
 fi
 
 
-if [ -z "${ssh_port}" ] ; then
+if [ -z "${ssh_port}" ]; then
 
 	$echo " Error, ssh_port not defined." 1>&2
 
@@ -411,9 +415,9 @@ start_it_up()
 	# It shall come first!
 
 	# Typically defined in ${setting_file}:
-	if [ "$use_ban_rules" = "true" ] ; then
+	if [ "$use_ban_rules" = "true" ]; then
 
-		if [ -f "${ban_file}" ] ; then
+		if [ -f "${ban_file}" ]; then
 
 			$echo " - adding ban rules from '${ban_file}'" >> "${log_file}"
 
@@ -421,7 +425,7 @@ start_it_up()
 
 			res=$?
 
-			if [ ! $res -eq 0 ] ; then
+			if [ ! $res -eq 0 ]; then
 
 				$echo "  Error, the addition of ban rules failed." 1>&2
 
@@ -456,7 +460,7 @@ start_it_up()
 	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -s ${multimedia_box} -j LOG --log-prefix "[FW-Box-out] "
 	#${iptables} -A FORWARD -i ${net_if} -o ${lan_if} -d ${multimedia_box} -j LOG --log-prefix "[FW-Box-in]"
 
-	if [ "$enable_iptv" = "true" ] ; then
+	if [ "$enable_iptv" = "true" ]; then
 
 		# So that the ISP content servers can join the LAN in terms of
 		# multicast:
@@ -551,14 +555,14 @@ start_it_up()
 	#
 	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
-	if [ "$enable_iptv" = "true" ] ; then
+	if [ "$enable_iptv" = "true" ]; then
 
 		# Needed for the IGMP proxy, in both ways:
 		${iptables} -A INPUT -d 224.0.0.0/4 -j ACCEPT
 
 	fi
 
-	if [ "$use_dht" = "true" ] ; then
+	if [ "$use_dht" = "true" ]; then
 
 		${iptables} -A INPUT -i ${net_if} -p udp -m udp --dport ${dht_udp_port} -j ACCEPT
 
@@ -575,7 +579,7 @@ start_it_up()
 	# If an (optional) TCP port range is specified, accepts corresponding
 	# LAN-originating packets addressed to this gateway:
 	#
-	if [ "$enable_unfiltered_tcp_range" = "true" ] ; then
+	if [ "$enable_unfiltered_tcp_range" = "true" ]; then
 
 		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 
@@ -644,7 +648,7 @@ start_it_up()
 
 	# Orge section:
 
-	if [ "$enable_orge" = "true" ] ; then
+	if [ "$enable_orge" = "true" ]; then
 
 		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
 
@@ -677,7 +681,7 @@ start_it_up()
 		# If our own EPMD port is set, we explicitly prevent anyone but the LAN
 		# to access it:
 		#
-		if [ -n "${orge_epmd_port}" ] ; then
+		if [ -n "${orge_epmd_port}" ]; then
 
 			${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j DROP
 
@@ -716,7 +720,7 @@ start_it_up()
 
 	# Sending emails:
 
-	if [ "$enable_smtp" = "true" ] ; then
+	if [ "$enable_smtp" = "true" ]; then
 
 		# Basic setting:
 
@@ -854,7 +858,7 @@ case "$1" in
 	  $echo "Warning: if this script is executed remotely (ex: through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (ex: 'systemctl restart iptables.rules-Gateway.service') would be then a better solution."
 	  $echo "Proceed anyway? [y/n] (default: n)"
 	  read answer
-	  if [ "${answer}" = "y" ] ; then
+	  if [ "${answer}" = "y" ]; then
 		  shut_it_down
 	  else
 		  $echo "(stop aborted)"
@@ -896,13 +900,13 @@ case "$1" in
   *)
 	$echo " Error, no appropriate action specified." >&2
 
-	if [ -z "$NAME" ] ; then
+	if [ -z "$NAME" ]; then
 		# Launched from the command-line:
-		$echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
+		$echo "${usage}" >&2
 
 	else
 
-		$echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status|disable}" >&2
+		$echo "Usage: /etc/init.d/$NAME ${script_opts}" >&2
 
 	fi
 

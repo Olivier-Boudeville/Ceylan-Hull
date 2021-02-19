@@ -1,12 +1,13 @@
 # Inspired from:
 # http://liquidat.wordpress.com/2007/12/03/short-tip-convert-ogg-file-to-mp3/
 
+usage="Usage: $(basename $0) AUDIO_FILENAME: converts a Vorbis-encoded Ogg file to MP3 (sometimes it is useful to use older players)"
 
 # Note: erases the source ogg files.
 
-file=$1
+file="$1"
 
-if [ ! -f "$file" ] ; then
+if [ ! -f "$file" ]; then
 
 	echo "  Error, '$file' is not an existing file." 1>&2
 

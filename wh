@@ -1,13 +1,14 @@
 #!/bin/sh
 
 
-USAGE="
- Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
- Searches all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
-   Options:
-	 [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in \$(wh -q 'foo*'); do...)
-	 --no-path: returns the filenames without any leading path
-	 --exclude-path DIR: excludes specified directory DIR from search"
+usage="  $(basename $0) (for \"where\"): searches (as a more user-friendly 'find') all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
+
+  Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
+
+  Options:
+	[-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in \$(wh -q 'foo*'); do...)
+	--no-path: returns the filenames without any leading path
+	--exclude-path DIR: excludes specified directory DIR from search"
 
 
 find_gnu="/usr/bin/find"
@@ -23,11 +24,11 @@ exclude_command=""
 
 token_eaten=0
 
-while [ $token_eaten -eq 0 ] ; do
+while [ $token_eaten -eq 0 ]; do
 
 	if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-		echo "$USAGE"
+		echo "${usage}"
 		exit 0
 
 	elif [ "$1" = "--verbose" ]; then
@@ -71,7 +72,7 @@ done
 
 if [ $# -eq 0 ]; then
 
-	echo " Error, at least one parameter must be specified.$USAGE
+	echo " Error, at least one parameter must be specified.${usage}
 	" 1>&2
 	exit 10
 
@@ -84,14 +85,14 @@ elif [ $# -eq 2 ]; then
 	starting_dir=$2
 
 else
-	echo " Error, too many parameters specified: $*.$USAGE
+	echo " Error, too many parameters specified: $*.${usage}
 	" 1>&2
 	exit 15
 fi
 
 
 if [ ! -d "$starting_dir" ]; then
-	echo " Error, no such directory: '$starting_dir'.$USAGE
+	echo " Error, no such directory: '$starting_dir'.${usage}
 	" 1>&2
 	exit 20
 else
@@ -122,7 +123,7 @@ Looking for all files and directories matching <$targetPattern>, starting from d
 # For an unknown reason, 'cd XXX ; find . YYY' seems to work better than
 # 'find XXX YYY'.
 
-if [ $no_path -eq 0 ] ; then
+if [ $no_path -eq 0 ]; then
 
 	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
 

@@ -1,18 +1,23 @@
 #!/bin/sh
 
+usage="$(basename $0): $(basename $0) [fr|us|...]: sets the X keyboard layout."
+
 # Just to remember the command:
 
-if [ -z "$1" ] ; then
+if [ -z "$1" ]; then
 
-	echo "Usage: "$(basename $0)" [fr|us|...]: sets the X keyboard layout."
+	echo "No layout specified.
+${usage}" 1>&2
 
-	exit 0
+	exit 5
 
 fi
 
-TOOL="/bin/setxkbmap"
+layout="$1"
 
-if [ ! -x "$TOOL" ] ; then
+setter_tool="/bin/setxkbmap"
+
+if [ ! -x "${setter_tool}" ]; then
 
 	echo "  Error, no setxkbmap found." 1>&2
 
@@ -20,4 +25,4 @@ if [ ! -x "$TOOL" ] ; then
 
 fi
 
-$TOOL $1
+${setter_tool} ${layout}

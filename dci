@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# Useful to check-in efficiently (fast):
+usage="Usage: $(basename $0) [ FILES ]: assists efficiently and conveniently the commit of specified file(s)."
 
 
 # Select relevant version control client:
 TOOL="svn"
 
-if [ -d 'CVS' ] ; then
+if [ -d 'CVS' ]; then
 	TOOL="cvs"
 fi
 
@@ -17,7 +17,7 @@ arrow="---------------------> "
 echo "$arrow Showing diff for <$target>:"
 
 # CVS diff returns 1 whereas ok:
-if [ ${TOOL} = "cvs" ] ; then
+if [ ${TOOL} = "cvs" ]; then
 
 	${TOOL} diff $target
 	echo "$arrow Committing-in <$target>:"
@@ -25,7 +25,7 @@ if [ ${TOOL} = "cvs" ] ; then
 
 	echo "...done"
 
-elif [ -d ".svn" ] ; then
+elif [ -d ".svn" ]; then
 
 	if ${TOOL} diff $target | more ; then
 
@@ -39,7 +39,7 @@ elif [ -d ".svn" ] ; then
 else
 
 
-	if [ -z "$target" ] ; then
+	if [ -z "$target" ]; then
 
 		# If no argument has been specified, default to incremental commits for
 		# all:
@@ -61,7 +61,7 @@ else
 		echo "$arrow Committing-in <$target>:"
 		git commit $target
 
-		if [ ! $? -eq 0 ] ; then
+		if [ ! $? -eq 0 ]; then
 
 			echo "Commit aborted for $target, unstaging it." 1>&2
 

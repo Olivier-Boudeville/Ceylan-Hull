@@ -1,11 +1,15 @@
+#!/bin/sh
+
+usage="Usage: $(basename $0): converts specified MOV file to MP4."
+
 # Inspired from:
 # https://superuser.com/questions/525249/convert-avi-to-mp4-keeping-the-same-quality
 
 # Note: leaves the source mov files.
 
-file=$1
+file="$1"
 
-if [ ! -f "$file" ] ; then
+if [ ! -f "$file" ]; then
 
 	echo "  Error, '$file' is not an existing file." 1>&2
 

@@ -1,18 +1,23 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) <files to delete securely>: 'secure' rm, stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. See also: emptyTrash.sh"
+usage="  $(basename $0) (for \"secure rm\"): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.
 
-trash_default="$HOME/tmp/Trash"
+  Usage: $(basename $0) <files to delete securely>
 
-if [ -z "$TRASH" ] ; then
-	echo "Warning: \$TRASH no defined, assuming trash is $trash_default"
-	TRASH="$trash_default"
+  See also: emptyTrash.sh"
+
+
+trash_default="${HOME}/tmp/Trash"
+
+if [ -z "${TRASH}" ]; then
+	echo "Warning: \${TRASH} no defined, assuming trash is '${trash_default}'."
+	TRASH="${trash_default}"
 fi
 
 
-if [ ! -d "$TRASH" ] ; then
-	echo "Warning: trash directory, $TRASH, does not exist; creating it."
-	/bin/mkdir -p "$TRASH"
+if [ ! -d "${TRASH}" ]; then
+	echo "Warning: trash directory, ${TRASH}, does not exist; creating it."
+	/bin/mkdir -p "${TRASH}"
 fi
 
 echo
@@ -21,22 +26,22 @@ echo
 # allows to still have only one string (otherwise: too many arguments for the
 # test)
 #
-if [ -n "$*" ] ; then
+if [ -n "$*" ]; then
 
-	echo "Secure deleting (moving to trash $TRASH):"
+	echo "Secure deleting (moving to trash ${TRASH}):"
 	echo "  $@"
 
 	# This version finally preferred to the next one, which could not support
 	# multiple filenames:
 
-	for elem in "$@" ; do
+	for elem in "$@"; do
 
 		#echo "elem = ${elem}"
 
 		actual_elem=$(basename "${elem}" 2>/dev/null)
 		#echo "actual_elem = ${actual_elem}"
 
-		if [ -z "${actual_elem}" ] ; then
+		if [ -z "${actual_elem}" ]; then
 
 			echo "(uname to process element '${elem}', aborting)" 1>&2
 			exit 17
@@ -44,17 +49,17 @@ if [ -n "$*" ] ; then
 		fi
 
 		# File/directory or (possibly dead) symbolic link:
-		if [ -e "${elem}" ] || [ -h "${elem}" ] ; then
+		if [ -e "${elem}" ] || [ -h "${elem}" ]; then
 
 			# No need to have specific rights such as reading or writing in
 			# order to move it (no chmod needed).
 
 			trash_target="${TRASH}/${actual_elem}"
 
-			if [ -e "${trash_target}" ] || [ -h "${trash_target}" ] ; then
+			if [ -e "${trash_target}" ] || [ -h "${trash_target}" ]; then
 
 				new_elem="${actual_elem}-$(date +'%Y%m%d-%Hh%Mm%Ss')"
-				new_full_elem="$TRASH/${new_elem}"
+				new_full_elem="${TRASH}/${new_elem}"
 
 				# To provide a real unicity (otherwise a 'find' executing a srm
 				# could remove in the same second a large number of different
@@ -63,7 +68,7 @@ if [ -n "$*" ] ; then
 
 				#echo "Testing trash target ${new_full_elem}"
 
-				while [ -e "${new_full_elem}" ] ; do
+				while [ -e "${new_full_elem}" ]; do
 
 					new_full_elem="${new_full_elem}x"
 
@@ -88,7 +93,7 @@ if [ -n "$*" ] ; then
 	done
 
 	# Better management of exotic filenames (ex: with spaces):
-	#/bin/mv -f "$*" $TRASH
+	#/bin/mv -f "$*" ${TRASH}
 
 	# Better displayed in all cases:
 	echo "Deleting finished"
@@ -96,7 +101,10 @@ if [ -n "$*" ] ; then
 
 else
 
-	echo "Error: no argument specified. $usage" 1>&2
+	echo "  Error: no argument specified.
+
+${usage}" 1>&2
+
 	exit 5
 
 fi

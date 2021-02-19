@@ -160,7 +160,7 @@ test_link()
 	# Otherwise could be too early for a ping to succeed:
 	sleep 2
 
-	# Both IP and DNS tested (otherwise: 8.8.8.8)
+	# Both IP and DNS tested (otherwise: just ping 8.8.8.8)
 	ping -c 1 google.com 1>/dev/null 2>&1
 	return $?
 }

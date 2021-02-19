@@ -2,8 +2,7 @@
 
 full_opt="--full"
 
-usage="  Usage: $(basename $0) [${full_opt}]
-	Performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio.
+usage="Usage: $(basename $0) [${full_opt}]: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio.
 	Use the ${full_opt} option to access to the higher-resolution stream with audio.
 	Hit:
 	 - Shift-S to take a snapshot
@@ -13,14 +12,14 @@ usage="  Usage: $(basename $0) [${full_opt}]
 
 full_requested=1
 
-if [ "$1" = "${full_opt}" ] ; then
+if [ "$1" = "${full_opt}" ]; then
 	echo "(higher-resolution stream with audio requested)"
 	full_requested=0
 	shift
 
 fi
 
-if [ ! $# -eq 0 ] ; then
+if [ ! $# -eq 0 ]; then
 
 	printf "  Error, too many parameters specified.\n${usage}" 1>&2
 	exit 5
@@ -33,7 +32,7 @@ client_tool_name="mplayer"
 
 client_tool=$(which $client_tool_name 2>/dev/null)
 
-if [ ! -x "$client_tool" ] ; then
+if [ ! -x "$client_tool" ]; then
 
 	echo "  Error, no stream client tool found (no $client_tool_name)." 1>&2
 	exit 10
@@ -56,7 +55,7 @@ fi
 
 camera_hostname=$(/bin/cat ${env_file} | grep -v % | grep camera_1_hostname | sed 's|.*, "||1' | sed 's|" }.$||1')
 
-if [ -z "${camera_hostname}" ] ; then
+if [ -z "${camera_hostname}" ]; then
 
 	echo "  Error, no usable camera_hostname key entry found in environment file (${env_file})." 1>&2
 	exit 20
@@ -68,7 +67,7 @@ fi
 
 camera_description=$(/bin/cat ${env_file} | grep -v % | grep camera_1_description | sed 's|.*, "||1' | sed 's|" }.$||1')
 
-if [ -z "${camera_description}" ] ; then
+if [ -z "${camera_description}" ]; then
 
 	echo "  Error, no usable camera_description key entry found in environment file (${env_file})." 1>&2
 	exit 20
@@ -81,7 +80,7 @@ fi
 
 camera_login=$(/bin/cat ${env_file} | grep -v % | grep camera_1_login | sed 's|.*, "||1' | sed 's|" }.$||1')
 
-if [ -z "${camera_login}" ] ; then
+if [ -z "${camera_login}" ]; then
 
 	echo "  Error, no usable camera_login key entry found in environment file (${env_file})." 1>&2
 	exit 20
@@ -93,7 +92,7 @@ fi
 
 camera_password=$(/bin/cat ${env_file} | grep -v % | grep camera_1_password | sed 's|.*, "||1' | sed 's|" }.$||1')
 
-if [ -z "${camera_password}" ] ; then
+if [ -z "${camera_password}" ]; then
 
 	echo "  Error, no usable camera_password key entry found in environment file (${env_file})." 1>&2
 	exit 20
@@ -106,7 +105,7 @@ fi
 
 camera_channel=$(/bin/cat ${env_file} | grep -v % | grep camera_1_channel | sed 's|.*, ||1' | sed 's| }.$||1')
 
-if [ -z "${camera_channel}" ] ; then
+if [ -z "${camera_channel}" ]; then
 
 	echo "  Error, no usable camera_channel key entry found in environment file (${env_file})." 1>&2
 	exit 20
@@ -117,13 +116,13 @@ fi
 
 
 
-if [ $full_requested -eq 0 ] ; then
+if [ $full_requested -eq 0 ]; then
 
 	#echo "Full quality mode requested."
 
 	camera_subtype_high_quality=$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_high_quality | sed 's|.*, ||1' | sed 's| }.$||1')
 
-	if [ -z "${camera_subtype_high_quality}" ] ; then
+	if [ -z "${camera_subtype_high_quality}" ]; then
 
 		echo "  Error, no usable camera_subtype_high_quality key entry found in environment file (${env_file})." 1>&2
 		exit 20
@@ -140,7 +139,7 @@ else
 
 	camera_subtype_normal_quality=$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_normal_quality | sed 's|.*, ||1' | sed 's| }.$||1')
 
-	if [ -z "${camera_subtype_normal_quality}" ] ; then
+	if [ -z "${camera_subtype_normal_quality}" ]; then
 
 		echo "  Error, no usable camera_subtype_normal_quality key entry found in environment file (${env_file})." 1>&2
 		exit 20

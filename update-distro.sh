@@ -1,7 +1,9 @@
 #!/bin/sh
 
-USAGE="Usage: $(basename $0) [-q]: updates the current distribution.
-  -q: quiet mode, no output if no error (suitable for crontab)"
+usage="Usage: $(basename $0) [-q]: updates the current distribution, and traces it.
+  Option -q: quiet mode, no output if no error (suitable for crontab)
+  Supported distributions: Arch, Debian."
+
 
 
 # Many problems with Haskell:
@@ -22,11 +24,11 @@ distro_type="Debian"
 
 distro_id_file="/etc/os-release"
 
-if [ -f "$distro_id_file" ] ; then
+if [ -f "${distro_id_file}" ]; then
 
-	source "$distro_id_file"
+	source "${distro_id_file}"
 
-	if [ "$NAME" = "Arch Linux" ] ; then
+	if [ "$NAME" = "Arch Linux" ]; then
 
 		distro_type="Arch"
 
@@ -40,7 +42,7 @@ fi
 
 quiet=1
 
-if [ "$1" = "-q" ] ; then
+if [ "$1" = "-q" ]; then
 
 	quiet=0
 
@@ -50,20 +52,20 @@ fi
 # Only standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
-if [ $(id -u) -eq 0 ] ; then
+if [ $(id -u) -eq 0 ]; then
 
 	lock_file="/var/lib/pacman/db.lck"
 
-	if [ -e "${lock_file}" ] ; then
+	if [ -e "${lock_file}" ]; then
 
 
-		if [ $quiet -eq 1 ] ; then
+		if [ $quiet -eq 1 ]; then
 
 			echo "Pacman lock file (${lock_file}) found; shall it be deleted first? [y/N]"
 
 			read answer
 
-			if [ "${answer}" = "y" ] ; then
+			if [ "${answer}" = "y" ]; then
 
 				/bin/rm -f "${lock_file}"
 				echo "  (lock file deleted)"
@@ -84,7 +86,7 @@ if [ $(id -u) -eq 0 ] ; then
 	case "${distro_type}" in
 
 		"Debian")
-			if [ $quiet -eq 1 ] ; then
+			if [ $quiet -eq 1 ]; then
 
 				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a  ${log_file}
 
@@ -101,7 +103,7 @@ if [ $(id -u) -eq 0 ] ; then
 			# Too many updates blocked by Haskell-related packages:
 			PACMAN_OPT="-Syu --noconfirm --ignore=ghc"
 
-			if [ $quiet -eq 1 ] ; then
+			if [ $quiet -eq 1 ]; then
 
 				# To be run from the command-line:
 				pacman ${PACMAN_OPT} 2>&1 | tee -a ${log_file}
@@ -127,7 +129,7 @@ if [ $(id -u) -eq 0 ] ; then
 
 	res=$?
 
-	if [ $res -eq 0 ] ; then
+	if [ $res -eq 0 ]; then
 
 		echo "... update done successfully" 1>>${log_file}
 

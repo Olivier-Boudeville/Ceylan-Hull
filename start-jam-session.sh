@@ -9,11 +9,11 @@ period="40"
 period_unit="minutes"
 
 
-usage="Usage: '$(basename $0) [-h|--help] [PERIOD]', starts a jam session interrupted every period (default: ${period} ${period_unit})."
+usage="Usage: '$(basename $0) [-h|--help] [PERIOD]', starts a jam session interrupted by a notification every period (default: ${period} ${period_unit}), to avoid remaining still for too long."
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	echo "$usage"
+	echo "${usage}"
 	exit
 fi
 

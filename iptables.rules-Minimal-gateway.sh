@@ -1,5 +1,10 @@
 #!/bin/sh
 
+script_opts="{start|stop|reload|restart|force-reload|status|disable}"
+
+usage="Usage: $(basename $0) ${script_opts}: sets up a minimal yet functional firewall suitable for a gateway host with masquerading and as few services as possible."
+
+
 # Note: this script can be safely run remotely from within the LAN whereas a
 # usual gateway configuration is enforced and SSH connections are active, as
 # accesses (web and SSH) will remain available (hence no need to rush to the
@@ -462,13 +467,13 @@ case "$1" in
 	$echo " Error, no appropriate action specified." >&2
 
 	if [ -z "${NAME}" ]; then
+		
 		# Launched from the command-line:
-		#
-		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
+		$echo "${usage}" >&2
 
 	else
-
-		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status|disable}" >&2
+		
+		$echo "Usage: /etc/init.d/$NAME ${script_opts}" >&2
 
 	fi
 

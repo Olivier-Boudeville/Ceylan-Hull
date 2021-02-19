@@ -3,7 +3,7 @@
 usage="
 Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
-Updates the copyright notices of code of specified type found from specified root directory, based on the specified years.
+Updates the copyright notices of code of specified type found from specified root directory, based on the specified year range.
 
 CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files

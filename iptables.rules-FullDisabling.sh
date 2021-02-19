@@ -1,6 +1,8 @@
 #!/bin/sh
 
-if [ ! $(id -u) -eq 0 ] ; then
+usage="Usage: $(basename $0): disables all firewall rules."
+
+if [ ! $(id -u) -eq 0 ]; then
 
 	echo "
 	Error, you must be root, aborting." 1>&2

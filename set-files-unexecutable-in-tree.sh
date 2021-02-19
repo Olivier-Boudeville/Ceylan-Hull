@@ -1,6 +1,10 @@
 #!/bin/sh
 
-echo "Will make so that all files from current directory $(pwd) are not executable, namely:"
+action="ensures that all files found recursively from the current directory $(pwd) are not executable"
+
+usage="Usage: $(basename $0): ${action} (typically useful after a vfat transfer)"
+
+echo "This script ${action}, namely:"
 
 find . -type f -exec echo '{}' ';'
 

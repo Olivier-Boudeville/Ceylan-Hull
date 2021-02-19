@@ -1,15 +1,23 @@
 #!/bin/sh
 
-NTP_SERVER="ntp.imag.fr"
+usage="Usage: $(basename $0) [NTP_SERVER]: sets time and date by NTP thanks to specified or default server."
 
-echo "Setting time and date by NTP thanks to $NTP_SERVER"
+ntp_server="$1"
+
+if [ -z "${ntp_server}" ]; then
+	ntp_server="ntp.imag.fr"
+fi
+
 
 if [ $(id -u) = "0" ]; then
 
-	ntpdate -u $NTP_SERVER
+	echo "Setting time and date by NTP thanks to ${ntp_server}..."
+	ntpdate -u ${ntp_server}
 
 else
 
-	echo "You must be root to do that."
+	echo "Error, you must be root to do that." 1>&2
+
+	exit 5
 
 fi

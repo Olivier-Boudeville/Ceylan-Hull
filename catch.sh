@@ -1,32 +1,43 @@
 #!/bin/sh
 
-USAGE=`basename $0`": stores a file in a vault directory and makes a symbolic link to it, so that if current tree is erased, this file will be kept."
+usage="Usage: $(basename $0) FILE: stores a file in a vault directory and makes a symbolic link to it, so that even if current tree is removed, this file will not be lost."
 
-# See: retrieve.sh, updateDirectoryFromVault.sh
+# Any already caught file with the same name will be overwritten.
 
-DATA_VAULT_DEFAULT="$HOME/Vault"
+# See: retrieve.sh, update-directory-from-vault.sh.
+
+data_vault_default="${HOME}/hull-vault"
 
 
-if [ ! "$#" = "1" ] ; then
-	echo "Error, not exactly one argument provided. $USAGE"
+if [ ! $# -eq 1 ]; then
+	echo "  Error, not exactly one argument provided.
+${usage}" 1>&2
 	exit 1
 fi
 
-if [ -z "$DATA_VAULT" ] ; then
-	echo "Warning: no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
-	DATA_VAULT="${DATA_VAULT_DEFAULT}"
-fi
-
-mkdir -p "$DATA_VAULT"
-
 target="$1"
 
-if [ ! -f "$1" ] ; then
-	echo "Error, no file <$1> to catch. $USAGE"
-	exit 3
+if [ ! -f "${target}" ]; then
+
+	echo "  Error, no file '${target}' to catch.
+${usage}" 1>&2
+
+	exit 5
+
 fi
 
-echo "Catching $target ..."
+
+if [ -z "$data_vault" ]; then
+
+	echo "Warning: no vault environment variable specified (\$data_vault), choosing default one (${data_vault_default})" 1>&2
+
+	data_vault="${data_vault_default}"
+
+fi
+
+mkdir -p "${data_vault}"
 
 
-mv -f "$target" $DATA_VAULT && ln -s $DATA_VAULT/`basename $target` $target && echo "... done"
+echo "Catching ${target}..."
+
+/bin/mv -f "${target}" ${data_vault} && ln -sf ${data_vault}/$(basename ${target}) ${target} && echo "... done"

@@ -4,10 +4,10 @@ usage="Usage: $(basename $0) <root of tree whose entry names should be corrected
 Note: this script might have to be run more than once so that the names of all directories and files are full fixed."
 
 
-if [ ! $# -eq 1 ] ; then
+if [ ! $# -eq 1 ]; then
 
 	echo "  Error, exactly one parameter expected.
-  $usage
+  ${usage}
 	" 1>&2
 	exit 5
 
@@ -16,7 +16,7 @@ fi
 
 correcter_script=$(dirname $0)/fix-filename.sh
 
-if [ ! -x "${correcter_script}" ] ; then
+if [ ! -x "${correcter_script}" ]; then
 	echo "
 
 	Error, no executable correcter script found (searched ${correcter_script}).
@@ -29,10 +29,10 @@ fi
 
 tree_root="$1"
 
-if [ ! -d "${tree_root}" ] ; then
+if [ ! -d "${tree_root}" ]; then
 	echo "
   Error, no directory named <${tree_root}> exists.
-  $usage
+  ${usage}
 	" 1>&2
 	exit 15
 fi
