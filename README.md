@@ -1,7 +1,7 @@
 # Ceylan-Hull
 
-![](/doc/hull-title.png)
-
+<center><img src="/doc/hull-title.png" height="200"></center>
+                                                                 
 This repository corresponds to the part of the [Ceylan project](https://github.com/Olivier-Boudeville/Ceylan) gathering a collection of all kinds of shell scripts.
 
 Please refer to the [Hull official documentation](http://hull.esperide.org), otherwise to its [mirror](http://olivier-boudeville.github.io/Ceylan-Hull/).
