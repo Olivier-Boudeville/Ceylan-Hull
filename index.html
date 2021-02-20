@@ -16,7 +16,7 @@
 
 
 <span class="target" id="top"></span><p><span class="raw-html"><a name="hull_top"></a></span></p>
-<p><span class="raw-html"><div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/index.html">browse mirror</a> <a href="hull.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div></span></p>
+<p><span class="raw-html"><div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div></span></p>
 <p><span class="raw-html"><center><img src="hull-title.png" width="20%"></img></center></span>
 </p>
 <div class="section" id="a-collection-of-all-kinds-of-shell-scripts">
@@ -31,9 +31,9 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Friday, February 19, 2021</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Saturday, February 20, 2021</td>
 </tr>
-<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.1</td>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.2</td>
 </tr>
 <tr class="field"><th class="field-name">Dedication:</th><td class="field-body">Users and maintainers of <tt class="docutils literal"><span class="pre">Ceylan-Hull</span></tt>, version 1.0.</td>
 </tr>
@@ -42,7 +42,7 @@
 </tbody>
 </table>
 <p>The latest version of this documentation is to be found at the <a class="reference external" href="http://hull.esperide.org">official Ceylan-Hull website</a> (<tt class="docutils literal"><span class="pre">http://hull.esperide.org</span></tt>).</p>
-<p><span class="raw-html">This Hull documentation is also available in the PDF format (see <a href="hull.pdf">hull.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/hull.html">here</a>.</span></p>
+<p><span class="raw-html">This Hull documentation is also available in the PDF format (see <a href="Ceylan-Hull-technical-manual-english.pdf">Ceylan-Hull-technical-manual-english.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/">here</a>.</span></p>
 <p></p>
 <div class="section" id="overview">
 <h2><a class="toc-backref" href="#id10">Overview</a></h2>
@@ -74,8 +74,8 @@
 <li><a class="reference internal" href="#to-remove-filesystem-elements" id="id19">To remove filesystem elements</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#process-related" id="id20">Process-related</a></li>
-<li><a class="reference internal" href="#network-related" id="id21">Network-related</a></li>
+<li><a class="reference internal" href="#related-to-unix-processes" id="id20">Related to (UNIX) Processes</a></li>
+<li><a class="reference internal" href="#related-to-network-management" id="id21">Related to Network Management</a></li>
 <li><a class="reference internal" href="#for-development" id="id22">For Development</a></li>
 <li><a class="reference internal" href="#replacement-related" id="id23">Replacement-related</a></li>
 <li><a class="reference internal" href="#multimedia-related" id="id24">Multimedia-related</a><ul>
@@ -153,7 +153,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-files-unexecutable-in-tree.sh">set-files-unexecutable-in-tree.sh</a>: ensures that all files found recursively from the current directory are not executable</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces.sh">fix-unbreakable-spaces.sh</a>: removes any unbreakable space in specified file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces-in-source-tree.sh">fix-unbreakable-spaces-in-source-tree.sh</a>: removes any unbreakable space in specified tree</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh">fix-whitespaces.sh</a>: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as editor</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh">fix-whitespaces.sh</a>: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as text editor</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh">rename-files-in-tree.sh</a> (just an example of pattern substitution in filenames)</li>
 </ul>
 </div>
@@ -186,19 +186,20 @@
 </ul>
 </div>
 </div>
-<div class="section" id="process-related">
-<h3><a class="toc-backref" href="#id20">Process-related</a></h3>
+<div class="section" id="related-to-unix-processes">
+<h3><a class="toc-backref" href="#id20">Related to (UNIX) Processes</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/top.sh">top.sh</a>: triggers the best &quot;top&quot; available, to monitor processes and system resources</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh">watch.sh</a>: to track (over time) processes that may be transient</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh">watch.sh</a>: tracks (over time) processes that may be transient</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/benchmark-command.sh">benchmark-command.sh</a>: returns a mean resource consumption for the specified shell command</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-size.sh">list-processes-by-size.sh</a>: lists processes by decreasing size in RAM</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-cpu-use.sh">list-processes-by-cpu-use.sh</a>: lists processes by decreasing use of CPU</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-every.sh">kill-every.sh</a>: kills all processes that match specified name pattern</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-always.sh">kill-always.sh</a>: as long as this script is kept running, kills any process matching the specified name</li>
 </ul>
 </div>
-<div class="section" id="network-related">
-<h3><a class="toc-backref" href="#id21">Network-related</a></h3>
+<div class="section" id="related-to-network-management">
+<h3><a class="toc-backref" href="#id21">Related to Network Management</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh">test-network.sh</a>: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/manage-wifi.sh">manage-wifi.sh</a>: starts/gets status/scans/stops the wifi support</li>
@@ -217,6 +218,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style.sh">reformat-source-style.sh</a>: applies some style change to specified file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style-in-tree.sh">reformat-source-style-in-tree.sh</a>: applies some style change to C/C++ files in specified tree</li>
 </ul>
+<p>See also the Erlang-related <a class="reference external" href="http://myriad.esperide.org/#erlang-dedicated-scripts">Myriad scripts</a>.</p>
 </div>
 <div class="section" id="replacement-related">
 <h3><a class="toc-backref" href="#id23">Replacement-related</a></h3>
@@ -289,6 +291,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh">track-rst-updates.sh</a>: tracks changes in the specified RST source file in order to regenerate the target file accordingly</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh">spell-check-rst-tree.sh</a>: spellchecks all RST files found from current directory</li>
 </ul>
+<p>One may also rely on the <a class="reference external" href="http://myriad.esperide.org/#to-generate-documentation">Ceylan-Myriad's scripts for documentation</a>, notably <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh">generate-docutils.sh</a> and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh">generate-pdf-from-rst.sh</a>.</p>
 </div>
 <div class="section" id="for-version-control-system-vcs">
 <h3><a class="toc-backref" href="#id31">For Version Control System (VCS)</a></h3>
@@ -420,7 +423,7 @@
 </ul>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-awstats-report.sh">generate-awstats-report.sh</a>: to trigger the generation of an Awstats report (prefer using <a class="reference external" href="http://us-web.esperide.org">US-Web</a> instead)</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/">make-markup-shortcut-links.sh</a>: creates shortcuts (symlinks) for the <tt class="docutils literal"><span class="pre">put-*-markup.sh</span></tt> micro-scripts, in order to assist a bit the user of following languages:<ul>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/make-markup-shortcut-links.sh">make-markup-shortcut-links.sh</a>: creates shortcuts (symlinks) for the <tt class="docutils literal"><span class="pre">put-*-markup.sh</span></tt> micro-scripts, in order to assist a bit the user of following languages:<ul>
 <li>for HTML: <tt class="docutils literal">bold</tt>, <tt class="docutils literal">box</tt>, <tt class="docutils literal">cent</tt>, <tt class="docutils literal">code</tt>, <tt class="docutils literal">def</tt>, <tt class="docutils literal">defel</tt>, <tt class="docutils literal">em</tt>, <tt class="docutils literal">img</tt>, <tt class="docutils literal">linked</tt>, <tt class="docutils literal">lnk</tt>, <tt class="docutils literal">ordered</tt>, <tt class="docutils literal">para</tt>, <tt class="docutils literal">sni</tt>, <tt class="docutils literal">strong</tt>, <tt class="docutils literal">table</tt>, <tt class="docutils literal">tit</tt>, <tt class="docutils literal">toc</tt></li>
 <li>for RST: <tt class="docutils literal">imgr</tt>, <tt class="docutils literal">linkr</tt></li>
 <li>in general: <tt class="docutils literal">fuda</tt>, <tt class="docutils literal">newda</tt></li>
@@ -486,7 +489,7 @@
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e">e</a>: to edit (i.e. open potentially for updating) all kinds of files</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v">v</a>: to view (i.e. open for reading only) all kinds of files</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/masteremail.sh/">email.sh</a> / <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh">courriels.sh</a>: to launch a suitable e-mail client</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/email.sh/">email.sh</a> / <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh">courriels.sh</a>: to launch a suitable e-mail client</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh">launch-irc.sh</a>: to launch a suitable IRC client</li>
 </ul>
 </div>
