@@ -21,7 +21,7 @@
 
 :raw-html:`<a name="hull_top"></a>`
 
-:raw-html:`<div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/index.html">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div>`
+:raw-html:`<div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div>`
 
 
 
@@ -40,8 +40,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Friday, February 19, 2021
-:Version: 1.0.1
+:Lastly updated: Saturday, February 20, 2021
+:Version: 1.0.2
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -56,9 +56,9 @@
 
 The latest version of this documentation is to be found at the `official Ceylan-Hull website <http://hull.esperide.org>`_ (``http://hull.esperide.org``).
 
-:raw-html:`This Hull documentation is also available in the PDF format (see <a href="Ceylan-Hull-technical-manual-english.pdf">Ceylan-Hull-technical-manual-english.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/hull.html">here</a>.`
+:raw-html:`This Hull documentation is also available in the PDF format (see <a href="Ceylan-Hull-technical-manual-english.pdf">Ceylan-Hull-technical-manual-english.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/">here</a>.`
 
-:raw-latex:`The documentation is also mirrored \href{https://olivier-boudeville.github.io/Ceylan-Hull/hull.html}{here}.`
+:raw-latex:`The documentation is also mirrored \href{https://olivier-boudeville.github.io/Ceylan-Hull/}{here}.`
 
 
 --------
@@ -146,9 +146,10 @@ To fix names, paths, permissions, content
 
 - `fix-unbreakable-spaces-in-source-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces-in-source-tree.sh>`_: removes any unbreakable space in specified tree
 
-- `fix-whitespaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh>`_: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as editor
+- `fix-whitespaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh>`_: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as text editor
 
 - `rename-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh>`_ (just an example of pattern substitution in filenames)
+
 
 
 To inspect file and directory content
@@ -188,13 +189,14 @@ To remove filesystem elements
 
 
 
-
-Process-related
-===============
+Related to (UNIX) Processes
+===========================
 
 - `top.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/top.sh>`_: triggers the best "top" available, to monitor processes and system resources
 
-- `watch.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh>`_: to track (over time) processes that may be transient
+- `watch.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh>`_: tracks (over time) processes that may be transient
+
+- `benchmark-command.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/benchmark-command.sh>`_: returns a mean resource consumption for the specified shell command
 
 - `list-processes-by-size.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-size.sh>`_: lists processes by decreasing size in RAM
 
@@ -207,8 +209,8 @@ Process-related
 
 
 
-Network-related
-===============
+Related to Network Management
+=============================
 
 - `test-network.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh>`_: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)
 
@@ -237,6 +239,9 @@ For Development
 - `reformat-source-style.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style.sh>`_: applies some style change to specified file
 
 - `reformat-source-style-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style-in-tree.sh>`_: applies some style change to C/C++ files in specified tree
+
+
+See also the Erlang-related `Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
 
 
 
@@ -346,6 +351,8 @@ Document-related
 
 - `spell-check-rst-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh>`_: spellchecks all RST files found from current directory
 
+
+One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
 
 
 For Version Control System (VCS)
@@ -556,7 +563,7 @@ Web-related facilities
 
 - `generate-awstats-report.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-awstats-report.sh>`_: to trigger the generation of an Awstats report (prefer using `US-Web <http://us-web.esperide.org>`_ instead)
 
-- `make-markup-shortcut-links.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/>`_: creates shortcuts (symlinks) for the ``put-*-markup.sh`` micro-scripts, in order to assist a bit the user of following languages:
+- `make-markup-shortcut-links.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/make-markup-shortcut-links.sh>`_: creates shortcuts (symlinks) for the ``put-*-markup.sh`` micro-scripts, in order to assist a bit the user of following languages:
 
   - for HTML: ``bold``, ``box``, ``cent``, ``code``, ``def``, ``defel``, ``em``, ``img``, ``linked``, ``lnk``, ``ordered``, ``para``, ``sni``, ``strong``, ``table``, ``tit``, ``toc``
   - for RST: ``imgr``, ``linkr``
@@ -648,11 +655,11 @@ Launch-related
 
 .. - `brave.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/brave.sh>`_
 
-
 - `e <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e>`_: to edit (i.e. open potentially for updating) all kinds of files
 - `v <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v>`_: to view (i.e. open for reading only) all kinds of files
-- `email.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/masteremail.sh/>`_ / `courriels.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh>`_: to launch a suitable e-mail client
+- `email.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/email.sh/>`_ / `courriels.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh>`_: to launch a suitable e-mail client
 - `launch-irc.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh>`_: to launch a suitable IRC client
+
 
 
 Miscellaneous
