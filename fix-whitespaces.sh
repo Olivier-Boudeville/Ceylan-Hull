@@ -3,6 +3,8 @@
 usage="Usage: $(basename $0) A_FILE: fixes whitespace problems into specified file.
 Useful to properly format files that shall committed, even if not using Emacs as editor."
 
+# Refer to http://myriad.esperide.org/#emacs-settings for the prior
+# configuration of Emacs.
 
 target_file="$1"
 
