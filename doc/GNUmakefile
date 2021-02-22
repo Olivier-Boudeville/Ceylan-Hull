@@ -32,21 +32,25 @@ GITHUB_PAGES_BASE := $(shell basename "$(HULL_WEB_MIRROR_BRANCH)")
 
 
 
-.PHONY: doc all full-doc html pdf clone-mirror           \
-		export-doc export-to-official export-to-mirror   \
+.PHONY: doc all full-doc html pdf clone-mirror                      \
+		export-doc export-to-official export-to-mirror              \
 		clean clean-doc clean-links info info-web
 
 
 # Default do-nothing target:
 doc:
 
+
 all:
 	@echo "  Run 'make full-doc' to generate the manual of the 'Hull' layer."
 
 
 full-doc: $(DOC_GENERATED_FILES)
-	@/bin/ln -sf $(CURRENT_HULL_HTML) hull.html
-	@/bin/ln -sf $(CURRENT_HULL_PDF) hull.pdf
+
+
+# This link does not need to be in version control:
+create-links:
+	@/bin/ln -sf $(CURRENT_HULL_HTML) index.html
 
 
 html: clean-doc $(HTML_TARGET)
@@ -70,12 +74,12 @@ export-doc: clean-doc full-doc export-to-official export-to-mirror
 # not a set of files), so currently not used:
 # rsync -avze "ssh $(SP)" $(SOME_WEB_TREE) $(WEB_SRV):$(WEB_ROOT)/Hull/
 #
-export-to-official: $(DOC_GENERATED_FILES)
+export-to-official: create-links $(DOC_GENERATED_FILES)
 	@echo "   Exporting Hull documentation to official website ($(WEB_SRV))"
 	@/bin/scp $(SP) $(WEB_CONTENT) $(WEB_SRV):$(WEB_ROOT)/Hull/
 
 
-export-to-mirror: $(DOC_GENERATED_FILES)
+export-to-mirror: create-links $(DOC_GENERATED_FILES)
 	@echo "   Exporting Hull documentation to mirror website in $(HULL_WEB_MIRROR_BRANCH)"
 	@/bin/cp -f $(WEB_CONTENT) $(HULL_WEB_MIRROR_BRANCH) && cd $(HULL_WEB_MIRROR_BRANCH) && git add . && git merge -s ours && git commit -m "Hull doc updated." && git push && git pull --ff-only
 
@@ -90,15 +94,10 @@ clean-doc: clean-links
 
 
 clean-links:
-	-@/bin/rm -f hull.html hull.pdf
+	-@/bin/rm -f index.html
 
 
-info: info-doc info-web
-
-
-info-doc:
-	@echo "OVERALL_DOCUMENT_SOURCE = $(OVERALL_DOCUMENT_SOURCE)"
-	@echo "DOC_TRACKER = $(DOC_TRACKER)"
+info: info-web
 
 
 info-web:
