@@ -2,8 +2,8 @@
 
 hide_suffix="-hidden"
 
-usage="Usage: $(basename $0) FILE_ELEMENT: hides specified file or directory (simply by adding a '${hide_suffix}' suffix to its name).
-See also: the reciprocal script 'unhide.sh'."
+usage="Usage: $(basename $0) FILE_ELEMENT: unhides specified file or directory (simply by adding tha '${hide_suffix}' suffix to its name).
+See also: the reciprocal script 'hide.sh'."
 
 if [ ! $# -eq 1 ]; then
 
@@ -24,15 +24,15 @@ ${usage}" 1>&2
 
 fi
 
-target_element="${source_element}${hide_suffix}"
+target_element=$(echo "${source_element}" | sed "s|${hide_suffix}$||1")
 
 if [ -e "${target_element}" ]; then
 
-	echo -"  Error, the target element '${target_element}' (to be used to hide the original) already exists." 1>&2
+	echo -"  Error, the target element '${target_element}' (to be used to unhide the specified file) already exists." 1>&2
 	exit 15
 
 fi
 
 /bin/mv "${source_element}" "${target_element}"
 
-echo "'${source_element}' has been hidden, as: '${target_element}'."
+echo "'${source_element}' has been unhidden, as: '${target_element}'."

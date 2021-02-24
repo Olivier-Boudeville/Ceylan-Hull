@@ -40,8 +40,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Saturday, February 20, 2021
-:Version: 1.0.2
+:Lastly updated: Wednesday, February 24, 2021
+:Version: 1.0.3
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -590,7 +590,6 @@ For user notifications
 
 
 
-
 Shell Helpers
 =============
 
@@ -598,7 +597,7 @@ To facilitate shell sessions:
 
 - `mo <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mo>`_: shorthand for a relevant version of ``more``
 
-- `hide.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/hide.sh>`_: hides specified file or directory (simply by adding a ``.orig`` extension to its name)
+- `hide.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/hide.sh>`_: hides specified file or directory (simply by adding a ``-hidden`` suffix to its filename), while `unhide.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unhide.sh>`_ does the reverse operation
 
 - `set-display.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-display.sh>`_: sets the X display to specified host; if none is specified, sets it to the local one
 
