@@ -57,6 +57,7 @@ standalone=1
 
 run_in_background=0
 
+verbose=1
 
 
 # Function section.
@@ -274,6 +275,7 @@ chooseEmacs()
 		editor_short_name="Emacs"
 
 		multi_win=0
+		# run_in_background unchanged
 
 	fi
 
@@ -436,10 +438,15 @@ autoSelectEditor()
 applyEditor()
 {
 
-	#echo "multi_win = ${multi_win}"
-	#echo "editor_short_name = ${editor_short_name}"
-	#echo "editor = ${editor}"
-	#echo "editor_opt = ${editor_opt}"
+	if [ $verbose -eq 0 ]; then
+		echo "editor_short_name = ${editor_short_name}"
+		echo "editor = ${editor}"
+		echo "editor_opt = ${editor_opt}"
+		echo "do_X = ${do_X}"
+		echo "DISPLAY = ${DISPLAY}"
+		echo "multi_win = ${multi_win}"
+		echo "run_in_background = ${run_in_background}"
+	fi
 
 	if [ ! -x "${editor}" ]; then
 
@@ -511,7 +518,7 @@ applyEditor()
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
 				#
-				#echo "Running (multiwin) ${editor} ${editor_opt} $f..."
+				[ $verbose -eq 1 ] || echo "Running (multiwin) ${editor} ${editor_opt} $f..."
 				${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
@@ -526,11 +533,11 @@ applyEditor()
 				if [ $run_in_background -eq 0 ]; then
 
 					# Ever happens?
-					#echo "Running (monowin, in background) ${editor} ${editor_opt} $f..."
+					[ $verbose -eq 1 ] || echo "Running (monowin, in background) ${editor} ${editor_opt} $f..."
 					${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				else
-					#echo "Running (monowin, in foreground) ${editor} ${editor_opt} $f..."
+					[ $verbose -eq 1 ] || echo "Running (monowin, in foreground) ${editor} ${editor_opt} $f..."
 					${editor} ${editor_opt} $f 1>/dev/null 2>&1
 
 				fi
@@ -547,12 +554,12 @@ applyEditor()
 
 			if [ $run_in_background -eq 0 ]; then
 
-				#echo "Running ${editor} ${editor_opt} $f in background..."
+				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in background..."
 				${editor} ${editor_opt} "$f" 2>/dev/null &
 
 			else
 
-				#echo "Running ${editor} ${editor_opt} $f in foreground..."
+				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in foreground..."
 				${editor} ${editor_opt} "$f"
 
 			fi
@@ -603,6 +610,11 @@ do_find=1
 do_locate=1
 
 
+# To debug:
+verbose=1
+#verbose=0
+
+
 # By default, a graphical editor will be used, unless the option specified in
 # no_x_opt has been set, or if the HULL_NO_GRAPHICAL_OUTPUT environment variable
 # has been set to 0, to prevent an attempt to launch a graphical tool from a
@@ -624,8 +636,10 @@ fi
 
 # Might not be defined at all:
 if [ "${HULL_NO_GRAPHICAL_OUTPUT}" = "0" ]; then
-	# Disabled:
+	[ $verbose -eq 1 ] || echo "Disabling X support, as HULL_NO_GRAPHICAL_OUTPUT was set."
 	do_X=1
+else
+	[ $verbose -eq 1 ] || echo "(HULL_NO_GRAPHICAL_OUTPUT not set to 0)"
 fi
 
 
@@ -705,7 +719,7 @@ parameters=""
 
 # Last filtering:
 #for arg in $remaining_parameters ; do
-for arg in "$@" ; do
+for arg in "$@"; do
 
 	if [ "$arg" = "-s" ]; then
 
