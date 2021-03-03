@@ -467,17 +467,17 @@ applyEditor()
 			# (ex: a regrep might return "class_X.erl:construct");
 			# Here we try to fix the filename - should such a file exist:
 
-			new_f=$(echo "$f"| sed 's|:.*$||1')
+			new_f="$(echo "$f"| sed 's|:.*$||1')"
 
 			#echo "- specified filename: ${f}"
 			#echo "- translated filename: ${new_f}"
 			#exit
 
-			if [ -f "$new_f" ]; then
+			if [ -f "${new_f}" ]; then
 
-				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
 
-				   f=$new_f
+				   f="${new_f}"
 
 			else
 
@@ -491,13 +491,13 @@ applyEditor()
 				# first - shall be taken into account as the first character to
 				# remove)
 				#
-				new_f=$(echo "$f" | sed -n 's|\(.*\)-.*|\1|p')
+				new_f="$(echo "$f" | sed -n 's|\(.*\)-.*|\1|p')"
 
-				if [ -f "$new_f" ]; then
+				if [ -f "${new_f}" ]; then
 
-				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
 
-				   f=$new_f
+				   f="${new_f}"
 				fi
 
 			fi
@@ -560,7 +560,7 @@ applyEditor()
 			else
 
 				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in foreground..."
-				${editor} ${editor_opt} "$f"
+				${editor} ${editor_opt} "$f" 2>/dev/null
 
 			fi
 
