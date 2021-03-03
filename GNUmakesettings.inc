@@ -1,4 +1,4 @@
-# This is the single file that all HULL GNUmakefiles, and only them, should
+# This is the single file that all Hull GNUmakefiles, and only them, should
 # include.
 
 # Prerequisite: HULL_TOP must be set.
