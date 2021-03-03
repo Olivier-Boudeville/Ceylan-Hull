@@ -40,8 +40,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Wednesday, February 24, 2021
-:Version: 1.0.3
+:Lastly updated: Wednesday, March 3, 2021
+:Version: 1.0.4
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -408,7 +408,7 @@ Admin-related
 
 - `update-locate-database.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-locate-database.sh>`_: updates the 'locate' database, for faster look-ups in filesystems
 
-- `mount-encrypted-usb-key.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-encrypted-usb-key.sh>`_: mounts specified LUKS-encrypted USB key, as root or as a normal user
+- `mount-encrypted-usb-device.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-encrypted-usb-device.sh>`_: mounts specified LUKS-encrypted device (ex: a USB key, or a disk), as root or (preferably) as a normal user
 
 
 
