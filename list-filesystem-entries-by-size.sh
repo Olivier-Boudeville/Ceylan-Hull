@@ -24,4 +24,4 @@ fi
 
 echo
 
-/bin/du -h --summarize * | /bin/sort -rh
+/usr/bin/du -h --summarize * | /usr/bin/sort -rh
