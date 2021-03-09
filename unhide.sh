@@ -2,37 +2,51 @@
 
 hide_suffix="-hidden"
 
-usage="Usage: $(basename $0) FILE_ELEMENT: unhides specified file or directory (simply by adding tha '${hide_suffix}' suffix to its name).
+usage="Usage: $(basename $0) FILE_ELEMENT [FILE_ELEMENTS]: unhides specified files or directories (simply by removing the '${hide_suffix}' suffix from their name).
 See also: the reciprocal script 'hide.sh'."
 
-if [ ! $# -eq 1 ]; then
 
-	echo "  Error, one argument expected.
+if [ $# -eq 0 ]; then
+
+	echo "  Error, at least one argument expected.
 ${usage}" 1>&2
 	exit 5
 
 fi
 
-# Removes any trailing slash for directories:
-source_element=$(echo "$1" | sed 's|/$||1')
 
-if [ ! -e "${source_element}" ]; then
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+	echo "${usage}"
+	exit 0
+fi
 
-	echo "  Error, the element '${source_element}' does not exist.
+
+while [ -n "$1" ]; do
+
+	# Removes any trailing slash for directories:
+	source_element="$(echo "$1" | sed 's|/$||1')"
+
+	if [ ! -e "${source_element}" ]; then
+
+		echo "  Error, the element '${source_element}' does not exist.
 ${usage}" 1>&2
-	exit 10
+		exit 10
 
-fi
+	fi
 
-target_element=$(echo "${source_element}" | sed "s|${hide_suffix}$||1")
+	target_element=$(echo "${source_element}" | sed "s|${hide_suffix}$||1")
 
-if [ -e "${target_element}" ]; then
+	if [ -e "${target_element}" ]; then
 
-	echo -"  Error, the target element '${target_element}' (to be used to unhide the specified file) already exists." 1>&2
-	exit 15
+		echo -"  Error, the target element '${target_element}' (to be used to unhide the specified file) already exists." 1>&2
+		exit 15
 
-fi
+	fi
 
-/bin/mv "${source_element}" "${target_element}"
+	/bin/mv "${source_element}" "${target_element}"
 
-echo "'${source_element}' has been unhidden, as: '${target_element}'."
+	echo "'${source_element}' has been unhidden, as: '${target_element}'."
+
+	shift
+
+done
