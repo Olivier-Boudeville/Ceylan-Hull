@@ -1,16 +1,35 @@
 #!/bin/sh
 
-usage="$0 <file pattern> <source expression> <target expression>
-  Replaces in files matching the specified pattern found from the current directory the specified target pattern with the replacement one."
+usage="Usage: $(basename $0) FILE_PATTERN SOURCE_EXPR TARGET_EXPR: replaces, in files whose name matches the specified pattern found from the current directory, the specified source pattern with the target one."
 
-if [ ! "$#" -eq "3" ]; then
-	echo "Error, ${usage}"
-	exit
+if [ ! $# -eq 3 ]; then
+	echo "  Error, three parameters are expected.
+${usage}" 1>&2
+	exit 5
 fi
 
-find . -type f -name "$1" -print | while read i
+file_pattern="$1"
+source_pattern="$2"
+target_pattern="$3"
+
+echo "Replacing, in files matching '${file_pattern}', patterns matching '${source_pattern}' with '${target_pattern}'..."
+
+find . -type f -name "${file_pattern}" -print | while read i
 do
-   # echo "s|$2|$3|g"
-   sed "s|$2|$3|g" $i > $i.tmp && mv $i.tmp $i
-   # mv was cp before
+
+	echo "  - replacing in ${i}"
+
+	tmp_file="${i}.replace.tmp"
+
+	if [ -e "${tmp_file}" ]; then
+
+		echo "  Error, a '${tmp_file}' element already exists, remove it first." 1>&2
+		exit 10
+
+	fi
+
+	sed "s|${source_pattern}|${target_pattern}|g" "${i}" > "${tmp_file}" && /bin/mv "${tmp_file}" "${i}"
+
 done
+
+echo "Replacements done."
