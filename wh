@@ -1,15 +1,15 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0) [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path SOME_DIR] FILE_PATTERN [STARTING_DIR]
 
-usage="  $(basename $0) (for \"where\"): searches (as a more user-friendly 'find') all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
+This '$(basename $0)' (for \"where\") script searches (as a more user-friendly 'find') all files and directories matching FILE_PATTERN (ex: '*hello*.?rl'), from STARTING_DIR if specified, otherwise from the current directory.
 
-  Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
-
-  Options:
-	[-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in \$(wh -q 'foo*'); do...)
+Options:
+	[-q|--quiet]: returns only file entries (no extra user-oriented information); suitable for scripts (ex: for f in \$($(basename $0) -q 'foo*'); do...)
 	--no-path: returns the filenames without any leading path
-	--exclude-path DIR: excludes specified directory DIR from search"
-
+	--exclude-path SOME_DIR: excludes specified the directory SOME_DIR from search
+	--verbose: outputs more information
+	-h or --help: displays this help"
 
 find_gnu="/usr/bin/find"
 
@@ -21,6 +21,9 @@ quiet=1
 no_path=1
 
 exclude_command=""
+
+#prefix="-->"
+prefix=" "
 
 token_eaten=0
 
@@ -52,15 +55,17 @@ while [ $token_eaten -eq 0 ]; do
 	elif [ "$1" = "--exclude-path" ]; then
 
 		to_exclude="$2"
-		exclude_command="${exclude_command} ( -name $to_exclude -prune -o -type f ) -a "
-		[ $quiet -eq 0 ] || echo "Directory $to_exclude will be excluded."
-		#echo "exclude_command = $exclude_command"
+		exclude_command="${exclude_command} (-name ${to_exclude} -prune -o -type f) -a "
+		[ $quiet -eq 0 ] || echo "  Directory '${to_exclude}' to be excluded."
+		#echo "exclude_command = ${exclude_command}"
 
 		shift
 		shift
 
 	else
+
 		token_eaten=1
+
 	fi
 
 done
@@ -72,49 +77,53 @@ done
 
 if [ $# -eq 0 ]; then
 
-	echo " Error, at least one parameter must be specified.${usage}
-	" 1>&2
+	echo "  Error, at least one parameter must be specified.
+${usage}" 1>&2
 	exit 10
 
 elif [ $# -eq 1 ]; then
 
-	starting_dir=$(pwd)
+	starting_dir="$(pwd)"
 
 elif [ $# -eq 2 ]; then
 
-	starting_dir=$2
+	starting_dir="$2"
 
 else
-	echo " Error, too many parameters specified: $*.${usage}
-	" 1>&2
+
+	echo "  Error, too many parameters specified: $*.
+${usage}" 1>&2
 	exit 15
+
 fi
 
 
-if [ ! -d "$starting_dir" ]; then
-	echo " Error, no such directory: '$starting_dir'.${usage}
-	" 1>&2
+if [ ! -d "${starting_dir}" ]; then
+
+	echo " Error, no such directory: '${starting_dir}'.
+${usage}" 1>&2
 	exit 20
+
 else
-	cd "$starting_dir"
+
+	cd "${starting_dir}"
+
 fi
 
 
-
-if [ -x "$find_gnu" ]; then
-	find="$find_gnu"
+if [ -x "${find_gnu}" ]; then
+	find="${find_gnu}"
 else
-	find=$(which find 2>/dev/null | grep -v ridiculously)
+	find="$(which find 2>/dev/null | grep -v ridiculously)"
 fi
 
-[ $verbose -eq 1 ] || echo "find is $find"
+[ $verbose -eq 1 ] || echo "find is ${find}"
 
 
-
-targetPattern=$1
+target_pattern="$1"
 
 [ $quiet -eq 0 ] || echo "
-Looking for all files and directories matching <$targetPattern>, starting from directory <$starting_dir>
+${prefix} Looking for all files and directories matching <${target_pattern}>, starting from directory '${starting_dir}':
 "
 
 [ $verbose -eq 1 ] || echo "Current directory is: $(pwd)"
@@ -125,17 +134,17 @@ Looking for all files and directories matching <$targetPattern>, starting from d
 
 if [ $no_path -eq 0 ]; then
 
-	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: ${find} . ${exclude_command} -name" "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
 
-	$find ${find_opt} . $exclude_command -name "$targetPattern" -exec basename '{}' ';' 2>/dev/null
+	${find} ${find_opt} . ${exclude_command} -name "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
 
 else
 
-	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: $find . $exclude_command -name" "$targetPattern" "-print 2>/dev/null | more"
+	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: ${find} . ${exclude_command} -name" "${target_pattern}" "-print 2>/dev/null | more"
 
-	$find ${find_opt} . $exclude_command -name "$targetPattern" -print 2>/dev/null | more
+	${find} ${find_opt} . ${exclude_command} -name "${target_pattern}" -print 2>/dev/null | more
 
 fi
 
 [ $quiet -eq 0 ] || echo "
-End of search"
+${prefix} End of search"
