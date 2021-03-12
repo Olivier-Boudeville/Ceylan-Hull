@@ -13,11 +13,6 @@
 .. role:: raw-latex(raw)
    :format: latex
 
-.. comment Would appear too late, can only be an be used only in preamble:
-.. comment :raw-latex:`\usepackage{graphicx}`
-.. comment As a result, in this document at least a '.. figure:: XXXX' must
-.. exist, otherwise: 'Undefined control sequence \includegraphics.'.
-
 
 :raw-html:`<a name="hull_top"></a>`
 
@@ -26,7 +21,7 @@
 
 
 :raw-html:`<center><img src="hull-title.png" width="20%"></img></center>`
-:raw-latex:`\includegraphics[scale=0.3]{hull-title.png}`
+:raw-latex:`\centering \includegraphics[scale=0.3]{hull-title.png}`
 
 .. comment Note: this is the latest, current version of the Hull 2.x documentation, directly obtained from the one of Hull 1.x.
 
@@ -40,7 +35,7 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Wednesday, March 3, 2021
+:Lastly updated: Friday, March 12, 2021
 :Version: 1.0.4
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
@@ -750,14 +745,9 @@ If you have information more detailed or more recent than those presented in thi
 Ending Word
 -----------
 
-Have fun with Hull!
+Have fun with Ceylan-Hull!
 
-.. comment Mostly added to ensure there is at least one figure directive,
-.. otherwise the LateX graphic support will not be included:
-
-.. figure:: hull-title.png
-   :alt: Hull logo
-   :width: 20 %
-   :align: center
+:raw-html:`<center><img src="hull-title.png" width="15%"></img></center>`
+:raw-latex:`\begin{figure}[h] \centering \includegraphics[scale=0.2]{hull-title.png} \end{figure}`
 
 :raw-html:`<a name="hull_bottom"></a>`
