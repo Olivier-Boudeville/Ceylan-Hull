@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2018 Olivier Boudeville
+# Copyright (C) 2010-2021 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -24,7 +24,7 @@ show_opt="--display"
 usage="
 Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
 
-  Opens for reading the set of specified files with the 'best' available viewer.
+  Opens for reading the set of specified files (or directories) with the 'best' available viewer.
 
   Options are:
 	  '${no_x_opt}' to prevent selecting a graphical viewer, notably if there is no available X display
@@ -68,7 +68,7 @@ chooseJedit()
 
 	#echo "Jedit selected."
 
-	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	JEDIT="$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	if [ -x "${JEDIT}" ]; then
 		viewer="${JEDIT}"
@@ -84,7 +84,7 @@ chooseEvince()
 
 	#echo "Evince selected."
 
-	viewer=$(which evince)
+	viewer="$(which evince)"
 	viewer_short_name="Evince"
 
 }
@@ -95,8 +95,18 @@ chooseLibreOffice()
 
 	#echo "LibreOffice selected."
 
-	viewer=$(which libreoffice)
+	viewer="$(which libreoffice)"
 	viewer_short_name="LibreOffice"
+
+}
+
+
+chooseMultimediaViewer()
+{
+
+	# Geeqie and Gthumb may have issues with clutter, so:
+	viewer="$(which gwenview)"
+	viewer_short_name="GwenView"
 
 }
 
@@ -106,7 +116,7 @@ chooseEog()
 
 	#echo "Eog selected."
 
-	viewer=$(which eog)
+	viewer="$(which eog)"
 	viewer_short_name="Eog"
 
 }
@@ -117,7 +127,7 @@ chooseFirefox()
 
 	#echo "Firefox selected."
 
-	viewer=$(which firefox)
+	viewer="$(which firefox)"
 	viewer_short_name="Firefox"
 
 }
@@ -128,7 +138,7 @@ chooseMplayer()
 
 	#echo "Mplayer selected."
 
-	viewer=$(which mplayer)
+	viewer="$(which mplayer)"
 	viewer_short_name="Mplayer"
 
 }
@@ -143,16 +153,16 @@ chooseNedit()
 	# nedit:
 
 	# Many names for nedit client/server: gentoo...
-	NEDITC_GENTOO=$(which neditc 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NEDITC_GENTOO="$(which neditc 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	# ...debian...
-	NEDITC_DEBIAN=$(which nedit-nc 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NEDITC_DEBIAN="$(which nedit-nc 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	# ...and others (nc can be netcat too)
-	NC=$(which nc 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NC="$(which nc 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	# Basic nedit, one full process by window:
-	NEDIT=$(which nedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NEDIT="$(which nedit 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 
 	# Sets of X parameters common to all nedit members:
@@ -161,12 +171,15 @@ chooseNedit()
 	NEDIT_NC_OPT="-noask"
 
 	if [ -x "${NEDIT}" ]; then
+
 		viewer="${NEDIT} ${NEDIT_FAMILY_OPT}"
 		viewer_short_name="Nedit"
 		multi_win=0
+
 	fi
 
 	if [ -x "${NC}" ]; then
+
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
 			viewer="${NC} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
@@ -174,18 +187,23 @@ chooseNedit()
 			multi_win=0
 	 # else: the nc being detected is netcat, not nedit tool: do nothing here.
 		fi
+
 	fi
 
 	if [ -x "${NEDITC_GENTOO}" ]; then
+
 		viewer="${NEDITC_GENTOO} ${NEDIT_FAMILY_OPT}"
 		viewer_short_name="Neditc"
 		multi_win=0
+
 	fi
 
 	if [ -x "${NEDITC_DEBIAN}" ]; then
+
 		viewer="${NEDITC_DEBIAN} ${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
 		viewer_short_name="Nedit-nc"
 		multi_win=0
+
 	fi
 
 }
@@ -204,7 +222,7 @@ chooseXemacs()
 
 	# xemacs:
 
-	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	XEMACS="$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	if [ -x "${XEMACS}" ]; then
 		viewer="${XEMACS} --geometry=83x60 "
@@ -225,7 +243,7 @@ chooseEmacs()
 	# emacs instead, which itself will be a server thanks to its
 	# '(server-start)' configuration.
 
-	EMACS=$(which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	EMACS="$(which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	if [ -x "${EMACS}" ]; then
 
@@ -285,7 +303,7 @@ chooseNano()
 	#echo "Choosing nano"
 
 	# nano, text-based user-friendly viewer:
-	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NANO="$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	viewer="${NANO}"
 	viewer_short_name="Nano"
@@ -301,7 +319,7 @@ chooseVim()
 	#echo "Choosing VIM"
 
 	# vi improved:
-	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	VIM="$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	viewer="${VIM}"
 	viewer_short_name="Vim"
@@ -317,7 +335,7 @@ chooseVi()
 	#echo "Choosing VI"
 
 	# Raw vi:
-	VI=$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	VI="$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	viewer="${VI}"
 	viewer_short_name="Vi"
@@ -332,7 +350,7 @@ chooseMore()
 
 	#echo "Choosing more"
 
-	MORE=$(which more 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	MORE="$(which more 2>/dev/null | grep -v ridiculously 2>/dev/null)"
 
 	viewer="${MORE}"
 	viewer_short_name="more"
@@ -444,7 +462,6 @@ applyViewer()
 	if [ ! -x "${viewer}" ]; then
 
 		echo "  Error, the '${viewer_short_name}' tool is not available." 1>&2
-
 		exit 10
 
 	fi
@@ -460,13 +477,13 @@ applyViewer()
 			# (ex: a regrep might return "class_X.erl:construct");
 			# Here we try to fix the filename:
 
-			new_f=$(echo "$f"| sed 's|:.*$||1')
+			new_f="$(echo $f| sed 's|:.*$||1')"
 
-			if [ -f "$new_f" ]; then
+			if [ -f "${new_f}" ]; then
 
-				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
 
-				   f=$new_f
+				   f="${new_f}"
 
 			fi
 
@@ -479,7 +496,7 @@ applyViewer()
 				# No need to remind if default:
 				echo "    Viewing $f with ${viewer_short_name}"
 			else
-				echo "    Viewing $f with ${viewer_short_name} (DISPLAY is <${DISPLAY}>)"
+				echo "    Viewing $f with ${viewer_short_name} (DISPLAY is '${DISPLAY}')"
 			fi
 		fi
 
@@ -489,8 +506,8 @@ applyViewer()
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
-				#echo ${viewer} ${viewer_opt} $f
-				${viewer} ${viewer_opt} $f 1>/dev/null 2>&1 &
+				#echo ${viewer} ${viewer_opt} "$f"
+				${viewer} ${viewer_opt} "$f" 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
 				# apparently may freeze emacs to death, loosing all pending
@@ -499,8 +516,8 @@ applyViewer()
 				sleep 1
 
 			else
-				#${viewer} ${viewer_opt} $f 2>/dev/null &
-				${viewer} ${viewer_opt} $f 2>/dev/null
+				#${viewer} ${viewer_opt} "$f" 2>/dev/null &
+				${viewer} ${viewer_opt} "$f" 2>/dev/null
 
 			fi
 
@@ -515,7 +532,7 @@ applyViewer()
 			if [ $run_in_background -eq 0 ]; then
 
 				#echo "Running ${viewer} in background..."
-				${viewer} ${viewer_opt} $f 2>/dev/null &
+				${viewer} ${viewer_opt} "$f" 2>/dev/null &
 
 			else
 
@@ -650,8 +667,8 @@ fi
 parameters=""
 
 # Last filtering:
-#for arg in $remaining_parameters ; do
-for arg in "$@" ; do
+#for arg in $remaining_parameters; do
+for arg in "$@"; do
 
 	if [ "$arg" = "-s" ]; then
 
@@ -663,14 +680,14 @@ for arg in "$@" ; do
 		#echo "arg=$arg"
 
 		# But then the information is lost when:
-		parameters="$parameters ${arg}"
+		parameters="${parameters} ${arg}"
 
 	fi
 
 done
 
 # Last test regarding bloody spaces included in filenames:
-#for p in ${parameters} ; do echo "- parameter: '$p'" ; done
+#for p in ${parameters}; do echo "- parameter: '$p'"; done
 #exit
 
 if [ $standalone -eq 0 ]; then
@@ -683,18 +700,18 @@ fi
 if [ $do_find -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
-	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
-	#echo "target_file = $target_file"
+	target_file="$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')"
+	#echo "target_file = ${target_file}"
 
-	target_path=$(find . -name $target_file)
+	target_path="$(find . -name ${target_file})"
 
 	if [ -z "${target_path}" ]; then
 
-		echo "  (file '$target_file' not found, nothing done)"
+		echo "  (file '${target_file}' not found, nothing done)"
 
 	else
 
-		echo "  (file '$target_file' found as '$target_path')"
+		echo "  (file '${target_file}' found as '${target_path}')"
 
 	fi
 
@@ -706,18 +723,18 @@ fi
 if [ $do_locate -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
-	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
-	#echo "target_file = $target_file"
+	target_file="$(echo ${parameters} | sed 's|^ ||1' | sed 's|:.*$||1')"
+	#echo "target_file = ${target_file}"
 
-	target_path=$(/bin/locate --limit 1 --existing ${target_file})
+	target_path="$(/bin/locate --limit 1 --existing ${target_file})"
 
 	if [ -z "${target_path}" ]; then
 
-		echo "  (file '$target_file' not found, nothing done)"
+		echo "  (file '${target_file}' not found, nothing done)"
 
 	else
 
-		echo "  (file '$target_file' found as '$target_path')"
+		echo "  (file '${target_file}' found as '${target_path}')"
 
 	fi
 
@@ -731,16 +748,28 @@ fi
 # Default:
 multi_win=1
 
+# Special-case for directories:
+if [ -d "$1" ]; then
+
+	chooseMultimediaViewer
+
+	dir="$1"
+
+	${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
+
+	exit
+
+fi
 
 # In case of a *list* of filenames, the detected extension will be the one of
 # the last filename:
 #
-extension=$(echo $parameters| sed 's|^.*\.||1')
-#extension=$(echo $1| sed 's|^.*\.||1')
+extension="$(echo ${parameters}| sed 's|^.*\.||1')"
+#extension="$(echo $1| sed 's|^.*\.||1')"
 
 
-#echo "parameters = $parameters"
-#echo "extension = $extension"
+#echo "parameters = ${parameters}"
+#echo "extension = ${extension}"
 
 
 
@@ -799,9 +828,10 @@ fi
 
 if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
 
-	viewer=$(which jq 2>/dev/null)
+	viewer="$(which jq 2>/dev/null)"
 
 	if [ -x "${viewer}" ]; then
+
 		viewer_opt="."
 		viewer_short_name="jq"
 		applyViewer
@@ -846,7 +876,7 @@ fi
 
 if [ "${extension}" = "dia" ]; then
 
-	viewer=$(which dia)
+	viewer="$(which dia)"
 	viewer_short_name="dia"
 	applyViewer
 	exit 0
@@ -857,7 +887,7 @@ fi
 if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
 
 	# Is it a compressed trace file?
-	if echo $parameters| grep '.traces' 1>/dev/null ; then
+	if echo ${parameters}| grep '.traces' 1>/dev/null; then
 		# In this case trigger next clause, as LogMX can handle it:
 		extension="traces"
 	fi
@@ -867,7 +897,7 @@ fi
 
 if [ "${extension}" = "traces" ]; then
 
-	LOGMX=$(which logmx.sh)
+	LOGMX="$(which logmx.sh)"
 
 	if [ ! -x "${LOGMX}" ]; then
 
