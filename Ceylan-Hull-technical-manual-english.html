@@ -370,7 +370,7 @@
 <div class="section" id="for-security">
 <h3><a class="toc-backref" href="#id41">For security</a></h3>
 <ul class="simple">
-<li>for the management of credentials (i.e. sets of login/password):<ul>
+<li>for the management of credentials (i.e. sets of login/password pairs):<ul>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/open-credentials.sh">open-credentials.sh</a>: unlocks (decrypts) the credential file whose path is read from the user environment, and opens it; once closed, re-locks it (with the same passphrase)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-credentials.sh">lock-credentials.sh</a>: locks (encrypts) the credential file whose path is read from the user environment</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unlock-credentials.sh">unlock-credentials.sh</a>: unlocks (decrypts) the credential file whose path is read from the user environment</li>
@@ -500,7 +500,7 @@
 <h3><a class="toc-backref" href="#id52">Launch-related</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e">e</a>: to edit (i.e. open potentially for updating) all kinds of files</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v">v</a>: to view (i.e. open for reading only) all kinds of files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v">v</a>: to view (i.e. open for reading only) all kinds of files and directories</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/email.sh/">email.sh</a> / <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh">courriels.sh</a>: to launch a suitable e-mail client</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh">launch-irc.sh</a>: to launch a suitable IRC client</li>
 </ul>
@@ -541,7 +541,8 @@
 <div class="line">-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only <a href="#id6"><span class="problematic" id="id7">*</span></a>.rst files)</div>
 </div>
 </blockquote>
-<p class="last">Example: regrep -i 'little red rooster' '<a href="#id8"><span class="problematic" id="id9">*</span></a>.txt'</p>
+<p>Example: regrep -i 'little red rooster' '<a href="#id8"><span class="problematic" id="id9">*</span></a>.txt'</p>
+<p class="last">See also: <a class="reference external" href="https://myriad.esperide.org/#searching-for-erlang-elements">ergrep</a> (for searching specifically in Erlang files) and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep">pygrep</a> (Python version).</p>
 </dd>
 <dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a></dt>
 <dd><p class="first">srm (for &quot;secure rm&quot;): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.</p>
