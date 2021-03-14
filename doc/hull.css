@@ -14,7 +14,7 @@ pre.code {
 
 
 .literal {
-  color: #200000;
+  color: #002030;
   font-weight: bold;
 }
 
@@ -26,7 +26,7 @@ pre.code {
 
 
 div.box {
-  color: #002200;
+  color: #003300;
   background: #FFFFFF;
   border: solid;
   padding: 5px;
@@ -179,7 +179,7 @@ dl {
 
 dt {
   color: #000000;
-  background: #04080a;
+  background: #2d323d;
   font-weight: bold;
   text-indent: 5px;
   line-height: 1.3;
@@ -424,7 +424,7 @@ td a {
 
 
 a:link {
-  color:#300022;
+  color:#400033;
   background: transparent;
   font-weight: bold;
   text-decoration: none;
@@ -433,7 +433,7 @@ a:link {
 
 
 a:visited {
-  color: #330033;
+  color: #503022;
   background: transparent;
   font-weight: bold;
   text-decoration: none;
@@ -472,7 +472,7 @@ b {
 /* Taken from http://www.w3.org/Style/Examples/007/menus.html */
 
 div.banner {
-  background: #000045;
+  background: #000065;
   margin: 0;
   font-size: 70%;
   font-weight: bold;
@@ -488,11 +488,11 @@ div.banner {
 
 div.banner p {
   color: #00FF00;
-  background: #002100;
+  background: #002500;
   margin-left: 0em;
   padding:  0em;
   font-family: Arial, sans-serif;
-  border: thin outset #200909;
+  border: thin outset #200a0a;
   margin-top: 0%;
   margin-bottom: 0%;
   margin-left: 0%;

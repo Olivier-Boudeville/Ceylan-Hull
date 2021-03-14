@@ -471,7 +471,7 @@ For security
 ============
 
 
-- for the management of credentials (i.e. sets of login/password):
+- for the management of credentials (i.e. sets of login/password pairs):
 
   - `open-credentials.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/open-credentials.sh>`_: unlocks (decrypts) the credential file whose path is read from the user environment, and opens it; once closed, re-locks it (with the same passphrase)
 
@@ -664,7 +664,7 @@ Launch-related
 .. - `brave.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/brave.sh>`_
 
 - `e <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e>`_: to edit (i.e. open potentially for updating) all kinds of files
-- `v <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v>`_: to view (i.e. open for reading only) all kinds of files
+- `v <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v>`_: to view (i.e. open for reading only) all kinds of files and directories
 - `email.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/email.sh/>`_ / `courriels.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh>`_: to launch a suitable e-mail client
 - `launch-irc.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh>`_: to launch a suitable IRC client
 
@@ -718,6 +718,8 @@ Detailed description of some frequently-used scripts
 
   Example: regrep -i 'little red rooster' '*.txt'
 
+
+  See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files) and `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version).
 
 
 `srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_
