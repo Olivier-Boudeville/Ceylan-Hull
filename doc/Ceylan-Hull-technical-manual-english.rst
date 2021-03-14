@@ -35,8 +35,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Friday, March 12, 2021
-:Version: 1.0.4
+:Lastly updated: Sunday, March 14, 2021
+:Version: 1.0.5
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -309,12 +309,13 @@ For Snapshots (Camera Pictures)
 
 - `rename-snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh>`_: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension
 
-- `rename-snapshots.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh>`_: renames snapshots found from current directory, so that they respect better naming conventions
+- `rename-snapshots.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh>`_: renames *all* snapshots found from current directory, so that they respect better naming conventions
+
+- `remove-snapshot-metadata.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-snapshot-metadata.sh>`_: removes any metadata (typically EXIF) stored in the specified snapshot(s)
 
 - `generate-lighter-image.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-image.sh>`_: generates a lighter (smaller and of decreased quality) version of the specified image
 
-- `generate-lighter-images.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-images.sh>`_: reduces the size of image files found in current directory
-
+- `generate-lighter-images.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-images.sh>`_: reduces the size of *all* image files found in current directory
 
 
 
@@ -350,6 +351,7 @@ Document-related
 One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
 
 
+
 For Version Control System (VCS)
 ================================
 
@@ -371,6 +373,7 @@ For Version Control System (VCS)
 
 - `show-branch-hierarchy.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh>`_: shows the hierarchy of the branches in the current VCS repository
 
+- `list-tags-by-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh>`_: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one
 
 
 
@@ -481,6 +484,17 @@ For security
 - `inspect-opened-ports.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/inspect-opened-ports.sh>`_: lists the local TCP/UDP ports that are currently opened
 
 .. - `ftp-only-shell.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ftp-only-shell.sh>`_
+
+
+One may also rely on Myriad's `generate-password.sh <https://myriad.esperide.org/#script-based-apps>`_ script in order to generate safe, strong passwords (typically one per account listed based the ``*-credentials.sh`` scripts just above).
+
+On a side note, we also recommend registering a domain name of one's own (ex: ``myfoobar.org``) and settting up a catch-all regarding the recipient email addresses (so that all emails sent to ``*@myfoobar.org`` are routed to your own personal email address).
+
+Then, to avoid messing with your wildcard naming in terms of email addresses, you may choose first any conventional, meaningless email address prefix (ex: ``deneb``) to be dedicated to per-service communications. Next step is, in order to register to any online service (let's say it is named ``http://someacme.com``), to declare to this service that your email address is ``deneb-someacme@myfoobar.org`` (or perhaps ``deneb-someacmedotcom@myfoobar.org`` if some ambiguity could remain). You would then generate a corresponding password with ``generate-password.sh`` and store the email/password pair among the credentials managed by the scripts above.
+
+The advantages of this procedure as a whole are: strong and unique password, stronger pair of credentials as the login is not constant (hence less predictable [#]_), and if ever you start receiving spam targeted to ``deneb-someacme@myfoobar.org`` then the corresponding website (ex: ``http://someacme.com``) may have some explanations to share...
+
+.. [#] Depending on the use, the suffix for a site may be different from the site name, provided of course a translation table is kept on your side (typically in said credentials file). For example, one just has to record that for ``http://someacme.com`` he chose ``deneb-bluetiger@myfoobar.org`` (stealthier/less obvious - but then harder to incriminate a rogue website).
 
 
 
