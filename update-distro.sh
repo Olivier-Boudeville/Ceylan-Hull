@@ -37,7 +37,7 @@ if [ -f "${distro_id_file}" ]; then
 fi
 
 
-#echo "Distro type: $distro_type"
+#echo "Distro type: ${distro_type}"
 
 
 quiet=1
@@ -101,19 +101,19 @@ if [ $(id -u) -eq 0 ]; then
 			# Consider as well a 'yaourt -Sy' or alike?
 
 			# Too many updates blocked by Haskell-related packages:
-			PACMAN_OPT="-Syu --noconfirm --ignore=ghc"
+			pacman_opt="-Syu --noconfirm --ignore=ghc"
 
 			if [ $quiet -eq 1 ]; then
 
 				# To be run from the command-line:
-				pacman ${PACMAN_OPT} 2>&1 | tee -a ${log_file}
+				pacman ${pacman_opt} 2>&1 | tee -a ${log_file}
 
 			else
 
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				pacman ${PACMAN_OPT} 1>>${log_file} #2>&1
+				pacman ${pacman_opt} 1>>${log_file} #2>&1
 
 			fi
 
@@ -131,14 +131,17 @@ if [ $(id -u) -eq 0 ]; then
 
 	if [ $res -eq 0 ]; then
 
+		echo "... update done successfully"
 		echo "... update done successfully" 1>>${log_file}
 
 	else
 
+		# pacman -Syyu might be your friend then...
+
 		echo "... update failed ($res). Refer to sent mail for further information." 1>>${log_file}
 
 		echo "... update failed ($res), on " $(date '+%A, %B %-e, %Y at %T')"."
-		echo "Failure logged in '${log_file}' on" $(hostname -f) "."
+		echo "Failure logged in '${log_file}' on $(hostname -f)."
 
 	fi
 
