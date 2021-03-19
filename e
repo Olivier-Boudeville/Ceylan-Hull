@@ -522,7 +522,7 @@ applyEditor()
 				${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
-				# apparently may freeze emacs to death, loosing all pending
+				# apparently may freeze emacs to death, losing all pending
 				# changes...
 				#
 				sleep 1
