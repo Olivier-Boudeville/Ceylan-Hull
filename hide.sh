@@ -38,7 +38,7 @@ ${usage}" 1>&2
 
 	if [ -e "${target_element}" ]; then
 
-		echo -"  Error, the target element '${target_element}' (to be used to hide the original) already exists." 1>&2
+		echo "  Error, the target element '${target_element}' (to be used to hide the original) already exists." 1>&2
 		exit 15
 
 	fi
