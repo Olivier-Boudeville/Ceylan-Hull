@@ -35,7 +35,7 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Sunday, March 14, 2021
+:Lastly updated: Thursday, March 25, 2021
 :Version: 1.0.5
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
@@ -719,7 +719,7 @@ Detailed description of some frequently-used scripts
   Example: regrep -i 'little red rooster' '*.txt'
 
 
-  See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files) and `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version).
+  See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files), `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version) and `cgrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep>`_ (C version)
 
 
 `srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_
