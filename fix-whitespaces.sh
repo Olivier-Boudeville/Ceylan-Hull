@@ -1,7 +1,7 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) A_FILE: fixes whitespace problems into specified file.
-Useful to properly format files that shall committed, even if not using Emacs as editor."
+usage="Usage: $(basename $0) A_FILE: fixes whitespace problems into the specified file.
+Useful to properly format files that shall committed, even if not using Emacs as editor of choice."
 
 # Refer to http://myriad.esperide.org/#emacs-settings for the prior
 # configuration of Emacs.
@@ -27,7 +27,7 @@ if [ ! -f "${target_file}" ]; then
 fi
 
 
-emacs=$(which emacs 2>/dev/null)
+emacs="$(which emacs 2>/dev/null)"
 
 if [ ! -x "${emacs}" ]; then
 
@@ -36,7 +36,7 @@ if [ ! -x "${emacs}" ]; then
 
 fi
 
-${emacs} "${target_file}" --batch --eval="(whitespace-cleanup)" -f save-buffer 1>/dev/null 2>&1
+${emacs} "${target_file}" --batch --eval="(whitespace-cleanup)" -f save-buffer 1>/dev/null # 2>&1
 
 if [ ! $? -eq 0 ]; then
 
