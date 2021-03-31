@@ -35,8 +35,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Thursday, March 25, 2021
-:Version: 1.0.5
+:Lastly updated: Wednesday, March 31, 2021
+:Version: 1.0.6
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -346,6 +346,8 @@ Document-related
 - `track-rst-updates.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh>`_: tracks changes in the specified RST source file in order to regenerate the target file accordingly
 
 - `spell-check-rst-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh>`_: spellchecks all RST files found from current directory
+
+- `switch-text-encoding.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/masterswitch-text-encoding.sh>`_: reencodes the specified text file according to the specified encoding (by default Unicode, precisely ``utf-8``)
 
 
 One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
