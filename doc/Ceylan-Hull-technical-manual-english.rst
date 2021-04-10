@@ -35,8 +35,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Wednesday, March 31, 2021
-:Version: 1.0.6
+:Lastly updated: Saturday, April 10, 2021
+:Version: 1.0.7
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -400,7 +400,7 @@ Admin-related
 
 - `report-ups-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-ups-status.sh>`_: reports a state change of the specified UPS (script for automation)
 
-- `record-system-settings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-system-settings.sh>`_: records in-file the main system settings of the local host
+- `record-system-settings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-system-settings.sh>`_: records in-file the main system settings of the local host (typically for a durable storage in VCS to help later troubleshootings)
 
 - `get-host-information.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-host-information.sh>`_ (possible duplicate): returns the main system settings of the local host, and stores them in-file
 
