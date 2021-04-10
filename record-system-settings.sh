@@ -1,14 +1,13 @@
 #!/bin/sh
 
-# 'hostname -s' shall return the shortest, local machine name if configuration
-# in /etc/hosts is correct:
-#
-host_id="$(hostname -s)"
+host_id="$(hostname -f)"
 
 # To avoid // if run from /:
 target_file="$(realpath $(pwd)/$(date '+%Y%m%d')-system-settings-of-${host_id}.txt)"
 
 usage="Usage: $(basename $0): records in file ${target_file} the main system settings of the local host ($(hostname -s))."
+
+
 
 if [ ! $# -eq 0 ]; then
 
@@ -32,7 +31,7 @@ echo "  Recording system settings of host ${host_id} in file '${target_file}'...
 
 unset LANG
 
-echo -e "\n\nThese are the system settings of host $(hostname -f) as they were on $(date '+%A, %B %-e, %Y') at $(date '+%H:%M:%S').\n" > ${target_file}
+echo -e "\n\nThese are the system settings of host $(host_id) as they were on $(date '+%A, %B %-e, %Y') at $(date '+%H:%M:%S').\n" > ${target_file}
 
 
 exec_cmd()
