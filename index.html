@@ -31,9 +31,9 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Saturday, April 10, 2021</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Tuesday, April 13, 2021</td>
 </tr>
-<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.7</td>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.8</td>
 </tr>
 <tr class="field"><th class="field-name">Dedication:</th><td class="field-body">Users and maintainers of <tt class="docutils literal"><span class="pre">Ceylan-Hull</span></tt>, version 1.0.</td>
 </tr>
@@ -77,17 +77,17 @@
 <li><a class="reference internal" href="#related-to-unix-processes" id="id22">Related to (UNIX) Processes</a></li>
 <li><a class="reference internal" href="#related-to-network-management" id="id23">Related to Network Management</a></li>
 <li><a class="reference internal" href="#for-development" id="id24">For Development</a></li>
-<li><a class="reference internal" href="#replacement-related" id="id25">Replacement-related</a></li>
-<li><a class="reference internal" href="#multimedia-related" id="id26">Multimedia-related</a><ul>
-<li><a class="reference internal" href="#for-audio" id="id27">For Audio</a></li>
-<li><a class="reference internal" href="#for-voice-synthesis-text-to-speech" id="id28">For Voice Synthesis / Text-To-Speech</a></li>
-<li><a class="reference internal" href="#for-video" id="id29">For Video</a></li>
-<li><a class="reference internal" href="#for-snapshots-camera-pictures" id="id30">For Snapshots (Camera Pictures)</a></li>
+<li><a class="reference internal" href="#for-version-control-system-vcs" id="id25">For Version Control System (VCS)</a></li>
+<li><a class="reference internal" href="#replacement-related" id="id26">Replacement-related</a></li>
+<li><a class="reference internal" href="#multimedia-related" id="id27">Multimedia-related</a><ul>
+<li><a class="reference internal" href="#for-audio" id="id28">For Audio</a></li>
+<li><a class="reference internal" href="#for-voice-synthesis-text-to-speech" id="id29">For Voice Synthesis / Text-To-Speech</a></li>
+<li><a class="reference internal" href="#for-video" id="id30">For Video</a></li>
+<li><a class="reference internal" href="#for-snapshots-camera-pictures" id="id31">For Snapshots (Camera Pictures)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#cctv-related" id="id31">CCTV-related</a></li>
-<li><a class="reference internal" href="#document-related" id="id32">Document-related</a></li>
-<li><a class="reference internal" href="#for-version-control-system-vcs" id="id33">For Version Control System (VCS)</a></li>
+<li><a class="reference internal" href="#cctv-related" id="id32">CCTV-related</a></li>
+<li><a class="reference internal" href="#document-related" id="id33">Document-related</a></li>
 <li><a class="reference internal" href="#system-related" id="id34">System-related</a><ul>
 <li><a class="reference internal" href="#admin-related" id="id35">Admin-related</a></li>
 <li><a class="reference internal" href="#to-install-software" id="id36">To install software</a></li>
@@ -162,6 +162,7 @@
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/compute-checksum-in-tree.sh">compute-checksum-in-tree.sh</a>: computes the checksum of all files in specified tree and stores them in the specified text output file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-tree-stats.sh">display-tree-stats.sh</a>: displays simple, key stats about the specified tree (typically in order to compare merged trees)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-broken-symlinks.sh">list-broken-symlinks.sh</a>: lists, from any specified directory, all the symbolic links that are broken</li>
 </ul>
 </div>
 <div class="section" id="to-compare-files-and-trees">
@@ -183,6 +184,7 @@
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a> (for &quot;secure rm&quot;): stores deleted files in a trash directory, instead of deleting them directly; see the <a class="reference internal" href="#srm-full-usage">srm full usage</a></li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/empty-trash.sh">empty-trash.sh</a>: empties the trash directory that can be filled thanks to our <tt class="docutils literal">srm</tt> script</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-broken-symlinks.sh">remove-broken-symlinks.sh</a>: removes from the specified directory all the symbolic links that are broken</li>
 </ul>
 </div>
 </div>
@@ -220,83 +222,8 @@
 </ul>
 <p>See also the Erlang-related <a class="reference external" href="http://myriad.esperide.org/#erlang-dedicated-scripts">Myriad scripts</a>.</p>
 </div>
-<div class="section" id="replacement-related">
-<h3><a class="toc-backref" href="#id25">Replacement-related</a></h3>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-file.sh">replace-in-file.sh</a>: replaces in specified file the specified target pattern with the replacement one</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-tree.sh">replace-in-tree.sh</a>: replaces, in files matching the specified pattern found from the current directory, the specified target pattern with the replacement one</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-file.sh">substitute-pattern-in-file.sh</a> (possible duplicate): replaces in specified file every source pattern by specified target one</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-tree.sh">substitute-pattern-in-tree.sh</a> (possible duplicate): substitutes every source pattern by specified target one in all files, starting recursively from current directory</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-lines-starting-by.sh">replace-lines-starting-by.sh</a>: replaces in specified file every line starting with the specified pattern by the specified full line</li>
-</ul>
-</div>
-<div class="section" id="multimedia-related">
-<h3><a class="toc-backref" href="#id26">Multimedia-related</a></h3>
-<div class="section" id="for-audio">
-<h4><a class="toc-backref" href="#id27">For Audio</a></h4>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh">play-audio.sh</a>: performs an audio-only playback of specified content files (including video ones) and directories</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh">extract-audio-from-video.sh</a>: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/resample.sh">resample.sh</a>: resamples the target audio file to the specified frequency, keeping the same bitdepth</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ogg-encode.sh">ogg-encode.sh</a>: encodes specified sound file in OggVorbis after having removed any leading and ending silences, adjusting volume</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-to-mp3.sh">convert-vorbis-to-mp3.sh</a>: converts a Vorbis-encoded Ogg file to MP3 (sometimes it is useful to use older players)</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-tree-to-mp3.sh">convert-vorbis-tree-to-mp3.sh</a>: converts all Vorbis-encoded Ogg files to MP3 in specified tree</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/trim-silence-in.sh">trim-silence-in.sh</a>: removes any silence at begin and end of specified file, which is updated (initial content is thus not kept)</li>
-</ul>
-</div>
-<div class="section" id="for-voice-synthesis-text-to-speech">
-<h4><a class="toc-backref" href="#id28">For Voice Synthesis / Text-To-Speech</a></h4>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/say.sh">say.sh</a>: says specified text, based on text to speech</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-speech.sh">record-speech.sh</a>: records the specified speech with specified voice in the specified prefixed filename</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-speech-syntheses.sh">install-speech-syntheses.sh</a>: installs all listed voices for speech synthesis</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-and-install-MBROLA-and-voices.sh">get-and-install-MBROLA-and-voices.sh</a>: installs MBROLA and corresponding voices</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-espeak-voices.sh">test-espeak-voices.sh</a>: tests the voices supported by espeak</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-voices.sh">test-voices.sh</a>: tests all supported voices</li>
-</ul>
-</div>
-<div class="section" id="for-video">
-<h4><a class="toc-backref" href="#id29">For Video</a></h4>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh">convert-mov-to-x264-mp4.sh</a>: converts specified MOV file to MP4</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh">fix-video-mode.sh</a>: forces a specified video resolution</li>
-</ul>
-</div>
-<div class="section" id="for-snapshots-camera-pictures">
-<h4><a class="toc-backref" href="#id30">For Snapshots (Camera Pictures)</a></h4>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh">rename-snapshot.sh</a>: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh">rename-snapshots.sh</a>: renames <em>all</em> snapshots found from current directory, so that they respect better naming conventions</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-snapshot-metadata.sh">remove-snapshot-metadata.sh</a>: removes any metadata (typically EXIF) stored in the specified snapshot(s)</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-image.sh">generate-lighter-image.sh</a>: generates a lighter (smaller and of decreased quality) version of the specified image</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-images.sh">generate-lighter-images.sh</a>: reduces the size of <em>all</em> image files found in current directory</li>
-</ul>
-</div>
-</div>
-<div class="section" id="cctv-related">
-<h3><a class="toc-backref" href="#id31">CCTV-related</a></h3>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh">monitor-cctv.sh</a>: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh">fetch-cctv-monitorings.sh</a>: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh">review-cctv-monitorings.sh</a>: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before</li>
-</ul>
-</div>
-<div class="section" id="document-related">
-<h3><a class="toc-backref" href="#id32">Document-related</a></h3>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh">check-rst-includes.sh</a>: checks that all RST files found from current directory are included once and only once in the sources found</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh">convert-rst-to-mediawiki.sh</a>: converts specified RST source file in a mediawiki counterpart file</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh">generate-mermaid-diagram.sh</a>: generates a PNG file corresponding to the specified file describing a Mermaid diagram</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh">generate-pdf-from-latex.sh</a>: generates a PDF file from a LaTeX one, and displays it</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh">regenerate-rst-files.sh</a>: updates generated files from more recent docutils files</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh">track-rst-updates.sh</a>: tracks changes in the specified RST source file in order to regenerate the target file accordingly</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh">spell-check-rst-tree.sh</a>: spellchecks all RST files found from current directory</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh">switch-text-encoding.sh</a>: reencodes the specified text file according to the specified encoding (by default Unicode, precisely <tt class="docutils literal"><span class="pre">utf-8</span></tt>)</li>
-</ul>
-<p>One may also rely on the <a class="reference external" href="http://myriad.esperide.org/#to-generate-documentation">Ceylan-Myriad's scripts for documentation</a>, notably <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh">generate-docutils.sh</a> and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh">generate-pdf-from-rst.sh</a>.</p>
-</div>
 <div class="section" id="for-version-control-system-vcs">
-<h3><a class="toc-backref" href="#id33">For Version Control System (VCS)</a></h3>
+<h3><a class="toc-backref" href="#id25">For Version Control System (VCS)</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci">dci</a>: assists efficiently and conveniently the commit of specified file(s)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci-all">dci-all</a>: selects recursively from current directory the files that should be committed (either added or modified), and commits them; for each of the modified files, shows the diff with previous version before requesting a commit message</li>
@@ -308,7 +235,83 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/up">up</a>: updates the current local version of the VCS repository</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh">show-branch-hierarchy.sh</a>: shows the hierarchy of the branches in the current VCS repository</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh">list-tags-by-date.sh</a>: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/`list-largest-vcs-blobs.sh">list-largest-vcs-blobs.sh</a>: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size</li>
 </ul>
+</div>
+<div class="section" id="replacement-related">
+<h3><a class="toc-backref" href="#id26">Replacement-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-file.sh">replace-in-file.sh</a>: replaces in specified file the specified target pattern with the replacement one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-tree.sh">replace-in-tree.sh</a>: replaces, in files matching the specified pattern found from the current directory, the specified target pattern with the replacement one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-file.sh">substitute-pattern-in-file.sh</a> (possible duplicate): replaces in specified file every source pattern by specified target one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-tree.sh">substitute-pattern-in-tree.sh</a> (possible duplicate): substitutes every source pattern by specified target one in all files, starting recursively from current directory</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-lines-starting-by.sh">replace-lines-starting-by.sh</a>: replaces in specified file every line starting with the specified pattern by the specified full line</li>
+</ul>
+</div>
+<div class="section" id="multimedia-related">
+<h3><a class="toc-backref" href="#id27">Multimedia-related</a></h3>
+<div class="section" id="for-audio">
+<h4><a class="toc-backref" href="#id28">For Audio</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh">play-audio.sh</a>: performs an audio-only playback of specified content files (including video ones) and directories</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh">extract-audio-from-video.sh</a>: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/resample.sh">resample.sh</a>: resamples the target audio file to the specified frequency, keeping the same bitdepth</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ogg-encode.sh">ogg-encode.sh</a>: encodes specified sound file in OggVorbis after having removed any leading and ending silences, adjusting volume</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-to-mp3.sh">convert-vorbis-to-mp3.sh</a>: converts a Vorbis-encoded Ogg file to MP3 (sometimes it is useful to use older players)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-tree-to-mp3.sh">convert-vorbis-tree-to-mp3.sh</a>: converts all Vorbis-encoded Ogg files to MP3 in specified tree</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/trim-silence-in.sh">trim-silence-in.sh</a>: removes any silence at begin and end of specified file, which is updated (initial content is thus not kept)</li>
+</ul>
+</div>
+<div class="section" id="for-voice-synthesis-text-to-speech">
+<h4><a class="toc-backref" href="#id29">For Voice Synthesis / Text-To-Speech</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/say.sh">say.sh</a>: says specified text, based on text to speech</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-speech.sh">record-speech.sh</a>: records the specified speech with specified voice in the specified prefixed filename</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-speech-syntheses.sh">install-speech-syntheses.sh</a>: installs all listed voices for speech synthesis</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-and-install-MBROLA-and-voices.sh">get-and-install-MBROLA-and-voices.sh</a>: installs MBROLA and corresponding voices</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-espeak-voices.sh">test-espeak-voices.sh</a>: tests the voices supported by espeak</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-voices.sh">test-voices.sh</a>: tests all supported voices</li>
+</ul>
+</div>
+<div class="section" id="for-video">
+<h4><a class="toc-backref" href="#id30">For Video</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh">convert-mov-to-x264-mp4.sh</a>: converts specified MOV file to MP4</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh">fix-video-mode.sh</a>: forces a specified video resolution</li>
+</ul>
+</div>
+<div class="section" id="for-snapshots-camera-pictures">
+<h4><a class="toc-backref" href="#id31">For Snapshots (Camera Pictures)</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh">rename-snapshot.sh</a>: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh">rename-snapshots.sh</a>: renames <em>all</em> snapshots found from current directory, so that they respect better naming conventions</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-snapshot-metadata.sh">remove-snapshot-metadata.sh</a>: removes any metadata (typically EXIF) stored in the specified snapshot(s)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-image.sh">generate-lighter-image.sh</a>: generates a lighter (smaller and of decreased quality) version of the specified image</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-images.sh">generate-lighter-images.sh</a>: reduces the size of <em>all</em> image files found in current directory</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cctv-related">
+<h3><a class="toc-backref" href="#id32">CCTV-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh">monitor-cctv.sh</a>: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh">fetch-cctv-monitorings.sh</a>: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh">review-cctv-monitorings.sh</a>: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before</li>
+</ul>
+</div>
+<div class="section" id="document-related">
+<h3><a class="toc-backref" href="#id33">Document-related</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh">check-rst-includes.sh</a>: checks that all RST files found from current directory are included once and only once in the sources found</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh">convert-rst-to-mediawiki.sh</a>: converts specified RST source file in a mediawiki counterpart file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh">generate-mermaid-diagram.sh</a>: generates a PNG file corresponding to the specified file describing a Mermaid diagram</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh">generate-pdf-from-latex.sh</a>: generates a PDF file from a LaTeX one, and displays it</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh">regenerate-rst-files.sh</a>: updates generated files from more recent docutils files</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh">track-rst-updates.sh</a>: tracks changes in the specified RST source file in order to regenerate the target file accordingly</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh">spell-check-rst-tree.sh</a>: spellchecks all RST files found from current directory</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh">switch-text-encoding.sh</a>: reencodes the specified text file according to the specified encoding (by default Unicode, precisely <tt class="docutils literal"><span class="pre">utf-8</span></tt>)</li>
+</ul>
+<p>One may also rely on the <a class="reference external" href="http://myriad.esperide.org/#to-generate-documentation">Ceylan-Myriad's scripts for documentation</a>, notably <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh">generate-docutils.sh</a> and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh">generate-pdf-from-rst.sh</a>.</p>
 </div>
 <div class="section" id="system-related">
 <h3><a class="toc-backref" href="#id34">System-related</a></h3>
