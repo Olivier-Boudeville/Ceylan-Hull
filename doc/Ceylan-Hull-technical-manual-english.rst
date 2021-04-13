@@ -35,8 +35,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Saturday, April 10, 2021
-:Version: 1.0.7
+:Lastly updated: Tuesday, April 13, 2021
+:Version: 1.0.8
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -154,6 +154,7 @@ To inspect file and directory content
 
 - `display-tree-stats.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-tree-stats.sh>`_: displays simple, key stats about the specified tree (typically in order to compare merged trees)
 
+- `list-broken-symlinks.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-broken-symlinks.sh>`_: lists, from any specified directory, all the symbolic links that are broken
 
 
 To compare files and trees
@@ -181,6 +182,7 @@ To remove filesystem elements
 
 - `empty-trash.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/empty-trash.sh>`_: empties the trash directory that can be filled thanks to our ``srm`` script
 
+- `remove-broken-symlinks.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-broken-symlinks.sh>`_: removes from the specified directory all the symbolic links that are broken
 
 
 
@@ -237,6 +239,34 @@ For Development
 
 
 See also the Erlang-related `Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
+
+
+
+For Version Control System (VCS)
+================================
+
+- `dci <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci>`_: assists efficiently and conveniently the commit of specified file(s)
+
+- `dci-all <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci-all>`_: selects recursively from current directory the files that should be committed (either added or modified), and commits them; for each of the modified files, shows the diff with previous version before requesting a commit message
+
+- `dif <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif>`_: shows on the console the differences between the current versions of the (possibly specified) files on the filesystem and the staged ones (i.e. the changes that might be added)
+
+- `difg <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difg>`_: graphical version of ``dif``
+
+- `dif-prev.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif-prev.sh>`_: compares the current (committed) version of specified file(s) with their previous one
+
+- `difs <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difs>`_: shows the differences between the staged files and their committed version
+
+- `st <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/st>`_: shows the current VCS status of the specified files
+
+- `up <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/up>`_: updates the current local version of the VCS repository
+
+- `show-branch-hierarchy.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh>`_: shows the hierarchy of the branches in the current VCS repository
+
+- `list-tags-by-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh>`_: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one
+
+- `list-largest-vcs-blobs.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/`list-largest-vcs-blobs.sh>`_: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size
+
 
 
 
@@ -352,30 +382,6 @@ Document-related
 
 One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
 
-
-
-For Version Control System (VCS)
-================================
-
-- `dci <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci>`_: assists efficiently and conveniently the commit of specified file(s)
-
-- `dci-all <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci-all>`_: selects recursively from current directory the files that should be committed (either added or modified), and commits them; for each of the modified files, shows the diff with previous version before requesting a commit message
-
-- `dif <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif>`_: shows on the console the differences between the current versions of the (possibly specified) files on the filesystem and the staged ones (i.e. the changes that might be added)
-
-- `difg <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difg>`_: graphical version of ``dif``
-
-- `dif-prev.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif-prev.sh>`_: compares the current (committed) version of specified file(s) with their previous one
-
-- `difs <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difs>`_: shows the differences between the staged files and their committed version
-
-- `st <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/st>`_: shows the current VCS status of the specified files
-
-- `up <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/up>`_: updates the current local version of the VCS repository
-
-- `show-branch-hierarchy.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh>`_: shows the hierarchy of the branches in the current VCS repository
-
-- `list-tags-by-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh>`_: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one
 
 
 
