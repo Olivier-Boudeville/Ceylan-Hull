@@ -265,7 +265,7 @@ For Version Control System (VCS)
 
 - `list-tags-by-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh>`_: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one
 
-- `list-largest-vcs-blobs.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/`list-largest-vcs-blobs.sh>`_: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size
+- `list-largest-vcs-blobs.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-largest-vcs-blobs.sh>`_: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size
 
 
 
