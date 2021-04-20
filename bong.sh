@@ -5,29 +5,15 @@ usage="Usage: $(basename $0) [COUNT]: plays COUNT (default: 1) bong sound(s). Us
 
 bong()
 {
-	${audio_player_cmd} "${bong_sound}" 1>/dev/null 2>&1
+	echo ${audio_player_cmd} "${bong_sound}" #1>/dev/null 2>&1
 	echo "Bong!"
 }
 
-bong_sound="${LOANI_REPOSITORY}/OSDL-data/gong.wav"
-
-if [ ! -f "${bong_sound}" ]; then
-
-	bong_sound="/usr/lib/libreoffice/share/gallery/sounds/beam.wav"
-
-	if [ ! -f "${bong_sound}" ]; then
-
-		# Later, espeak could be used:
-		echo "  Error, no suitable bong sound found." 1>&2
-		exit 15
-
-	fi
-
-fi
 
 audio_player=$(which cvlc 2>/dev/null)
 audio_player_cmd="${audio_player} --quiet --novideo --play-and-exit"
 
+bong_sound="${LOANI_REPOSITORY}/OSDL-data/gong.wav"
 
 bong_count="$1"
 
