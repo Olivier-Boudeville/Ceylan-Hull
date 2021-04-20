@@ -1,27 +1,28 @@
 #!/bin/sh
 
-USAGE="Usage: "$(basename $0)" <DIR TO BACKUP> <TARGET SERVER> <TARGET SSH PORT> <TARGET_DIR>: backups specified directory to specified backup directory on specified server, using specified SSH port."
+usage="Usage: $(basename $0) <DIR TO BACKUP> <TARGET SERVER> <TARGET SSH PORT> <TARGET_DIR>: backups specified directory to specified backup directory on the specified server, using specified SSH port."
 
-if [ ! $# -eq 4 ] ; then
+if [ ! $# -eq 4 ]; then
 
-	echo "  Error, four parameters needed. $USAGE" 1>&2
+	echo "  Error, four parameters needed.
+${usage}" 1>&2
 	exit 5
 
 fi
 
 
-RSYNC=$(which rsync 2>/dev/null)
+rsync=$(which rsync 2>/dev/null)
 
-if [ ! -x "$RSYNC" ] ; then
+if [ ! -x "${rsync}" ]; then
 
 	echo "  Error, no rsync available." 1>&2
 	exit 10
 
 fi
 
-SCP=$(which scp 2>/dev/null)
+scp=$(which scp 2>/dev/null)
 
-if [ ! -x "$SCP" ] ; then
+if [ ! -x "${scp}" ]; then
 
 	echo "  Error, no scp available." 1>&2
 	exit 15
@@ -29,51 +30,50 @@ if [ ! -x "$SCP" ] ; then
 fi
 
 
-SOURCE="$1"
+source_dir="$1"
 
-if [ ! -e "$SOURCE" ] ; then
+if [ ! -d "${source_dir}" ]; then
 
-	echo "  Error, directory to backup ($SOURCE) does not exist." 1>&2
+	echo "  Error, directory to backup (${source_dir}) does not exist." 1>&2
 	exit 20
 
 fi
 
 
-TARGET_SERVER="$2"
+target_server="$2"
 
-SSH_PORT="$3"
+ssh_port="$3"
 
-TARGET_BACKUP_DIR="$4"
+target_backup_dir="$4"
 
-TARGET="${TARGET_SERVER}:${TARGET_BACKUP_DIR}"
-
+target="${target_server}:${target_backup_dir}"
 
 
 # Testing first if the permissions are ok (otherwise we could run a rsync that
 # would fail to transfer anything after hours of copy):
 #
-DUMMY_TRANSFER="$SOURCE/.bashrc"
+dummy_transfer="${HOME}/.$(basename $0).tmp"
 
 # If was not already existing:
-touch $DUMMY_TRANSFER
+touch ${dummy_transfer}
 
-if ! $SCP -P $SSH_PORT $DUMMY_TRANSFER $TARGET 1>/dev/null ; then
+if ! ${scp} -P ${ssh_port} ${dummy_transfer} ${target} 1>/dev/null; then
 
 	echo "  Errot, test scp failed, no backup attempted." 1>&2
 	exit 15
 
 fi
 
+source_name="$(basename ${source_dir})"
 
-# Not in the transfered directory on purpose:
-LOG_FILE="/tmp/$(date '+%Y%m%d')-backup-full-home-directory.log"
+# Not in the transferred directory on purpose:
+log_file="/tmp/$(date '+%Y%m%d')-backup-full-${source_name}-directory.log"
 
 
-# Beware to symlinks, they may lead to backup of infinite size:
-#
-$RSYNC -r --safe-links --links --rsh="ssh -p $SSH_PORT" /home/$USER/ $TARGET_SERVER:$TARGET_BACKUP_DIR/$(date '+%Y%m%d')-full-$USER-home-from-$(hostname -s) 2>&1 | tee $LOG_FILE
+# Beware to symlinks, they may lead to backups of infinite size:
+${rsync} -r --safe-links --links --rsh="ssh -p ${ssh_port}" ${source_dir} ${target_server}:${target_backup_dir}/$(date '+%Y%m%d')-full-${source_name}-from-$(hostname -s) 2>&1 | tee ${log_file}
 
-if [ $? -eq 0 ] ; then
+if [ $? -eq 0 ]; then
 
 	echo "  Backup succeeded."
 

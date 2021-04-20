@@ -1,5 +1,15 @@
 #!/bin/sh
 
+script_opts="{start|stop|reload|restart|force-reload|status|disable}"
+
+usage="Usage: $(basename $0) ${script_opts}: sets up a minimal yet functional firewall suitable for a gateway host with masquerading and as few services as possible."
+
+
+# Note: this script can be safely run remotely from within the LAN whereas a
+# usual gateway configuration is enforced and SSH connections are active, as
+# accesses (web and SSH) will remain available (hence no need to rush to the
+# gateway itself to fix a network issue is expected to happen).
+
 
 # This script configures the firewall for a minimal gateway, so that traffic is
 # still routed yet no fancy rules are applied, except masquerading and extensive
@@ -14,7 +24,7 @@ lsmod=/sbin/lsmod
 rmmod=/sbin/rmmod
 
 
-if [ ! $(id -u) -eq 0 ] ; then
+if [ ! $(id -u) -eq 0 ]; then
 
 	$echo "  Error, firewall rules can only be applied by root." 1>&2
 
@@ -45,7 +55,7 @@ version="s-test-2"
 setting_file="/etc/iptables.settings-Gateway.sh"
 
 
-if [ ! -f "${setting_file}" ] ; then
+if [ ! -f "${setting_file}" ]; then
 
 	$echo " Error, setting file ('${setting_file}) not found." 1>&2
 
@@ -60,7 +70,7 @@ fi
 . "${setting_file}"
 
 
-if [ -z "${log_file}" ] ; then
+if [ -z "${log_file}" ]; then
 
 	$echo " Error, log_file not defined." 1>&2
 
@@ -69,7 +79,7 @@ if [ -z "${log_file}" ] ; then
 fi
 
 
-if [ -f "${log_file}" ] ; then
+if [ -f "${log_file}" ]; then
 
 	/bin/rm -f "${log_file}"
 
@@ -80,7 +90,7 @@ fi
 $echo > "${log_file}"
 
 
-if [ -z "${lan_if}" ] ; then
+if [ -z "${lan_if}" ]; then
 
 	$echo " Error, lan_if not defined." 1>&2
 
@@ -89,7 +99,7 @@ if [ -z "${lan_if}" ] ; then
 fi
 
 
-if [ -z "${net_if}" ] ; then
+if [ -z "${net_if}" ]; then
 
 	$echo " Error, net_if not defined." 1>&2
 
@@ -98,7 +108,7 @@ if [ -z "${net_if}" ] ; then
 fi
 
 
-if [ -z "${enable_orge}" ] ; then
+if [ -z "${enable_orge}" ]; then
 
 	$echo " Error, enable_orge not defined." 1>&2
 
@@ -107,7 +117,7 @@ if [ -z "${enable_orge}" ] ; then
 fi
 
 
-if [ -z "${enable_iptv}" ] ; then
+if [ -z "${enable_iptv}" ]; then
 
 	$echo " Error, enable_iptv not defined." 1>&2
 
@@ -116,7 +126,7 @@ if [ -z "${enable_iptv}" ] ; then
 fi
 
 
-if [ -z "${enable_smtp}" ] ; then
+if [ -z "${enable_smtp}" ]; then
 
 	$echo " Error, enable_smtp not defined." 1>&2
 
@@ -125,7 +135,7 @@ if [ -z "${enable_smtp}" ] ; then
 fi
 
 
-if [ -z "${ssh_port}" ] ; then
+if [ -z "${ssh_port}" ]; then
 
 	$echo " Error, ssh_port not defined." 1>&2
 
@@ -216,7 +226,7 @@ start_it_up()
 
 	# ----------------  FORWARD ---------------------
 
-	if [ -n "${test_client_ip}" ] ; then
+	if [ -n "${test_client_ip}" ]; then
 
 		# L for LAN, W for WAN:
 
@@ -253,7 +263,7 @@ start_it_up()
 	# ----------------  OUTPUT ---------------------
 
 
-	if [ -n "${test_client_ip}" ] ; then
+	if [ -n "${test_client_ip}" ]; then
 
 		# L for LAN, W for WAN:
 
@@ -280,7 +290,7 @@ start_it_up()
 
 	# ----------------  INPUT ---------------------
 
-	if [ -n "${test_client_ip}" ] ; then
+	if [ -n "${test_client_ip}" ]; then
 
 		# To log all non-SSH, client-related input packets:
 
@@ -456,14 +466,14 @@ case "$1" in
   *)
 	$echo " Error, no appropriate action specified." >&2
 
-	if [ -z "$NAME" ] ; then
+	if [ -z "${NAME}" ]; then
+		
 		# Launched from the command-line:
-		#
-		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status|disable}" >&2
+		$echo "${usage}" >&2
 
 	else
-
-		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status|disable}" >&2
+		
+		$echo "Usage: /etc/init.d/$NAME ${script_opts}" >&2
 
 	fi
 

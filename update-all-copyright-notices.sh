@@ -3,7 +3,7 @@
 usage="
 Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
-Updates the copyright notices of code of specified type found from specified root directory, based on the specified years.
+Updates the copyright notices of code of specified type found from specified root directory, based on the specified year range.
 
 CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
@@ -28,21 +28,30 @@ Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 2010
 # but you forgot to update the sources in 2012, so you still have 20XX-2011,
 # that you want to transform into 20XX-2013), then you may run:
 #
-# for y in 2009 2010 2011 2012 ; do update-all-copyright-notices.sh C++ . 2000
-# $y "Olivier Boudeville" ; done
+# for y in 2009 2010 2011 2012; do update-all-copyright-notices.sh C++ . 2000
+# $y "James Bond" ; done
 
-if [ ! $# -eq 5 ] ; then
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
+fi
+
+
+if [ ! $# -eq 5 ]; then
 
 	echo "  Error, exactly five parameters are required.
-$usage" 1>&2
+${usage}" 1>&2
 	exit 5
 
 fi
 
 
-code_type=$1
+code_type="$1"
 
-case $code_type in
+case "${code_type}" in
 
 	Erlang)
 		;;
@@ -51,47 +60,47 @@ case $code_type in
 		;;
 
    *)
-		echo "  Error, unknown code type ($code_type).
-$usage" 1>&2
+		echo "  Error, unknown code type (${code_type}).
+${usage}" 1>&2
 		exit 10
 		;;
 
 esac
 
 
-root_dir=$2
+root_dir="$2"
 
-if [ -z "$root_dir" ] ; then
+if [ -z "${root_dir}" ]; then
 
 	echo "  Error, no root directory specified.
-$usage" 1>&2
-	exit 10
-
-fi
-
-
-if [ ! -d "$root_dir" ] ; then
-
-	echo "  Error, specified root directory ($root_dir) does not exist.
-$usage" 1>&2
+${usage}" 1>&2
 	exit 15
 
 fi
 
 
-starting_year=$3
+if [ ! -d "${root_dir}" ]; then
 
-new_year=$4
+	echo "  Error, specified root directory (${root_dir}) does not exist.
+${usage}" 1>&2
+	exit 20
 
-if [ $new_year -le $starting_year ] ; then
+fi
 
-	echo "  Error, starting year (here, $starting_year) must be strictly lower than new year ($new_year)." 1>&2
+
+starting_year="$3"
+
+new_year="$4"
+
+if [ ${new_year} -le ${starting_year} ]; then
+
+	echo "  Error, starting year (here, ${starting_year}) must be strictly lower than new year (${new_year})." 1>&2
 
 	exit 50
 
 fi
 
-max_year=$(expr $new_year - 1)
+max_year=$(expr ${new_year} - 1)
 
 notice="$5"
 
@@ -101,7 +110,7 @@ notice="$5"
 #echo "notice = ${notice}"
 #echo "max_year = ${max_year}"
 
-years=$(seq --equal-width $starting_year $max_year)
+years=$(seq --equal-width ${starting_year} ${max_year})
 
 #echo "years = ${years}"
 
@@ -109,14 +118,14 @@ per_year_script="$(dirname $0)/update-copyright-notices.sh"
 
 #echo "per_year_script = ${per_year_script}"
 
-if [ ! -x "$per_year_script" ] ; then
+if [ ! -x "${per_year_script}" ]; then
 
-	echo "  Error, no update script found ($per_year_script)." 1>&2
+	echo "  Error, no update script found (${per_year_script})." 1>&2
 
 	exit 55
 
 fi
 
-for y in $years ; do echo "---> searching for year $y-$max_year, to be replaced by $y-$new_year $notice" ; $per_year_script --quiet $code_type $root_dir "$y-$max_year $notice" "$y-$new_year $notice" ; echo ; done
+for y in ${years} ; do echo "---> searching for year ${y}-${max_year}, to be replaced by ${y}-${new_year} ${notice}" ; ${per_year_script} --quiet ${code_type} ${root_dir} "${y}-${max_year} ${notice}" "${y}-${new_year} ${notice}" ; echo ; done
 
 echo "Replacements done."

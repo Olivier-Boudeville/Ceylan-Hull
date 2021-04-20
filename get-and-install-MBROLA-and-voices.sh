@@ -1,5 +1,7 @@
 #/bin/sh
 
+usage="Usage: $(basename $0): installs MBROLA and corresponding voices."
+
 # Update it regularly:
 MBROLA_VERSION="301h"
 

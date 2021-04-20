@@ -23,7 +23,7 @@ use_biber=0
 
 usage="Usage: $(basename $0) [${bibliography_opt}] [${glossary_opt}] [${no_display_opt}] [${verbose_opt}] LATEX_FILE
 
-Generates a PDF file from a LateX one, and displays it.
+Generates a PDF file from a LaTeX one, and displays it.
 
 Options:
   ${bibliography_opt}: generates a bibliography

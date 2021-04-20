@@ -1,9 +1,11 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0) TARGET_DIR: converts all Vorbis-encoded Ogg files to MP3 in specified tree."
+
 current_dir="$( cd "$( dirname "$0" )" && pwd )"
 converter="$current_dir/convert-vorbis-to-mp3.sh"
 
-if [ ! -x "$converter" ] ; then
+if [ ! -x "$converter" ]; then
 
 	echo "  Error, no executable converter found ('$converter')." 1>&2
 
@@ -15,7 +17,7 @@ fi
 
 target_dir="$1"
 
-if [ ! -d "$target_dir" ] ; then
+if [ ! -d "$target_dir" ]; then
 
 	echo "  Error, target directory ('$target_dir') not found." 1>&2
 

@@ -2,7 +2,7 @@
 
 # See also: Content-indexing/audio/speech-synthesis/Espeak-without-MBROLA.rst
 
-USAGE="  Usage: "`basename $0`"
+usage="Usage: $(basename $0): tests the voices supported by espeak"
 
   Tests espeak voices by recording a test sentence with each of them, and comparing the MD5sum for each resulting WAV file.
 "

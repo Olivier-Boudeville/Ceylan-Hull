@@ -24,7 +24,7 @@ if $XINPUT | grep -i mouse 1>/dev/null ; then
 
 	#touch ~/TOUCHPAD_DISABLED
 
-	if $XINPUT set-prop $TOUCHPAD_ID "Device Enabled" 0 1>/dev/null ; then
+	if $XINPUT set-prop $TOUCHPAD_ID "Device Enabled" 0 1>/dev/null; then
 
 		notify-send "Mouse found, touchpad disabled."
 		$CLIENT TouchpadOff=1

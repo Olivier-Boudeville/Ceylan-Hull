@@ -1,12 +1,11 @@
 #!/bin/sh
 
-USAGE="
-Usage: $(basename $0) SNAPSHOT_FILENAME: renames the specified picture file, based on its date (used as a prefix, if appropriate), and with a proper extension. New assigned names are typically '20160703-foo-bar.jpeg'.
+usage="Usage: $(basename $0) SNAPSHOT_FILENAME: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension. New assigned names are typically '20160703-foo-bar.jpeg'.
 "
 
-if [ ! $# -eq 1 ] ; then
+if [ ! $# -eq 1 ]; then
 
-	echo "  Error, exactly one argument needed. $USAGE" 1>&2
+	echo "  Error, exactly one argument needed. ${usage}" 1>&2
 
 	exit 5
 
@@ -14,7 +13,7 @@ fi
 
 filename="$1"
 
-if [ ! -f "${filename}" ] ; then
+if [ ! -f "${filename}" ]; then
 
 	echo "  Error, '${filename}' is not an existing file." 1>&2
 
@@ -33,7 +32,7 @@ test_prefix=$(echo $(basename "${filename}" ) | sed 's|^[0-9]*-.*||1')
 
 #echo "test_prefix = ${test_prefix}"
 
-if [ -z "${test_prefix}" ] ; then
+if [ -z "${test_prefix}" ]; then
 
 	# Already a prefix, thus none added:
 	prefix=""
@@ -42,7 +41,7 @@ else
 
 	exiftool=$(which exiftool 2>/dev/null)
 
-	if [ ! -x "${exiftool}" ] ; then
+	if [ ! -x "${exiftool}" ]; then
 
 		echo "  Error, no executable 'exiftool' found." 1>&2
 
@@ -54,7 +53,7 @@ else
 	# Like "20180702":
 	prefix=$(${exiftool} "${expanded_filename}" | grep 'GPS Date Stamp' | sed 's|^.*: ||1' | sed 's|:||g')
 
-	if [ -n "${prefix}" ] ; then
+	if [ -n "${prefix}" ]; then
 		prefix="${prefix}-"
 	fi
 
@@ -72,7 +71,7 @@ all_but_extension=$(echo "${filename}" | sed 's|\.[^\.]*$||1')
 #echo "all but extension = ${all_but_extension}"
 
 
-if [ "${extension}" = "jpg" ] || [ "${extension}" = "JPG" ] || [ "${extension}" = "JPEG" ] ; then
+if [ "${extension}" = "jpg" ] || [ "${extension}" = "JPG" ] || [ "${extension}" = "JPEG" ]; then
 
 	extension="jpeg"
 
@@ -80,7 +79,7 @@ fi
 
 #echo "retained extension = ${extension}"
 
-if [ -n "${prefix}" ] ; then
+if [ -n "${prefix}" ]; then
 
 	# The original filename may already include the just determined prefix; if so,
 	# let's remove that potential duplication:
@@ -103,7 +102,7 @@ if [ -e "{new_filename}" ]; then
 fi
 
 
-if [ ! "${expanded_filename}" = "${new_filename}" ] ; then
+if [ ! "${expanded_filename}" = "${new_filename}" ]; then
 
 	/bin/mv "${expanded_filename}" "${new_filename}"
 

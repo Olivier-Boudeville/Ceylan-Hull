@@ -31,19 +31,20 @@ else
 	message="$3"
 fi
 
+notify_script=$(which notify.sh 2>/dev/null)
 
 first_audio_player=$(which playwave 2>/dev/null)
 second_audio_player=$(which wavplay 2>/dev/null)
 third_audio_player=$(which mplayer 2>/dev/null)
 
 if [ -x "${first_audio_player}" ]; then
-	audio_player=${first_audio_player}
+	audio_player="${first_audio_player}"
 else
 	if [ -x "${second_audio_player}" ]; then
-		audio_player=${second_audio_player}
+		audio_player="${second_audio_player}"
 	else
 		if [ -x "${third_audio_player}" ]; then
-			audio_player=${third_audio_player}
+			audio_player="${third_audio_player}"
 		fi
 	fi
 fi
@@ -80,31 +81,39 @@ dinnerIsReady()
 }
 
 
-if [ ! -x "$audio_player" ]; then
+if [ ! -x "${notify_script}" ]; then
+
+	echo "  Error, no executable notification script found." 1>&2
+	exit 2
+
+fi
+
+
+if [ ! -x "${audio_player}" ]; then
 
 	echo "  Error, no executable wave player found." 1>&2
 	exit 2
 
 fi
 
-if [ ! -f "$time_out_sound" ]; then
+if [ ! -f "${time_out_sound}" ]; then
 
-	echo "  Error, dinner-is-ready sound file not found ($time_out_sound)." 1>&2
+	echo "  Error, dinner-is-ready sound file not found (${time_out_sound})." 1>&2
 	exit 3
 
 fi
 
 
-if [ ! -f "$bong_sound" ]; then
+if [ ! -f "${bong_sound}" ]; then
 
-	echo "  Error, gong sound file not found ($bong_sound)." 1>&2
+	echo "  Error, gong sound file not found (${bong_sound})." 1>&2
 	exit 4
 
 fi
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	echo "$usage"
+	echo "${usage}"
 	exit
 fi
 
@@ -190,10 +199,10 @@ actual_stop_time=$(date '+%H:%M:%S')
 
 count=1
 
-while [ "$count" -le "$bong_count" ]; do
+while [ "${count}" -le "${bong_count}" ]; do
 	bong
 	sleep 1
-	count=$(($count+1))
+	count=$((${count}+1))
 done
 
 #echo ".... time is up!"
@@ -201,11 +210,11 @@ dinnerIsReady
 
 count=1
 
-while [ "$count" -le "$bong_count" ]; do
+while [ "${count}" -le "${bong_count}" ]; do
 
 	bong
 	sleep 1
-	count=$(($count+1))
+	count=$((${count}+1))
 
 done
 
@@ -220,6 +229,7 @@ fi
 
 #echo "Notifying with title='${title}' and message='${message}'."
 
-notify.sh "${title}" "${message}" time
+
+${notify_script} "${title}" "${message}" time
 
 echo "(actual stopping time: ${actual_stop_time})"

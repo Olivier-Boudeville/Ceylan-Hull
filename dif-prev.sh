@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [FILES]: compares current (committed) version with previous one, for specified file(s)"
+usage="Usage: $(basename $0) [FILES]: compares the current (committed) version of specified file(s) with their previous one."
 
 #svn diff -r PREV:BASE $* | more
 

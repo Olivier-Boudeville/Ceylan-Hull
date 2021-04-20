@@ -3,9 +3,10 @@
 usage="Usage: $(basename $0) <expression to watch in running processes>.\nExample: $(basename $0) AP2 to track all processes which have AP2 in their command or arguments."
 
 
-if [ -z "$1" ] ; then
+if [ -z "$1" ]; then
 
-	echo -e "\nError, no expression to watch.\n\t$usage."
+	echo  "Error, no expression to watch.
+$usage."
 
 	exit 5
 
@@ -24,7 +25,7 @@ local_user=$(whoami)
 # Default: %CPU, %MEM and short command:
 show_full_cmd=1
 
-if [ $show_full_cmd -eq 0 ] ; then
+if [ $show_full_cmd -eq 0 ]; then
 
 	ps_opt="-o comm,args"
 
@@ -42,7 +43,7 @@ ps -ed ${ps_opt} | head --lines=1
 
 stop=1
 
-while [ $stop -eq 1 ] ; do
+while [ $stop -eq 1 ]; do
 
 	# Useful to show the user that not stuck:
 	echo "   Watching $1..."

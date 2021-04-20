@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) -h | --help | some_mermaid_file.mmd: generates a PNG file corresponding to specified file describing a Mermaid diagram.
+usage="Usage: $(basename $0) -h | --help | some_mermaid_file.mmd: generates a PNG file corresponding to the specified file describing a Mermaid diagram.
 More information: https://mermaid-js.github.io/mermaid/"
 
 

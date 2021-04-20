@@ -1,7 +1,11 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) [-q|--quiet]: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
-  Option -q / --quiet prevents any normal output so that "
+Crontab example:
+  # Each day at 2:35 AM:
+  35 2 * * * /usr/local/hull/fetch-cctv-monitorings.sh --quiet
+
+Option -q / --quiet prevents any normal output to better integrate in scripts or command-line oneliners."
 
 # We need first to gather the necessary settings.
 

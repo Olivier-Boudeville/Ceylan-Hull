@@ -1,14 +1,16 @@
 #!/bin/sh
 
-USAGE="
-$(basename $0): recursive grep for the ones that lack it.
+usage="  $(basename $0): recursive grep for the ones that lack it.
+
   Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+
   Options:
 	-v or --verbose: be specifically verbose
 	-q or --quiet: be specifically quiet, just listing matches
 	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
 	-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
 	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+
   Example: $(basename $0) -i 'little red rooster' '*.txt'"
 
 
@@ -19,13 +21,13 @@ grep=$(which grep | grep -v ridiculously 2>/dev/null)
 #echo "find = ${find}"
 
 
-if [ ! -x "${grep}" ] ; then
+if [ ! -x "${grep}" ]; then
 	echo "Error, no executable grep found." 1>&2
 	exit 5
 fi
 
 
-if [ ! -x "${find}" ] ; then
+if [ ! -x "${find}" ]; then
 	echo "Error, no executable find found." 1>&2
 	exit 6
 fi
@@ -48,14 +50,21 @@ force_multi_files="$HOME/.regrep.toDelete.tmp"
 
 name_opt="-name"
 
-if [ $# -eq 0 ] ; then
-	echo "Error, too few parameters. $USAGE" 1>&2
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit 0
+
+fi
+
+if [ $# -eq 0 ]; then
+	echo "Error, too few parameters. ${usage}" 1>&2
 	exit 1
 fi
 
 
-if [ $# -ge 7 ] ; then
-	echo "Error, too many parameters ($*). $USAGE" 1>&2
+if [ $# -ge 7 ]; then
+	echo "Error, too many parameters ($*). ${usage}" 1>&2
 	exit 2
 fi
 
@@ -65,14 +74,14 @@ fi
 
 token_eaten=0
 
-while [ $token_eaten -eq 0 ] ; do
+while [ $token_eaten -eq 0 ]; do
 
 	read_parameter="$1"
 	#echo "read_parameter = $read_parameter"
 
 	token_eaten=1
 
-	if [ "$read_parameter" = "--verbose" -o "$read_parameter" = "-v" ] ; then
+	if [ "$read_parameter" = "--verbose" -o "$read_parameter" = "-v" ]; then
 		verbose=0
 		quiet=1
 		echo "Verbose mode activated."
@@ -80,14 +89,14 @@ while [ $token_eaten -eq 0 ] ; do
 	fi
 
 
-	if [ "$read_parameter" = "--quiet" -o "$read_parameter" = "-q" ] ; then
+	if [ "$read_parameter" = "--quiet" -o "$read_parameter" = "-q" ]; then
 		verbose=1
 		quiet=0
 		#echo "Quiet mode activated."
 		token_eaten=0
 	fi
 
-	if [ "$read_parameter" = "--filenames-only" -o "$read_parameter" = "-f" ] ; then
+	if [ "$read_parameter" = "--filenames-only" -o "$read_parameter" = "-f" ]; then
 		verbose=1
 		quiet=0
 		filenames_only=0
@@ -96,7 +105,7 @@ while [ $token_eaten -eq 0 ] ; do
 	fi
 
 
-	if [ "$read_parameter" = "--insensitive" -o "$read_parameter" = "-i" ] ;
+	if [ "$read_parameter" = "--insensitive" -o "$read_parameter" = "-i" ];
 	then
 		insensitive_opt="-i"
 		name_opt="-iname"
@@ -105,7 +114,7 @@ while [ $token_eaten -eq 0 ] ; do
 	fi
 
 
-	if [ "$read_parameter" = "--restructured" -o "$read_parameter" = "-r" ] ;
+	if [ "$read_parameter" = "--restructured" -o "$read_parameter" = "-r" ];
 	then
 		restructured_mode=0
 		[ $quiet -eq 0 ] || echo "ReStructured text mode activated."
@@ -113,7 +122,7 @@ while [ $token_eaten -eq 0 ] ; do
 	fi
 
 
-	if [ -n "$read_parameter" ] ; then
+	if [ -n "$read_parameter" ]; then
 		shift
 	fi
 
@@ -122,14 +131,14 @@ done
 
 # Then check one or two parameters remain indeed:
 
-if [ -z "$read_parameter" ] ; then
-	echo "Error, too few parameters. $USAGE" 1>&2
+if [ -z "$read_parameter" ]; then
+	echo "Error, too few parameters. ${usage}" 1>&2
 	exit 3
 fi
 
 
-if [ $# -ge 2 ] ; then
-	echo "Error, too many parameters ($*). $USAGE" 1>&2
+if [ $# -ge 2 ]; then
+	echo "Error, too many parameters ($*). ${usage}" 1>&2
 	exit 4
 fi
 
@@ -143,10 +152,10 @@ filter_on_file="$1"
 #echo "filter_on_file = $filter_on_file"
 
 
-if [ $verbose -eq 0 ] ; then
+if [ $verbose -eq 0 ]; then
 
 	echo "Will search in following files:"
-	if [ -z "$filter_on_file" ] ; then
+	if [ -z "$filter_on_file" ]; then
 		$find . -exec /bin/ls '{}' ';' 2>/dev/null
 	else
 		$find . -exec /bin/ls '{}' $force_multi_files ';' 2>/dev/null
@@ -155,15 +164,15 @@ if [ $verbose -eq 0 ] ; then
 fi
 
 
-if [ -z "$filter_on_file" ] ; then
+if [ -z "$filter_on_file" ]; then
 
 	[ $quiet -eq 0 ] || echo "
 	Recursive grep for expression <$searched_expression> in all files:
 	"
 
-	if [ $restructured_mode -eq 1 ] ; then
+	if [ $restructured_mode -eq 1 ]; then
 
-		if [ $filenames_only -eq 1 ] ; then
+		if [ $filenames_only -eq 1 ]; then
 
 			$find . -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
@@ -186,9 +195,9 @@ else
 	Recursive grep for expression <$searched_expression> in all files matching <$filter_on_file>:
 	"
 
-	if [ $restructured_mode -eq 1 ] ; then
+	if [ $restructured_mode -eq 1 ]; then
 
-		if [ $filenames_only -eq 1 ] ; then
+		if [ $filenames_only -eq 1 ]; then
 
 			$find . ${name_opt} "$filter_on_file" -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 
@@ -199,7 +208,7 @@ else
 
 	else
 
-		if [ $filenames_only -eq 1 ] ; then
+		if [ $filenames_only -eq 1 ]; then
 
 			$find . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec $grep ${base_grep_opt} ${insensitive_opt} "$searched_expression" '{}' $force_multi_files ';' 2>/dev/null
 

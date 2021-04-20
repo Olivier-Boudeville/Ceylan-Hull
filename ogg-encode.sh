@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-usage="  Usage: $(basename $0) [--play-back] [--verbose] AUDIO_FILENAME
+usage="Usage: $(basename $0) [--play-back] [--verbose] AUDIO_FILENAME
 
   Encodes specified sound file in OggVorbis after having removed any leading and ending silences, adjusting volume.
 	  --play-back: enables play-back of the generated sound
@@ -69,32 +69,32 @@ playback_tool_exec=`which $playback_tool`
 
 
 
-while [ $# -gt 0 ] ; do
+while [ $# -gt 0 ]; do
 
 	token_eaten=1
 
-	if [ "$1" = "--play-back" ] ; then
+	if [ "$1" = "--play-back" ]; then
 		play_back=0
 		token_eaten=0
 	fi
 
 
-	if [ "$1" = "--verbose" ] ; then
+	if [ "$1" = "--verbose" ]; then
 		verbose=0
 		token_eaten=0
 	fi
 
 
-	if [ "$1" = "-h" -o "$1" = "--help" ] ; then
+	if [ "$1" = "-h" -o "$1" = "--help" ]; then
 		echo "${usage}"
 		exit
 		token_eaten=0
 	fi
 
 
-	if [ $token_eaten -eq 1 ] ; then
+	if [ $token_eaten -eq 1 ]; then
 
-		if [ $# -eq 1 ] ; then
+		if [ $# -eq 1 ]; then
 			input_file="$1"
 		else
 			echo "Error, too many remaining arguments ($*)." 1>&2
@@ -110,7 +110,7 @@ done
 
 effective_target="$input_file"
 
-if [ -z "$effective_target" ] ; then
+if [ -z "$effective_target" ]; then
 	echo "Error, no input sound file specified." 1>&2
 	echo "${usage}" 1>&2
 	exit 6
@@ -123,12 +123,12 @@ fi
 
 # Almost always interesting, as sox is used, thus correcting any malformed
 # input sound file:
-if [ $trim_silences -eq 0 ] ; then
+if [ $trim_silences -eq 0 ]; then
 
 	trimmer_tool="trimSilence.sh"
 	trimmer=`which ${trimmer_tool} 2>/dev/null`
 
-	if [ ! -x "${trimmer}" ] ; then
+	if [ ! -x "${trimmer}" ]; then
 
 		echo "Error, no trimming tool found (${trimmer_tool})." 1>&2
 		exit 13
@@ -140,12 +140,12 @@ fi
 
 
 # Based on sox too:
-if [ $resample -eq 0 ] ; then
+if [ $resample -eq 0 ]; then
 
 	resample_tool="resample.sh"
 	resampler=`which ${resample_tool} 2>/dev/null`
 
-	if [ ! -x "${resampler}" ] ; then
+	if [ ! -x "${resampler}" ]; then
 
 		echo "Error, no resampling tool found (${resample_tool})." 1>&2
 		exit 14
@@ -155,11 +155,11 @@ if [ $resample -eq 0 ] ; then
 fi
 
 
-if [ $adjust_volume -eq 0 ] ; then
+if [ $adjust_volume -eq 0 ]; then
 
 	sox_tool=`PATH=/usr/local/bin:$PATH which sox 2>/dev/null`
 
-	if [ ! -x "${sox_tool}" ] ; then
+	if [ ! -x "${sox_tool}" ]; then
 
 		echo "Error, sox tool not found." 1>&2
 		exit 15
@@ -171,9 +171,9 @@ if [ $adjust_volume -eq 0 ] ; then
 fi
 
 
-if [ $play_back -eq 0 ] ; then
+if [ $play_back -eq 0 ]; then
 
-	if [ ! -x "${playback_tool_exec}" ] ; then
+	if [ ! -x "${playback_tool_exec}" ]; then
 
 	echo "Error, playback tool not found (${playback_tool})." 1>&2
 		exit 16
@@ -184,7 +184,7 @@ fi
 
 
 
-if [ ! -f "$effective_target" ] ; then
+if [ ! -f "$effective_target" ]; then
 
 	echo "Error, specified input file not found ($effective_target)." 1>&2
 	exit 17
@@ -193,24 +193,24 @@ fi
 
 
 
-if [ $verbose -eq 0 ] ; then
+if [ $verbose -eq 0 ]; then
 
 	echo " - input file: $effective_target"
 
 
-	if [ $trim_silences -eq 0 ] ; then
+	if [ $trim_silences -eq 0 ]; then
 	echo " - silences will be trimmed"
 	else
 	echo " - no trimming of silences performed"
 	fi
 
-	if [ $resample -eq 0 ] ; then
+	if [ $resample -eq 0 ]; then
 	echo " - resampling to ${target_frequency} Hz will be performed"
 	else
 	echo " - no resampling performed"
 	fi
 
-	if [ $adjust_volume -eq 0 ] ; then
+	if [ $adjust_volume -eq 0 ]; then
 	echo " - volume adjustment will be performed, at ${norm_level}dB"
 	else
 	echo " - no volume adjustment will be performed"
@@ -218,7 +218,7 @@ if [ $verbose -eq 0 ] ; then
 
 	echo " - encoding to OggVorbis quality $ogg_quality will be performed"
 
-	if [ $play_back -eq 0 ] ; then
+	if [ $play_back -eq 0 ]; then
 	echo " - play-back selected"
 	else
 	echo " - play-back not selected"
@@ -232,7 +232,7 @@ fi
 # Actual operations:
 
 
-if [ $trim_silences -eq 0 ] ; then
+if [ $trim_silences -eq 0 ]; then
 
 	# Trimming will alter the specified file, operating on a copy instead:
 	copied_source="trimmed-$effective_target"
@@ -242,7 +242,7 @@ if [ $trim_silences -eq 0 ] ; then
 
 	${trimmer} "$copied_source"
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 		echo "Error, trimming of $effective_target failed." 1>&2
 		/bin/rm -f "$copied_source"
 		exit 13
@@ -254,11 +254,11 @@ if [ $trim_silences -eq 0 ] ; then
 fi
 
 
-if [ $resample -eq 0 ] ; then
+if [ $resample -eq 0 ]; then
 
 	${resample_tool} --target-sample-rate ${target_frequency} $effective_target
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 		echo "Error, resampling of $effective_target failed." 1>&2
 		exit 14
 	fi
@@ -266,7 +266,7 @@ if [ $resample -eq 0 ] ; then
 fi
 
 
-if [ $adjust_volume -eq 0 ] ; then
+if [ $adjust_volume -eq 0 ]; then
 
 	echo "Adjusting volume of ${effective_target}: normalizing to ${norm_level}dB"
 
@@ -286,13 +286,13 @@ if [ $adjust_volume -eq 0 ] ; then
 
 	${sox_tool} ${effective_target} ${ajusted_version} gain -n ${norm_level}
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 		echo "Error, adjusting the volume of $effective_target failed." 1>&2
 		exit 15
 	fi
 
 	# Make some cleaning:
-	if [ ! "$effective_target" = "$input_file" ] ; then
+	if [ ! "$effective_target" = "$input_file" ]; then
 		/bin/rm -f "$effective_target"
 	fi
 
@@ -301,7 +301,7 @@ if [ $adjust_volume -eq 0 ] ; then
 fi
 
 
-if [ $ogg_encoding -eq 0 ] ; then
+if [ $ogg_encoding -eq 0 ]; then
 
 	echo "Encoding with ${encoder_tool}, with quality ${ogg_quality}"
 
@@ -312,13 +312,13 @@ if [ $ogg_encoding -eq 0 ] ; then
 	# 3 is the encoder default (we suppose it is VBR indeed, must be the case):
 	${encoder_tool} "$effective_target" --discard-comments --quality=${ogg_quality} --output="$target_ogg" 1>/dev/null 2>&1
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 		echo "Error, encoding of $effective_target failed." 1>&2
 		exit 20
 	fi
 
 	# Make some cleaning:
-	if [ ! "$effective_target" = "$input_file" ] ; then
+	if [ ! "$effective_target" = "$input_file" ]; then
 		/bin/rm -f "$effective_target"
 	fi
 
@@ -329,11 +329,11 @@ if [ $ogg_encoding -eq 0 ] ; then
 fi
 
 
-if [ $play_back -eq 0 ] ; then
+if [ $play_back -eq 0 ]; then
 
 	${playback_tool} "$effective_target"
 
-	if [ ! $? -eq 0 ] ; then
+	if [ ! $? -eq 0 ]; then
 		echo "Error, playback failed." 1>&2
 	fi
 

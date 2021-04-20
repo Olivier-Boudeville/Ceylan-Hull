@@ -1,34 +1,45 @@
 #!/bin/sh
 
-USAGE="Usage: "`basename $0`" [<file>+]: retrieves at least one file already stored in vault by creating link towards it, from current directory. No previous file with the same name should exist."
+usage="Usage: $(basename $0) FILE [FILE]: retrieves at least one file already stored in vault by creating link towards it, from current directory. No previous file with the same name should exist."
 
-# See: catch.sh, updateDirectoryFromVault.sh
+# See: catch.sh, update-directory-from-vault.sh.
 
 
-DATA_VAULT_DEFAULT="$HOME/Vault"
+data_vault_default="${HOME}/hull-vault"
 
-if [ -z "$DATA_VAULT" ] ; then
-	echo "Warning: no vault environment variable specified (\$DATA_VAULT), choosing default one (${DATA_VAULT_DEFAULT})" 1>&2
-	DATA_VAULT="${DATA_VAULT_DEFAULT}"
+if [ -z "${data_vault}" ]; then
+
+	echo "  Warning: no vault environment variable specified (\${data_vault}), selecting default one (${data_vault_default})." 1>&2
+
+	data_vault="${data_vault_default}"
+
 fi
 
 echo
 
-while [ -n "$1" ] ; do
+while [ -n "$1" ]; do
 
-	linkTarget="$1"
+	link_target="$1"
 
-	if [ -e "${linkTarget}" ] ; then
-		echo "Error, ${linkTarget} already exists, remove it first. $USAGE"
-		exit 1
+	if [ -e "${link_target}" ]; then
+
+		echo "  Error, ${link_target} already exists, remove it first.
+${usage}"
+
+		exit 5
+
 	fi
 
-	if [ ! -f ${DATA_VAULT}/`basename ${linkTarget}` ] ; then
-		echo "Error, no "`basename ${linkTarget}`" previously caught, refusing to create a dead link."
-		exit 2
+	if [ ! -f "${data_vault}/$(basename ${link_target})" ]; then
+
+		echo "  Error, no $(basename ${link_target}) previously caught, refusing to create a dead link." 1>&2
+
+		exit 10
+
 	fi
 
-	ln -s ${DATA_VAULT}/`basename ${linkTarget}` ${linkTarget} && echo "    Linked back to ${DATA_VAULT}/`basename $linkTarget`"
+	ln -sf ${data_vault}/$(basename ${link_target}) ${link_target} && echo "    Linked back to ${data_vault}/$(basename ${link_target})."
 
 	shift
+
 done

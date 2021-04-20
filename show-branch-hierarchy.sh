@@ -1,5 +1,5 @@
 #!/bin/sh
 
-# Shows the hierarchy of the GIT branches in the current repository.
+usage="Usage: $(basename $0): shows the hierarchy of the branches in the current VCS repository"
 
 git log --all --graph --decorate --oneline --simplify-by-decoration

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-USAGE="  Usage: $(basename $0) --voice-id <voice identifier> --speech-prefix <speech identifier> --message <message> [--no-play-back] [--ogg-encoding] [--verbose]
+usage="Usage: $(basename $0) --voice-id <voice identifier> --speech-prefix <speech identifier> --message <message> [--no-play-back] [--ogg-encoding] [--verbose]
 
   Records the specified speech with specified voice in specified prefixed filename (default: WAV format), removes leading and ending silences, and plays it back to check it.
 	  --voice-id <voice identifier>: the ID of the voice to be used (see Asset-Indexing/audio/speech-synthesis/Voice-index.rst)
@@ -84,14 +84,14 @@ while [ $# -gt 0 ]; do
 
 
 	if [ "$1" = "-h" -o "$1" = "--help" ]; then
-		echo "${USAGE}"
+		echo "${usage}"
 		exit
 		token_eaten=0
 	fi
 
 	if [ $token_eaten -eq 1 ]; then
 		echo "Error, unknown argument ($1)." 1>&2
-		echo "${USAGE}" 1>&2
+		echo "${usage}" 1>&2
 		exit 5
 	fi
 	shift
@@ -106,7 +106,7 @@ done
 if [ $voice_id -eq 0 ]; then
 
 	echo "Error, no voice identifier specified." 1>&2
-	echo "${USAGE}" 1>&2
+	echo "${usage}" 1>&2
 	exit 6
 
 fi
@@ -115,7 +115,7 @@ fi
 if [ "$speech_prefix" = "" ]; then
 
 	echo "Error, no speech prefix specified." 1>&2
-	echo "${USAGE}" 1>&2
+	echo "${usage}" 1>&2
 	exit 7
 
 fi
@@ -124,7 +124,7 @@ fi
 if [ -z "$message" ]; then
 
 	echo "Error, no message specified." 1>&2
-	echo "${USAGE}" 1>&2
+	echo "${usage}" 1>&2
 	exit 8
 
 fi

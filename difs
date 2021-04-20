@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# By default, shows the differences between the staged files and their committed
-# version.
+usage="Usage: $(basename $0): shows the differences between the staged files and their committed version."
 
 
 # More precisely: shows (regardless of the current versions available on the
@@ -13,10 +12,11 @@
 
 args="$*"
 
-if [ -z "${args}" ] ; then
+if [ -z "${args}" ]; then
 
 	# We find it more convenient to only start from the current directory,
 	# rather than inspecting the full repository (hence the dot):
+	#
 	git diff --cached .
 
 else

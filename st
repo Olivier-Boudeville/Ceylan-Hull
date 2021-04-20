@@ -1,14 +1,17 @@
 #!/bin/sh
 
-# -f: full information.
+usage="Usage: $(basename $0) [-f] [FILES]: shows the current VCS status of the specified files.
+Option:
+ -f: full information
+"
 
 # Select relevant version control client:
 
-if [ -d 'CVS' ] ; then
+if [ -d 'CVS' ]; then
 
 	cvs update -d $* 2>&1 | grep -v Updating
 
-elif [ -d '.svn' ] ; then
+elif [ -d '.svn' ]; then
 
 	if [ "$1" = "-f" ]; then
 		shift
@@ -24,7 +27,7 @@ else
 
 	git_opt="-c color.status=always"
 
-	if [ -z "${args}" ] ; then
+	if [ -z "${args}" ]; then
 
 		# We find it more convenient to only start from the current directory,
 		# rather than inspecting the full repository (hence the dot):

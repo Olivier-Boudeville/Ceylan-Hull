@@ -1,5 +1,7 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0): installs all listed voices for speech synthesis"
+
 # To be run for example in Content-repository/audio/speech-synthesis.
 
 # Largely inspired from: http://ubuntuforums.org/showthread.php?t=751169

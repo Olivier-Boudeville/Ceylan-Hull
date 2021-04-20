@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-usage="Usage: $(basename $0) MP4_FILE: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified)."
+usage="Usage: $(basename $0) MP4_FILE: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful as smaller and less resource-demanding to playback."
 
 
 # Same content being playback, knowing the actual CPU time used by a process is

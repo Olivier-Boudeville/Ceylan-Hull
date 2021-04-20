@@ -2,7 +2,7 @@
 
 # See also: Content-indexing/audio/speech-synthesis
 
-USAGE="  Usage: "`basename $0`"
+usage="Usage: $(basename $0): tests all supported voices"
 
   Tests all voices by recording a test sentence with each of them, and comparing the MD5sum for each resulting WAV file.
 "

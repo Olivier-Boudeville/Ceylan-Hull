@@ -3,13 +3,12 @@
 # (not sh, as we prefer 'read' to support a "no echo" option)
 
 
-usage="  Usage: $(basename $0)
-  Unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh."
+usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh."
 
 
 crypt_tool_name="gpg"
 
-crypt_tool=$(which $crypt_tool_name 2>/dev/null)
+crypt_tool=$(which ${crypt_tool_name} 2>/dev/null)
 
 if [ ! -x "$crypt_tool" ]; then
 
@@ -22,9 +21,9 @@ fi
 
 shred_tool_name="shred"
 
-shred_tool=$(which $shred_tool_name 2>/dev/null)
+shred_tool=$(which ${shred_tool_name} 2>/dev/null)
 
-if [ ! -x "$shred_tool" ]; then
+if [ ! -x "${shred_tool}" ]; then
 
 	echo "  Error, no shredding tool found (no $shred_tool_name)." 1>&2
 	exit 10
@@ -32,7 +31,7 @@ if [ ! -x "$shred_tool" ]; then
 fi
 
 
-env_file="$HOME/.ceylan-settings.txt"
+env_file="${HOME}/.ceylan-settings.txt"
 
 if [ ! -f "${env_file}" ]; then
 
@@ -115,11 +114,11 @@ if [ $already_unlocked -eq 1 ]; then
 
 	#echo "crypt_opts=$crypt_opts"
 
-	$crypt_tool -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1
+	${crypt_tool} -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1
 
 	res="$?"
 
-	if [ $res -eq 0 ]; then
+	if [ ${res} -eq 0 ]; then
 
 		#echo "(credentials unlocked in ${unlocked_file})"
 		echo "(credentials unlocked)"
@@ -127,7 +126,7 @@ if [ $already_unlocked -eq 1 ]; then
 		${shred_tool} --force --remove --zero "${locked_file}"
 		res="$?"
 
-		if [ ! $res -eq 0 ]; then
+		if [ ! ${res} -eq 0 ]; then
 
 			echo "  Error, shredding of '${locked_file}' failed (code: $res), removing it." 1>&2
 			/bin/rm -f "${locked_file}"
@@ -159,7 +158,7 @@ echo "(locking now the credentials)"
 # No passphrase wanted to be specified on the command-line:
 #lock-credentials.sh [{passphrase}]
 
-$crypt_tool -c ${crypt_opts} --output ${locked_file} ${unlocked_file} 1>/dev/null 2>/dev/null
+${crypt_tool} -c ${crypt_opts} --output ${locked_file} ${unlocked_file} 1>/dev/null 2>/dev/null
 
 res="$?"
 
@@ -187,7 +186,7 @@ if [ $res -eq 0 ]; then
 	${shred_tool} --force --remove --zero "${unlocked_file}"
 	res="$?"
 
-	if [ ! $res -eq 0 ]; then
+	if [ ! ${res} -eq 0 ]; then
 
 		echo "  Error, shredding of '${unlocked_file}' failed (code: $res), removing it." 1>&2
 		/bin/rm -f "${unlocked_file}"

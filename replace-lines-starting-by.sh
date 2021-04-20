@@ -1,8 +1,8 @@
 #/bin/sh
 
-USAGE="
+usage="
 Usage: $(basename $0) START TARGET FILE
-		Replaces in FILE every line starting by START by line TARGET.
+		.
 
 Example: $(basename $0) 'MAKE=' 'MAKE=/usr/bin/make' myFile"
 
@@ -10,7 +10,7 @@ Example: $(basename $0) 'MAKE=' 'MAKE=/usr/bin/make' myFile"
 
 
 if [ $# != 3 ]; then
-	echo "$USAGE" 1>&2
+	echo "${usage}" 1>&2
 	exit 1
 fi
 
@@ -24,14 +24,14 @@ fi
 
 shell_dir=$(dirname $0)
 
-SOURCE="^$(${shell_dir}/protectSpecialCharacters.sh "$1").*$"
-TARGET=$(${shell_dir}/protectSpecialCharacters.sh "$2")
+SOURCE="^$(${shell_dir}/protect-special-characters.sh "$1").*$"
+TARGET=$(${shell_dir}/protect-special-characters.sh "$2")
 
 #echo "SOURCE = $SOURCE"
 #echo "TARGET = $TARGET"
 #echo "FILE   = $3"
 
-temp_file=".replaceLineStartingBy.tmp"
+temp_file=".replace-lines-starting-by.tmp"
 
 /bin/cp -f ${target_file} ${temp_file}
 

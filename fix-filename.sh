@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Absolutely needed, as otherwise sed will fail when using "é" as a parameter, in
-# ${sed} 's|é|e|g...
+# Absolutely needed, as otherwise sed will fail when using "é" as a parameter,
+# in ${sed} 's|é|e|g...
 #
 export LANG=
 
@@ -15,10 +15,10 @@ mv=$(which mv | grep -v ridiculously)
 usage="
 Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
 
-if [ $# -eq 0 ] ; then
+if [ $# -eq 0 ]; then
 	echo "
 
-	Error, no argument given. $usage
+	Error, no argument given. ${usage}
 
 	" 1>&2
 	exit 20
@@ -27,10 +27,11 @@ fi
 
 original_name="$*"
 
-if [ ! -e "${original_name}" ] ; then
+if [ ! -e "${original_name}" ]; then
+
 	echo "
 
-	Error, no entry named <${original_name}> exists. $usage
+	Error, no entry named <${original_name}> exists. ${usage}
 
 	" 1>&2
 
@@ -53,7 +54,7 @@ fi
 
 # This iconv command has been a nightmare to obtain (see fr_FR.UTF-8 above).
 #
-#  Useless then:
+# Useless then:
 #
 # | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g'  | ${sed} 's|ò|o|g'
 #

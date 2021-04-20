@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2019 Olivier Boudeville
+# Copyright (C) 2010-2021 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -21,13 +21,12 @@ no_x_opt="--noX"
 show_opt="--display"
 
 
-usage="
-Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
+usage="Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
 
   Opens for reading/writing the set of specified files with the 'best' available editor.
 
   Options are:
-	  '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display
+	  '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display (can also be disabled once for all in the environment by setting the HULL_NO_GRAPHICAL_OUTPUT variable to the 0 value)
 	  '${show_opt}' to display only the chosen settings (not executing them)
 	  '-e' or '--emacs' to prefer emacs over all other editors (the default)
 	  '-n' or '--nedit' to prefer nedit over all other editors
@@ -36,7 +35,7 @@ Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|-
 	  '-l' or '--locate' to open the single file (if any) found thanks to 'locate'
 "
 
-# Note: a special syntax is recognised as well: 'n A_FILE -s', which is
+# Note: a special syntax is recognised as well: 'e A_FILE -s', which is
 # convenient when wanting to open a file yet thinking last that this should be
 # done in another window.
 
@@ -58,6 +57,7 @@ standalone=1
 
 run_in_background=0
 
+verbose=1
 
 
 # Function section.
@@ -70,7 +70,7 @@ chooseJedit()
 
 	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	if [ -x "${JEDIT}" ] ; then
+	if [ -x "${JEDIT}" ]; then
 		editor="${JEDIT}"
 		editor_short_name="Jedit"
 		multi_win=0
@@ -135,14 +135,14 @@ chooseNedit()
 
 	NEDIT_NC_OPT="-noask"
 
-	if [ -x "${NEDIT}" ] ; then
+	if [ -x "${NEDIT}" ]; then
 		editor="${NEDIT}"
 		editor_opt="${NEDIT_FAMILY_OPT}"
 		editor_short_name="Nedit"
 		multi_win=0
 	fi
 
-	if [ -x "${NC}" ] ; then
+	if [ -x "${NC}" ]; then
 		if ${NC} -h 2>/dev/null; then
 		 # Not netcat:
 			editor="${NC}"
@@ -154,14 +154,14 @@ chooseNedit()
 		fi
 	fi
 
-	if [ -x "${NEDITC_GENTOO}" ] ; then
+	if [ -x "${NEDITC_GENTOO}" ]; then
 		editor="${NEDITC_GENTOO}"
 		editor_opt="${NEDIT_FAMILY_OPT}"
 		editor_short_name="Neditc"
 		multi_win=0
 	fi
 
-	if [ -x "${NEDITC_DEBIAN}" ] ; then
+	if [ -x "${NEDITC_DEBIAN}" ]; then
 		editor="${NEDITC_DEBIAN}"
 		editor_opt="${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
 		editor_short_name="Nedit-nc"
@@ -186,7 +186,7 @@ chooseXemacs()
 
 	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	if [ -x "${XEMACS}" ] ; then
+	if [ -x "${XEMACS}" ]; then
 		editor="${XEMACS}"
 		editor_opt="--geometry=83x60 "
 		editor_short_name="XEmacs"
@@ -208,17 +208,17 @@ chooseEmacs()
 
 	EMACS=$(which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
 
-	if [ -x "${EMACS}" ] ; then
+	if [ -x "${EMACS}" ]; then
 
-		if [ $standalone -eq 0 ] ; then
+		if [ $standalone -eq 0 ]; then
 
 			EMACS_CLIENT="/bin/emacsclient"
 
-			if [ ! -x "${EMACS_CLIENT}" ] ; then
+			if [ ! -x "${EMACS_CLIENT}" ]; then
 
 				EMACS_CLIENT="/usr/bin/emacsclient"
 
-				if [ ! -x "${EMACS_CLIENT}" ] ; then
+				if [ ! -x "${EMACS_CLIENT}" ]; then
 
 					echo " Error, no emacs client available." 1>&2
 					exit 55
@@ -234,11 +234,14 @@ chooseEmacs()
 
 		else
 
-			# if [ ! -x "${EMACS}" ] ; then
+			# Finally emacsclient seems always available with emacs, and seems
+			# more relevant generally:
+
+			# if [ ! -x "${EMACS}" ]; then
 
 			#	EMACS="/usr/bin/emacs"
 
-			#	if [ ! -x "${EMACS}" ] ; then
+			#	if [ ! -x "${EMACS}" ]; then
 
 			#		echo " Error, no (standalone) emacs available." 1>&2
 			#		exit 56
@@ -249,11 +252,11 @@ chooseEmacs()
 
 			EMACS_CLIENT="/bin/emacsclient"
 
-			if [ ! -x "${EMACS_CLIENT}" ] ; then
+			if [ ! -x "${EMACS_CLIENT}" ]; then
 
 				EMACS_CLIENT="/usr/bin/emacsclient"
 
-				if [ ! -x "${EMACS_CLIENT}" ] ; then
+				if [ ! -x "${EMACS_CLIENT}" ]; then
 
 					echo " Error, no emacs client available." 1>&2
 					exit 55
@@ -272,6 +275,7 @@ chooseEmacs()
 		editor_short_name="Emacs"
 
 		multi_win=0
+		# run_in_background unchanged
 
 	fi
 
@@ -348,35 +352,35 @@ autoSelectEditor()
 	multi_win=1
 
 
-	if [ "${do_X}" -eq 0 ] ; then
+	if [ "${do_X}" -eq 0 ]; then
 
-		if [ $prefer_emacs -eq 0 ] ; then
+		if [ $prefer_emacs -eq 0 ]; then
 
-			if [ -z "$editor" ] ; then
+			if [ -z "$editor" ]; then
 				chooseEmacs
 			fi
 
-			if [ -z "$editor" ] ; then
+			if [ -z "$editor" ]; then
 				chooseXemacs
 			fi
 
-			if [ -z "$editor" ] ; then
+			if [ -z "$editor" ]; then
 				chooseNedit
 			fi
 
 		else
 
-			if [ $prefer_nedit -eq 0 ] ; then
+			if [ $prefer_nedit -eq 0 ]; then
 
-				if [ -z "$editor" ] ; then
+				if [ -z "$editor" ]; then
 					chooseNedit
 				fi
 
-				if [ -z "$editor" ] ; then
+				if [ -z "$editor" ]; then
 					chooseEmacs
 				fi
 
-				if [ -z "$editor" ] ; then
+				if [ -z "$editor" ]; then
 					chooseXemacs
 				fi
 
@@ -384,11 +388,11 @@ autoSelectEditor()
 
 				chooseEmacs
 
-				if [ -z "$editor" ] ; then
+				if [ -z "$editor" ]; then
 					chooseXemacs
 				fi
 
-				if [ -z "$editor" ] ; then
+				if [ -z "$editor" ]; then
 					chooseNedit
 				fi
 
@@ -396,26 +400,33 @@ autoSelectEditor()
 
 		fi
 
+	else
+
+		#echo "Choosing Emacs here whereas no X here:"
+		chooseEmacs
+		run_in_background=1
+		multi_win=1
+
 	fi
 
-	if [ -n "$editor" ] ; then
+	if [ -n "$editor" ]; then
 		return
 	fi
 
 
-	if [ -x "${NANO}" ] ; then
+	if [ -x "${NANO}" ]; then
 		chooseNano
 		return
 	fi
 
 
-	if [ -x "${VIM}" ] ; then
+	if [ -x "${VIM}" ]; then
 		chooseVim
 		return
 	fi
 
 
-	if [ -x "${VI}" ] ; then
+	if [ -x "${VI}" ]; then
 		chooseVi
 		return
 	fi
@@ -427,12 +438,17 @@ autoSelectEditor()
 applyEditor()
 {
 
-	#echo "multi_win = ${multi_win}"
-	#echo "editor_short_name = ${editor_short_name}"
-	#echo "editor = ${editor}"
-	#echo "editor_opt = ${editor_opt}"
+	if [ $verbose -eq 0 ]; then
+		echo "editor_short_name = ${editor_short_name}"
+		echo "editor = ${editor}"
+		echo "editor_opt = ${editor_opt}"
+		echo "do_X = ${do_X}"
+		echo "DISPLAY = ${DISPLAY}"
+		echo "multi_win = ${multi_win}"
+		echo "run_in_background = ${run_in_background}"
+	fi
 
-	if [ ! -x "${editor}" ] ; then
+	if [ ! -x "${editor}" ]; then
 
 		echo "  Error, the '${editor_short_name}' tool is not available (no '${editor}')." 1>&2
 
@@ -445,23 +461,23 @@ applyEditor()
 	# Open the files in parallel or sequentially:
 	for f in ${parameters}; do
 
-		if [ ! -f "$f" ] ; then
+		if [ ! -f "$f" ]; then
 
 			# Sometimes a filename followed by some garbage is specified
 			# (ex: a regrep might return "class_X.erl:construct");
 			# Here we try to fix the filename - should such a file exist:
 
-			new_f=$(echo "$f"| sed 's|:.*$||1')
+			new_f="$(echo "$f"| sed 's|:.*$||1')"
 
 			#echo "- specified filename: ${f}"
 			#echo "- translated filename: ${new_f}"
 			#exit
 
-			if [ -f "$new_f" ] ; then
+			if [ -f "${new_f}" ]; then
 
-				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
 
-				   f=$new_f
+				   f="${new_f}"
 
 			else
 
@@ -475,45 +491,60 @@ applyEditor()
 				# first - shall be taken into account as the first character to
 				# remove)
 				#
-				new_f=$(echo "$f" | sed -n 's|\(.*\)-.*|\1|p')
+				new_f="$(echo "$f" | sed -n 's|\(.*\)-.*|\1|p')"
 
-				if [ -f "$new_f" ] ; then
+				if [ -f "${new_f}" ]; then
 
-				   echo "  (non-existing file '$f' has been automatically translated to existing file '$new_f')"
+				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
 
-				   f=$new_f
+				   f="${new_f}"
 				fi
 
 			fi
 
 		fi
 
-		if [ -z "${DISPLAY}" ] ; then
+		if [ -z "${DISPLAY}" ]; then
 			echo "    Editing $f with ${editor_short_name} (no DISPLAY set)"
 		else
 			echo "    Editing $f with ${editor_short_name} (DISPLAY is <${DISPLAY}>)"
 		fi
 
-		if [ ${multi_win} -eq 0 ] ; then
+		if [ ${multi_win} -eq 0 ]; then
 
-			if [ "${editor_short_name}" = "emacs" ] ; then
+			if [ "${editor_short_name}" = "emacs" ]; then
+
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
+				#
+				[ $verbose -eq 1 ] || echo "Running (multiwin) ${editor} ${editor_opt} $f..."
 				${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
-				# apparently may freeze emacs to death, loosing all pending
+				# apparently may freeze emacs to death, losing all pending
 				# changes...
 				#
 				sleep 1
 
 			else
-				${editor} ${editor_opt} $f 2>/dev/null &
+
+				# May not be put in the background either:
+				if [ $run_in_background -eq 0 ]; then
+
+					# Ever happens?
+					[ $verbose -eq 1 ] || echo "Running (monowin, in background) ${editor} ${editor_opt} $f..."
+					${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
+
+				else
+					[ $verbose -eq 1 ] || echo "Running (monowin, in foreground) ${editor} ${editor_opt} $f..."
+					${editor} ${editor_opt} $f 1>/dev/null 2>&1
+
+				fi
 
 			fi
 
-			if [ "{editor_short_name}" = "nedit" ] ; then
+			if [ "{editor_short_name}" = "nedit" ]; then
 				sleep 1
 			fi
 
@@ -521,15 +552,15 @@ applyEditor()
 
 			# As not all tools can/shall be run in background:
 
-			if [ $run_in_background -eq 0 ] ; then
+			if [ $run_in_background -eq 0 ]; then
 
-				#echo "Running ${editor} in background..."
+				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in background..."
 				${editor} ${editor_opt} "$f" 2>/dev/null &
 
 			else
 
-				#echo "Running ${editor} ${editor_opt} in foreground..."
-				${editor} ${editor_opt} "$f"
+				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in foreground..."
+				${editor} ${editor_opt} "$f" 2>/dev/null
 
 			fi
 
@@ -579,19 +610,46 @@ do_find=1
 do_locate=1
 
 
-if [ "$1" = "${no_x_opt}" ] ; then
+# To debug:
+verbose=1
+#verbose=0
+
+
+# By default, a graphical editor will be used, unless the option specified in
+# no_x_opt has been set, or if the HULL_NO_GRAPHICAL_OUTPUT environment variable
+# has been set to 0, to prevent an attempt to launch a graphical tool from a
+# user not allowed (like root in some rare cases) and/or from a computer without
+# X support (most servers), in which case one may add then add on a per-host
+# basis, in /etc/bash.bashrc:
+#
+# """
+# # No X support wanted on an headless server:
+# export HULL_NO_GRAPHICAL_OUTPUT=0
+# """
+#
+
+if [ "$1" = "${no_x_opt}" ]; then
 	do_X=1
 	shift
 fi
 
 
-if [ "$1" = "${show_opt}" ] ; then
+# Might not be defined at all:
+if [ "${HULL_NO_GRAPHICAL_OUTPUT}" = "0" ]; then
+	[ $verbose -eq 1 ] || echo "Disabling X support, as HULL_NO_GRAPHICAL_OUTPUT was set."
+	do_X=1
+else
+	[ $verbose -eq 1 ] || echo "(HULL_NO_GRAPHICAL_OUTPUT not set to 0)"
+fi
+
+
+if [ "$1" = "${show_opt}" ]; then
 	do_show=0
 	shift
 fi
 
 
-if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
+if [ "$1" = "-e" ] || [ "$1" = "--emacs" ]; then
 	prefer_emacs=1
 	prefer_nedit=0
 	echo "(requested to prefer emacs over other editors)"
@@ -599,7 +657,7 @@ if [ "$1" = "-e" ] || [ "$1" = "--emacs" ] ; then
 fi
 
 
-if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
+if [ "$1" = "-n" ] || [ "$1" = "--nedit" ]; then
 	prefer_emacs=0
 	prefer_nedit=1
 	echo "(requested to prefer nedit over other editors)"
@@ -607,37 +665,39 @@ if [ "$1" = "-n" ] || [ "$1" = "--nedit" ] ; then
 fi
 
 
-if [ "$1" = "-s" ] || [ "$1" = "--standalone" ] ; then
+if [ "$1" = "-s" ] || [ "$1" = "--standalone" ]; then
 	standalone=0
 	shift
 fi
 
-if [ "$1" = "-f" ] || [ "$1" = "--find" ] ; then
+if [ "$1" = "-f" ] || [ "$1" = "--find" ]; then
 	do_find=0
 	shift
 fi
 
-if [ "$1" = "-l" ] || [ "$1" = "--locate" ] ; then
+if [ "$1" = "-l" ] || [ "$1" = "--locate" ]; then
 	do_locate=0
 	shift
 fi
 
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-	echo "${usage}"
+	echo "
+${usage}"
 	exit 0
 fi
 
 
-if [ -z "$1" ] ; then
-	if [ ${do_show} -eq 1 ] ; then
-		echo "${usage}"
-		exit 1
+if [ -z "$1" ]; then
+	if [ ${do_show} -eq 1 ]; then
+		echo "Error, no parameter specified.
+${usage}" 1>&2
+		exit 5
 	fi
 fi
 
 
-if [ ${do_show} -eq 0 ] ; then
+if [ ${do_show} -eq 0 ]; then
 	displayEditors
 fi
 
@@ -659,9 +719,9 @@ parameters=""
 
 # Last filtering:
 #for arg in $remaining_parameters ; do
-for arg in "$@" ; do
+for arg in "$@"; do
 
-	if [ "$arg" = "-s" ] ; then
+	if [ "$arg" = "-s" ]; then
 
 		standalone=0
 
@@ -673,7 +733,7 @@ for arg in "$@" ; do
 		# But then the information is lost when:
 		# (avoiding any intial space)
 		#
-		if [ -z "${parameters}" ] ; then
+		if [ -z "${parameters}" ]; then
 			parameters="${arg}"
 		else
 			parameters="$parameters ${arg}"
@@ -689,14 +749,14 @@ done
 #for p in ${parameters} ; do echo "- parameter: '$p'" ; done
 #exit
 
-if [ $standalone -eq 0 ] ; then
+if [ $standalone -eq 0 ]; then
 
 	echo "  (standalone mode activated)"
 
 fi
 
 
-if [ $do_find -eq 0 ] ; then
+if [ $do_find -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
 	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
@@ -704,7 +764,7 @@ if [ $do_find -eq 0 ] ; then
 
 	target_path=$(find . -name $target_file)
 
-	if [ -z "${target_path}" ] ; then
+	if [ -z "${target_path}" ]; then
 
 		echo "  (file '$target_file' not found, nothing done)"
 
@@ -719,7 +779,7 @@ if [ $do_find -eq 0 ] ; then
 fi
 
 
-if [ $do_locate -eq 0 ] ; then
+if [ $do_locate -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
 	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
@@ -727,7 +787,7 @@ if [ $do_locate -eq 0 ] ; then
 
 	target_path=$(/bin/locate --limit 1 --existing ${target_file})
 
-	if [ -z "${target_path}" ] ; then
+	if [ -z "${target_path}" ]; then
 
 		echo "  (file '$target_file' not found, nothing done)"
 
@@ -760,11 +820,11 @@ extension=$(echo $parameters| sed 's|^.*\.||1')
 #echo "C: extension = '$extension'"
 
 
-if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ] ; then
+if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
 
 	echo "  Warning: do you really want to *edit* this PDF file (not just display it)? (y/n) [n]"
 	read answer
-	if [ "${answer}" = "y" ] || [ "${answer}" = "Y" ] ; then
+	if [ "${answer}" = "y" ] || [ "${answer}" = "Y" ]; then
 
 		chooseLibreOffice
 		applyEditor
@@ -790,7 +850,7 @@ if [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" =
 fi
 
 
-if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ] ; then
+if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ]; then
 
 	chooseGimp
 	applyEditor
@@ -798,7 +858,7 @@ if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ] ; then
 
 fi
 
-if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
+if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ]; then
 
 	chooseGimp
 	applyEditor
@@ -807,7 +867,7 @@ if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] ; then
 fi
 
 
-if [ "${extension}" = "svg" -o "${extension}" = "svgz" ] ; then
+if [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
 
 	chooseInkscape
 	applyEditor
@@ -820,7 +880,7 @@ fi
 # HTML files are to be edited (hence no special case here)
 
 
-if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] ; then
+if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ]; then
 
 	editor=$(which audacity)
 	editor_short_name="Audacity"
@@ -832,7 +892,7 @@ if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" 
 fi
 
 
-if [ "${extension}" = "dia" ] ; then
+if [ "${extension}" = "dia" ]; then
 
 	editor=$(which dia)
 	editor_short_name="dia"
@@ -842,7 +902,7 @@ if [ "${extension}" = "dia" ] ; then
 fi
 
 
-if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ] ; then
+if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
 
 	# Is it a compressed trace file?
 	if echo $parameters| grep '.traces' 1>/dev/null ; then
@@ -853,11 +913,11 @@ if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" =
 fi
 
 
-if [ "${extension}" = "traces" ] ; then
+if [ "${extension}" = "traces" ]; then
 
 	LOGMX=$(which logmx.sh)
 
-	if [ ! -x "${LOGMX}" ] ; then
+	if [ ! -x "${LOGMX}" ]; then
 
 		echo "  (no LogMX found, using default editor for traces)"
 
@@ -874,7 +934,7 @@ if [ "${extension}" = "traces" ] ; then
 fi
 
 
-if [ "${extension}" = "gan" ] ; then
+if [ "${extension}" = "gan" ]; then
 
 	chooseGanttproject
 
@@ -895,7 +955,7 @@ fi
 
 autoSelectEditor
 
-if [ ${do_show} -eq 0 ] ; then
+if [ ${do_show} -eq 0 ]; then
 
 	echo "Chosen editor: ${editor_short_name}"
 	echo "Complete editor command: ${editor} ${editor_opt}"
@@ -905,7 +965,7 @@ if [ ${do_show} -eq 0 ] ; then
 fi
 
 
-if [ -z "${editor}" ] ; then
+if [ -z "${editor}" ]; then
 
 	echo "  Error, none of the registered editors (neditc, nc, nedit, nano, vim or vi) can be used. Stopping now." 1>&2
 	exit 1
