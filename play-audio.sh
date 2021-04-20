@@ -13,7 +13,7 @@ usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file
 
 # Hidden option, useful for recursive uses: "--no-notification"
 
-espeak=$(which espeak 2>/dev/null)
+espeak="$(which espeak 2>/dev/null)"
 
 
 say()
@@ -26,16 +26,15 @@ say()
 
 player_name="mplayer"
 
-player=$(which ${player_name} 2>/dev/null)
+player=$(which "${player_name}" 2>/dev/null)
 
-# In many cases this will not work, use '-vc null -vo null' instead:
-#player_opt="-novideo -quiet"
+# For mplayer:
 player_opt="-vc null -vo null -quiet"
 
 
-# cvlc does not seem as easy to control from the command-line:
+# VLC also relevant:
 #player=$(which cvlc 2>/dev/null)
-#player_opt="--quiet --novideo"
+#player_opt="--quiet --novideo --play-and-exit"
 
 
 if [ ! -x "${player}" ]; then
@@ -157,7 +156,7 @@ fi
 #echo "files=${files}"
 
 
-for f in ${files} ; do
+for f in ${files}; do
 
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ]; then
@@ -183,14 +182,14 @@ for f in ${files} ; do
 
 			if [ $do_announce -eq 0 ]; then
 
-				say_name=$(basename ${f}|sed 's|\..*$||1')
+				say_name="$(basename ${f}|sed 's|\..*$||1')"
 				#echo "say_name = ${say_name}"
 
-				say "Playing " ${say_name}
+				say "Playing " "${say_name}"
 
 			fi
 
-			${player} ${player_opt} ${f} 1>/dev/null 2>&1
+			${player} ${player_opt} "${f}" 1>/dev/null 2>&1
 
 			# Useful to stop the overall reading as a whole:
 			if [ ! $? -eq 0 ]; then
