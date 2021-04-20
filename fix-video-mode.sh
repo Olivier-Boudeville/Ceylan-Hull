@@ -2,10 +2,10 @@
 
 usage="Usage: $(basename $0): forces a specified video resolution."
 
-XRANDR=/usr/bin/xrandr
+xrandr=/usr/bin/xrandr
 
 
-CURRENT_RES=$(${XRANDR} | grep '*' | awk '{print $1}')
+current_res=$(${xrandr} | grep '*' | awk '{print $1}')
 
 # External LCD (instead of 1440x900):
 # target_res="1680x1050"
