@@ -338,7 +338,7 @@ For Video
 For Snapshots (Camera Pictures)
 -------------------------------
 
-- `rename-snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh>`_: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension
+- `rename-snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh>`_: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension; new assigned names are typically '20160703-foo-bar.jpeg'; if no filename is specified, operates on all files of the current directory
 
 - `rename-snapshots.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh>`_: renames *all* snapshots found from current directory, so that they respect better naming conventions
 
