@@ -49,9 +49,15 @@ else
 
 	fi
 
+	# Two possible patterns, such as:
+	# "Create Date                     : 2011:12:04 08:50:40"
+	# "GPS Date Stamp                  : 2011:12:04"
+	#
+	# Sometimes there may be only:
+	# "File Modification Date/Time     : 2014:10:28 21:45:47+01:00"
 
 	# Like "20180702":
-	prefix=$(${exiftool} "${expanded_filename}" | grep 'GPS Date Stamp' | sed 's|^.*: ||1' | sed 's|:||g')
+	prefix=$(${exiftool} "${expanded_filename}" | grep 'GPS Date Stamp\|Create Date' | sed 's|^.*: ||1' | sed 's| .*$||1' | sed 's|:||g')
 
 	if [ -n "${prefix}" ]; then
 		prefix="${prefix}-"
@@ -60,7 +66,6 @@ else
 	#echo "prefix = '${prefix}'"
 
 fi
-
 
 extension=$(echo "${filename}" | sed 's|.*\.||1')
 
