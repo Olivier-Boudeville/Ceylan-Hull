@@ -799,7 +799,7 @@ if [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" 
 
 fi
 
-if [ "${extension}" = "png" ]; then
+if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] || [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
 
 	chooseEog
 	applyViewer
@@ -807,19 +807,9 @@ if [ "${extension}" = "png" ]; then
 
 fi
 
+if [ "${extension}" = "webp" ]; then
 
-if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ]; then
-
-	chooseEog
-	applyViewer
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
-
-	chooseEog
+	chooseFirefox
 	applyViewer
 	exit 0
 
