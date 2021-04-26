@@ -24,4 +24,4 @@ fi
 echo "The local directories in '${target_dir}' are:"
 
 # Min to avoid '.':
-find ${target_dir} -mindepth 1 -maxdepth 1 -type d
+find ${target_dir} -mindepth 1 -maxdepth 1 -type d | more
