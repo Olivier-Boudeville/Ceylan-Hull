@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-usage="Usage: $(basename $0) RST_SOURCE_FILE: converts specified RST source file (ex: 'foobar.rst') in a mediawiki counterpart file (ex: 'foobar.mediawiki')."
+usage="Usage: $(basename $0) MEDIAWIKI_SOURCE_FILE: converts specified Mediawiki source file (ex: 'foobar.mediawiki') in a GitLab Markdown counterpart file (ex: 'foobar.gitlabmd')."
 
 
 pandoc="$(which pandoc)"
@@ -34,14 +34,19 @@ fi
 
 
 # Any pre-existing mediawiki file will be silently overwritten:
-target_file=$(echo "${source_file}" | sed 's|\.rst$|.mediawiki|1')
+target_file=$(echo "${source_file}" | sed 's|\.mediawiki$|.gitlabmd|1')
 
 #echo "target_file = ${target_file}"
 
 export LANG=fr_FR.utf8
 
+
+# At least currently Pandoc does not support directly GitLab's markdown
+# (cf. https://pandoc.org/MANUAL.html#options). We go for the closest: GitHub
+# one, i.e. gfm.
+#
 echo " - converting '${source_file}' to '${target_file}'"
-${pandoc} --from=rst --to=mediawiki "${source_file}" -o "${target_file}"
+${pandoc} --from=mediawiki --to=gfm "${source_file}" -o "${target_file}"
 
 if [ ! $? -eq 0 ]; then
 
