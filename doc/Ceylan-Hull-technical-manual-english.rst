@@ -35,7 +35,7 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Tuesday, April 13, 2021
+:Lastly updated: Sunday, April 25, 2021
 :Version: 1.0.8
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
@@ -123,6 +123,7 @@ To list filesystem elements
 
 - `list-files-in-tree-by-most-recent-modification-time.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-files-in-tree-by-most-recent-modification-time.sh>`_: lists, from any specified directory otherwise from the current one, all files in tree, sorted from the most recently modified to the least
 
+- `list-local-directories.sh: <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-local-directories.sh>`_: lists all local, direct directories of any specified directory, or from the current one. Useful for overcrowded base directories
 
 
 
@@ -337,7 +338,7 @@ For Video
 For Snapshots (Camera Pictures)
 -------------------------------
 
-- `rename-snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh>`_: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension
+- `rename-snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh>`_: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension; new assigned names are typically '20160703-foo-bar.jpeg'; if no filename is specified, operates on all files of the current directory
 
 - `rename-snapshots.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh>`_: renames *all* snapshots found from current directory, so that they respect better naming conventions
 
