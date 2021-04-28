@@ -4,7 +4,7 @@ usage="  $(basename $0) (for \"secure rm\"): stores deleted files in a trash ins
 
   Usage: $(basename $0) <files to delete securely>
 
-  See also: emptyTrash.sh"
+  See also: empty-trash.sh"
 
 
 trash_default="${HOME}/tmp/Trash"
@@ -22,7 +22,7 @@ fi
 
 echo
 
-# Quoted $@ allows not to split parameters which contain for example spaces; $*
+# Quoted $@ allows not to split parameters that contain for example spaces; $*
 # allows to still have only one string (otherwise: too many arguments for the
 # test)
 #
@@ -38,7 +38,7 @@ if [ -n "$*" ]; then
 
 		#echo "elem = ${elem}"
 
-		actual_elem=$(basename "${elem}" 2>/dev/null)
+		actual_elem="$(basename '${elem}' 2>/dev/null)"
 		#echo "actual_elem = ${actual_elem}"
 
 		if [ -z "${actual_elem}" ]; then
@@ -80,7 +80,7 @@ if [ -n "$*" ]; then
 
 			else
 
-				/bin/mv -f "${elem}" ${TRASH}
+				/bin/mv -f "${elem}" "${TRASH}"
 
 			fi
 
@@ -93,7 +93,7 @@ if [ -n "$*" ]; then
 	done
 
 	# Better management of exotic filenames (ex: with spaces):
-	#/bin/mv -f "$*" ${TRASH}
+	#/bin/mv -f "$*" "${TRASH}"
 
 	# Better displayed in all cases:
 	echo "Deleting finished"
