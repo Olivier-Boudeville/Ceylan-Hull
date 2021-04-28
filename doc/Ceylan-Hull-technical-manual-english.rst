@@ -368,6 +368,8 @@ Document-related
 
 - `convert-rst-to-mediawiki.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh>`_: converts specified RST source file in a mediawiki counterpart file
 
+- `convert-mediawiki-to-gitlab-markdown.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mediawiki-to-gitlab-markdown.sh>`_: converts specified Mediawiki source file in a GitLab Markdown counterpart file
+
 - `generate-mermaid-diagram.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh>`_: generates a PNG file corresponding to the specified file describing a Mermaid diagram
 
 - `generate-pdf-from-latex.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh>`_: generates a PDF file from a LaTeX one, and displays it
