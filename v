@@ -22,7 +22,7 @@ show_opt="--display"
 
 
 usage="
-Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] file1 file2 ...:
+Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] FILE_ELEMENT_1 FILE_ELEMENT_2...:
 
   Opens for reading the set of specified files (or directories) with the 'best' available viewer.
 
@@ -36,7 +36,7 @@ Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|-
 	  '-l' or '--locate' to open the single file (if any) found thanks to 'locate'
 "
 
-# Note: a special syntax is recognised as well: 'n A_FILE -s', which is
+# Note: a special syntax used to be recognised as well: 'v A_FILE -s', which is
 # convenient when wanting to open a file yet thinking last that this should be
 # done in another window.
 
@@ -144,7 +144,6 @@ chooseMplayer()
 }
 
 
-
 chooseNedit()
 {
 
@@ -209,8 +208,6 @@ chooseNedit()
 }
 
 
-
-
 # For the *emacs, we use a window width of 83 instead of 80 to compensate
 # for the line numbers. However the length of that number depends on the
 # number of lines (ex: more than 1000 lines implies 4 digits on the left).
@@ -231,7 +228,6 @@ chooseXemacs()
 	fi
 
 }
-
 
 
 chooseEmacs()
@@ -296,7 +292,6 @@ chooseEmacs()
 }
 
 
-
 chooseNano()
 {
 
@@ -310,7 +305,6 @@ chooseNano()
 	multi_win=1
 
 }
-
 
 
 chooseVim()
@@ -328,7 +322,6 @@ chooseVim()
 }
 
 
-
 chooseVi()
 {
 
@@ -344,7 +337,6 @@ chooseVi()
 }
 
 
-
 chooseMore()
 {
 
@@ -357,8 +349,6 @@ chooseMore()
 	multi_win=0
 
 }
-
-
 
 
 
@@ -451,6 +441,9 @@ autoSelectViewer()
 
 
 
+# Applies the selected viewer to the element designated by the file_elem
+# variable.
+#
 applyViewer()
 {
 
@@ -458,6 +451,12 @@ applyViewer()
 	#echo "viewer_short_name = ${viewer_short_name}"
 	#echo "viewer = ${viewer}"
 	#echo "viewer_opt = ${viewer_opt}"
+
+	# Empty in a function:
+	#echo "\$@ = $@"
+
+	# Garbled:
+	#echo "parameters = ${parameters}"
 
 	if [ ! -x "${viewer}" ]; then
 
@@ -468,58 +467,58 @@ applyViewer()
 
 	# Let's hope the display is OK.
 
-	# Open the files in parallel or sequentially:
-	for f in ${parameters}; do
+	if [ ! -f "${file_elem}" ]; then
 
-		if [ ! -f "$f" ]; then
+		# Sometimes a filename followed by some garbage is specified (ex: a
+		# regrep might return "class_X.erl:construct"); Here we try to fix the
+		# filename by remove all characters after the first semicolon:
 
-			# Sometimes a filename followed by some garbage is specified
-			# (ex: a regrep might return "class_X.erl:construct");
-			# Here we try to fix the filename:
+		new_file_elem="$(echo ${file_elem}| sed 's|:.*$||1')"
 
-			new_f="$(echo $f| sed 's|:.*$||1')"
+		if [ -f "${new_file_elem}" ]; then
 
-			if [ -f "${new_f}" ]; then
+			echo "  (non-existing file '${file_elem}' has been automatically translated to existing file '${new_file_elem}')"
 
-				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
-
-				   f="${new_f}"
-
-			fi
+			file_elem="${new_file_elem}"
 
 		fi
 
-		if [ -z "${DISPLAY}" ]; then
-			echo "    Viewing $f with ${viewer_short_name} (no DISPLAY set)"
+	fi
+
+	if [ -z "${DISPLAY}" ]; then
+
+		echo "    Viewing '${file_elem}' with ${viewer_short_name} (no DISPLAY set)"
+
+	else
+
+		if [ "${DISPLAY}" = ":0.0" ]; then
+			# No need to remind if default:
+			echo "    Viewing ${file_elem} with ${viewer_short_name}"
 		else
-			if [ "${DISPLAY}" = ":0.0" ]; then
-				# No need to remind if default:
-				echo "    Viewing $f with ${viewer_short_name}"
-			else
-				echo "    Viewing $f with ${viewer_short_name} (DISPLAY is '${DISPLAY}')"
-			fi
+			echo "    Viewing '${file_elem}' with ${viewer_short_name} (DISPLAY is '${DISPLAY}')"
 		fi
 
-		if [ ${multi_win} -eq 0 ]; then
+	fi
 
-			if [ "${viewer_short_name}" = "Emacs" ]; then
-				# To get rid of silly message:
-				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
-				# multiple times"
-				#echo ${viewer} ${viewer_opt} "$f"
-				${viewer} ${viewer_opt} "$f" 1>/dev/null 2>&1 &
+	if [ ${multi_win} -eq 0 ]; then
 
-				# Small delay added, otherwise specifying multiple files
-				# apparently may freeze emacs to death, loosing all pending
-				# changes...
-				#
-				sleep 1
+		if [ "${viewer_short_name}" = "Emacs" ]; then
+			# To get rid of silly message:
+			# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
+			# multiple times"
+			#echo ${viewer} ${viewer_opt} "${file_elem}"
+			${viewer} ${viewer_opt} "${file_elem}" 1>/dev/null 2>&1 &
 
-			else
-				#${viewer} ${viewer_opt} "$f" 2>/dev/null &
-				${viewer} ${viewer_opt} "$f" 2>/dev/null
+			# Small delay added, otherwise specifying multiple files apparently
+			# may freeze emacs to death, loosing all pending changes...
+			#
+			sleep 1
 
-			fi
+		else
+			#${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
+			${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null
+
+		fi
 
 			if [ "${viewer_short_name}" = "Nedit" ]; then
 				sleep 1
@@ -532,24 +531,26 @@ applyViewer()
 			if [ $run_in_background -eq 0 ]; then
 
 				#echo "Running ${viewer} in background..."
-				${viewer} ${viewer_opt} "$f" 2>/dev/null &
+				${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
 
 			else
 
 				#echo "Running ${viewer} ${viewer_opt} in foreground..."
-				${viewer} ${viewer_opt} "$f"
+				${viewer} ${viewer_opt} "${file_elem}"
 
 			fi
 
-		fi
+	fi
 
-	done
 
 }
 
 
+
 displayViewers()
 {
+
+	echo "(displaying viewers)"
 
 	# Just for the side-effect of setting their executable paths:
 	chooseJedit
@@ -578,8 +579,255 @@ displayViewers()
 
 
 
+
+# Manages the (single) file element specified in $1.
+view_element()
+{
+
+	file_elem="$1"
+
+	#echo "(viewing '${file_elem}')"
+
+	if [ $do_find -eq 0 ]; then
+
+		# Any initial whitespace removed:
+		target_file="$(echo "${file_elem}" | sed 's|^ ||1' | sed 's|:.*$||1')"
+		#echo "target_file = ${target_file}"
+
+		target_path="$(find . -name '${target_file}')"
+
+		if [ -z "${target_path}" ]; then
+
+			echo "  (file '${target_file}' not found, nothing done)"
+
+		else
+
+			echo "  (file '${target_file}' found as '${target_path}')"
+
+		fi
+
+		file_elem="${target_path}"
+
+	fi
+
+
+	if [ $do_locate -eq 0 ]; then
+
+		# Any initial whitespace removed:
+		target_file="$(echo ${file_elem} | sed 's|^ ||1' | sed 's|:.*$||1')"
+		#echo "target_file = ${target_file}"
+
+		target_path="$(/bin/locate --limit 1 --existing '${target_file}')"
+
+		if [ -z "${target_path}" ]; then
+
+			echo "  (file '${target_file}' not found, nothing done)"
+
+		else
+
+			echo "  (file '${target_file}' found as '${target_path}')"
+
+		fi
+
+		file_elem="${target_path}"
+
+	fi
+
+	# Default:
+	multi_win=1
+
+	# Special-case for directories:
+	if [ -d "${file_elem}" ]; then
+
+		chooseMultimediaViewer
+
+		dir="${file_elem}"
+
+		#echo "(viewing directory '${dir}')"
+
+		${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
+
+		exit 0
+
+	fi
+
+	if [ ! -f "${file_elem}" ]; then
+
+		echo "  Error, the target file to view, '${file_elem}', does not exist." 1>&2
+		exit 15
+
+	fi
+
+	extension="$(echo ${file_elem}| sed 's|^.*\.||1')"
+	#extension="$(echo $@ | sed 's|^.*\.||1')"
+	#extension="$(echo $1| sed 's|^.*\.||1')"
+
+	#echo "file_elem = ${file_elem}"
+	#echo "extension = ${extension}"
+
+	# Deactivated for the moment:
+	#
+	#if [ "${extension}" = "erl" ]; then
+	#
+	#	chooseJedit
+	#	applyViewer
+	#	exit 0
+	#
+	#fi
+
+	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
+
+		chooseEvince
+		applyViewer
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+
+		chooseLibreOffice
+		applyViewer
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] || [ "${extension}" = "svg" -o "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] ; then
+
+		chooseEog
+		applyViewer
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "webp" ]; then
+
+		chooseFirefox
+		applyViewer
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
+
+		viewer="$(which jq 2>/dev/null)"
+
+		if [ -x "${viewer}" ]; then
+
+			viewer_opt="."
+			viewer_short_name="jq"
+			applyViewer
+			exit 0
+
+		else
+
+			echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
+			chooseEmacs
+			applyViewer
+			exit 0
+
+		fi
+
+	fi
+
+
+	if [ "${extension}" = "html" ]; then
+
+		chooseFirefox
+		applyViewer
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "ogg" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
+
+		# Another option is: vlc.
+
+		chooseMplayer
+
+		# Otherwise difficult to control/stop:
+		run_in_background=1
+
+		applyViewer
+
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "dia" ]; then
+
+		viewer="$(which dia)"
+		viewer_short_name="dia"
+		applyViewer
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
+
+		# Is it a compressed trace file?
+		if echo ${file_elem}| grep '.traces' 1>/dev/null; then
+			# In this case trigger next clause, as LogMX can handle it:
+			extension="traces"
+		fi
+
+	fi
+
+
+	if [ "${extension}" = "traces" ]; then
+
+		LOGMX="$(which logmx.sh)"
+
+		if [ ! -x "${LOGMX}" ]; then
+
+			echo "  (no LogMX found, using default viewer for traces)"
+
+		else
+
+			viewer="${LOGMX}"
+			viewer_short_name="LogMX"
+
+		fi
+
+		applyViewer
+		exit 0
+
+	fi
+
+
+	autoSelectViewer
+
+	if [ ${do_show} -eq 0 ]; then
+
+		echo "Chosen viewer: ${viewer_short_name}"
+		echo "Complete viewer command: ${viewer} ${viewer_opt}"
+		echo "Multiwin: ${multi_win}"
+		exit 0
+
+	fi
+
+
+	if [ -z "${viewer}" ]; then
+
+		echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim, vi or more) can be used. Stopping now." 1>&2
+		exit 1
+
+	fi
+
+	#echo "Applying finally the viewer"
+
+	applyViewer
+
+}
+
+
+
+
 # Main section.
 
+#echo "(starting script)"
 
 do_X=0
 do_show=1
@@ -640,14 +888,21 @@ fi
 
 if [ -z "$1" ]; then
 	if [ ${do_show} -eq 1 ]; then
-		echo "${usage}"
-		exit 1
+		echo "${usage}" 1>&2
+		exit 5
 	fi
 fi
 
 
 if [ ${do_show} -eq 0 ]; then
 	displayViewers
+fi
+
+
+if [ $standalone -eq 0 ]; then
+
+	echo "  (standalone mode activated)"
+
 fi
 
 # A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
@@ -662,269 +917,277 @@ fi
 
 # Not done anymore, as loses spaces:
 #remaining_parameters="$@"
-#echo "remaining_parameters = $remaining_parameters"
+#echo "remaining_parameters = ${remaining_parameters}"
 
-parameters=""
+# Only sane way of dealing with paths that may include spaces:
+for file_elem in "$@"; do
 
-# Last filtering:
-#for arg in $remaining_parameters; do
-for arg in "$@"; do
-
-	if [ "$arg" = "-s" ]; then
-
-		standalone=0
-
-	else
-
-		# Here $arg is still right:
-		#echo "arg=$arg"
-
-		# But then the information is lost when:
-		parameters="${parameters} ${arg}"
-
-	fi
+	# Never name a function 'view'...
+	view_element "${file_elem}"
 
 done
+
+# So we do not seem able to keep in a variable the information obtained after
+# having iterated on $@. So we still use 'parameters', but set it exactly to
+# "$@", and manage afterwards the fact that options (like "-s") may linger in
+# it:
+
+#echo "\$@ = $@"
+#for p in "$@"; do echo "- @ parameter: '$p'"; done
+
+#parameters="$@"
+#echo "parameters = ${parameters}"
 
 # Last test regarding bloody spaces included in filenames:
 #for p in ${parameters}; do echo "- parameter: '$p'"; done
 #exit
 
-if [ $standalone -eq 0 ]; then
+#echo "(end of viewing)"
 
-	echo "  (standalone mode activated)"
-
-fi
+exit 0
 
 
-if [ $do_find -eq 0 ]; then
-
-	# Single file assumed, any initial whitespace removed:
-	target_file="$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')"
-	#echo "target_file = ${target_file}"
-
-	target_path="$(find . -name ${target_file})"
-
-	if [ -z "${target_path}" ]; then
-
-		echo "  (file '${target_file}' not found, nothing done)"
-
-	else
-
-		echo "  (file '${target_file}' found as '${target_path}')"
-
-	fi
-
-	parameters="${target_path}"
-
-fi
 
 
-if [ $do_locate -eq 0 ]; then
+# Manages the (single) file element specified in $1.
+view_element()
+{
 
-	# Single file assumed, any initial whitespace removed:
-	target_file="$(echo ${parameters} | sed 's|^ ||1' | sed 's|:.*$||1')"
-	#echo "target_file = ${target_file}"
+	file_elem="$1"
 
-	target_path="$(/bin/locate --limit 1 --existing ${target_file})"
+	#echo "(viewing '${file_elem}')"
 
-	if [ -z "${target_path}" ]; then
+	if [ $do_find -eq 0 ]; then
 
-		echo "  (file '${target_file}' not found, nothing done)"
+		# Any initial whitespace removed:
+		target_file="$(echo "${file_elem}" | sed 's|^ ||1' | sed 's|:.*$||1')"
+		#echo "target_file = ${target_file}"
 
-	else
+		target_path="$(find . -name '${target_file}')"
 
-		echo "  (file '${target_file}' found as '${target_path}')"
+		if [ -z "${target_path}" ]; then
+
+			echo "  (file '${target_file}' not found, nothing done)"
+
+		else
+
+			echo "  (file '${target_file}' found as '${target_path}')"
+
+		fi
+
+		file_elem="${target_path}"
 
 	fi
 
-	parameters="${target_path}"
 
-fi
+	if [ $do_locate -eq 0 ]; then
 
+		# Any initial whitespace removed:
+		target_file="$(echo ${file_elem} | sed 's|^ ||1' | sed 's|:.*$||1')"
+		#echo "target_file = ${target_file}"
 
+		target_path="$(/bin/locate --limit 1 --existing '${target_file}')"
 
+		if [ -z "${target_path}" ]; then
 
-# Default:
-multi_win=1
+			echo "  (file '${target_file}' not found, nothing done)"
 
-# Special-case for directories:
-if [ -d "$1" ]; then
+		else
 
-	chooseMultimediaViewer
+			echo "  (file '${target_file}' found as '${target_path}')"
 
-	dir="$1"
+		fi
 
-	${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
+		file_elem="${target_path}"
 
-	exit
+	fi
 
-fi
+	# Default:
+	multi_win=1
 
-# In case of a *list* of filenames, the detected extension will be the one of
-# the last filename:
-#
-extension="$(echo ${parameters}| sed 's|^.*\.||1')"
-#extension="$(echo $1| sed 's|^.*\.||1')"
+	# Special-case for directories:
+	if [ -d "${file_elem}" ]; then
 
+		chooseMultimediaViewer
 
-#echo "parameters = ${parameters}"
-#echo "extension = ${extension}"
+		dir="${file_elem}"
 
+		#echo "(viewing directory '${dir}')"
 
+		${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
 
-# Deactivated for the moment:
-#
-#if [ "${extension}" = "erl" ]; then
-#
-#	chooseJedit
-#	applyViewer
-#	exit 0
-#
-#fi
-
-if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
-
-	chooseEvince
-	applyViewer
-	exit 0
-
-fi
-
-if [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
-
-	chooseLibreOffice
-	applyViewer
-	exit 0
-
-fi
-
-if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] || [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
-
-	chooseEog
-	applyViewer
-	exit 0
-
-fi
-
-if [ "${extension}" = "webp" ]; then
-
-	chooseFirefox
-	applyViewer
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
-
-	viewer="$(which jq 2>/dev/null)"
-
-	if [ -x "${viewer}" ]; then
-
-		viewer_opt="."
-		viewer_short_name="jq"
-		applyViewer
 		exit 0
 
-	else
+	fi
 
-		echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
-		chooseEmacs
+	if [ ! -f "${file_elem}" ]; then
+
+		echo "  Error, the specified element to view, '${file_elem}', does not exist." 1>&2
+
+		exit 15
+
+	fi
+
+	extension="$(echo ${file_elem}| sed 's|^.*\.||1')"
+	#extension="$(echo $@ | sed 's|^.*\.||1')"
+	#extension="$(echo $1| sed 's|^.*\.||1')"
+
+	#echo "file_elem = ${file_elem}"
+	#echo "extension = ${extension}"
+
+	# Deactivated for the moment:
+	#
+	#if [ "${extension}" = "erl" ]; then
+	#
+	#	chooseJedit
+	#	applyViewer
+	#	exit 0
+	#
+	#fi
+
+	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
+
+		chooseEvince
 		applyViewer
 		exit 0
 
 	fi
 
-fi
+	if [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
-
-
-if [ "${extension}" = "html" ]; then
-
-	chooseFirefox
-	applyViewer
-	exit 0
-
-fi
-
-if [ "${extension}" = "ogg" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
-
-	# Another option is: vlc.
-
-	chooseMplayer
-
-	# Otherwise difficult to control/stop:
-	run_in_background=1
-
-	applyViewer
-
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "dia" ]; then
-
-	viewer="$(which dia)"
-	viewer_short_name="dia"
-	applyViewer
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
-
-	# Is it a compressed trace file?
-	if echo ${parameters}| grep '.traces' 1>/dev/null; then
-		# In this case trigger next clause, as LogMX can handle it:
-		extension="traces"
-	fi
-
-fi
-
-
-if [ "${extension}" = "traces" ]; then
-
-	LOGMX="$(which logmx.sh)"
-
-	if [ ! -x "${LOGMX}" ]; then
-
-		echo "  (no LogMX found, using default viewer for traces)"
-
-	else
-
-		viewer="${LOGMX}"
-		viewer_short_name="LogMX"
+		chooseLibreOffice
+		applyViewer
+		exit 0
 
 	fi
 
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] || [ "${extension}" = "svg" -o "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] ; then
+
+		chooseEog
+		applyViewer
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "webp" ]; then
+
+		chooseFirefox
+		applyViewer
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
+
+		viewer="$(which jq 2>/dev/null)"
+
+		if [ -x "${viewer}" ]; then
+
+			viewer_opt="."
+			viewer_short_name="jq"
+			applyViewer
+			exit 0
+
+		else
+
+			echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
+			chooseEmacs
+			applyViewer
+			exit 0
+
+		fi
+
+	fi
+
+
+	if [ "${extension}" = "html" ]; then
+
+		chooseFirefox
+		applyViewer
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "ogg" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
+
+		# Another option is: vlc.
+
+		chooseMplayer
+
+		# Otherwise difficult to control/stop:
+		run_in_background=1
+
+		applyViewer
+
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "dia" ]; then
+
+		viewer="$(which dia)"
+		viewer_short_name="dia"
+		applyViewer
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
+
+		# Is it a compressed trace file?
+		if echo ${file_elem}| grep '.traces' 1>/dev/null; then
+			# In this case trigger next clause, as LogMX can handle it:
+			extension="traces"
+		fi
+
+	fi
+
+
+	if [ "${extension}" = "traces" ]; then
+
+		LOGMX="$(which logmx.sh)"
+
+		if [ ! -x "${LOGMX}" ]; then
+
+			echo "  (no LogMX found, using default viewer for traces)"
+
+		else
+
+			viewer="${LOGMX}"
+			viewer_short_name="LogMX"
+
+		fi
+
+		applyViewer
+		exit 0
+
+	fi
+
+
+	autoSelectViewer
+
+	if [ ${do_show} -eq 0 ]; then
+
+		echo "Chosen viewer: ${viewer_short_name}"
+		echo "Complete viewer command: ${viewer} ${viewer_opt}"
+		echo "Multiwin: ${multi_win}"
+		exit 0
+
+	fi
+
+
+	if [ -z "${viewer}" ]; then
+
+		echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim, vi or more) can be used. Stopping now." 1>&2
+		exit 1
+
+	fi
+
+	#echo "Applying finally the viewer"
+
 	applyViewer
-	exit 0
 
-fi
-
-
-autoSelectViewer
-
-if [ ${do_show} -eq 0 ]; then
-
-	echo "Chosen viewer: ${viewer_short_name}"
-	echo "Complete viewer command: ${viewer} ${viewer_opt}"
-	echo "Multiwin: ${multi_win}"
-	exit
-
-fi
-
-
-if [ -z "${viewer}" ]; then
-
-	echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim, vi or more) can be used. Stopping now." 1>&2
-	exit 1
-
-fi
-
-#echo "Applying finally the viewer"
-
-applyViewer
+}
