@@ -825,130 +825,6 @@ view_element()
 
 
 
-# Main section.
-
-#echo "(starting script)"
-
-do_X=0
-do_show=1
-do_force_nedit=1
-do_find=1
-do_locate=1
-
-
-if [ "$1" = "${no_x_opt}" ]; then
-	do_X=1
-	shift
-fi
-
-
-if [ "$1" = "${show_opt}" ]; then
-	do_show=0
-	shift
-fi
-
-
-if [ "$1" = "-e" ] || [ "$1" = "--emacs" ]; then
-	prefer_emacs=1
-	prefer_nedit=0
-	echo "(requested to prefer emacs over other viewers)"
-	shift
-fi
-
-
-if [ "$1" = "-n" ] || [ "$1" = "--nedit" ]; then
-	prefer_emacs=0
-	prefer_nedit=1
-	echo "(requested to prefer nedit over other viewers)"
-	shift
-fi
-
-
-if [ "$1" = "-s" ] || [ "$1" = "--standalone" ]; then
-	standalone=0
-	shift
-fi
-
-if [ "$1" = "-f" ] || [ "$1" = "--find" ]; then
-	do_find=0
-	shift
-fi
-
-if [ "$1" = "-l" ] || [ "$1" = "--locate" ]; then
-	do_locate=0
-	shift
-fi
-
-
-if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-	echo "${usage}"
-	exit 0
-fi
-
-
-if [ -z "$1" ]; then
-	if [ ${do_show} -eq 1 ]; then
-		echo "${usage}" 1>&2
-		exit 5
-	fi
-fi
-
-
-if [ ${do_show} -eq 0 ]; then
-	displayViewers
-fi
-
-
-if [ $standalone -eq 0 ]; then
-
-	echo "  (standalone mode activated)"
-
-fi
-
-# A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
-# then apparently there is no easy way in sh to preserve that space (the script
-# will understand that two files are listed, 'hello' and 'world.txt').
-#
-# See
-# https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters for more details.
-
-
-# Assigned only here to take into account the previous shifts:
-
-# Not done anymore, as loses spaces:
-#remaining_parameters="$@"
-#echo "remaining_parameters = ${remaining_parameters}"
-
-# Only sane way of dealing with paths that may include spaces:
-for file_elem in "$@"; do
-
-	# Never name a function 'view'...
-	view_element "${file_elem}"
-
-done
-
-# So we do not seem able to keep in a variable the information obtained after
-# having iterated on $@. So we still use 'parameters', but set it exactly to
-# "$@", and manage afterwards the fact that options (like "-s") may linger in
-# it:
-
-#echo "\$@ = $@"
-#for p in "$@"; do echo "- @ parameter: '$p'"; done
-
-#parameters="$@"
-#echo "parameters = ${parameters}"
-
-# Last test regarding bloody spaces included in filenames:
-#for p in ${parameters}; do echo "- parameter: '$p'"; done
-#exit
-
-#echo "(end of viewing)"
-
-exit 0
-
-
-
-
 # Manages the (single) file element specified in $1.
 view_element()
 {
@@ -1028,7 +904,7 @@ view_element()
 
 	fi
 
-	extension="$(echo ${file_elem}| sed 's|^.*\.||1')"
+	extension="$(echo ${file_elem} | sed 's|^.*\.||1')"
 	#extension="$(echo $@ | sed 's|^.*\.||1')"
 	#extension="$(echo $1| sed 's|^.*\.||1')"
 
@@ -1044,6 +920,29 @@ view_element()
 	#	exit 0
 	#
 	#fi
+
+	content_type="$(file -b ${file_elem} | sed 's| .*$||1')"
+	#echo "content_type = ${content_type}"
+
+	# Synonyms for extensions:
+	if [ "${extension}" = "jpg" ] || [ "${extension}" = "JPG" ] || [ "${extension}" = "JPEG" ]; then
+
+		extension="jpeg"
+
+	fi
+
+	if [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
+
+		# Extension being a dot then 3 or 4 letters:
+		renamed_elem=$(echo ${file_elem} | sed 's|.\{3,4\}[a-zA-Z]$|.webp|1')
+		echo "Warning: file '${file_elem}' has a JPEG-related extension yet its content is RIFF: fixing its actual extension, renaming it to '${renamed_elem}'." 1>&2
+		/bin/mv "${file_elem}" "${renamed_elem}"
+
+		file_elem="${renamed_elem}"
+		extension="webp"
+
+	fi
+
 
 	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
 
@@ -1191,3 +1090,126 @@ view_element()
 	applyViewer
 
 }
+
+
+
+# Main section.
+
+#echo "(starting script)"
+
+do_X=0
+do_show=1
+do_force_nedit=1
+do_find=1
+do_locate=1
+
+
+if [ "$1" = "${no_x_opt}" ]; then
+	do_X=1
+	shift
+fi
+
+
+if [ "$1" = "${show_opt}" ]; then
+	do_show=0
+	shift
+fi
+
+
+if [ "$1" = "-e" ] || [ "$1" = "--emacs" ]; then
+	prefer_emacs=1
+	prefer_nedit=0
+	echo "(requested to prefer emacs over other viewers)"
+	shift
+fi
+
+
+if [ "$1" = "-n" ] || [ "$1" = "--nedit" ]; then
+	prefer_emacs=0
+	prefer_nedit=1
+	echo "(requested to prefer nedit over other viewers)"
+	shift
+fi
+
+
+if [ "$1" = "-s" ] || [ "$1" = "--standalone" ]; then
+	standalone=0
+	shift
+fi
+
+if [ "$1" = "-f" ] || [ "$1" = "--find" ]; then
+	do_find=0
+	shift
+fi
+
+if [ "$1" = "-l" ] || [ "$1" = "--locate" ]; then
+	do_locate=0
+	shift
+fi
+
+
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+	echo "${usage}"
+	exit 0
+fi
+
+
+if [ -z "$1" ]; then
+	if [ ${do_show} -eq 1 ]; then
+		echo "${usage}" 1>&2
+		exit 5
+	fi
+fi
+
+
+if [ ${do_show} -eq 0 ]; then
+	displayViewers
+fi
+
+
+if [ $standalone -eq 0 ]; then
+
+	echo "  (standalone mode activated)"
+
+fi
+
+# A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
+# then apparently there is no easy way in sh to preserve that space (the script
+# will understand that two files are listed, 'hello' and 'world.txt').
+#
+# See
+# https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters for more details.
+
+
+# Assigned only here to take into account the previous shifts:
+
+# Not done anymore, as loses spaces:
+#remaining_parameters="$@"
+#echo "remaining_parameters = ${remaining_parameters}"
+
+# Only sane way of dealing with paths that may include spaces:
+for file_elem in "$@"; do
+
+	# Never name a function 'view'...
+	view_element "${file_elem}"
+
+done
+
+# So we do not seem able to keep in a variable the information obtained after
+# having iterated on $@. So we still use 'parameters', but set it exactly to
+# "$@", and manage afterwards the fact that options (like "-s") may linger in
+# it:
+
+#echo "\$@ = $@"
+#for p in "$@"; do echo "- @ parameter: '$p'"; done
+
+#parameters="$@"
+#echo "parameters = ${parameters}"
+
+# Last test regarding bloody spaces included in filenames:
+#for p in ${parameters}; do echo "- parameter: '$p'"; done
+#exit
+
+#echo "(end of viewing)"
+
+exit 0
