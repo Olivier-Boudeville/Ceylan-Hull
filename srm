@@ -1,8 +1,8 @@
 #!/bin/sh
 
-usage="  $(basename $0) (for \"secure rm\"): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.
+usage="  $(basename $0) (for \"secure rm\"): stores deleted files and directories in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two element names can collide in trash so that all contents are preserved.
 
-  Usage: $(basename $0) <files to delete securely>
+  Usage: $(basename $0) <file elements to delete securely>
 
   See also: empty-trash.sh"
 
@@ -68,10 +68,8 @@ if [ -n "$*" ]; then
 
 				#echo "Testing trash target ${new_full_elem}"
 
-				while [ -e "${new_full_elem}" ]; do
-
+				while [ -e "${new_full_elem}" ] || [ -h "${new_full_elem}" ]; do
 					new_full_elem="${new_full_elem}x"
-
 				done
 
 				echo "Warning: element '${actual_elem}' was already existing in trash, storing it as '${new_full_elem}' instead." 1>&2
