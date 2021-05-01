@@ -38,7 +38,7 @@ if [ -n "$*" ]; then
 
 		#echo "elem = ${elem}"
 
-		actual_elem="$(basename '${elem}' 2>/dev/null)"
+		actual_elem="$(basename "${elem}" 2>/dev/null)"
 		#echo "actual_elem = ${actual_elem}"
 
 		if [ -z "${actual_elem}" ]; then
@@ -55,6 +55,7 @@ if [ -n "$*" ]; then
 			# order to move it (no chmod needed).
 
 			trash_target="${TRASH}/${actual_elem}"
+			#echo "trash_target = ${trash_target}"
 
 			if [ -e "${trash_target}" ] || [ -h "${trash_target}" ]; then
 
