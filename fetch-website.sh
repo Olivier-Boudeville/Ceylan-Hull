@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-s|--slow] URL: downloads correctly, recursively (fully but slowly) web content accessible from specified URL.
+usage="Usage: $(basename $0) [-h|--help] [-s|--slow] URL: downloads correctly, recursively (fully but slowly) web content accessible from the specified URL.
   If using -s or --slow, will download content even slower."
 
 # Allows to keep track of the relevant wget options.
@@ -39,9 +39,7 @@ if [ "$1" = "-s" ] || [ "$1" = "--slow" ]; then
 fi
 
 
-
 url="$1"
-
 
 if [ -z "${url}" ]; then
 
@@ -60,7 +58,6 @@ if [ ! -x "${wget}" ]; then
 fi
 
 # Tries to be a good (not so bad at least) netizen.
-#
 
 log_suffix=$(echo "${url}" | sed 's|^.*://||1')
 

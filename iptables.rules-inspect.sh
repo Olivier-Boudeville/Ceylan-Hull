@@ -1,5 +1,8 @@
 #!/bin/sh
-if [ ! `id -u` = "0" ] ; then
+
+usage="Usage: $(basename $0): lists the currently-used firewall rules."
+
+if [ ! $(id -u) -eq 0 ]; then
 
 	echo "  Error, firewall rules can only be applied by root." 1>&2
 

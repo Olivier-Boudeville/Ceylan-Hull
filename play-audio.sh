@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file1/directory1 file/directory2 ...]
+usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file1/directory1 file/directory2 ...]
 
   Performs an audio-only playback of specified content files (including video ones) and directories:
 	  --announce: announce the filename that will be played immediatly (with espeak)
@@ -13,7 +13,7 @@ usage="  Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [fi
 
 # Hidden option, useful for recursive uses: "--no-notification"
 
-espeak=$(which espeak 2>/dev/null)
+espeak="$(which espeak 2>/dev/null)"
 
 
 say()
@@ -26,19 +26,18 @@ say()
 
 player_name="mplayer"
 
-player=$(which ${player_name} 2>/dev/null)
+player=$(which "${player_name}" 2>/dev/null)
 
-# In many cases this will not work, use '-vc null -vo null' instead:
-#player_opt="-novideo -quiet"
+# For mplayer:
 player_opt="-vc null -vo null -quiet"
 
 
-# cvlc does not seem as easy to control from the command-line:
+# VLC also relevant:
 #player=$(which cvlc 2>/dev/null)
-#player_opt="--quiet --novideo"
+#player_opt="--quiet --novideo --play-and-exit"
 
 
-if [ ! -x "${player}" ] ; then
+if [ ! -x "${player}" ]; then
 
 	echo "Error, no executable player found (${player})." 1>&2
 	exit 5
@@ -55,18 +54,18 @@ be_recursive=1
 display_notification=0
 
 
-while [ ! $# -eq 0 ] ; do
+while [ ! $# -eq 0 ]; do
 
 	token_eaten=1
 
 	#echo "(examining $1)"
 
-	if [ "$1" = "--announce" -o "$1" = "-a" ] ; then
+	if [ "$1" = "--announce" -o "$1" = "-a" ]; then
 
 		shift
 		token_eaten=0
 
-		if [ ! -x "${espeak}" ] ; then
+		if [ ! -x "${espeak}" ]; then
 
 			echo "Error, espeak not found." 1>&2
 			exit 15
@@ -78,28 +77,28 @@ while [ ! $# -eq 0 ] ; do
 	fi
 
 
-	if [ "$1" = "--quiet" -o "$1" = "-q" ] ; then
+	if [ "$1" = "--quiet" -o "$1" = "-q" ]; then
 		shift
 		token_eaten=0
 		be_quiet=0
 	fi
 
 
-	if [ "$1" = "--recursive" -o "$1" = "-r" ] ; then
+	if [ "$1" = "--recursive" -o "$1" = "-r" ]; then
 		shift
 		token_eaten=0
 		be_recursive=0
 	fi
 
 
-	if [ "$1" = "--no-notification" ] ; then
+	if [ "$1" = "--no-notification" ]; then
 		shift
 		token_eaten=0
 		display_notification=1
 	fi
 
 
-	if [ "$1" = "--help" -o "$1" = "-h" ] ; then
+	if [ "$1" = "--help" -o "$1" = "-h" ]; then
 
 		shift
 		token_eaten=0
@@ -110,7 +109,7 @@ while [ ! $# -eq 0 ] ; do
 	fi
 
 
-	if [ $token_eaten -eq 1 ] ; then
+	if [ $token_eaten -eq 1 ]; then
 
 		#echo "Adding $1"
 		files="${files} $1"
@@ -126,9 +125,9 @@ done
 #echo "be_recursive=${be_recursive}"
 #echo "display_notification=${display_notification}"
 
-if [ $display_notification -eq 0 ] ; then
+if [ $display_notification -eq 0 ]; then
 
-	if [ "${player_name}" = "mplayer" ] ; then
+	if [ "${player_name}" = "mplayer" ]; then
 
 		echo " Using mplayer, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
@@ -157,10 +156,10 @@ fi
 #echo "files=${files}"
 
 
-for f in ${files} ; do
+for f in ${files}; do
 
 	# If a directory is specified, just recurse and play everything found:
-	if [ -d "${f}" ] ; then
+	if [ -d "${f}" ]; then
 
 		cd "${f}" && $0 --no-notification
 
@@ -173,7 +172,7 @@ for f in ${files} ; do
 
 	else
 
-		if [ ! -f "${f}" ] ; then
+		if [ ! -f "${f}" ]; then
 
 			echo "  (file ${f} not found, thus skipped)" 1>&2
 
@@ -181,19 +180,19 @@ for f in ${files} ; do
 
 			[ $be_quiet -eq 0 ] || echo " - playing now ${f}"
 
-			if [ $do_announce -eq 0 ] ; then
+			if [ $do_announce -eq 0 ]; then
 
-				say_name=$(basename ${f}|sed 's|\..*$||1')
+				say_name="$(basename ${f}|sed 's|\..*$||1')"
 				#echo "say_name = ${say_name}"
 
-				say "Playing " ${say_name}
+				say "Playing " "${say_name}"
 
 			fi
 
-			${player} ${player_opt} ${f} 1>/dev/null 2>&1
+			${player} ${player_opt} "${f}" 1>/dev/null 2>&1
 
 			# Useful to stop the overall reading as a whole:
-			if [ ! $? -eq 0 ] ; then
+			if [ ! $? -eq 0 ]; then
 
 				echo "Playback of ${f} failed, stopping." 1>&2
 				exit 20
@@ -208,7 +207,7 @@ done
 
 
 # Allows to avoid having several of these lines accumulate:
-if [ $display_notification -eq 0 ] ; then
+if [ $display_notification -eq 0 ]; then
 
 	echo " (end of playback)"
 

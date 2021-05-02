@@ -26,7 +26,7 @@ mem_code=${rss_mem_code}
 usage="Usage: $(basename $0) [${rss_mem_opt}|${vsz_mem_opt}]: lists the up to ${max_process_count} processes that are the largest in memory (default: in ${rss_mem_code} size, which is generally the right metric), by decreasing sizes. Use the --${vsz_mem_code} option to switch to the ${vsz_mem_name} size instead."
 
 
-if [ "$1" = "--rss" ] ; then
+if [ "$1" = "--rss" ]; then
 
 	mem_type=${rss_mem_type}
 	mem_name=${rss_mem_name}
@@ -34,7 +34,7 @@ if [ "$1" = "--rss" ] ; then
 
 	shift
 
-elif [ "$1" = "--vsz" ] ; then
+elif [ "$1" = "--vsz" ]; then
 
 	mem_type=${vsz_mem_type}
 	mem_name=${vsz_mem_name}
@@ -42,7 +42,7 @@ elif [ "$1" = "--vsz" ] ; then
 
 	shift
 
-elif [ -n "$1" ] ; then
+elif [ -n "$1" ]; then
 
 	echo "Unexpected parameter: $1.
 $usage" 1>&2
@@ -55,7 +55,8 @@ fi
 
 # Ex:
 # $ list-processes-by-size.sh
-#	Listing running processes by decreasing virtual size in RAM (total size in KiB):
+#	Listing running processes by decreasing virtual size in RAM (total size in
+#	KiB):
 #    PID    VSZ COMMAND
 #	420080 42789072 XXXX
 # ...
@@ -73,7 +74,7 @@ ${usage}" 1>&2
 fi
 
 
-echo -e "\tListing running processes by decreasing ${mem_name} size in RAM (total size in KiB): "
+echo  "    Listing running processes by decreasing ${mem_name} size in RAM (total size in KiB): "
 #echo "(see also: atop -m)"
 
 #--no-headers

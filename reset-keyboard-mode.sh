@@ -1,18 +1,19 @@
 #!/bin/sh
 
-usage="$(basename $0) [-v]: resets the keyboard mode, typically should it have been modified by a misbehaving program."
+usage="$(basename $0) [-v]: resets the keyboard mode, typically should it have been modified by a misbehaving program.
+The -v option stands for verbose"
 
 
 verbose=1
 
-if [ "$1" = "-v" ] ; then
+if [ "$1" = "-v" ]; then
 
 	verbose=0
 
 fi
 
 
-if [ $verbose -eq 0 ] ; then
+if [ $verbose -eq 0 ]; then
 
 	echo "Resetting keyboard mode..."
 
@@ -72,7 +73,7 @@ setxkbmap
 
 # That's it!
 
-if [ $verbose -eq 0 ] ; then
+if [ $verbose -eq 0 ]; then
 
 	echo "...reset!"
 

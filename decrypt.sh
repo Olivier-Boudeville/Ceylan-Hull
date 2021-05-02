@@ -1,7 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] FILE1 [FILE2 ...]
-Decrypts specified file(s) (does not remove their encrypted version).
+usage="Usage: $(basename $0) [-h|--help] FILE1 [FILE2 ...]: decrypts specified file(s) (does not remove their encrypted version).
 See also the crypt.sh counterpart script."
 
 

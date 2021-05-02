@@ -1,5 +1,7 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0): checks the current, local NTP status."
+
 # Can be run by a normal user.
 
 # Tired to forget how to do it:

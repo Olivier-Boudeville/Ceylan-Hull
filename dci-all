@@ -1,11 +1,11 @@
 #!/bin/sh
 
-USAGE="$0 selects recursively from current directory the files that should be committed (either added or modified), and commits them. For each of the modified files, shows the diff with previous version before."
+usage="Usage: $(basename $0): selects recursively from current directory the files that should be committed (either added or modified), and commits them. For each of the modified files, shows the diff with previous version before."
 
 
 initial_dir=$(pwd)
 
-if [ -d ".svn" ] ; then
+if [ -d ".svn" ]; then
 
 	TOOL="svn"
 
@@ -20,7 +20,7 @@ if [ -d ".svn" ] ; then
 	MODIFIED=$(echo ${OUTPUT} | sed 's|A |\nA |g' | sed 's|C |\nC |g' | sed 's|D |\nD |g' | sed 's|M |\nM |g' | sed 's|R |\nR |g' | sed 's|X |\nX |g' | sed 's|? |\n? |g' | sed 's|! |\n! |g' | sed 's|~ |\n~ |g' | sed 's|I |\nI |g' | sed 's| n |\n? |g' | sed 's|^n |\n? |g' | grep  '^M' | awk '{print $2}')
 
 
-elif [ -d "CVS" ] ; then
+elif [ -d "CVS" ]; then
 
 	TOOL="cvs"
 
@@ -65,7 +65,7 @@ else
 	relative_to_root=$(git rev-parse --show-cdup)
 
 	# (empty string means already there)
-	if [ -n "${relative_to_root}" ] ; then
+	if [ -n "${relative_to_root}" ]; then
 
 		cd "${relative_to_root}"
 
@@ -74,7 +74,7 @@ else
 fi
 
 
-if [ -n "${ADDED}" ] ; then
+if [ -n "${ADDED}" ]; then
 
 	echo
 	echo "####### Added file(s): ${ADDED}"
@@ -91,7 +91,7 @@ if [ -n "${ADDED}" ] ; then
 
 fi
 
-if [ -n "${MODIFIED}" ] ; then
+if [ -n "${MODIFIED}" ]; then
 
 	echo
 	echo "####### Modified file(s): ${MODIFIED}"
@@ -107,7 +107,7 @@ if [ -n "${MODIFIED}" ] ; then
 
 fi
 
-if [ "$TOOL" = "git" ] ; then
+if [ "$TOOL" = "git" ]; then
 
 	# To avoid listing all files from the root:
 	cd $initial_dir

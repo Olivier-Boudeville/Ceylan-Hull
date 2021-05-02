@@ -1,26 +1,24 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) <root of tree whose entry names should be corrected>: renames recursively the files and directories from specified tree root to 'corrected' paths, i.e. without space (replaced with '-'), nor accentuated characters in them, etc.
-Note: this script might have to be run more than once so that the names of all directories and files are full fixed."
+usage="Usage: $(basename $0) TREE_ROOT: renames recursively the files and directories found from specified tree root to 'corrected' paths, i.e. without space (replaced with '-'), nor accentuated characters in them, etc.
+Note: this script might have to be run more than once so that the names of all directories and files are fully fixed."
 
 
-if [ ! $# -eq 1 ] ; then
+if [ ! $# -eq 1 ]; then
 
 	echo "  Error, exactly one parameter expected.
-  $usage
+  ${usage}
 	" 1>&2
 	exit 5
 
 fi
 
 
-correcter_script=$(dirname $0)/fix-filename.sh
+correcter_script="$(dirname $0)/fix-filename.sh"
 
-if [ ! -x "${correcter_script}" ] ; then
+if [ ! -x "${correcter_script}" ]; then
 	echo "
-
-	Error, no executable correcter script found (searched ${correcter_script}).
-
+	Error, no executable correcter script found (searched for ${correcter_script}).
 	" 1>&2
 	exit 10
 
@@ -29,15 +27,15 @@ fi
 
 tree_root="$1"
 
-if [ ! -d "${tree_root}" ] ; then
+if [ ! -d "${tree_root}" ]; then
 	echo "
   Error, no directory named <${tree_root}> exists.
-  $usage
+  ${usage}
 	" 1>&2
 	exit 15
 fi
 
-echo "  Fixing all paths in tree '$(realpath ${tree_root})'..."
+echo "Fixing all paths in tree '$(realpath ${tree_root})'..."
 
 # A problem is that renaming a base directory while iterating in it would result
 # in faulty subpaths to be searched afterwards (a solution being then to run
@@ -46,10 +44,10 @@ echo "  Fixing all paths in tree '$(realpath ${tree_root})'..."
 # Instead a "depth-first" traversal is done; it is not sufficient yet so we
 # perform multiple traversals:
 #
-find "${tree_root}" -depth -type d -exec ${correcter_script} '{}' ';'
-find "${tree_root}" -depth -type d -exec ${correcter_script} '{}' ';'
-find "${tree_root}" -depth -type d -exec ${correcter_script} '{}' ';'
+find "${tree_root}" -depth -type d -exec "${correcter_script}" '{}' ';'
+find "${tree_root}" -depth -type d -exec "${correcter_script}" '{}' ';'
+find "${tree_root}" -depth -type d -exec "${correcter_script}" '{}' ';'
 
-find "${tree_root}" -type f -exec ${correcter_script} '{}' ';'
+find "${tree_root}" -type f -exec "${correcter_script}" '{}' ';'
 
-echo "  Tree fixed."
+echo "Tree fixed."

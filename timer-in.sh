@@ -11,14 +11,14 @@ See also:
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	echo "$usage"
+	echo "${usage}"
 	exit
 fi
 
 
 if [ -z "$1" ]; then
 	echo "  Error, no target duration specified.
-$usage"
+${usage}" 1>&2
 	exit 1
 fi
 
@@ -31,11 +31,11 @@ else
 	message="$3"
 fi
 
-notify_script=$(which notify.sh 2>/dev/null)
+notify_script="$(which notify.sh 2>/dev/null)"
 
-first_audio_player=$(which playwave 2>/dev/null)
-second_audio_player=$(which wavplay 2>/dev/null)
-third_audio_player=$(which mplayer 2>/dev/null)
+first_audio_player="$(which playwave 2>/dev/null)"
+second_audio_player="$(which wavplay 2>/dev/null)"
+third_audio_player="$(which mplayer 2>/dev/null)"
 
 if [ -x "${first_audio_player}" ]; then
 	audio_player="${first_audio_player}"
@@ -71,10 +71,10 @@ bong()
 
 
 
-dinnerIsReady()
+time_has_come()
 {
 
-	${audio_player} ${time_out_sound} 1>/dev/null 2>&1
+	${audio_player} "${time_out_sound}" 1>/dev/null 2>&1
 	#echo "Dinner is ready!"
 	#echo "Time has come!"
 
@@ -98,7 +98,7 @@ fi
 
 if [ ! -f "${time_out_sound}" ]; then
 
-	echo "  Error, dinner-is-ready sound file not found (${time_out_sound})." 1>&2
+	echo "  Error, time-out sound file not found (${time_out_sound})." 1>&2
 	exit 3
 
 fi
@@ -122,7 +122,7 @@ duration_str="$1"
 if [ -z "${duration_str}" ]; then
 
 	echo "  Error, no duration specified.
-$usage" 1>&2
+${usage}" 1>&2
 	exit 10
 
 fi
@@ -172,7 +172,7 @@ case ${colon_count} in
 
 	*)
 		echo "Error, invalid duration specified: '${duration_str}'.
-$usage" 1>&2
+${usage}" 1>&2
 		exit 30
 
 esac
@@ -193,7 +193,7 @@ echo "(start at $(date '+%H:%M:%S'), for an expected stop at ${stop_time}, i.e. 
 
 sleep ${duration_secs}
 
-actual_stop_time=$(date '+%H:%M:%S')
+actual_stop_time="$(date '+%H:%M:%S')"
 
 #echo ".... time is up!"
 
@@ -206,7 +206,7 @@ while [ "${count}" -le "${bong_count}" ]; do
 done
 
 #echo ".... time is up!"
-dinnerIsReady
+time_has_come
 
 count=1
 
@@ -219,7 +219,7 @@ while [ "${count}" -le "${bong_count}" ]; do
 done
 
 # Would be too noisy:
-#dinnerIsReady
+#time_has_come
 
 # Enforce default:
 if [ -z "${title}" ]; then

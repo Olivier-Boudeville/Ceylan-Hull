@@ -1,10 +1,11 @@
 #!/bin/sh
 
+usage="$(basename $0): generates some CPU load."
 
 stop=1
 
-while [ $stop -eq 1 ] ; do
+while [ $stop -eq 1 ]; do
 
-	echo "Eating now a lot of CPU cycles"
+	echo "Eating now some CPU cycles..."
 
 done

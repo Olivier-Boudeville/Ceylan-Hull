@@ -1,5 +1,7 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0): lists the local TCP/UDP ports that are currently opened."
+
 if [ ! $(id -u) -eq 0 ]; then
 
 	echo " Error, this script must be run as root." 1>&2

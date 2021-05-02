@@ -1,7 +1,6 @@
 #!/bin/sh
 
-USAGE="Usage: "`basename $0`" [-l]:
-  Plays a beep to notify the user of an event
+usage="Usage: $(basename $0) [-l]: plays a beep to notify the user of an event
 	[-l]: prefer a low-level (system) beep
 	[-h]: this help
 "
@@ -14,14 +13,17 @@ do_default_beep()
 	echo "  Performing low-level default beep"
 
 	# Obtained with 'apt-get install beep':
-	#BEEPER="/usr/bin/beep"
-	BEEPER=$(which beep 2>/dev/null)
+	#beeper="/usr/bin/beep"
+	beeper=$(which beep 2>/dev/null)
 
-	if [ -x "$BEEPER" ] ; then
+	if [ -x "$beeper" ]; then
 
-		$BEEPER
-		$BEEPER
-		$BEEPER
+		# May trigger 'beep: Error: Could not open any device' whereas audio
+		# support is fine:
+
+		$beeper
+		$beeper
+		$beeper
 
 	else
 
@@ -39,15 +41,15 @@ do_default_beep()
 }
 
 
-if [ "$1" = "-h" ] ; then
+if [ "$1" = "-h" ]; then
 
-	echo "$USAGE"
+	echo "$usage"
 	exit 0
 
 fi
 
 
-if [ "$1" = "-l" ] ; then
+if [ "$1" = "-l" ]; then
 
 	do_default_beep
 
@@ -56,10 +58,10 @@ if [ "$1" = "-l" ] ; then
 fi
 
 
-if [ -n "$1" ] ; then
+if [ -n "$1" ]; then
 
 	echo "  Error, unexpected parameter ($*).
-$USAGE" 1>&2
+$usage" 1>&2
 	exit 1
 
 fi
@@ -71,18 +73,18 @@ PLAY_CMD=$(which play 2>/dev/null)
 ACTUAL_CMD=""
 
 
-if [ -x "${SCRIPT_CMD}" ] ; then
+if [ -x "${SCRIPT_CMD}" ]; then
 
 	ACTUAL_CMD="$SCRIPT_CMD"
 
-elif [ -x  "${PLAY_CMD}" ] ; then
+elif [ -x  "${PLAY_CMD}" ]; then
 
 	ACTUAL_CMD="${PLAY_CMD}"
 
 fi
 
 # A player has been found, needing also an audio file to be played:
-if [ -n "${ACTUAL_CMD}" ] ; then
+if [ -n "${ACTUAL_CMD}" ]; then
 
 	ACTUAL_FILE=""
 
@@ -92,18 +94,18 @@ if [ -n "${ACTUAL_CMD}" ] ; then
 
 	CAND_3="/usr/share/sounds/k3b_success1.wav"
 
-	if [ -f "${CAND_1}" ] ; then
+	if [ -f "${CAND_1}" ]; then
 		ACTUAL_FILE="${CAND_1}"
 
-	elif [ -f "${CAND_2}" ] ; then
+	elif [ -f "${CAND_2}" ]; then
 		ACTUAL_FILE="${CAND_2}"
 
-	elif [ -f "${CAND_3}" ] ; then
+	elif [ -f "${CAND_3}" ]; then
 		ACTUAL_FILE="${CAND_3}"
 
 	fi
 
-	if [ -z "$ACTUAL_FILE" ] ; then
+	if [ -z "$ACTUAL_FILE" ]; then
 
 		# No file found, reverting to basic beep:
 		do_default_beep

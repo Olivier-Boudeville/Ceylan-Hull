@@ -1,10 +1,10 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) A_GENERATED_FILE\n \
- Forces a remake of specified file"
+ Forces a remake of specified generated file (ex: .o or .beam)."
 
 
-if [ ! $# -eq 1 ] ; then
+if [ ! $# -eq 1 ]; then
 
 	printf "  Error, exactly one parameter expected.\n \
  ${usage}" 1>&2
@@ -49,7 +49,7 @@ case "${ext}" in
 esac
 
 
-if [ -f "${real_target}" ] ; then
+if [ -f "${real_target}" ]; then
 
 	srm "${real_target}" 1>/dev/null
 	#/bin/rm -f "${real_target}"

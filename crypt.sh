@@ -1,7 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] FILE1 [FILE2 ...]
-Encrypts as strongly as reasonably possible the specified file(s), and removes their unencrypted sources.
+usage="Usage: $(basename $0) [-h|--help] FILE1 [FILE2 ...]: encrypts as strongly as reasonably possible the specified file(s), and removes their unencrypted sources.
 See also the decrypt.sh counterpart script."
 
 

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+usage="$(basename $0): updates the basic Emacs modules that we use."
+
 # See also: Ceylan-Heavy/src/conf/environment/*.el
 
 echo
@@ -9,10 +11,10 @@ echo
 # We define a subdirectory, otherwise the '(setq load-path...' will be reported
 # as a problem waiting to happen:
 #
-emacs_conf_dir="$HOME/.emacs.d/my-modules"
+emacs_conf_dir="${HOME}/.emacs.d/my-modules"
 
-mkdir -p $emacs_conf_dir
-cd $emacs_conf_dir
+mkdir -p ${emacs_conf_dir}
+cd ${emacs_conf_dir}
 
 /bin/rm -f *.elc 2>/dev/null
 
@@ -23,11 +25,11 @@ update()
 	echo
 	echo "  + updating $1 from $2"
 
-	if [ -f "$1" ] ; then
+	if [ -f "$1" ]; then
 		/bin/mv -f "$1" "$1.previous"
 	fi
 
-	wget $2
+	wget "$2"
 
 }
 
