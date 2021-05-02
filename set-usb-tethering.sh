@@ -11,7 +11,7 @@ ${usage}" 1>&2
 
 fi
 
-ip=$(which ip 2>/dev/null)
+ip="$(which ip 2>/dev/null)"
 
 if [ ! -x "${ip}" ]; then
 
@@ -28,7 +28,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
-dhcpcd=$(which dhcpcd 2>/dev/null)
+dhcpcd="$(which dhcpcd 2>/dev/null)"
 
 if [ ! -x "${dhcpcd}" ]; then
 
@@ -37,7 +37,7 @@ if [ ! -x "${dhcpcd}" ]; then
 
 fi
 
-espeak=$(which espeak 2>/dev/null)
+espeak="$(which espeak 2>/dev/null)"
 
 notify()
 {
@@ -56,7 +56,7 @@ notify()
 # Extract for example 'enp0s18f2u1' from '24: enp0s18f2u1:
 # <BROADCAST,MULTICAST...'
 #
-if_name=$(${ip} addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')
+if_name="$(${ip} addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')"
 
 if [ -z "${if_name}" ]; then
 
@@ -74,7 +74,7 @@ if [ "$1" = "--stop" ]; then
 
 	echo "Disabling connection on auto-detected interface ${if_name}..."
 
-	${ip} link set dev ${if_name} down && echo "...done"
+	${ip} link set dev "${if_name}" down && echo "...done"
 
 	exit 0
 
@@ -83,7 +83,7 @@ fi
 if [ -n "$1" ]; then
 
 	echo "  Error, parameter '$1' not supported.
-$usage" 1>&2
+${usage}" 1>&2
 	exit 25
 
 fi
@@ -98,18 +98,18 @@ connect()
 {
 
 	# Ensures that the daemon is not already runnning:
-	${dhcpcd} -k ${if_name} 1>/dev/null 2>&1
+	${dhcpcd} -k "${if_name}" 1>/dev/null 2>&1
 
 	# Any past default route could still apply and remain the first, so:
 	${ip} route del default 2>/dev/null
 
-	${dhcpcd} ${if_name} 1>/dev/null
+	${dhcpcd} "${if_name}" 1>/dev/null
 
 	if [ $? -eq 0 ]; then
 
 		# Fix routes (only gateway needed, not full network):
-		${ip} route del 192.168.0.0/24 dev ${if_name}
-		${ip} route add 192.168.0.1 dev ${if_name}
+		${ip} route del 192.168.0.0/24 dev "${if_name}"
+		${ip} route add 192.168.0.1 dev "${if_name}"
 
 		if test_link; then
 
@@ -163,6 +163,7 @@ test_link()
 	# Both IP and DNS tested (otherwise: just ping 8.8.8.8)
 	ping -c 1 google.com 1>/dev/null 2>&1
 	return $?
+
 }
 
 connect
