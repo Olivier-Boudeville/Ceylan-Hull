@@ -50,7 +50,7 @@ IF_NAME=$($IP addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\:
 
 if [ -z "${IF_NAME}" ] ; then
 
-	echo " Error, no relevant network interface found (is USB tethering activated?)." 1>&2
+	echo " Error, no relevant network interface found (is USB tethering activated on the phone, typically in Settings -> Network and Internet -> Access point and connection sharing?)." 1>&2
 	#ip addr 1>&2
 	exit 18
 
