@@ -46,8 +46,8 @@ done
 
 if [ ! $# -eq 0 ]; then
 
-	echo "  Error, unexpected argument(s): '$*'." 1>&2
-	echo "${usage}" 1>&2
+	echo "  Error, unexpected argument(s): '$*'.
+${usage}" 1>&2
 	exit 4
 
 fi
@@ -100,7 +100,7 @@ if [ $do_fetch -eq 0 ]; then
 
 	fi
 
-	scp=$(which scp)
+	scp="$(which scp)"
 
 	# SCP option:
 	if [ -n "${SSH_PORT}" ]; then
@@ -111,10 +111,10 @@ if [ $do_fetch -eq 0 ]; then
 
 	cd "${review_dir}"
 
-	yesterday=$(date -d '-1 day' '+%Y%m%d')
-	day_minus_two=$(date -d '-2 day' '+%Y%m%d')
-	day_minus_three=$(date -d '-3 day' '+%Y%m%d')
-	day_minus_four=$(date -d '-4 day' '+%Y%m%d')
+	yesterday="$(date -d '-1 day' '+%Y%m%d')"
+	day_minus_two="$(date -d '-2 day' '+%Y%m%d')"
+	day_minus_three="$(date -d '-3 day' '+%Y%m%d')"
+	day_minus_four="$(date -d '-4 day' '+%Y%m%d')"
 
 	echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the three days before (i.e. ${day_minus_two}, ${day_minus_three} and ${day_minus_four}):"
 
@@ -133,10 +133,10 @@ if [ $do_fetch -eq 0 ]; then
 
 	message="CCTV recordings have been fetched, hit Enter to review them."
 
-	echo ${message}
+	echo "${message}"
 
 	# As the fetch might have been long, notification useful:
-	say.sh ${message}
+	say.sh "${message}"
 
 	read answer
 
@@ -151,14 +151,14 @@ fi
 echo "Use '}' to fast forward."
 
 
-recordings=$(/bin/ls *.mkv 2>/dev/null)
+recordings="$(/bin/ls *.mkv 2>/dev/null)"
 
 count=$(echo ${recordings} | wc -w)
 
 
 echo "${count} recordings found."
 
-for f in ${recordings} ; do
+for f in ${recordings}; do
 
 	done=1
 
@@ -185,7 +185,7 @@ for f in ${recordings} ; do
 					echo "Select action: [D: Delete, R: Replay, M: Move, L: Leave as it is, S: Stop the review]"
 					read answer
 
-					if [ "$answer" = "d" ] || [ "$answer" = "D" ]; then
+					if [ "${answer}" = "d" ] || [ "${answer}" = "D" ]; then
 
 						/bin/rm -f "$f"
 						echo "  ('$f' deleted)"
@@ -193,7 +193,7 @@ for f in ${recordings} ; do
 
 					fi
 
-					if [ "$answer" = "r" ] || [ "$answer" = "R" ]; then
+					if [ "${answer}" = "r" ] || [ "${answer}" = "R" ]; then
 
 						echo "  (replaying '$f')"
 						understood=0
@@ -201,7 +201,7 @@ for f in ${recordings} ; do
 
 					fi
 
-					if [ "$answer" = "m" ] || [ "$answer" = "M" ]; then
+					if [ "${answer}" = "m" ] || [ "${answer}" = "M" ]; then
 
 						echo "  Enter a prefix to apply to this file to be moved:"
 						read prefix
@@ -214,13 +214,13 @@ for f in ${recordings} ; do
 
 					fi
 
-					if [ "$answer" = "l" ] || [ "$answer" = "L" ]; then
+					if [ "${answer}" = "l" ] || [ "${answer}" = "L" ]; then
 
 						understood=0
 
 					fi
 
-					if [ "$answer" = "s" ] || [ "$answer" = "S" ]; then
+					if [ "${answer}" = "s" ] || [ "${answer}" = "S" ]; then
 
 						echo "  (review requested to stop)"
 						#(understood=0)
@@ -257,7 +257,7 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 	read answer
 
-	if [ ! "$answer" = "n" ]; then
+	if [ ! "${answer}" = "n" ]; then
 
 		#echo "Deleting as a whole local ${recordings}"
 		echo "Deleting as a whole these local recordings."
@@ -279,7 +279,7 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 	read answer
 
-	if [ ! "$answer" = "n" ]; then
+	if [ ! "${answer}" = "n" ]; then
 
 		#echo "Deleting as a whole remote ${recordings}"
 		echo "Deleting as a whole these remote recordings."
@@ -320,7 +320,7 @@ if [ $do_fetch -eq 0 ] && [ ${auto_play} -eq 1 ] && [ -n "${recordings}" ]; then
 
 	read answer
 
-	if [ "$answer" = "y" ]; then
+	if [ "${answer}" = "y" ]; then
 
 		echo "Deleting remote recordings."
 
