@@ -92,16 +92,16 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 
 
 # Full path of the programs we need, change them to your needs:
-iptables=/sbin/iptables
-modprobe=/sbin/modprobe
-echo=/bin/echo
-lsmod=/sbin/lsmod
-rmmod=/sbin/rmmod
+iptables="/sbin/iptables"
+modprobe="/sbin/modprobe"
+echo="/bin/echo"
+lsmod="/sbin/lsmod"
+rmmod="/sbin/rmmod"
 
 
 if [ ! $(id -u) -eq 0 ]; then
 
-	$echo "  Error, firewall rules can only be applied by root." 1>&2
+	${echo} "  Error, firewall rules can only be applied by root." 1>&2
 
 	exit 10
 
@@ -111,8 +111,8 @@ fi
 # Not used anymore by distros like Arch:
 #init_file="/lib/lsb/init-functions"
 
-#if [ -f "$init_file" ]; then
-#	. "$init_file"
+#if [ -f "${init_file}" ]; then
+#	. "${init_file}"
 #fi
 
 
@@ -136,7 +136,7 @@ setting_file="/etc/iptables.settings-LANBox.sh"
 
 if [ ! -f "${setting_file}" ]; then
 
-	$echo " Error, setting file ('${setting_file}) not found." 1>&2
+	${echo} " Error, setting file ('${setting_file}) not found." 1>&2
 
 	exit 15
 
@@ -151,7 +151,7 @@ fi
 
 if [ -z "${log_file}" ]; then
 
-	$echo " Error, log_file not defined." 1>&2
+	${echo} " Error, log_file not defined." 1>&2
 
 	exit 16
 
@@ -166,49 +166,49 @@ fi
 
 
 # From now on, log-related echos can be done in the log file:
-$echo > "${log_file}"
+${echo} > "${log_file}"
 
 
 if [ -z "${lan_if}" ]; then
 
-	$echo "No LAN interface set, trying to auto-detect it." >> "${log_file}"
+	${echo} "No LAN interface set, trying to auto-detect it." >> "${log_file}"
 
-	detected_if=$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')
+	detected_if="$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')"
 
-	if [ -z "$detected_if" ]; then
+	if [ -z "${detected_if}" ]; then
 
-		$echo "  No LAN interface found!" 1>&2
+		${echo} "  No LAN interface found!" 1>&2
 		exit 25
 
 	fi
 
-	printf "* detected network interfaces: \n$detected_if" >> "${log_file}"
-	$echo
+	printf "* detected network interfaces: \n${detected_if}" >> "${log_file}"
+	${echo}
 
 	# By default we select the first interface found:
-	lan_if=$($echo $detected_if | sed 's| .*$||1')
+	lan_if="$(${echo} ${detected_if} | sed 's| .*$||1')"
 
-	$echo >> "${log_file}"
-	$echo >> "${log_file}"
-	$echo "* selected LAN interface: $lan_if" >> "${log_file}"
+	${echo} >> "${log_file}"
+	${echo} >> "${log_file}"
+	${echo} "* selected LAN interface: ${lan_if}" >> "${log_file}"
 
-	if [ -z "$lan_if" ]; then
+	if [ -z "${lan_if}" ]; then
 
-		$echo "  No LAN interface selected!" 1>&2
+		${echo} "  No LAN interface selected!" 1>&2
 		exit 30
 
 	fi
 
 else
 
-	$echo "Using specified LAN interface ${lan_if}." >> "${log_file}"
+	${echo} "Using specified LAN interface ${lan_if}." >> "${log_file}"
 
 fi
 
 
 if [ -z "${ssh_port}" ]; then
 
-	$echo " Error, ssh_port not defined." 1>&2
+	${echo} " Error, ssh_port not defined." 1>&2
 
 	exit 22
 
@@ -223,20 +223,20 @@ fi
 start_it_up()
 {
 
-	$echo "Setting LAN box firewall rules, version $version."
+	${echo} "Setting LAN box firewall rules, version $version."
 
-	$echo >> "${log_file}"
-	$echo "# ---- Setting LAN firewall rules, version $version, on $(date)." >> "${log_file}"
-	$echo >> "${log_file}"
+	${echo} >> "${log_file}"
+	${echo} "# ---- Setting LAN firewall rules, version $version, on $(date)." >> "${log_file}"
+	${echo} >> "${log_file}"
 
 
-	$echo "Interface: LAN is ${lan_if}." >> "${log_file}"
-	$echo "Services: EPMD is '${allow_epmd}' (port: ${epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
+	${echo} "Interface: LAN is ${lan_if}." >> "${log_file}"
+	${echo} "Services: EPMD is '${allow_epmd}' (port: ${epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
-	#if $lsmod  2>/dev/null | grep -q ipchains ; then
+	#if $lsmod  2>/dev/null | grep -q ipchains; then
 	#	$rmmod ipchains
 	#fi
 
@@ -289,11 +289,11 @@ start_it_up()
 
 	# Enable response to ping in the kernel, but we will only answer if the rule
 	# at the bottom of the file let us:
-	$echo "0" > /proc/sys/net/ipv4/icmp_echo_ignore_all
+	${echo} "0" > /proc/sys/net/ipv4/icmp_echo_ignore_all
 
 	# Disable response to broadcasts.
 	# You do not want yourself becoming a Smurf amplifier:
-	$echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+	${echo} "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 
 	# Do not accept source routed packets.
 	#
@@ -301,14 +301,14 @@ start_it_up()
 	# inside your network, but which is routed back along the path from which it
 	# came, namely outside, so attackers can compromise your network. Source
 	# routing is rarely used for legitimate purposes:
-	$echo "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
+	${echo} "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
 
 	# Disable ICMP redirect acceptance. ICMP redirects can be used to alter your
 	# routing tables, possibly to a bad end:
-	$echo "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
+	${echo} "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
 
 	# Enable bad error message protection:
-	$echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+	${echo} "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
 
 	# Turn on reverse path filtering. This helps make sure that packets use
 	# legitimate source addresses, by automatically rejecting incoming packets
@@ -323,17 +323,17 @@ start_it_up()
 	#
 	# Note: if you turn on IP forwarding, you will also get this:
 	for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do
-		$echo "1" > ${interface}
+		${echo} "1" > ${interface}
 	done
 
 	# Log spoofed packets, source routed packets, redirect packets:
-	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
+	${echo} "1" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Make sure that IP forwarding is turned off.
 	#
 	# We only want this for a multi-homed host.
 	# Remember: this is for a LAN box (mere client)
-	$echo "0" > /proc/sys/net/ipv4/ip_forward
+	${echo} "0" > /proc/sys/net/ipv4/ip_forward
 
 
 	## ============================================================
@@ -348,7 +348,7 @@ start_it_up()
 
 		if [ -f "${ban_file}" ]; then
 
-			$echo " - adding ban rules from '${ban_file}'" >> "${log_file}"
+			${echo} " - adding ban rules from '${ban_file}'" >> "${log_file}"
 
 			# May add useless FORWARD rules as well (expected to be harmless):
 			. "${ban_file}"
@@ -357,7 +357,7 @@ start_it_up()
 
 			if [ ! $res -eq 0 ]; then
 
-				$echo "  Error, the addition of ban rules failed." 1>&2
+				${echo} "  Error, the addition of ban rules failed." 1>&2
 
 				exit 60
 
@@ -365,7 +365,7 @@ start_it_up()
 
 		else
 
-			$echo "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
+			${echo} "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
 
 			exit 61
 
@@ -394,7 +394,7 @@ start_it_up()
 
 	if [ "$allow_dlna" = "true" ]; then
 
-		$echo " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}" >> "${log_file}"
+		${echo} " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}" >> "${log_file}"
 
 		# No restriction onto source IP except local network:
 		${iptables} -A INPUT -p tcp -m tcp -s 10.0.0.0/16 --dport ${trivnet1_tcp_port} -j ACCEPT
@@ -410,7 +410,7 @@ start_it_up()
 
 	if [ "$allow_rtsp" = "true" ]; then
 
-		$echo " - enabling RTSP/RTP service at UDP port ${live555_udp_port}" >> "${log_file}"
+		${echo} " - enabling RTSP/RTP service at UDP port ${live555_udp_port}" >> "${log_file}"
 
 		# Thought that was needed, but apparently not:
 		#${iptables} -A INPUT -p udp -m udp -s ${rtsp_server} -j ACCEPT
@@ -437,7 +437,7 @@ start_it_up()
 
 	if [ "${allow_epmd}" = "true" ]; then
 
-		$echo " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
+		${echo} " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
@@ -445,7 +445,7 @@ start_it_up()
 
 	if [ "$enable_unfiltered_tcp_range" = "true" ]; then
 
-		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
+		${echo} " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
@@ -534,9 +534,9 @@ start_it_up()
 	#
 	${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
-	$echo "Set rules are:" >> "${log_file}"
+	${echo} "Set rules are:" >> "${log_file}"
 	${iptables} -nvL --line-numbers >> "${log_file}"
-	$echo "# ---- End of LAN rules, on $(date)." >> "${log_file}"
+	${echo} "# ---- End of LAN rules, on $(date)." >> "${log_file}"
 
 }
 
@@ -549,7 +549,7 @@ shut_it_down()
 	# whose connection will be lost after this call, preventing from restarting
 	# the service again...
 
-	$echo "Disabling LAN box firewall rules, version $version."
+	${echo} "Disabling LAN box firewall rules, version ${version}."
 
 	# Load appropriate modules:
 	${modprobe} ip_tables 2>/dev/null
@@ -580,13 +580,13 @@ case "$1" in
 	;;
 
   reload|force-reload)
-	$echo "(reloading)"
+	${echo} "(reloading)"
 	shut_it_down
 	start_it_up
 	;;
 
   restart)
-	$echo "(restarting)"
+	${echo} "(restarting)"
 	# Note: at least in general, using the 'restart' option will not break a
 	# remote SSH connection issuing that command.
 	#
@@ -595,12 +595,12 @@ case "$1" in
 	;;
 
   status)
-	$echo "(status)"
+	${echo} "(status)"
 	${iptables} -L
 	;;
 
   disable)
-	$echo "Disabling all rules (hence disabling the firewall)"
+	${echo} "Disabling all rules (hence disabling the firewall)"
 	${iptables} -F INPUT
 	${iptables} -P INPUT ACCEPT
 
@@ -612,16 +612,16 @@ case "$1" in
 	;;
 
   *)
-	$echo >&2
-	$echo " Error, no appropriate action specified." >&2
+	${echo} >&2
+	${echo} " Error, no appropriate action specified." >&2
 
-	if [ -z "$NAME" ]; then
+	if [ -z "${NAME}" ]; then
 		# Launched from the command-line:
-		$echo "${usage}" >&2
+		${echo} "${usage}" >&2
 
 	else
 
-		$echo "Usage: /etc/init.d/$NAME ${script_opts}" >&2
+		${echo} "${usage}" >&2
 
 	fi
 
@@ -631,8 +631,8 @@ case "$1" in
 
 esac
 
-$echo
-$echo "The content of log file ('${log_file}') follows:"
+${echo}
+${echo} "The content of log file ('${log_file}') follows:"
 /bin/cat "${log_file}"
 
 exit 0
