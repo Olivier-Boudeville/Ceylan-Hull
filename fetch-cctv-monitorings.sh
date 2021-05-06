@@ -1,6 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-q|--quiet]: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
+review_dir="$[HOME}/cctv-recordings-to-review"
+
+usage="Usage: $(basename $0) [-q|--quiet]: fetches locally, in '${review_dir}' (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
 Crontab example:
   # Each day at 2:35 AM:
   35 2 * * * /usr/local/hull/fetch-cctv-monitorings.sh --quiet
@@ -26,8 +28,6 @@ if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
 
 fi
 
-
-review_dir="${HOME}/cctv-recordings-to-review"
 
 # Typically defined in ~/.bashrc.contextual:
 
@@ -59,7 +59,7 @@ if [ -z "${CCTV_USER}" ]; then
 
 fi
 
-scp=$(which scp)
+scp="$(which scp)"
 
 # SCP option:
 if [ -n "${SSH_PORT}" ]; then
@@ -70,10 +70,11 @@ mkdir -p "${review_dir}"
 
 cd "${review_dir}"
 
-yesterday=$(date -d '-1 day' '+%Y%m%d')
-day_minus_two=$(date -d '-2 day' '+%Y%m%d')
-day_minus_three=$(date -d '-3 day' '+%Y%m%d')
-day_minus_four=$(date -d '-4 day' '+%Y%m%d')
+yesterday="(date -d '-1 day' '+%Y%m%d')"
+day_minus_two="$(date -d '-2 day' '+%Y%m%d')"
+day_minus_three="$(date -d '-3 day' '+%Y%m%d')"
+day_minus_four="$(date -d '-4 day' '+%Y%m%d')"
+
 
 if [ $is_quiet -eq 1 ]; then
 
