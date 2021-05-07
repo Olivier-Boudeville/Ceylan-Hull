@@ -1,6 +1,6 @@
 #!/bin/sh
 
-review_dir="$[HOME}/cctv-recordings-to-review"
+review_dir="${HOME}/cctv-recordings-to-review"
 
 usage="Usage: $(basename $0) [-q|--quiet]: fetches locally, in '${review_dir}' (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
 Crontab example:
@@ -25,6 +25,17 @@ if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
 
 	# Ahah: echo "Quiet mode activated."
 	is_quiet=0
+
+	shift
+
+fi
+
+
+if [ ! $# -eq 0 ]; then
+
+	echo "  Error, unexpected argument(s): '$*'.
+${usage}" 1>&2
+	exit 4
 
 fi
 
@@ -70,7 +81,7 @@ mkdir -p "${review_dir}"
 
 cd "${review_dir}"
 
-yesterday="(date -d '-1 day' '+%Y%m%d')"
+yesterday="$(date -d '-1 day' '+%Y%m%d')"
 day_minus_two="$(date -d '-2 day' '+%Y%m%d')"
 day_minus_three="$(date -d '-3 day' '+%Y%m%d')"
 day_minus_four="$(date -d '-4 day' '+%Y%m%d')"
