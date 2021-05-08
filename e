@@ -760,17 +760,28 @@ if [ $do_find -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
 	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
-	#echo "target_file = $target_file"
+	#echo "target_file = ${target_file}"
 
-	target_path=$(find . -name $target_file)
+	target_path=$(find . -name "${target_file}")
 
 	if [ -z "${target_path}" ]; then
 
-		echo "  (file '$target_file' not found, nothing done)"
+		echo "  (file '${target_file}' not found, nothing done)"
 
 	else
 
-		echo "  (file '$target_file' found as '$target_path')"
+		# Detect if more than one path was found:
+		found_count="$(echo ${target_path} | wc -w)"
+
+		if [ ! "${found_count}" = 1 ]; then
+
+			echo "  Error, expecting to find a single entry named '${target_file}', yet found: '${target_path}'." 1>&2
+
+			exit 65
+
+		fi
+
+		echo "  (file '${target_file}' found as '${target_path}')"
 
 	fi
 
@@ -783,17 +794,17 @@ if [ $do_locate -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
 	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
-	#echo "target_file = $target_file"
+	#echo "target_file = ${target_file}"
 
 	target_path=$(/bin/locate --limit 1 --existing ${target_file})
 
 	if [ -z "${target_path}" ]; then
 
-		echo "  (file '$target_file' not found, nothing done)"
+		echo "  (file '${target_file}' not found, nothing done)"
 
 	else
 
-		echo "  (file '$target_file' found as '$target_path')"
+		echo "  (file '${target_file}' found as '${target_path}')"
 
 	fi
 
