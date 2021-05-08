@@ -76,6 +76,10 @@ if [ $(id -u) -eq 0 ]; then
 
 			fi
 
+		else
+
+			/bin/rm -f "${lock_file}"
+
 		fi
 
 	fi
@@ -125,7 +129,6 @@ if [ $(id -u) -eq 0 ]; then
 			;;
 
 	esac
-
 
 	res=$?
 
