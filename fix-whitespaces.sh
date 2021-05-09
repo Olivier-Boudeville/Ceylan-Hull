@@ -10,13 +10,12 @@ target_file="$1"
 
 if [ ! $# -eq 1 ]; then
 
-	echo "  Error, exactly one parameter needed." 1>&2
-	echo "${usage}" 1>&2
+	echo "  Error, exactly one parameter needed.
+${usage}" 1>&2
 
 	exit 5
 
 fi
-
 
 
 if [ ! -f "${target_file}" ]; then
@@ -25,6 +24,8 @@ if [ ! -f "${target_file}" ]; then
 	exit 10
 
 fi
+
+#echo "Fixing '${target_file}'..."
 
 
 emacs="$(which emacs 2>/dev/null)"
@@ -36,7 +37,11 @@ if [ ! -x "${emacs}" ]; then
 
 fi
 
-${emacs} "${target_file}" --batch --eval="(whitespace-cleanup)" -f save-buffer 1>/dev/null # 2>&1
+
+# Error output silenced to avoid for example "Ignoring unknown mode
+# ‘erlang-mode’":
+#
+${emacs} "${target_file}" --batch --eval="(whitespace-cleanup)" -f save-buffer 1>/dev/null 2>&1
 
 if [ ! $? -eq 0 ]; then
 
