@@ -35,8 +35,8 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Sunday, April 25, 2021
-:Version: 1.0.8
+:Lastly updated: Sunday, May 9, 2021
+:Version: 1.0.9
 :Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
 :Abstract:
 
@@ -143,6 +143,8 @@ To fix names, paths, permissions, content
 - `fix-unbreakable-spaces-in-source-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces-in-source-tree.sh>`_: removes any unbreakable space in specified tree
 
 - `fix-whitespaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh>`_: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as text editor
+
+- `fix-whitespaces-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces-in-tree.sh>`_: fixes whitespace problems in all elligible files found from specified root directory tree; useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others
 
 - `rename-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh>`_ (just an example of pattern substitution in filenames)
 
