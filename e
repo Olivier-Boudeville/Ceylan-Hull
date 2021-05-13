@@ -762,6 +762,34 @@ if [ $do_find -eq 0 ]; then
 	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
 	#echo "target_file = ${target_file}"
 
+	if echo "${target_file}" | grep / 1>/dev/null 2>&1; then
+
+		# Otherwise: "find: warning: ‘-name’ matches against basenames only, but
+		# the given pattern contains a directory separator (‘/’), thus the
+		# expression will evaluate to false all the time.  Did you mean
+		# ‘-wholename’?
+		#
+		#echo " Error, the deduced target file to be found is '${target_file}', whereas no directory separator is allowed here." 1>&2
+
+		#exit 80
+
+		new_target_file=$(basename ${target_file})
+
+		if [ "${new_target_file}" = "${target_file}" ]; then
+
+			echo " Error, unable to determine the file to lookup from deduced target file '${target_file}', which contains a directory separator." 1>&2
+			exit 85
+
+		else
+
+			#echo "The deduced target file to be found, '${target_file}', contains a directory separator. Looking up '${new_target_file}'."
+
+			target_file="${new_target_file}"
+
+		fi
+
+	fi
+
 	target_path=$(find . -name "${target_file}")
 
 	if [ -z "${target_path}" ]; then
