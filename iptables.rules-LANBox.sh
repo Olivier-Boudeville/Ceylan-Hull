@@ -125,7 +125,7 @@ fi
 #
 # 'c' is for client (log prefix must be shorter than 29 characters):
 #
-version="c-12"
+version="c-13"
 
 
 # Now the settings are not embedded anymore in this script, but in the next
@@ -136,7 +136,7 @@ setting_file="/etc/iptables.settings-LANBox.sh"
 
 if [ ! -f "${setting_file}" ]; then
 
-	${echo} " Error, setting file ('${setting_file}) not found." 1>&2
+	${echo} " Error, setting file ('${setting_file}') not found." 1>&2
 
 	exit 15
 
@@ -491,10 +491,14 @@ start_it_up()
 	# This rules allow to prevent brute-force SSH attacks by limiting the
 	# frequency of attempts coming from the LAN if compromised:
 
-	# Logs too frequent attempts tagged with 'SSH' and drops them:
+	# Logs too frequent attempts tagged with 'SSH' and drops them if requested:
 	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
-	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+	if [ "${limit_ssh_connection_rate}" = "true" ]; then
+
+		${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+
+	fi
 
 	# Tags too frequent SSH attempts with the name 'SSH':
 	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --set --name SSH
