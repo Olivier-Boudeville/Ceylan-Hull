@@ -1,6 +1,7 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorizing Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards), knowing that adb pull does not support that.\nEx: $(basename $0) /sdcard/DCIM/Camera/IMG_20200530*.jpg"
+usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorizing ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that 'adb pull' does not support that.
+Ex: $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg"
 
 
 # To find content (ex: snapshots) in mobile phone:
@@ -14,7 +15,7 @@ usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the 
 #
 # See also our fix-snapshots.sh script.
 
-adb_exec=$(which adb 2>/dev/null)
+adb_exec="$(which adb 2>/dev/null)"
 
 
 if [ ! -x "${adb_exec}" ]; then
@@ -26,7 +27,7 @@ fi
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	echo "$usage"
+	echo "${usage}"
 	exit
 fi
 
@@ -35,7 +36,8 @@ args="$*"
 
 if [ -z "${args}" ]; then
 
-	echo -e "  Error, no argument specified.\n ${usage}" 1>&2
+	echo "  Error, no argument specified.
+${usage}" 1>&2
 	exit 15
 
 fi
