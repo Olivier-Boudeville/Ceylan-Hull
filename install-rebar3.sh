@@ -121,6 +121,6 @@ fi
 
 ln -sf --no-target-directory ${dir_name} rebar3
 
-echo " Installation success, please ensure that the '${software_dir}/rebar3' directory is in your PATH for good; installed version: $(./rebar3/rebar3 -v)."
+echo " Installation success; please ensure that the '${software_dir}/rebar3' directory is in your PATH for good; installed version: $(./rebar3/rebar3 -v)."
 
 exit 0
