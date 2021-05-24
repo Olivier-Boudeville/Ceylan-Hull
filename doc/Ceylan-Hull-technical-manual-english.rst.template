@@ -2,7 +2,7 @@
 .. _Top:
 
 
-.. title:: Welcome to the Ceylan-Hull 1.0 documentation
+.. title:: Welcome to the Ceylan-Hull documentation
 
 .. comment stylesheet specified through GNUmakefile
 
@@ -16,7 +16,7 @@
 
 :raw-html:`<a name="hull_top"></a>`
 
-:raw-html:`<div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div>`
+:raw-html:`<div class="banner"><p><em>Hull documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_toc">go to toc</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull]%20Remark">email us</a></p></div>`
 
 
 
@@ -35,9 +35,10 @@
 :Organisation: Copyright (C) 2008-2021 Olivier Boudeville
 :Contact: about (dash) hull (at) esperide (dot) com
 :Creation date: Sunday, August 17, 2008
-:Lastly updated: Sunday, May 9, 2021
-:Version: 1.0.9
-:Dedication: Users and maintainers of ``Ceylan-Hull``, version 1.0.
+:Lastly updated: GENERATION_DATE
+:Version: PROJECT_VERSION
+:Status: Stable
+:Dedication: Users and maintainers of ``Ceylan-Hull``.
 :Abstract:
 
 	The role of ``Hull`` is to concentrate various, generic-purpose convenience shell scripts, on behalf of the `Ceylan <https://github.com/Olivier-Boudeville/Ceylan>`_ project.
@@ -82,12 +83,11 @@ Most of them are certainly not rocket science.
 
 :raw-latex:`\pagebreak`
 
-
+:raw-html:`<a name="hull_toc"></a>`
 
 .. _`table of contents`:
 
-
-.. contents:: Table of Contents
+.. contents:: **Table of Contents**
   :depth: 5
 
 
