@@ -69,12 +69,12 @@ In each category, scripts are roughly sorted by decreasing interest/update statu
 
 As much as possible, we try to name these scripts functionally rather than in terms of tools, so that the implementation they rely upon can be updated as transparently as possible (i.e. with as little change as possible in the user's habits).
 
-Each script entry is a link pointing directly to the script itself.
+Each script entry is a link pointing directly to the script itself. They may be directly read from the `Hull repository <https://github.com/Olivier-Boudeville/Ceylan-Hull>`_.
 
 Most of them are certainly not rocket science.
 
 
-.. Note:: Many of these scripts may be a bit outdated, as only a small subset of them are routinely used; rely on them with caution!
+.. Note:: Some of these scripts may be a bit outdated, as only a small subset of them are routinely used; rely on them with caution!
 
 		  And tell us if you would like some of them to be updated.
 
