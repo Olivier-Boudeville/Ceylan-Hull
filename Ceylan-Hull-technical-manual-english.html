@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
-<title>Welcome to the Ceylan-Hull 1.0 documentation</title>
+<title>Welcome to the Ceylan-Hull documentation</title>
 <meta content="Hull, shell, scripts, sh, bash" name="keywords" />
 <link rel="stylesheet" href="pygments-default.css" type="text/css" />
 <link rel="stylesheet" href="hull.css" type="text/css" />
@@ -16,7 +16,7 @@
 
 
 <span class="target" id="top"></span><p><span class="raw-html"><a name="hull_top"></a></span></p>
-<p><span class="raw-html"><div class="banner"><p><em>Hull 1.0 documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull%201.0]%20Remark">email us</a></p></div></span></p>
+<p><span class="raw-html"><div class="banner"><p><em>Hull documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_toc">go to toc</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull]%20Remark">email us</a></p></div></span></p>
 <p><span class="raw-html"><center><img src="hull-title.png" width="20%"></img></center></span>
 </p>
 <div class="section" id="a-collection-of-all-kinds-of-shell-scripts">
@@ -31,11 +31,13 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Sunday, April 25, 2021</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Monday, May 24, 2021</td>
 </tr>
-<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.8</td>
+<tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
-<tr class="field"><th class="field-name">Dedication:</th><td class="field-body">Users and maintainers of <tt class="docutils literal"><span class="pre">Ceylan-Hull</span></tt>, version 1.0.</td>
+<tr class="field"><th class="field-name">Status:</th><td class="field-body">Stable</td>
+</tr>
+<tr class="field"><th class="field-name">Dedication:</th><td class="field-body">Users and maintainers of <tt class="docutils literal"><span class="pre">Ceylan-Hull</span></tt>.</td>
 </tr>
 <tr class="field"><th class="field-name">Abstract:</th><td class="field-body">The role of <tt class="docutils literal">Hull</tt> is to concentrate various, generic-purpose convenience shell scripts, on behalf of the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan">Ceylan</a> project.</td>
 </tr>
@@ -58,8 +60,9 @@
 <p class="last">And tell us if you would like some of them to be updated.</p>
 </div>
 <p></p>
+<p><span class="raw-html"><a name="hull_toc"></a></span></p>
 <div class="contents topic" id="id1">
-<span id="table-of-contents"></span><p class="topic-title">Table of Contents</p>
+<span id="table-of-contents"></span><p class="topic-title"><strong>Table of Contents</strong></p>
 <ul class="simple">
 <li><a class="reference internal" href="#a-collection-of-all-kinds-of-shell-scripts" id="id11"><em>A collection of all kinds of shell scripts</em></a><ul>
 <li><a class="reference internal" href="#overview" id="id12">Overview</a></li>
@@ -155,6 +158,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces.sh">fix-unbreakable-spaces.sh</a>: removes any unbreakable space in specified file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces-in-source-tree.sh">fix-unbreakable-spaces-in-source-tree.sh</a>: removes any unbreakable space in specified tree</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh">fix-whitespaces.sh</a>: fixes whitespace problems into specified file; useful to properly format files that shall committed when not using Emacs as text editor</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces-in-tree.sh">fix-whitespaces-in-tree.sh</a>: fixes whitespace problems in all elligible files found from specified root directory tree; useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh">rename-files-in-tree.sh</a> (just an example of pattern substitution in filenames)</li>
 </ul>
 </div>
@@ -284,7 +288,7 @@
 <div class="section" id="for-snapshots-camera-pictures">
 <h4><a class="toc-backref" href="#id31">For Snapshots (Camera Pictures)</a></h4>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh">rename-snapshot.sh</a>: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh">rename-snapshot.sh</a>: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension; new assigned names are typically '20160703-foo-bar.jpeg'; if no filename is specified, operates on all files of the current directory</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh">rename-snapshots.sh</a>: renames <em>all</em> snapshots found from current directory, so that they respect better naming conventions</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-snapshot-metadata.sh">remove-snapshot-metadata.sh</a>: removes any metadata (typically EXIF) stored in the specified snapshot(s)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-image.sh">generate-lighter-image.sh</a>: generates a lighter (smaller and of decreased quality) version of the specified image</li>
@@ -305,6 +309,7 @@
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh">check-rst-includes.sh</a>: checks that all RST files found from current directory are included once and only once in the sources found</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh">convert-rst-to-mediawiki.sh</a>: converts specified RST source file in a mediawiki counterpart file</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mediawiki-to-gitlab-markdown.sh">convert-mediawiki-to-gitlab-markdown.sh</a>: converts specified Mediawiki source file in a GitLab Markdown counterpart file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh">generate-mermaid-diagram.sh</a>: generates a PNG file corresponding to the specified file describing a Mermaid diagram</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh">generate-pdf-from-latex.sh</a>: generates a PDF file from a LaTeX one, and displays it</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh">regenerate-rst-files.sh</a>: updates generated files from more recent docutils files</li>

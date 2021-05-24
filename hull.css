@@ -42,6 +42,12 @@ div.centered {
 }
 
 
+div.contents {
+	border: solid;
+	border-width: thin;
+}
+
+
 body {
   color: #000000;
   background: #FFFFFF;
@@ -424,7 +430,7 @@ td a {
 
 
 a:link {
-  color:#400033;
+  color:#200023;
   background: transparent;
   font-weight: bold;
   text-decoration: none;
@@ -433,7 +439,7 @@ a:link {
 
 
 a:visited {
-  color: #503022;
+  color: #402022;
   background: transparent;
   font-weight: bold;
   text-decoration: none;
@@ -488,7 +494,7 @@ div.banner {
 
 div.banner p {
   color: #00FF00;
-  background: #002500;
+  background: #002000;
   margin-left: 0em;
   padding:  0em;
   font-family: Arial, sans-serif;
