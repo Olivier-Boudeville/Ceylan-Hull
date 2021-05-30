@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Preferring not a blind transformation on any binary file (ex: beam, o,
+# Preferring not a blind transformation on any binary file (ex: .beam, .o, .so,
 # executables, etc.).
 
 target_extensions="txt markdown md asciidoc spec erl hrl escript app edoc rst src config js json mk"
@@ -8,9 +8,10 @@ target_extensions="txt markdown md asciidoc spec erl hrl escript app edoc rst sr
 target_filenames="Makefile rebar.config .gitignore LICENSE"
 
 
-usage="Usage: $(basename $0) A_DIRECTORY: fixes whitespace problems in all elligible files found from specified root directory tree.
-Useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others.
-Target extension are '${target_extensions}', target filenames are '${target_filenames}'.
+usage="Usage: $(basename $0) A_DIRECTORY: fixes whitespace problems in all eligible files found from specified root directory tree.
+Useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the meaningful others.
+Target extensions are: '${target_extensions}'.
+Target filenames are: '${target_filenames}'.
 "
 
 target_dir="$1"
