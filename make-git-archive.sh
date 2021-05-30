@@ -32,6 +32,9 @@ if [ ! -d "${project_dir}" ]; then
 
 fi
 
+project_dir="$(realpath ${project_dir})"
+
+project_name="$(basename ${project_dir})"
 
 archive_dir="$2"
 
@@ -43,9 +46,15 @@ if [ ! -d "${archive_dir}" ]; then
 fi
 
 
-git_archive_name="${archive_dir}/$(date +'%Y%m%d'-${project_dir}.git-bundle)"
-final_archive_name="${archive_dir}/$(date +'%Y%m%d')-${project_dir}.git-bundle.gpg"
+git_archive_name="${archive_dir}/$(date +'%Y%m%d')-${project_name}.git-bundle"
+final_archive_name="${git_archive_name}.gpg"
 
+if [ -e "${final_archive_name}" ]; then
+
+	echo "  Error, a '${final_archive_name}' entry already exists, remove it first." 1>&2
+	exit 22
+
+fi
 
 mkdir -p "${archive_dir}"
 
@@ -74,6 +83,16 @@ if [ ! $res -eq 0 ]; then
 else
 
 	/bin/rm -f "${git_archive_name}"
-	echo "  Archive '${final_archive_name}' ready!"
+
+	if [ -f "${final_archive_name}" ]; then
+
+		echo "  Archive '${final_archive_name}' ready!"
+
+	else
+
+		echo "  Error, '${final_archive_name}' could not be generated." 1>&2to3
+		exit 60
+
+	fi
 
 fi
