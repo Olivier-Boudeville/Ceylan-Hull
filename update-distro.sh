@@ -5,7 +5,6 @@ usage="Usage: $(basename $0) [-q]: updates the current distribution, and traces 
   Supported distributions: Arch, Debian."
 
 
-
 # Many problems with Haskell:
 
 #pacman -Rsc pandoc
@@ -26,7 +25,7 @@ distro_id_file="/etc/os-release"
 
 if [ -f "${distro_id_file}" ]; then
 
-	source "${distro_id_file}"
+	. "${distro_id_file}"
 
 	if [ "$NAME" = "Arch Linux" ]; then
 
@@ -52,7 +51,7 @@ fi
 # Only standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
-if [ $(id -u) -eq 0 ]; then
+if [ "$(id -u)" -eq 0 ]; then
 
 	lock_file="/var/lib/pacman/db.lck"
 
@@ -132,7 +131,7 @@ if [ $(id -u) -eq 0 ]; then
 
 	res=$?
 
-	if [ $res -eq 0 ]; then
+	if [ ${res} -eq 0 ]; then
 
 		echo "... update done successfully"
 		echo "... update done successfully" 1>>${log_file}
@@ -149,7 +148,7 @@ if [ $(id -u) -eq 0 ]; then
 	fi
 
 	# To propagate errors:
-	exit $res
+	exit ${res}
 
 else
 
