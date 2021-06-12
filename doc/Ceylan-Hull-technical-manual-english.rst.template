@@ -464,6 +464,8 @@ Distribution-related
 
 - `update-distro.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro.sh>`_: updates the current distribution, and traces it
 
+- `update-distro-mirrors.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro-mirrors.sh>`_: updates the mirrors used for packages by the current distribution
+
 - `update-aur-installer.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-aur-installer.sh>`_: updates the local AUR (Arch User Repository) installer
 
 .. - `debian-updater.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/debian-updater.sh>`_
