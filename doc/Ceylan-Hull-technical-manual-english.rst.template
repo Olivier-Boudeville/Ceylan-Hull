@@ -206,6 +206,7 @@ Related to (UNIX) Processes
 
 - `kill-always.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-always.sh>`_: as long as this script is kept running, kills any process matching the specified name
 
+- `kill-trace-supervision-tool.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-trace-supervision-tool.sh>`_: kills all instances, run by the current user on the local host, of the tool that is used to perform trace (log) supervision
 
 
 
