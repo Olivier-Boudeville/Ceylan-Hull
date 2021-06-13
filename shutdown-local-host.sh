@@ -35,7 +35,7 @@ fi
 if [ -n "$1" ]; then
 
 	echo "  Error, extra parameter specified.
-${usage}" 1>&2to3
+${usage}" 1>&2
 
 	exit 15
 
