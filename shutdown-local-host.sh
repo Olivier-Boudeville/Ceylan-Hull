@@ -1,6 +1,7 @@
 #!/bin/sh
 
-usage="$(basename $0): shutdowns current, local host after having performed any relevant system update."
+usage="$(basename $0) [-r|--reboot]: shutdowns (otherwies: reboot) current, local host after having performed any relevant system update.
+  -r or --reboot: reboots instead of shutting down "
 
 
 if [ ! "$(id -u)" -eq 0 ]; then
@@ -11,10 +12,30 @@ if [ ! "$(id -u)" -eq 0 ]; then
 fi
 
 
-echo "
+# Otherwise reboots:
+halt=0
+
+if [ "$1" = "-r" ] || [ "$1" = "--reboot" ]; then
+
+	halt=1
+
+fi
+
+if [ $halt -eq 0 ]; then
+
+	echo "
 
 System will shutdown now host $(hostname -s), after a possible update (including notably its kernel)...
 "
+
+else
+
+	echo "
+
+System will reboot now host $(hostname -s), after a possible update (including notably its kernel)...
+"
+
+fi
 
 read -p "  Press Enter key to continue (CTRL-C to abort)" value
 
@@ -52,13 +73,24 @@ fi
 #
 # - on computer having a graphical card, after the kernel update the graphic
 # drivers should better be reinstalled; either this is done automatically -
-# through dkms, or it can be done explicitly, with for example:
-#       pacman -Su nvidia nvidia-utils nvidia-lts
+# through dkms (not always working properly, apparently), or it can be done
+# explicitly, with for example: pacman -Su nvidia nvidia-utils nvidia-lts
 # Refer to https://wiki.archlinux.org/title/NVIDIA#Installation.
 
 
-echo "Stopping now for good."
-shutdown -h now
+if [ $halt -eq 0 ]; then
 
-# Not expected to be seen:
+	echo "Stopping now for good."
+	shutdown --poweroff now
+
+else
+
+	echo "Rebooting now."
+	# Better than 'reboot':
+	shutdown --reboot now
+
+fi
+
+
+# Not expected to be ever seen:
 echo "Stopped."
