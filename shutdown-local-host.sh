@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="$(basename $0) [-r|--reboot]: shutdowns (otherwies: reboot) current, local host after having performed any relevant system update.
+usage="Usage: $(basename $0) [-h|--help] [-r|--reboot]: shutdowns (otherwise: reboots) current, local host after having performed any relevant system update.
   -r or --reboot: reboots instead of shutting down "
 
 
@@ -12,14 +12,35 @@ if [ ! "$(id -u)" -eq 0 ]; then
 fi
 
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
+fi
+
+
 # Otherwise reboots:
 halt=0
 
 if [ "$1" = "-r" ] || [ "$1" = "--reboot" ]; then
 
 	halt=1
+	shift
 
 fi
+
+
+if [ -n "$1" ]; then
+
+	echo "  Error, extra parameter specified.
+${usage}" 1>&2to3
+
+	exit 15
+
+fi
+
 
 if [ $halt -eq 0 ]; then
 
