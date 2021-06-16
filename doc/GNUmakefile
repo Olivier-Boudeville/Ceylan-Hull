@@ -42,7 +42,8 @@ all:
 	@echo "  Run 'make doc' to generate the documentation of the 'Hull' layer."
 
 
-doc: html pdf api-doc
+# No api-doc here:
+doc: html pdf
 
 
 html: local-html
