@@ -1,10 +1,29 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): locks immediately the screen."
+usage="Usage: $(basename $0) [-h|--help]: locks immediately the screen."
 
 # Logging to a console and executing 'killall xscreensaver' as your normal user
 # might be your best friend, as at least sometimes correct logins are rejected
 # and will lead to have one's account blocked for 10 minutes repeatedly...
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
+fi
+
+
+if [ -n "$1" ]; then
+
+	echo "Error, no parameter expected.
+${usage}" 1>&2
+
+	exit 10
+
+fi
 
 
 locker_name="xscreensaver"
@@ -19,10 +38,12 @@ if [ ! -x "${locker_exec}" ]; then
 fi
 
 
-echo "Activating the screensaver, and locking the screen immediately..."
+echo "Activating the screensaver on $(date), and locking the screen immediately..."
 
 ${locker_name} -no-splash 1>/dev/null &
 
 locker_cmd="xscreensaver-command"
 
 ${locker_cmd} -lock 1>/dev/null
+
+echo "... unlocked on $(date)"
