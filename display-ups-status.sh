@@ -4,6 +4,10 @@ usage="Usage: $(basename $0) [UPS_NAME] [UPS_SERVER]: displays the status of spe
 
 # An UPS may be queried through NUT (with upsc) or thanks to a vendor-specific
 # client like the APC UPS daemon (with apcaccess).
+#
+# See also: 'upower -e' and 'upower -i XXX' like in:
+# for d in $(upower -e); do echo "For $d: "; upower -i $d; done
+# (duplicates may be returned)
 
 upsc=$(which upsc 2>/dev/null)
 
@@ -22,7 +26,7 @@ if [ -x "${upsc}" ]; then
 	fi
 
 	echo "Displaying state of UPS ${ups_name}@${ups_server}:"
-	${upsc} ${ups_name}@${ups_server}
+	${upsc} "${ups_name}@${ups_server}"
 
 else
 
