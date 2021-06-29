@@ -196,6 +196,8 @@ Related to (UNIX) Processes
 
 - `watch.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh>`_: tracks (over time) processes that may be transient
 
+- `monitor-demanding-processes.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-demanding-processes.sh>`_: monitors endlessly the most CPU-demanding processes. Typically useful to catch an otherwise idle process that uses a full core as soon as the system gets not actively used anymore
+
 - `benchmark-command.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/benchmark-command.sh>`_: returns a mean resource consumption for the specified shell command
 
 - `list-processes-by-size.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-size.sh>`_: lists processes by decreasing size in RAM
