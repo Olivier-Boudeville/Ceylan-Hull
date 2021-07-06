@@ -7,6 +7,12 @@
 .. comment stylesheet specified through GNUmakefile
 
 
+
+============================================
+*A collection of all kinds of shell scripts*
+============================================
+
+
 .. role:: raw-html(raw)
    :format: html
 
@@ -20,16 +26,9 @@
 
 
 
-:raw-html:`<center><img src="hull-title.png" width="20%"></img></center>`
+:raw-html:`<center><img src="hull-title.png" width="20%"></img>`
 :raw-latex:`\centering \includegraphics[scale=0.3]{hull-title.png}`
 
-.. comment Note: this is the latest, current version of the Hull 2.x documentation, directly obtained from the one of Hull 1.x.
-
-
-
-============================================
-*A collection of all kinds of shell scripts*
-============================================
 
 
 :Organisation: Copyright (C) 2008-GENERATION_YEAR_TAG Olivier Boudeville
@@ -47,6 +46,7 @@
 .. meta::
    :keywords: Hull, shell, scripts, sh, bash
 
+:raw-html:`</center>`
 
 
 
@@ -69,14 +69,12 @@ In each category, scripts are roughly sorted by decreasing interest/update statu
 
 As much as possible, we try to name these scripts functionally rather than in terms of tools, so that the implementation they rely upon can be updated as transparently as possible (i.e. with as little change as possible in the user's habits).
 
-Each script entry is a link pointing directly to the script itself. They may be directly read from the `Hull repository <https://github.com/Olivier-Boudeville/Ceylan-Hull>`_.
+Each script entry is a link pointing directly to the script itself. They may be directly obtained as a whole from the `Hull repository <https://github.com/Olivier-Boudeville/Ceylan-Hull>`_.
 
 Most of them are certainly not rocket science.
 
 
-.. Note:: Some of these scripts may be a bit outdated, as only a small subset of them are routinely used; rely on them with caution!
-
-		  And tell us if you would like some of them to be updated.
+.. Note:: A few of these scripts may be a bit outdated, as only a subset of them are routinely used; rely on them with caution! (and tell us if you would like some of them to be updated)
 
 
 
@@ -709,30 +707,30 @@ Detailed description of some frequently-used scripts
 
 
 `wh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh>`_
-  wh (for "where"): searches (as a more user-friendly 'find') all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
+  ``wh`` (for "where"): searches (as a more user-friendly 'find') all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
 
-  Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
+  | Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
 
-  Options:
+  | Options:
 
-	| [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in $(wh -q 'foo*'); do...)
-	| --no-path: returns the filenames without any leading path
-	| --exclude-path DIR: excludes specified directory DIR from search
+  | [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in $(wh -q 'foo*'); do...)
+  | --no-path: returns the filenames without any leading path
+  | --exclude-path DIR: excludes specified directory DIR from search
 
 
 
 `regrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep>`_
-  regrep: recursive grep for the ones that lack it.
+  ``regrep``: recursive grep for the ones that lack it.
 
-  Usage: regrep [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+  | Usage: regrep [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
 
-  Options:
+  | Options:
 
-	| -v or --verbose: be specifically verbose
-	| -q or --quiet: be specifically quiet, just listing matches
-	| -f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
-	| -i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
-	| -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+  | -v or --verbose: be specifically verbose
+  | -q or --quiet: be specifically quiet, just listing matches
+  | -f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
+  | -i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
+  | -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
 
   Example: regrep -i 'little red rooster' '*.txt'
 
@@ -741,11 +739,11 @@ Detailed description of some frequently-used scripts
 
 
 `srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_
-  srm (for "secure rm"): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.
+  ``srm`` (for "secure rm"): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.
 
-  Usage: srm <files to delete securely>
+  | Usage: srm <files to delete securely>
 
-  See also: emptyTrash.sh
+  | See also: emptyTrash.sh
 
 
 
