@@ -1,6 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host."
+usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host.
+
+Note: ensures that no Internet connection is already available (ex: unplug any Ethernet connector) to avoid possibly confusing this script."
 
 
 if [ ! $(id -u) -eq 0 ]; then
@@ -103,9 +105,7 @@ connect()
 	# Any past default route could still apply and remain the first, so:
 	${ip} route del default 2>/dev/null
 
-	${dhcpcd} "${if_name}" 1>/dev/null
-
-	if [ $? -eq 0 ]; then
+	if ${dhcpcd} "${if_name}" 1>/dev/null; then
 
 		# Fix routes (only gateway needed, not full network):
 		${ip} route del 192.168.0.0/24 dev "${if_name}"
