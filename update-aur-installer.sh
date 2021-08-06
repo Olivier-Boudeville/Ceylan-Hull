@@ -1,6 +1,12 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): updates the local AUR (Arch User Repository) installer."
+usage="Usage: $(basename $0): updates the local AUR (Arch User Repository) installer; to be run as a non-priviledged user (i.e. not as root)."
+
+# Such installers may break after a pacman update (ex: 'yay: error while loading
+# shared libraries: libalpm.so.12: cannot open shared object file: No such file
+# or directory'), in which case they should be rebuilt - preferably thanks to
+# this script.
+
 
 # 'yaourt' is no longer recommended (deprecated now), using 'yay' instead.
 
@@ -9,7 +15,7 @@ usage="Usage: $(basename $0): updates the local AUR (Arch User Repository) insta
 #
 if [ $(id -u) -eq 0 ]; then
 
-	echo "  Error, this script must be run as a normal user, not as root." 1>&2
+	echo "  Error, this script must be run as a non-priviledged user, not as root." 1>&2
 	exit 5
 
 fi
@@ -29,6 +35,8 @@ if [ -d "yay" ]; then
 fi
 
 git clone https://aur.archlinux.org/yay.git && cd yay && makepkg ${makepkg_opts} -si && echo && echo "Yay successfully updated!" && cd .. && /bin/rm -rf yay
+
+echo "Now, to install an AUR package, just use, still as a non-priviledged user: 'yay -Sy TARGET_PACKAGE'."
 
 
 # Previously:
