@@ -23,7 +23,7 @@ else
 
 	if [ $# -eq 0 ]; then
 
-		echo "(no argument specified, operating in the current directory, '$(pwd)')"
+		echo "(no argument specified, operating - only - in the current directory, '$(pwd)')"
 		target_elems="$(/bin/ls *${hide_suffix} 2>/dev/null)"
 
 	else
