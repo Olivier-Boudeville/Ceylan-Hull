@@ -153,10 +153,21 @@ echo "Use '}' to fast forward."
 
 recordings="$(/bin/ls *.mkv 2>/dev/null)"
 
-count=$(echo ${recordings} | wc -w)
+count="$(echo ${recordings} | wc -w)"
 
+# Clearer:
+if [ "${count}" = "0" ]; then
 
-echo "${count} recordings found."
+	message="No recordings was found."
+	echo "${message}"
+	say.sh "${message}"
+	exit 0
+
+fi
+
+message="${count} recordings found."
+echo "${message}"
+say.sh "${message}"
 
 for f in ${recordings}; do
 
@@ -289,16 +300,14 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 			ssh_opt="-p ${SSH_PORT}"
 		fi
 
-		ssh=$(which ssh)
+		ssh="$(which ssh)"
 
 		remote_recordings=""
 		for f in ${recordings}; do
 			remote_recordings="${remote_recordings} ${CCTV_BASE_PATH}/$f"
 		done
 
-		${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${remote_recordings}
-
-		if [ $? -eq 0 ]; then
+		if ${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${remote_recordings}; then
 
 			echo "Deleted!"
 
@@ -331,9 +340,7 @@ if [ $do_fetch -eq 0 ] && [ ${auto_play} -eq 1 ] && [ -n "${recordings}" ]; then
 
 		ssh=$(which ssh)
 
-		${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv
-
-		if [ $? -eq 0 ]; then
+		if ${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv; then
 
 			echo "Deleted!"
 
