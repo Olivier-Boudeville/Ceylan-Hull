@@ -467,23 +467,6 @@ applyViewer()
 
 	# Let's hope the display is OK.
 
-	if [ ! -f "${file_elem}" ]; then
-
-		# Sometimes a filename followed by some garbage is specified (ex: a
-		# regrep might return "class_X.erl:construct"); Here we try to fix the
-		# filename by remove all characters after the first semicolon:
-
-		new_file_elem="$(echo ${file_elem}| sed 's|:.*$||1')"
-
-		if [ -f "${new_file_elem}" ]; then
-
-			echo "  (non-existing file '${file_elem}' has been automatically translated to existing file '${new_file_elem}')"
-
-			file_elem="${new_file_elem}"
-
-		fi
-
-	fi
 
 	if [ -z "${DISPLAY}" ]; then
 
@@ -833,6 +816,28 @@ view_element()
 
 	#echo "(viewing '${file_elem}')"
 
+	# Tentative name clean-up:
+
+	if [ ! -f "${file_elem}" ]; then
+
+		# Sometimes a filename followed by some garbage is specified (ex: a
+		# regrep might return "class_X.erl:construct"); Here we try to fix the
+		# filename by remove all characters after the first semicolon; we also
+		# remove any 'file://' prefix:
+
+		new_file_elem="$(echo ${file_elem}| sed 's|^file://||1' | sed 's|:.*$||1')"
+
+		if [ ! "${new_file_elem}" = "${file_elem}" ]; then
+
+			echo "  (non-existing file '${file_elem}' has been automatically translated to file '${new_file_elem}')"
+
+			file_elem="${new_file_elem}"
+
+		fi
+
+	fi
+
+
 	if [ $do_find -eq 0 ]; then
 
 		# Any initial whitespace removed:
@@ -896,13 +901,6 @@ view_element()
 
 	fi
 
-	if [ ! -f "${file_elem}" ]; then
-
-		echo "  Error, the specified element to view, '${file_elem}', does not exist." 1>&2
-
-		exit 15
-
-	fi
 
 	extension="$(echo ${file_elem} | sed 's|^.*\.||1')"
 	#extension="$(echo $@ | sed 's|^.*\.||1')"
