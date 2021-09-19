@@ -40,7 +40,7 @@ if [ ! -x "${shred_tool}" ]; then
 fi
 
 
-env_file="$HOME/.ceylan-settings.txt"
+env_file="$HOME/.ceylan-settings.etf"
 
 if [ ! -f "${env_file}" ]; then
 

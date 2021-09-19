@@ -40,7 +40,7 @@ if [ ! -x "$client_tool" ]; then
 fi
 
 
-env_file="$HOME/.ceylan-settings.txt"
+env_file="$HOME/.ceylan-settings.etf"
 
 if [ ! -f "${env_file}" ]; then
 
@@ -90,7 +90,7 @@ fi
 #echo "  - camera login: ${camera_login}"
 
 
-camera_password=$(/bin/cat ${env_file} | grep -v % | grep camera_1_password | sed 's|.*, "||1' | sed 's|" }.$||1')
+camera_password="$(/bin/cat ${env_file} | grep -v % | grep camera_1_password | sed 's|.*, "||1' | sed 's|" }.$||1')"
 
 if [ -z "${camera_password}" ]; then
 
@@ -103,7 +103,7 @@ fi
 
 
 
-camera_channel=$(/bin/cat ${env_file} | grep -v % | grep camera_1_channel | sed 's|.*, ||1' | sed 's| }.$||1')
+camera_channel="$(/bin/cat ${env_file} | grep -v % | grep camera_1_channel | sed 's|.*, ||1' | sed 's| }.$||1')"
 
 if [ -z "${camera_channel}" ]; then
 
@@ -120,7 +120,7 @@ if [ $full_requested -eq 0 ]; then
 
 	#echo "Full quality mode requested."
 
-	camera_subtype_high_quality=$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_high_quality | sed 's|.*, ||1' | sed 's| }.$||1')
+	camera_subtype_high_quality="$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_high_quality | sed 's|.*, ||1' | sed 's| }.$||1')"
 
 	if [ -z "${camera_subtype_high_quality}" ]; then
 
@@ -137,7 +137,7 @@ else
 
 	#echo "Normal quality mode requested."
 
-	camera_subtype_normal_quality=$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_normal_quality | sed 's|.*, ||1' | sed 's| }.$||1')
+	camera_subtype_normal_quality="$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_normal_quality | sed 's|.*, ||1' | sed 's| }.$||1')"
 
 	if [ -z "${camera_subtype_normal_quality}" ]; then
 
@@ -163,7 +163,7 @@ rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/cam/realm
 #verbose_opt="--verbose 0"
 
 # Only the most precise hostname wanted (FQDN too long):
-camera_short_name=$(echo "${camera_hostname}" | sed 's|\..*$||')
+camera_short_name="$(echo "${camera_hostname}" | sed 's|\..*$||')"
 
 #snapshot_prefix_opt="--snapshot-prefix=camera-${camera_short_name}-"
 

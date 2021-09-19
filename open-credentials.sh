@@ -8,7 +8,7 @@ usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path 
 
 crypt_tool_name="gpg"
 
-crypt_tool=$(which ${crypt_tool_name} 2>/dev/null)
+crypt_tool="$(which ${crypt_tool_name} 2>/dev/null)"
 
 if [ ! -x "$crypt_tool" ]; then
 
@@ -31,7 +31,7 @@ if [ ! -x "${shred_tool}" ]; then
 fi
 
 
-env_file="${HOME}/.ceylan-settings.txt"
+env_file="${HOME}/.ceylan-settings.etf"
 
 if [ ! -f "${env_file}" ]; then
 
@@ -44,7 +44,7 @@ fi
 # Used to rely on a shell-compliant syntax, now Erlang one:
 #source "${env_file}"
 
-main_credentials_path=$(/bin/cat ${env_file} | grep -v % | grep main_credentials_path | sed 's|.*, "||1' | sed 's|" }.$||1')
+main_credentials_path="$(/bin/cat ${env_file} | grep -v % | grep main_credentials_path | sed 's|.*, "||1' | sed 's|" }.$||1')"
 
 
 if [ -z "${main_credentials_path}" ]; then
@@ -110,15 +110,11 @@ if [ $already_unlocked -eq 1 ]; then
 	crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
 
 	# Enable read operations on the locked version:
-	chmod 400 ${locked_file}
+	chmod 400 "${locked_file}"
 
 	#echo "crypt_opts=$crypt_opts"
 
-	${crypt_tool} -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1
-
-	res="$?"
-
-	if [ ${res} -eq 0 ]; then
+	if ${crypt_tool} -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1; then
 
 		#echo "(credentials unlocked in ${unlocked_file})"
 		echo "(credentials unlocked)"
@@ -164,7 +160,7 @@ res="$?"
 
 unset passphrase
 
-if [ ! $res -eq 0 ]; then
+if [ ! ${res} -eq 0 ]; then
 
 	echo "  Error, locking failed (code: $res), stopping, unlocked file '${unlocked_file}' left as it is, please lock it manually." 1>&2
 
@@ -176,10 +172,8 @@ fi
 # Re-enabled read operations (more discrete, and needed by GIT to commit newer
 # versions):
 #
-#chmod 000 ${locked_file}
-chmod 400 ${locked_file}
-
-if [ $res -eq 0 ]; then
+#chmod 000 "${locked_file}"
+if chmod 400 "${locked_file}"; then
 
 	#echo "(credentials locked in ${locked_file})"
 	echo "(credentials locked)"
@@ -188,7 +182,7 @@ if [ $res -eq 0 ]; then
 
 	if [ ! ${res} -eq 0 ]; then
 
-		echo "  Error, shredding of '${unlocked_file}' failed (code: $res), removing it." 1>&2
+		echo "  Error, shredding of '${unlocked_file}' failed (code: ${res}), removing it." 1>&2
 		/bin/rm -f "${unlocked_file}"
 
 		exit 50
