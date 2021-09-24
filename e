@@ -206,24 +206,27 @@ chooseEmacs()
 	# emacs instead, which itself will be a server thanks to its
 	# '(server-start)' configuration.
 
-	EMACS=$(which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	EMACS=$(which emacs 2>/dev/null 2>/dev/null)
+
+	# A note about emacsclient: on Windows/MSYS2, this executable can be 
+        # found either in /bin and /usr/bin, or in /mingw64/bin (unfortunately in a different version).
+
+	# Special care must be done in order to select the same origin/version for emacs and emacsclient, 
+	# otherwise for example the first file may be opened whereas the next ones will be
+	# deemed (wrongly) non-existing and thus to be created.
+	# So, EMACS being found either with 'which', the same shall be done for EMACSCLIENT
+	# (so no test with hardcoded paths)
 
 	if [ -x "${EMACS}" ]; then
 
 		if [ $standalone -eq 0 ]; then
 
-			EMACS_CLIENT="/bin/emacsclient"
+			EMACS_CLIENT="$(which emacsclient 2>/dev/null)"
 
 			if [ ! -x "${EMACS_CLIENT}" ]; then
 
-				EMACS_CLIENT="/usr/bin/emacsclient"
-
-				if [ ! -x "${EMACS_CLIENT}" ]; then
-
-					echo " Error, no emacs client available." 1>&2
-					exit 55
-
-				fi
+				echo " Error, no emacs client available." 1>&2
+				exit 55
 
 			fi
 
@@ -250,18 +253,12 @@ chooseEmacs()
 
 			# fi
 
-			EMACS_CLIENT="/bin/emacsclient"
+			EMACS_CLIENT="$(which emacsclient 2>/dev/null)"
 
 			if [ ! -x "${EMACS_CLIENT}" ]; then
 
-				EMACS_CLIENT="/usr/bin/emacsclient"
-
-				if [ ! -x "${EMACS_CLIENT}" ]; then
-
-					echo " Error, no emacs client available." 1>&2
-					exit 55
-
-				fi
+				echo " Error, no emacs client available." 1>&2
+				exit 56
 
 			fi
 
