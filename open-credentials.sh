@@ -10,9 +10,9 @@ crypt_tool_name="gpg"
 
 crypt_tool="$(which ${crypt_tool_name} 2>/dev/null)"
 
-if [ ! -x "$crypt_tool" ]; then
+if [ ! -x "${crypt_tool}" ]; then
 
-	echo "  Error, no encryption tool found (no $crypt_tool_name)." 1>&2
+	echo "  Error, no encryption tool found (no ${crypt_tool_name} found)." 1>&2
 	exit 5
 
 fi
@@ -21,7 +21,7 @@ fi
 
 shred_tool_name="shred"
 
-shred_tool=$(which ${shred_tool_name} 2>/dev/null)
+shred_tool="$(which ${shred_tool_name} 2>/dev/null)"
 
 if [ ! -x "${shred_tool}" ]; then
 
@@ -68,6 +68,7 @@ if [ ! -f "${locked_file}" ]; then
 	if [ -f "${unlocked_file}" ]; then
 
 		echo "  Warning: the credentials file (as defined in the main_credentials_path variable of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist). As a result, a password (to be chosen identical to the usual one) will be requested (twice) when closing this file." 1>&2
+
 		# This happens whenever left in a terminal, being forgotten, or closing
 		# the terminal while still opened:
 		#
@@ -110,7 +111,12 @@ if [ $already_unlocked -eq 1 ]; then
 	crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
 
 	# Enable read operations on the locked version:
-	chmod 400 "${locked_file}"
+	if ! chmod 400 "${locked_file}"; then
+
+		echo "  Error, unable to relax permission of locked file '${locked_file}'." 1>&2
+		exit 33
+
+	fi
 
 	#echo "crypt_opts=$crypt_opts"
 
@@ -162,7 +168,7 @@ unset passphrase
 
 if [ ! ${res} -eq 0 ]; then
 
-	echo "  Error, locking failed (code: $res), stopping, unlocked file '${unlocked_file}' left as it is, please lock it manually." 1>&2
+	echo "  Error, locking failed (code: ${res}), stopping, unlocked file '${unlocked_file}' left as it is, please lock it manually." 1>&2
 
 	exit 45
 
@@ -191,7 +197,7 @@ if chmod 400 "${locked_file}"; then
 
 else
 
-	echo "  Error, locking failed (code: $res), stopping, unlocked file '${unlocked_file}' left as it is." 1>&2
+	echo "  Error, permissions could not be changed (code: ${res}), stopping, unlocked file '${unlocked_file}' left as it is." 1>&2
 
 	exit 55
 
