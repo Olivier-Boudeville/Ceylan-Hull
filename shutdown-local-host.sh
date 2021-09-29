@@ -46,14 +46,14 @@ if [ $halt -eq 0 ]; then
 
 	echo "
 
-System will shutdown now host $(hostname -s), after a possible update (including notably its kernel)...
+System will shutdown now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel)...
 "
 
 else
 
 	echo "
 
-System will reboot now host $(hostname -s), after a possible update (including notably its kernel)...
+System will reboot now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel)...
 "
 
 fi
@@ -62,7 +62,6 @@ read -p "  Press Enter key to continue (CTRL-C to abort)" value
 
 
 echo " - performing first a general system update"
-pacman --noconfirm -Sy
 
 if ! pacman --noconfirm -Sy; then
 
@@ -77,7 +76,6 @@ fi
 # (overrides any IgnorePkg directive in /etc/pacman.conf)
 #
 echo " - performing then any kernel (with headers) update"
-pacman --noconfirm --needed -Sy linux linux-headers
 
 if ! pacman --noconfirm --needed -Sy linux linux-headers; then
 
