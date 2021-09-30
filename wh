@@ -1,14 +1,15 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path SOME_DIR] FILE_PATTERN [STARTING_DIR]
+usage="Usage: $(basename $0) [-h|--help] [-v|--verbose] [-q|--quiet] [-i|--case-insensitive] [--no-path] [--exclude-path SOME_DIR] FILE_PATTERN [STARTING_DIR]
 
 This '$(basename $0)' (for \"where\") script searches (as a more user-friendly 'find') all files and directories matching FILE_PATTERN (ex: '*hello*.?rl'), from STARTING_DIR if specified, otherwise from the current directory.
 
 Options:
-	[-q|--quiet]: returns only file entries (no extra user-oriented information); suitable for scripts (ex: for f in \$($(basename $0) -q 'foo*'); do...)
+	-q or --quiet: returns only file entries (no extra user-oriented information); suitable for scripts (ex: for f in \$($(basename $0) -q 'foo*'); do...)
+	-i or --case-insensitive: performs a case-insensitive search (excludes are still case-sensitive)
 	--no-path: returns the filenames without any leading path
 	--exclude-path SOME_DIR: excludes specified the directory SOME_DIR from search
-	--verbose: outputs more information
+	-v or --verbose: outputs more information
 	-h or --help: displays this help"
 
 find_gnu="/usr/bin/find"
@@ -19,6 +20,8 @@ find_opt="-L"
 verbose=1
 quiet=1
 no_path=1
+
+case_insensitive=1
 
 exclude_command=""
 
@@ -34,7 +37,7 @@ while [ $token_eaten -eq 0 ]; do
 		echo "${usage}"
 		exit 0
 
-	elif [ "$1" = "--verbose" ]; then
+	elif [ "$1" = "-v" ] || [ "$1" = "--verbose" ]; then
 
 		verbose=0
 		echo "Verbose mode activated."
@@ -44,6 +47,13 @@ while [ $token_eaten -eq 0 ]; do
 
 		quiet=0
 		#echo "Quiet mode activated."
+		shift
+
+	elif [ "$1" = "-i" ] || [ "$1" = "--case-insensitive" ]; then
+
+		case_insensitive=0
+		#echo "Case-insensitive mode activated."
+		case_comment="(case-insensitively)"
 		shift
 
 	elif [ "$1" = "--no-path" ]; then
@@ -123,26 +133,37 @@ fi
 target_pattern="$1"
 
 [ $quiet -eq 0 ] || echo "
-${prefix} Looking for all files and directories matching <${target_pattern}>, starting from directory '${starting_dir}':
+${prefix} Looking ${case_comment} for all files and directories matching <${target_pattern}>, starting from directory '${starting_dir}':
 "
+
+
+if [ $case_insensitive -eq 0 ]; then
+
+	name_opt="-iname"
+
+else
+
+	name_opt="-name"
+
+fi
 
 [ $verbose -eq 1 ] || echo "Current directory is: $(pwd)"
 
 
-# For an unknown reason, 'cd XXX ; find . YYY' seems to work better than
+# For an unknown reason, 'cd XXX; find . YYY' seems to work better than
 # 'find XXX YYY'.
 
 if [ $no_path -eq 0 ]; then
 
-	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: ${find} . ${exclude_command} -name" "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
+	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: ${find} ${find_opt} . ${exclude_command} ${name_opt} \"${target_pattern}\" -exec basename '{}' ';' #2>/dev/null"
 
-	${find} ${find_opt} . ${exclude_command} -name "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
+	${find} ${find_opt} . ${exclude_command} ${name_opt} "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
 
 else
 
-	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: ${find} . ${exclude_command} -name" "${target_pattern}" "-print 2>/dev/null | more"
+	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: ${find} . ${exclude_command} ${name_opt} \"${target_pattern}\" -print #2>/dev/null | more"
 
-	${find} ${find_opt} . ${exclude_command} -name "${target_pattern}" -print 2>/dev/null | more
+	${find} ${find_opt} . ${exclude_command} ${name_opt} "${target_pattern}" -print 2>/dev/null | more
 
 fi
 
