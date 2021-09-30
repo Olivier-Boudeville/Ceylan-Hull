@@ -53,7 +53,7 @@ while [ $token_eaten -eq 0 ]; do
 
 		case_insensitive=0
 		#echo "Case-insensitive mode activated."
-		case_comment="(case-insensitively)"
+		case_comment="(case-insensitively) "
 		shift
 
 	elif [ "$1" = "--no-path" ]; then
@@ -133,7 +133,7 @@ fi
 target_pattern="$1"
 
 [ $quiet -eq 0 ] || echo "
-${prefix} Looking ${case_comment} for all files and directories matching <${target_pattern}>, starting from directory '${starting_dir}':
+${prefix} Looking ${case_comment}for all files and directories matching <${target_pattern}>, starting from directory '${starting_dir}':
 "
 
 
