@@ -10,8 +10,9 @@ If the '-p' or '${prebuilt_opt}' option is specified, downloads and installs a p
 
 # See https://www.rebar3.org/docs/getting-started
 
-# Note: quite often, the version obtained from sources was broken, so maybe with
-# a prebuilt binary it will be better.
+# Note: quite often, the version obtained from sources was broken and/or had
+# issues with at least some proxies, so maybe with a prebuilt binary it will be
+# better.
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
