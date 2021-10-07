@@ -69,12 +69,16 @@ In each category, scripts are roughly sorted by decreasing interest/update statu
 
 As much as possible, we try to name these scripts functionally rather than in terms of tools, so that the implementation they rely upon can be updated as transparently as possible (i.e. with as little change as possible in the user's habits).
 
+
+These scripts are intended for all kinds of Unices, especially GNU/Linux, yet most of them are believed to work on Windows as well, provided a `relevant context`_ exists there.
+
+
 Each script entry is a link pointing directly to the script itself. They may be directly obtained as a whole from the `Hull repository <https://github.com/Olivier-Boudeville/Ceylan-Hull>`_.
 
 Most of them are certainly not rocket science.
 
 
-.. Note:: A few of these scripts may be a bit outdated, as only a subset of them are routinely used; rely on them with caution! (and tell us if you would like some of them to be updated)
+.. Note:: A few of these scripts may be a bit outdated, as not all of them are daily used; rely on them with (a bit of) caution! (and tell us if you would like some of them to be updated)
 
 
 
@@ -297,6 +301,8 @@ For Audio
 ---------
 
 - `play-audio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh>`_: performs an audio-only playback of specified content files (including video ones) and directories
+
+- `listen-to-radio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/listen-to-radio.sh>`_: plays the stream of various radios
 
 - `extract-audio-from-video.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh>`_: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback
 
@@ -652,7 +658,6 @@ Of Environment and related
 
 - `unset-all-environment-variables.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unset-all-environment-variables.sh>`_: unsets all environment variables, typically to rule out stranger account-related side-effects
 
-- `update-emacs-modules.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-emacs-modules.sh>`_: updates the basic Emacs modules that we use
 
 - `set-local-environment.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-local-environment.sh>`_: sets up a few installation conventions
 
@@ -743,8 +748,39 @@ Detailed description of some frequently-used scripts
 
   | Usage: srm <files to delete securely>
 
-  | See also: emptyTrash.sh
+  | See also: empty-trash.sh
 
+
+-------------------
+Shell Configuration
+-------------------
+
+One may also have a look at our related Ceylan-Heavy's `generic, flexible shell configuration <https://github.com/Olivier-Boudeville/Ceylan-Heavy/tree/master/src/conf/environment>`_ (namely ``.bashrc*`` files).
+
+
+
+.. _`relevant context`:
+
+---------------
+Windows Support
+---------------
+
+The idea here is to go another route than using the highly-integrated graphical tools available there, but to replicate on Windows the Unix tools we know and like (albeit in a somehow less efficient form).
+
+Here are the choices that we recommend:
+
+- use of `MSYS2 <https://www.msys2.org/>`_ ("minimal system 2"), a `software distribution and a development platform for Microsoft Windows <https://en.wikipedia.org/wiki/Mingw-w64#MSYS2>`_, based on Mingw-w64 and Cygwin, that helps to deploy code from the Unix world on Windows; this collection of tools and libraries providing an easy-to-use environment for building, installing and running native Windows software
+
+- installation of the following base packages with::
+
+  $ pacman -Sy
+
+- in terms of terminal, preferring Windows Terminal
+
+
+Our `shell configuration`_  and our `Emacs' one <http://myriad.esperide.org#emacs-settings>`_ support natively the Windows platform as well.
+
+Most of the Ceylan-Hull scripts should be operational in such a context.
 
 
 --------
@@ -753,8 +789,7 @@ See also
 
 - the ``tests`` subdirectory, for a few tests of specific facilities provided here
 - the ``mostly-obsolete`` subdirectory, for the scripts we deprecated
-
-
+- our `Emacs configuration <http://myriad.esperide.org#emacs-settings>`_ (in Ceylan-Myriad)
 
 
 -------
