@@ -8,7 +8,7 @@ usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file
 	  --recursive: (also) select content files automatically and recursively, from the current directory
   (default: no announce, not quiet, not recursive - unless no files nor directories are specified)
 
-  Note: the underlying audio player remains responsive (console-level interaction, for example to pause it).
+  Note: the underlying audio player remains responsive (to console-level interaction, for example to pause it).
 "
 
 # Hidden option, useful for recursive uses: "--no-notification"
