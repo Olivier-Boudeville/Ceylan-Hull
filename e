@@ -68,7 +68,7 @@ chooseJedit()
 
 	#echo "Jedit selected."
 
-	JEDIT=$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	JEDIT="$(which jedit 2>/dev/null)"
 
 	if [ -x "${JEDIT}" ]; then
 		editor="${JEDIT}"
@@ -84,7 +84,7 @@ chooseLibreOffice()
 
 	#echo "LibreOffice selected."
 
-	editor=$(which libreoffice)
+	editor="$(which libreoffice 2>/dev/null)"
 	editor_short_name="LibreOffice"
 
 }
@@ -95,8 +95,19 @@ chooseGimp()
 
 	#echo "Gimp selected."
 
-	editor=$(which gimp)
+	editor="$(which gimp 2>/dev/null)"
 	editor_short_name="The Gimp"
+
+}
+
+
+chooseBlender()
+{
+
+	#echo "Blender selected."
+
+	editor="$(which blender 2>/dev/null)"
+	editor_short_name="Blender"
 
 }
 
@@ -106,7 +117,7 @@ chooseInkscape()
 
 	#echo "Inkscape selected."
 
-	editor=$(which inkscape)
+	editor="$(which inkscape 2>/dev/null)"
 	editor_short_name="Inkscape"
 
 }
@@ -118,16 +129,16 @@ chooseNedit()
 	# nedit:
 
 	# Many names for nedit client/server: gentoo...
-	NEDITC_GENTOO=$(which neditc 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NEDITC_GENTOO="$(which neditc 2>/dev/null)"
 
 	# ...debian...
-	NEDITC_DEBIAN=$(which nedit-nc 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NEDITC_DEBIAN="$(which nedit-nc 2>/dev/null)"
 
 	# ...and others (nc can be netcat too)
-	NC=$(which nc 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NC="$(which nc 2>/dev/null)"
 
 	# Basic nedit, one full process by window:
-	NEDIT=$(which nedit 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NEDIT="$(which nedit 2>/dev/null)"
 
 
 	# Sets of X parameters common to all nedit members:
@@ -184,7 +195,7 @@ chooseXemacs()
 
 	# xemacs:
 
-	XEMACS=$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	XEMACS="$(which xemacs 2>/dev/null)"
 
 	if [ -x "${XEMACS}" ]; then
 		editor="${XEMACS}"
@@ -288,7 +299,7 @@ chooseNano()
 	#echo "Nano selected."
 
 	# nano, text-based user-friendly editor:
-	NANO=$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	NANO="$(which nano 2>/dev/null)"
 
 	editor="${NANO}"
 	editor_short_name="Nano"
@@ -303,7 +314,7 @@ chooseVim()
 	#echo "Choosing VIM"
 
 	# vi improved:
-	VIM=$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	VIM="$(which vim 2>/dev/null)"
 
 	editor="${VIM}"
 	editor_short_name="Vim"
@@ -319,7 +330,7 @@ chooseVi()
 	#echo "Choosing VI"
 
 	# Raw vi:
-	VI=$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	VI="$(which vi 2>/dev/null)"
 
 	editor="${VI}"
 	editor_short_name="vi"
@@ -332,7 +343,7 @@ chooseVi()
 chooseGanttproject()
 {
 
-	GANTTPROJECT=$(which ganttproject 2>/dev/null | grep -v ridiculously 2>/dev/null)
+	GANTTPROJECT="$(which ganttproject 2>/dev/null)"
 
 	editor="${GANTTPROJECT}"
 	editor_short_name="Ganttproject"
@@ -721,7 +732,7 @@ parameters=""
 #for arg in $remaining_parameters ; do
 for arg in "$@"; do
 
-	if [ "$arg" = "-s" ]; then
+	if [ "${arg}" = "-s" ]; then
 
 		standalone=0
 
@@ -736,7 +747,7 @@ for arg in "$@"; do
 		if [ -z "${parameters}" ]; then
 			parameters="${arg}"
 		else
-			parameters="$parameters ${arg}"
+			parameters="${parameters} ${arg}"
 		fi
 
 	fi
@@ -746,7 +757,7 @@ done
 #echo "A: parameters = '$parameters'"
 
 # Last test regarding bloody spaces included in filenames:
-#for p in ${parameters} ; do echo "- parameter: '$p'" ; done
+#for p in ${parameters}; do echo "- parameter: '$p'"; done
 #exit
 
 if [ $standalone -eq 0 ]; then
@@ -790,7 +801,7 @@ if [ $do_find -eq 0 ]; then
 
 	fi
 
-	target_path=$(find . -name "${target_file}")
+	target_path="$(find . -name "${target_file}")"
 
 	if [ -z "${target_path}" ]; then
 
@@ -821,7 +832,7 @@ fi
 if [ $do_locate -eq 0 ]; then
 
 	# Single file assumed, any initial whitespace removed:
-	target_file=$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')
+	target_file="$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')"
 	#echo "target_file = ${target_file}"
 
 	target_path="$(/bin/locate --limit 1 --existing ${target_file})"
@@ -851,12 +862,12 @@ multi_win=1
 # In case of a *list* of filenames, the detected extension will be the one of
 # the last filename:
 #
-extension=$(echo $parameters| sed 's|^.*\.||1')
+extension="$(echo ${parameters}| sed 's|^.*\.||1')"
 #extension=$(echo $1| sed 's|^.*\.||1')
 
 
-#echo "C: parameters = '$parameters'"
-#echo "C: extension = '$extension'"
+#echo "C: parameters = '${parameters}'"
+#echo "C: extension = '${extension}'"
 
 
 if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
@@ -906,6 +917,48 @@ if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ]; then
 fi
 
 
+if [ "${extension}" = "dae" -o "${extension}" = "gltf" ]; then
+
+	chooseBlender
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "template" ]; then
+
+	chooseEmacs
+	applyEditor
+	exit 0
+
+fi
+
+
+if [ "${extension}" = "rst" ]; then
+
+	# Check that if wanting to edit X.rst, no X.rst.template exists (hopefully a
+	# single filename was specified):
+	#
+	template_file="${parameters}.template"
+
+	if [ -e "${template_file}" ]; then
+
+		echo "## Warning: '${parameters}' was requested to be edited, whereas '${template_file}' exists; editing the former one instead." 1>&2
+
+		parameters="${template_file}"
+
+		# Leaving extension to RST.
+
+	fi
+
+	chooseEmacs
+	applyEditor
+	exit 0
+
+fi
+
+
 if [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
 
 	chooseInkscape
@@ -921,7 +974,7 @@ fi
 
 if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ]; then
 
-	editor=$(which audacity)
+	editor="$(which audacity)"
 	editor_short_name="Audacity"
 
 	applyEditor
@@ -933,7 +986,7 @@ fi
 
 if [ "${extension}" = "dia" ]; then
 
-	editor=$(which dia)
+	editor="$(which dia)"
 	editor_short_name="dia"
 	applyEditor
 	exit 0
@@ -954,7 +1007,7 @@ fi
 
 if [ "${extension}" = "traces" ]; then
 
-	LOGMX=$(which logmx.sh)
+	LOGMX="$(which logmx.sh)"
 
 	if [ ! -x "${LOGMX}" ]; then
 
