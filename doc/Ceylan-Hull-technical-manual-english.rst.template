@@ -302,7 +302,7 @@ For Audio
 
 - `play-audio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh>`_: performs an audio-only playback of specified content files (including video ones) and directories
 
-- `listen-to-radio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/listen-to-radio.sh>`_: plays the stream of various radios
+- `listen-to-radio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/listen-to-radio.sh>`_: plays the stream of various Internet radios
 
 - `extract-audio-from-video.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh>`_: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback
 
