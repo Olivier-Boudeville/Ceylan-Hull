@@ -68,7 +68,7 @@ chooseJedit()
 
 	#echo "Jedit selected."
 
-	JEDIT="$(which jedit 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	JEDIT="$(which jedit 2>/dev/null)"
 
 	if [ -x "${JEDIT}" ]; then
 		viewer="${JEDIT}"
@@ -141,6 +141,8 @@ chooseMplayer()
 	viewer="$(which mplayer)"
 	viewer_short_name="Mplayer"
 
+	viewer_opt="-nolirc -quiet -msglevel all=0"
+
 }
 
 
@@ -152,16 +154,16 @@ chooseNedit()
 	# nedit:
 
 	# Many names for nedit client/server: gentoo...
-	NEDITC_GENTOO="$(which neditc 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	NEDITC_GENTOO="$(which neditc 2>/dev/null)"
 
 	# ...debian...
-	NEDITC_DEBIAN="$(which nedit-nc 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	NEDITC_DEBIAN="$(which nedit-nc 2>/dev/null)"
 
 	# ...and others (nc can be netcat too)
-	NC="$(which nc 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	NC="$(which nc 2>/dev/null)"
 
 	# Basic nedit, one full process by window:
-	NEDIT="$(which nedit 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	NEDIT="$(which nedit 2>/dev/null)"
 
 
 	# Sets of X parameters common to all nedit members:
@@ -219,7 +221,7 @@ chooseXemacs()
 
 	# xemacs:
 
-	XEMACS="$(which xemacs 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	XEMACS="$(which xemacs 2>/dev/null)"
 
 	if [ -x "${XEMACS}" ]; then
 		viewer="${XEMACS} --geometry=83x60 "
@@ -239,7 +241,7 @@ chooseEmacs()
 	# emacs instead, which itself will be a server thanks to its
 	# '(server-start)' configuration.
 
-	EMACS="$(which emacs 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	EMACS="$(which emacs 2>/dev/null)"
 
 	if [ -x "${EMACS}" ]; then
 
@@ -298,7 +300,7 @@ chooseNano()
 	#echo "Choosing nano"
 
 	# nano, text-based user-friendly viewer:
-	NANO="$(which nano 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	NANO="$(which nano 2>/dev/null)"
 
 	viewer="${NANO}"
 	viewer_short_name="Nano"
@@ -313,7 +315,7 @@ chooseVim()
 	#echo "Choosing VIM"
 
 	# vi improved:
-	VIM="$(which vim 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	VIM="$(which vim 2>/dev/null)"
 
 	viewer="${VIM}"
 	viewer_short_name="Vim"
@@ -328,7 +330,7 @@ chooseVi()
 	#echo "Choosing VI"
 
 	# Raw vi:
-	VI="$(which vi 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	VI="$(which vi 2>/dev/null)"
 
 	viewer="${VI}"
 	viewer_short_name="Vi"
@@ -342,7 +344,7 @@ chooseMore()
 
 	#echo "Choosing more"
 
-	MORE="$(which more 2>/dev/null | grep -v ridiculously 2>/dev/null)"
+	MORE="$(which more 2>/dev/null)"
 
 	viewer="${MORE}"
 	viewer_short_name="more"
