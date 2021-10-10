@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# Source: http://fluxradios.blogspot.com/
+# Sources:
+# - http://fluxradios.blogspot.com/
+# - http://flux.radio.free.fr/
 
 # Supposing that:
 #  - 96kbps AAC is enough
@@ -86,8 +88,7 @@ le_mouv_label="Le Mouv"
 
 # [${}|${}]
 
-usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]
- where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be:
+usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be:
   - for Radio France:
 	* ${france_culture_short_opt} | ${france_culture_long_opt}
 	* ${france_musique_short_opt} | ${france_musique_long_opt}
@@ -115,7 +116,7 @@ player="$(which "${player_name}" 2>/dev/null)"
 
 # For mplayer:
 #player_opt="-vc null -vo null -quiet"
-player_opt="-quiet -msglevel all=0"
+player_opt="-nolirc -quiet -msglevel all=0:demuxer=4"
 
 
 # VLC also relevant:
@@ -292,9 +293,10 @@ if [ $display_notification -eq 0 ]; then
 
 		echo " Using mplayer, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
-		echo "  - 'U' at any moment to stop the current playback and jump to any next one"
-		echo "  - <CTRL-C> to stop all playbacks"
+		#echo "  - 'U' at any moment to stop the current playback and jump to any next one"
+		#echo "  - <CTRL-C> to stop all playbacks"
 		echo "  - left and right arrow keys to go backward/forward in the current playback"
+		echo "  - <CTRL-C> or <Enter> to stop"
 		echo
 
 	fi
@@ -304,7 +306,11 @@ fi
 echo "  Playing ${stream_label}..."
 
 #echo ${player} ${player_opt} "${stream_url}"
-${player} ${player_opt} "${stream_url}" 2>/dev/null
+
+# Allows to display the group and song name, typically as sent by Radio
+# Paradise:
+#
+${player} ${player_opt} "${stream_url}" | grep --line-buffered 'ICY Info:' | awk -F\' '{print "    -> " $2}'
 
 
 # Allows to avoid having several of these lines accumulate:
