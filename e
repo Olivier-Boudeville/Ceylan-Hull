@@ -28,8 +28,8 @@ usage="Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs
   Options are:
 	  '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display (can also be disabled once for all in the environment by setting the HULL_NO_GRAPHICAL_OUTPUT variable to the 0 value)
 	  '${show_opt}' to display only the chosen settings (not executing them)
-	  '-e' or '--emacs' to prefer emacs over all other editors (the default)
-	  '-n' or '--nedit' to prefer nedit over all other editors
+	  '-e' or '--emacs' to prefer Emacs over all other auto-selected editors
+	  '-n' or '--nedit' to prefer Nedit over all other auto-selected editors
 	  '-f' or '--find' to first look-up specified file from current directory, before opening it
 	  '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)
 	  '-l' or '--locate' to open the single file (if any) found thanks to 'locate'
@@ -49,7 +49,7 @@ editor_opt=""
 
 
 # Defaults:
-prefer_emacs=0
+prefer_emacs=1
 prefer_nedit=1
 
 # Tells whether we want to launch a standalone editor (default: no):
@@ -663,7 +663,7 @@ fi
 if [ "$1" = "-e" ] || [ "$1" = "--emacs" ]; then
 	prefer_emacs=1
 	prefer_nedit=0
-	echo "(requested to prefer emacs over other editors)"
+	echo "(requested to prefer Emacs over other editors)"
 	shift
 fi
 
@@ -671,7 +671,7 @@ fi
 if [ "$1" = "-n" ] || [ "$1" = "--nedit" ]; then
 	prefer_emacs=0
 	prefer_nedit=1
-	echo "(requested to prefer nedit over other editors)"
+	echo "(requested to prefer Nedit over other editors)"
 	shift
 fi
 
@@ -870,177 +870,191 @@ extension="$(echo ${parameters}| sed 's|^.*\.||1')"
 #echo "C: extension = '${extension}'"
 
 
-if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
+if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
-	echo "  Warning: do you really want to *edit* this PDF file (not just display it)? (y/n) [n]"
-	read answer
-	if [ "${answer}" = "y" ] || [ "${answer}" = "Y" ]; then
+	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
+
+		echo "  Warning: do you really want to *edit* this PDF file (not just display it)? (y/n) [n]"
+		read answer
+		if [ "${answer}" = "y" ] || [ "${answer}" = "Y" ]; then
+
+			chooseLibreOffice
+			applyEditor
+			exit 0
+
+		else
+
+			# Just a display then:
+			v ${parameters}
+			exit 0
+
+		fi
+
+	fi
+
+
+	if [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 		chooseLibreOffice
 		applyEditor
 		exit 0
 
-	else
+	fi
 
-		# Just a display then:
-		v ${parameters}
+
+	if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ]; then
+
+		chooseGimp
+		applyEditor
 		exit 0
 
 	fi
 
-fi
+	if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ]; then
+
+		chooseGimp
+		applyEditor
+		exit 0
+
+	fi
 
 
-if [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
-
-	chooseLibreOffice
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ]; then
-
-	chooseGimp
-	applyEditor
-	exit 0
-
-fi
-
-if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ]; then
-
-	chooseGimp
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "dae" -o "${extension}" = "gltf" ]; then
-
-	chooseBlender
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "template" ]; then
-
-	chooseEmacs
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "rst" ]; then
-
-	# Check that if wanting to edit X.rst, no X.rst.template exists (hopefully a
-	# single filename was specified):
+	# Not relevant, as for Blender will not open them, as they must be imported
+	# instead:
 	#
-	template_file="${parameters}.template"
+	#if [ "${extension}" = "dae" -o "${extension}" = "gltf" ]; then
+	#
+	#	chooseBlender
+	#	applyEditor
+	#	exit 0
+	#
+	#fi
 
-	if [ -e "${template_file}" ]; then
+	if [ "${extension}" = "blend" ]; then
 
-		echo "## Warning: '${parameters}' was requested to be edited, whereas '${template_file}' exists; editing the former one instead." 1>&2
-
-		parameters="${template_file}"
-
-		# Leaving extension to RST.
-
-	fi
-
-	chooseEmacs
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
-
-	chooseInkscape
-	applyEditor
-	exit 0
-
-fi
-
-# No json-specified rule (ex: 'jq' just a viewer).
-
-# HTML files are to be edited (hence no special case here)
-
-
-if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ]; then
-
-	editor="$(which audacity)"
-	editor_short_name="Audacity"
-
-	applyEditor
-
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "dia" ]; then
-
-	editor="$(which dia)"
-	editor_short_name="dia"
-	applyEditor
-	exit 0
-
-fi
-
-
-if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
-
-	# Is it a compressed trace file?
-	if echo $parameters| grep '.traces' 1>/dev/null ; then
-		# In this case trigger next clause, as LogMX can handle it:
-		extension="traces"
-	fi
-
-fi
-
-
-if [ "${extension}" = "traces" ]; then
-
-	LOGMX="$(which logmx.sh)"
-
-	if [ ! -x "${LOGMX}" ]; then
-
-		echo "  (no LogMX found, using default editor for traces)"
-
-	else
-
-		editor="${LOGMX}"
-		editor_short_name="LogMX"
+		chooseBlender
+		applyEditor
+		exit 0
 
 	fi
 
-	applyEditor
-	exit 0
+	if [ "${extension}" = "template" ]; then
 
-fi
+		chooseEmacs
+		applyEditor
+		exit 0
+
+	fi
 
 
-if [ "${extension}" = "gan" ]; then
+	if [ "${extension}" = "rst" ]; then
 
-	chooseGanttproject
+		# Check that if wanting to edit X.rst, no X.rst.template exists
+		# (hopefully a single filename was specified):
+		#
+		template_file="${parameters}.template"
 
-	# Supposing a single filename (otherwise will look up files in
-	# /opt/ganttproject rather than in current directory):
+		if [ -e "${template_file}" ]; then
 
-	#echo "D: parameters = '${parameters}'"
+			echo "## Warning: '${parameters}' was requested to be edited, whereas '${template_file}' exists; editing the former one instead." 1>&2
 
-	parameters="$PWD/${parameters}"
+			parameters="${template_file}"
 
-	#echo "E: parameters = '${parameters}'"
+			# Leaving extension to RST.
 
-	applyEditor
-	exit 0
+		fi
+
+		chooseEmacs
+		applyEditor
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
+
+		chooseInkscape
+		applyEditor
+		exit 0
+
+	fi
+
+	# No json-specified rule (ex: 'jq' just a viewer).
+
+	# HTML files are to be edited (hence no special case here)
+
+
+	if [ "${extension}" = "ogg" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ]; then
+
+		editor="$(which audacity)"
+		editor_short_name="Audacity"
+
+		applyEditor
+
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "dia" ]; then
+
+		editor="$(which dia)"
+		editor_short_name="dia"
+		applyEditor
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
+
+		# Is it a compressed trace file?
+		if echo $parameters| grep '.traces' 1>/dev/null ; then
+			# In this case trigger next clause, as LogMX can handle it:
+			extension="traces"
+		fi
+
+	fi
+
+
+	if [ "${extension}" = "traces" ]; then
+
+		LOGMX="$(which logmx.sh)"
+
+		if [ ! -x "${LOGMX}" ]; then
+
+			echo "  (no LogMX found, using default editor for traces)"
+
+		else
+
+			editor="${LOGMX}"
+			editor_short_name="LogMX"
+
+		fi
+
+		applyEditor
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "gan" ]; then
+
+		chooseGanttproject
+
+		# Supposing a single filename (otherwise will look up files in
+		# /opt/ganttproject rather than in current directory):
+
+		#echo "D: parameters = '${parameters}'"
+
+		parameters="$PWD/${parameters}"
+
+		#echo "E: parameters = '${parameters}'"
+
+		applyEditor
+		exit 0
+
+	fi
 
 fi
 
