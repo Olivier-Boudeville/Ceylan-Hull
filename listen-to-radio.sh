@@ -310,7 +310,7 @@ echo "  Playing ${stream_label}..."
 # Allows to display the group and song name, typically as sent by Radio
 # Paradise:
 #
-${player} ${player_opt} "${stream_url}" | grep --line-buffered 'ICY Info:' | awk -F\' '{print "    -> " $2}'
+${player} ${player_opt} "${stream_url}" | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | awk -F\' '{print "    -> " $2}'
 
 
 # Allows to avoid having several of these lines accumulate:
