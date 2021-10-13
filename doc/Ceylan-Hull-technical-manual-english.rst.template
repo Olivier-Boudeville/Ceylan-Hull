@@ -162,6 +162,7 @@ To inspect file and directory content
 - `list-broken-symlinks.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-broken-symlinks.sh>`_: lists, from any specified directory, all the symbolic links that are broken
 
 
+
 To compare files and trees
 --------------------------
 
@@ -169,7 +170,10 @@ To compare files and trees
 
 - `diff-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-tree.sh>`_: compares all files that are present both in first and second trees, and warns if they are not identical; warns too if some files are in one directory but not in the other
 
-See also: Myriad's `merge.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/apps/merge-tool/merge.sh>`_ script, a considerably more powerful tool for merging trees.
+- `diff-json.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-tree.sh>`_: compares the two specified JSON files, once their content has been put in a canonical, sorted form (knowing notably that their keys are allowed to be in arbitrary order)
+
+
+See also: Myriad's `merge.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/apps/merge-tool/merge.sh>`_ script, a considerably more powerful tool for comparing, uniquifying, merging trees.
 
 
 
@@ -684,8 +688,8 @@ Launch-related
 
 .. - `brave.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/brave.sh>`_
 
-- `e <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e>`_: to edit (i.e. open potentially for updating) all kinds of files
-- `v <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v>`_: to view (i.e. open for reading only) all kinds of files and directories
+- `e <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e>`_: to edit (i.e. open potentially for updating) smartly all kinds of files; see also our `bash autocomplete settings <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e.bash>`_ so that your shell automatically filters the arguments that it suggests whenever executing this ``e`` script from a command-line
+- `v <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v>`_: to view (i.e. open for reading only) smartly all kinds of files and directories
 - `email.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/email.sh/>`_ / `courriels.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh>`_: to launch a suitable e-mail client
 - `launch-irc.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh>`_: to launch a suitable IRC client
 

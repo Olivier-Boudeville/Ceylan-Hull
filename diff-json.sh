@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) FIRST_JSON_FILE SECOND_JSON_FILE [-h|--help]: compares the two specified JSON files, once their content has been put in a canonical, sorted form.
+usage="Usage: $(basename $0) FIRST_JSON_FILE SECOND_JSON_FILE [-h|--help]: compares the two specified JSON files, once their content has been put in a canonical, sorted form (knowing notably that their keys are allowed to be in arbitrary order).
 
 Options:
    -h or --help: this help"
@@ -9,7 +9,7 @@ Options:
 # Needed early to be able to shift:
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	echo "${usage}"
-	exit
+	exit 0
 fi
 
 
@@ -62,6 +62,9 @@ ${usage}" 1>&2
 fi
 
 
+# We ensure that the two temporary filenames cannot collide (if comparing the
+# same filenames in different directories):
+
 #first_canonical_file_path="$(mktemp) $(basename ${first_file_path})-XXXX"
 first_canonical_file_path="/tmp/$(basename ${first_file_path})-first"
 
@@ -84,6 +87,6 @@ if ! ${jq} --sort-keys . < "${second_file_path}" > "${second_canonical_file_path
 fi
 
 
-${meld} "${first_canonical_file_path}" "${second_canonical_file_path}"
+${meld} "${first_canonical_file_path}" "${second_canonical_file_path}" 1>/dev/null
 
 /bin/rm -f "${first_canonical_file_path}" "${second_canonical_file_path}"
