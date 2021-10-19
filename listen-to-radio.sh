@@ -10,6 +10,26 @@
 #  "direct" one
 
 
+play_stream()
+{
+
+	echo "  Playing ${current_stream_label}..."
+
+	#echo ${player} ${player_opt} "${current_stream_url}"
+
+	# Allows to display the group and song name, typically as sent by Radio
+	# Paradise:
+	#
+	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | awk -F\' '{print "    -> " $2}'; then
+
+		echo "(stopping all playbacks)"
+		exit 0
+
+	fi
+
+}
+
+
 base_codec="aac"
 
 # Radio France:
@@ -84,6 +104,8 @@ le_mouv_url="http://direct.mouv.fr/live/mouv-midfi.mp3"
 le_mouv_label="Le Mouv"
 
 
+fallback_url="${france_culture_url}"
+fallback_label="${france_culture_label}"
 
 
 # [${}|${}]
@@ -105,7 +127,11 @@ usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]: plays the specified Interne
 
 Outputs the audio streams of specified (online) radio, either preset or based on its specified stream URL.
 
-  Note: the underlying audio player remains responsive (to console-level interaction, for example to pause it)."
+  Note:
+   - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
+   - hit <Enter> or <Escape> to toggle between the selected stream and the fallback one (which is currently set to '${fallback_label}'); this is typically useful in order to escape from a starting series of advertisements or any similar uninteresting sequence 
+   - hit Ctrl-C to stop all playbacks
+"
 
 # Hidden option, useful for recursive uses: "--no-notification"
 
@@ -296,21 +322,33 @@ if [ $display_notification -eq 0 ]; then
 		#echo "  - 'U' at any moment to stop the current playback and jump to any next one"
 		#echo "  - <CTRL-C> to stop all playbacks"
 		echo "  - left and right arrow keys to go backward/forward in the current playback"
-		echo "  - <CTRL-C> or <Enter> to stop"
+		echo "  - <Enter> or <Escape> to toggle between this stream ('${stream_label}') and the fallback one ('${fallback_label}')"
+		#echo "  - <CTRL-C> to stop all playbacks"
 		echo
 
 	fi
 
 fi
 
-echo "  Playing ${stream_label}..."
 
-#echo ${player} ${player_opt} "${stream_url}"
+do_stop=1
 
-# Allows to display the group and song name, typically as sent by Radio
-# Paradise:
-#
-${player} ${player_opt} "${stream_url}" | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | awk -F\' '{print "    -> " $2}'
+while [ $do_stop -eq 1 ]; do
+
+	current_stream_url="${stream_url}"
+	current_stream_label="${stream_label}"
+
+	if play_stream; then
+
+		current_stream_url="${fallback_url}"
+		current_stream_label="as fallback ${fallback_label}"
+
+		play_stream
+
+	fi
+
+done
+
 
 
 # Allows to avoid having several of these lines accumulate:
