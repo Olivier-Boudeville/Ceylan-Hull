@@ -2,7 +2,7 @@
 
 review_dir="${HOME}/cctv-recordings-to-review"
 
-usage="Usage: $(basename $0) [-q|--quiet]: fetches locally, in '${review_dir}' (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
+usage="Usage: $(basename $0) [-h|--help] [-q|--quiet]: fetches locally, in '${review_dir}' (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before. Designed to be called typically from the crontab of your usual reviewing user.
 Crontab example:
   # Each day at 2:35 AM:
   35 2 * * * /usr/local/hull/fetch-cctv-monitorings.sh --quiet
@@ -16,6 +16,15 @@ shell_init="${HOME}/.bashrc"
 
 if [ -f "${shell_init}" ]; then
 	. "${shell_init}"
+fi
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
 fi
 
 
