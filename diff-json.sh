@@ -2,6 +2,8 @@
 
 usage="Usage: $(basename $0) FIRST_JSON_FILE SECOND_JSON_FILE [-h|--help]: compares the two specified JSON files, once their content has been put in a canonical, sorted form (knowing notably that their keys are allowed to be in arbitrary order).
 
+Note that due to this on-the-fly transformation made for comparison purpose (of course the original files are not modified), their conten used for comparison may be slightly alterered (ex: a "1.0" value in an original file may be compared as if it was "1", i.e. an integer value).
+
 Options:
    -h or --help: this help"
 
