@@ -1,7 +1,10 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) MP4_FILE: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as smaller and less resource-demanding to playback."
+usage="Usage: $(basename $0) [-h|--help] VIDEO_FILE: strips the video information from specified file (in the MP4 or 3GP format) to generate a pure audio file (.ogg) out of it (the original video file is not modified).
+ Relying on an audio file is useful, as: smaller, less resource-demanding to playback, and no video output gets in the way."
 
+# About 3GP: https://en.wikipedia.org/wiki/3GP_and_3G2
+# Insight: when possible, prefer MP4 to 3GP (which is for mobile 3G phones).
 
 # Same content being playback, knowing the actual CPU time used by a process is
 # user+sys:
@@ -11,6 +14,15 @@ usage="Usage: $(basename $0) MP4_FILE: strips the video information from specifi
 #
 # 124+63 = 187 vs 2, so ~93 times more demanding as mp4, and thus such
 # extraction is worthwhile.
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
+fi
+
 
 encoder_name="ffmpeg"
 
@@ -39,13 +51,17 @@ fi
 
 if [ ! -f "${video_file}" ]; then
 
-	echo "  Error, input file '${video_file}' not found." 1>&2
+	echo "  Error, input video file '${video_file}' not found." 1>&2
 
 	exit 10
 
 fi
 
-audio_file="$(echo "${video_file}" | sed 's|\.mp4|.ogg|1')"
+# -r: extended regular expressions, meaning metacharacters do not have to be
+# -escaped:
+#
+audio_file="$(echo "${video_file}" | sed -r 's|\.mp4\|\.3gp|.ogg|1')"
+
 
 echo " Generating from video file '${video_file}' following audio one: '${audio_file}'..."
 
