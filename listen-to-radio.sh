@@ -104,6 +104,9 @@ le_mouv_url="http://direct.mouv.fr/live/mouv-midfi.mp3"
 le_mouv_label="Le Mouv"
 
 
+default_url="${france_info_url}"
+default_label="${france_info_label}"
+
 fallback_url="${france_culture_url}"
 fallback_label="${france_culture_label}"
 
@@ -129,7 +132,8 @@ Outputs the audio streams of specified (online) radio, either preset or based on
 
   Note:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
-   - hit <Enter> or <Escape> to toggle between the selected stream and the fallback one (which is currently set to '${fallback_label}'); this is typically useful in order to escape from a starting series of advertisements or any similar uninteresting sequence 
+   - if no radio is specified, will default to '${default_label}'
+   - hit <Enter> or <Escape> to toggle between the selected stream and the fallback one (which is currently set to '${fallback_label}'); this is typically useful in order to escape from a starting series of advertisements or any similar uninteresting sequence
    - hit Ctrl-C to stop all playbacks
 "
 
@@ -303,10 +307,13 @@ done
 
 if [ -z "${stream_url}" ]; then
 
-	echo "  Error, no radio stream selected.
-${usage}" 1>&2
+	#echo "  Error, no radio stream selected.
+#${usage}" 1>&2
 
-	exit 15
+	#exit 15
+
+	stream_url="${default_url}"
+	stream_label="default ${default_label} stream"
 
 fi
 
