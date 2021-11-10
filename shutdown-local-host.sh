@@ -97,6 +97,28 @@ fi
 # Refer to https://wiki.archlinux.org/title/NVIDIA#Installation.
 
 
+if lsmod 2>/dev/null | grep nvidia; then
+
+	# Output example:
+	#
+	# nvidia_drm             73728  2
+	# nvidia_modeset       1155072  3 nvidia_drm
+	# nvidia              36954112  84 nvidia_modeset
+	# drm_kms_helper        303104  1 nvidia_drm
+	# drm                   589824  6 drm_kms_helper,nvidia,nvidia_drm
+
+	echo "The use of a Nvidia driver has been detected, forcing a corresponding upgrade in turn."
+
+	# Not --needed:
+	if ! pacman --noconfirm -Sy nvidia nvidia-utils; then
+
+		echo "  Error, nvidia update failed." 1>&2
+		exit 15
+
+	fi
+
+fi
+
 if [ $halt -eq 0 ]; then
 
 	echo "Stopping now for good."
