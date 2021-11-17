@@ -139,7 +139,7 @@ if [ $already_unlocked -eq 1 ]; then
 
 	else
 
-		echo "  Error, unlocking failed (code: $res), stopping, locked file '${locked_file}' left as it is." 1>&2
+		echo "  Error, unlocking failed, stopping, locked file '${locked_file}' left as it is." 1>&2
 
 		exit 40
 
