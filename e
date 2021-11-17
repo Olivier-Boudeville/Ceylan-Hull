@@ -57,8 +57,6 @@ standalone=1
 
 run_in_background=0
 
-verbose=1
-
 
 # Function section.
 
@@ -529,7 +527,7 @@ applyEditor()
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
 				#
-				[ $verbose -eq 1 ] || echo "Running (multiwin) ${editor} ${editor_opt} $f..."
+				[ $verbose -eq 1 ] || echo "Running (multiwin) '${editor} ${editor_opt} $f'..."
 				${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
@@ -544,11 +542,11 @@ applyEditor()
 				if [ $run_in_background -eq 0 ]; then
 
 					# Ever happens?
-					[ $verbose -eq 1 ] || echo "Running (monowin, in background) ${editor} ${editor_opt} $f..."
+					[ $verbose -eq 1 ] || echo "Running (monowin, in background) '${editor} ${editor_opt} $f'..."
 					${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
 
 				else
-					[ $verbose -eq 1 ] || echo "Running (monowin, in foreground) ${editor} ${editor_opt} $f..."
+					[ $verbose -eq 1 ] || echo "Running (monowin, in foreground) '${editor} ${editor_opt} $f'..."
 					${editor} ${editor_opt} $f 1>/dev/null 2>&1
 
 				fi
@@ -565,12 +563,12 @@ applyEditor()
 
 			if [ $run_in_background -eq 0 ]; then
 
-				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in background..."
+				[ $verbose -eq 1 ] || echo "Running '${editor} ${editor_opt} $f' in background..."
 				${editor} ${editor_opt} "$f" 2>/dev/null &
 
 			else
 
-				[ $verbose -eq 1 ] || echo "Running ${editor} ${editor_opt} $f in foreground..."
+				[ $verbose -eq 1 ] || echo "Running '${editor} ${editor_opt} $f' in foreground..."
 				${editor} ${editor_opt} "$f" 2>/dev/null
 
 			fi
