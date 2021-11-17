@@ -59,6 +59,9 @@ standalone=1
 run_in_background=0
 
 
+#verbose=0
+verbose=1
+
 
 # Function section.
 
@@ -449,10 +452,12 @@ autoSelectViewer()
 applyViewer()
 {
 
-	#echo "multi_win = ${multi_win}"
-	#echo "viewer_short_name = ${viewer_short_name}"
-	#echo "viewer = ${viewer}"
-	#echo "viewer_opt = ${viewer_opt}"
+	[ $verbose -eq 1 ] || (
+		echo "multi_win = ${multi_win}";
+		echo "viewer_short_name = ${viewer_short_name}";
+		echo "viewer = ${viewer}";
+		echo "viewer_opt = ${viewer_opt}" )
+
 
 	# Empty in a function:
 	#echo "\$@ = $@"
@@ -478,7 +483,7 @@ applyViewer()
 
 		if [ "${DISPLAY}" = ":0.0" ]; then
 			# No need to remind if default:
-			echo "    Viewing ${file_elem} with ${viewer_short_name}"
+			echo "    Viewing '${file_elem}' with ${viewer_short_name}"
 		else
 			echo "    Viewing '${file_elem}' with ${viewer_short_name} (DISPLAY is '${DISPLAY}')"
 		fi
@@ -488,10 +493,12 @@ applyViewer()
 	if [ ${multi_win} -eq 0 ]; then
 
 		if [ "${viewer_short_name}" = "Emacs" ]; then
+
 			# To get rid of silly message:
 			# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 			# multiple times"
-			#echo ${viewer} ${viewer_opt} "${file_elem}"
+			#
+			[ $verbose -eq 1 ] || echo "case A: ${viewer} ${viewer_opt} ${file_elem}"
 			${viewer} ${viewer_opt} "${file_elem}" 1>/dev/null 2>&1 &
 
 			# Small delay added, otherwise specifying multiple files apparently
@@ -500,6 +507,8 @@ applyViewer()
 			sleep 1
 
 		else
+
+			[ $verbose -eq 1 ] || echo "case B: ${viewer} ${viewer_opt} ${file_elem}"
 			#${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
 			${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null
 
@@ -516,11 +525,13 @@ applyViewer()
 			if [ $run_in_background -eq 0 ]; then
 
 				#echo "Running ${viewer} in background..."
+				[ $verbose -eq 1 ] || echo "case C: ${viewer} ${viewer_opt} ${file_elem}"
 				${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
 
 			else
 
 				#echo "Running ${viewer} ${viewer_opt} in foreground..."
+				[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
 				${viewer} ${viewer_opt} "${file_elem}"
 
 			fi
@@ -566,12 +577,12 @@ displayViewers()
 
 
 # Manages the (single) file element specified in $1.
-view_element()
+view_selected_element()
 {
 
 	file_elem="$1"
 
-	#echo "(viewing '${file_elem}')"
+	[ $verbose -eq 1 ] || echo "(viewing '${file_elem}')"
 
 	if [ $do_find -eq 0 ]; then
 
@@ -630,6 +641,7 @@ view_element()
 
 		#echo "(viewing directory '${dir}')"
 
+		#echo ${viewer} ${viewer_opt} "${dir}"
 		${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
 
 		exit 0
@@ -1187,11 +1199,15 @@ fi
 #remaining_parameters="$@"
 #echo "remaining_parameters = ${remaining_parameters}"
 
+[ $verbose -eq 1 ] || echo "Parameters: $@"
+
 # Only sane way of dealing with paths that may include spaces:
 for file_elem in "$@"; do
 
-	# Never name a function 'view'...
-	view_element "${file_elem}"
+	[ $verbose -eq 1 ] || echo " - parameter: ${file_elem}"
+
+	# Never name a function 'view' or even 'view_element'...
+	view_selected_element "${file_elem}"
 
 done
 
