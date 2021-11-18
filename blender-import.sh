@@ -1,8 +1,10 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) [-h|--help] FILE_TO_IMPORT: imports specified file into a newly-launched instance of Blender.
-  Supported file formats:
+  Supported file formats (extension are case-independant):
 	- glTF 2.0 (extension: '*.gltf')
+	- Collada/DAE (extension: '*.dae')
+	- FBX (extension: '*.fbx')
 	- IFC (extension: '*.ifc')
 
 Note that this script depends on Ceylan-Snake (see http://snake.esperide.org)
@@ -60,7 +62,7 @@ if [ ! -f "${file_to_import}" ] && [ ! -L "${file_to_import}" ]; then
 
 fi
 
-ext="$(echo "${file_to_import}" | sed 's|^.*\.||1')"
+ext="$(echo "${file_to_import}" | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 #echo "Extension: '${ext}'."
 
 
@@ -77,6 +79,36 @@ if [ "${ext}" = "gltf" ]; then
 
 	${blender} --python "${gltf_script}" -- "${file_to_import}"
 
+
+elif [ "${ext}" = "dae" ]; then
+
+	dae_script="${python_importers_dir}/blender_import_dae.py"
+
+	if [ ! -f "${dae_script}" ]; then
+
+		echo "  Error, import script for Collada/DAE ('${dae_script}') not found." 1>&2
+		exit 35
+
+	fi
+
+	${blender} --python "${dae_script}" -- "${file_to_import}"
+
+
+elif [ "${ext}" = "fbx" ]; then
+
+
+	fbx_script="${python_importers_dir}/blender_import_fbx.py"
+
+	if [ ! -f "${fbx_script}" ]; then
+
+		echo "  Error, import script for FBX ('${fbx_script}') not found." 1>&2
+		exit 40
+
+	fi
+
+	${blender} --python "${fbx_script}" -- "${file_to_import}"
+
+
 elif [ "${ext}" = "ifc" ]; then
 
 
@@ -85,11 +117,12 @@ elif [ "${ext}" = "ifc" ]; then
 	if [ ! -f "${ifc_script}" ]; then
 
 		echo "  Error, import script for IFC ('${ifc_script}') not found." 1>&2
-		exit 35
+		exit 45
 
 	fi
 
 	${blender} --python "${ifc_script}" -- "${file_to_import}"
+
 
 else
 
