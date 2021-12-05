@@ -223,6 +223,8 @@ Related to Network Management
 
 - `test-network.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh>`_: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)
 
+- `monitor-network.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-network.sh>`_: polls periodically one's local connection to the Internet, to detect (possibly intermittent) outages, notifying them if requested and helping their diagnosis
+
 - `manage-wifi.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/manage-wifi.sh>`_: starts/gets status/scans/stops the wifi support
 
 - `ip-scan.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-scan.sh>`_: scans all IPs with any specified prefix, searching for ICMP ping answers (useful to locate some devices in a local network)
@@ -250,7 +252,7 @@ For Development
 - `reformat-source-style-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style-in-tree.sh>`_: applies some style change to C/C++ files in specified tree
 
 
-See also the Erlang-related `Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
+See also the Ceylan-HOWTOs section about `build tools <http://howtos.esperide.org/Build.html>`_ and the Erlang-related `Ceylan-Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
 
 
 
@@ -350,6 +352,8 @@ For Video
 
 For 3D
 ------
+
+.. _blender::
 
 - `blender-import.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh>`_: allows to import directly in `Blender <https://www.blender.org/>`_ various file formats (ex: glTF 2.0 i.e. ``*.gltf``, IFC i.e. ``*.ifc``) from the command-line, rather than doing it interactively, with: a Blender launch, a splash screen, default primitives to remove/disable (cube, light, camera, collection), an import menu with a dialog to go through the whole filesystem; depends on the `Ceylan-Snake importers <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-importers>`_
 
@@ -494,16 +498,16 @@ Distribution-related
 For encryption
 ==============
 
-
-- `crypt.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh>`_: encrypts as strongly as reasonably possible the specified file(s), and removes their unencrypted sources
+- `crypt.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh>`_: encrypts in a standard way and as strongly as reasonably possible the specified file(s), and removes their unencrypted sources
 
 - `decrypt.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/decrypt.sh>`_: decrypts specified file(s) (does not remove their encrypted version)
+
+Note also Ceylan-Myriad's support for `basic, old-school ciphering <http://myriad.esperide.org/#for-basic-old-school-ciphering>`_, a complementary solution, and also our `mini-HOWTO regarding cybersecurity <http://howtos.esperide.org/Cybersecurity.html>`_.
 
 
 
 For security
 ============
-
 
 - for the management of credentials (i.e. sets of login/password pairs):
 
