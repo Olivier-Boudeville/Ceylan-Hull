@@ -29,7 +29,7 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Saturday, October 30, 2021</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Sunday, December 5, 2021</td>
 </tr>
 <tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
@@ -237,6 +237,7 @@
 <h2><a class="toc-backref" href="#id30">Related to Network Management</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh">test-network.sh</a>: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-network.sh">monitor-network.sh</a>: polls periodically one's local connection to the Internet, to detect (possibly intermittent) outages, notifying them if requested and helping their diagnosis</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/manage-wifi.sh">manage-wifi.sh</a>: starts/gets status/scans/stops the wifi support</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-scan.sh">ip-scan.sh</a>: scans all IPs with any specified prefix, searching for ICMP ping answers (useful to locate some devices in a local network)</li>
 </ul>
@@ -253,7 +254,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style.sh">reformat-source-style.sh</a>: applies some style change to specified file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style-in-tree.sh">reformat-source-style-in-tree.sh</a>: applies some style change to C/C++ files in specified tree</li>
 </ul>
-<p>See also the Erlang-related <a class="reference external" href="http://myriad.esperide.org/#erlang-dedicated-scripts">Myriad scripts</a>.</p>
+<p>See also the Ceylan-HOWTOs section about <a class="reference external" href="http://howtos.esperide.org/Build.html">build tools</a> and the Erlang-related <a class="reference external" href="http://myriad.esperide.org/#erlang-dedicated-scripts">Ceylan-Myriad scripts</a>.</p>
 </div>
 <div class="section" id="for-version-control-system-vcs">
 <h2><a class="toc-backref" href="#id32">For Version Control System (VCS)</a></h2>
@@ -409,9 +410,10 @@
 <div class="section" id="for-encryption">
 <h2><a class="toc-backref" href="#id48">For encryption</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh">crypt.sh</a>: encrypts as strongly as reasonably possible the specified file(s), and removes their unencrypted sources</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh">crypt.sh</a>: encrypts in a standard way and as strongly as reasonably possible the specified file(s), and removes their unencrypted sources</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/decrypt.sh">decrypt.sh</a>: decrypts specified file(s) (does not remove their encrypted version)</li>
 </ul>
+<p>Note also Ceylan-Myriad's support for <a class="reference external" href="http://myriad.esperide.org/#for-basic-old-school-ciphering">basic, old-school ciphering</a>, a complementary solution, and also our <a class="reference external" href="http://howtos.esperide.org/Cybersecurity.html">mini-HOWTO regarding cybersecurity</a>.</p>
 </div>
 <div class="section" id="for-security">
 <h2><a class="toc-backref" href="#id49">For security</a></h2>
