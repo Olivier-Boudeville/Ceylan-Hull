@@ -3,8 +3,11 @@
 default_prefix="192.168"
 
 usage="Usage: $(basename $0) [-h|--help] [IP_PREFIX=XXX.YYY]
-Scans all IPs with IP_PREFIX (default one being ${default_prefix}), searching for ICMP ping answers (useful to locate some devices in a local network).
+Scans all IPs with IP_PREFIX (default one being ${default_prefix}), searching for ICMP ping answers (useful to locate some devices in a local network). Prerably to be run as a non-priviledged user.
+
 Ex: $(basename $0) 192.100
+
+To interrupt a scan, one may use CTRL-Z then 'kill %1' (otherwise one can directly kill the script's process).
 "
 
 if [ $# -ge 2 ]; then
@@ -36,8 +39,8 @@ log_file="ip-scan.log"
 output_message()
 {
 
-	echo $* >> ${log_file}
-	echo $*
+	echo "$*" >> ${log_file}
+	echo "$*"
 
 }
 
@@ -47,18 +50,19 @@ output_message
 a=0
 b=1
 
-while [ ${a} -le 255 ]; do
+# Not keeping 255 for a or b, as these are broadcast addresses:
+while [ ${a} -le 254 ]; do
 
-	echo " - exploring range ${prefix}.${a}.1-255"
+	echo " - exploring range ${prefix}.${a}.1-254"
 
-	while [ ${b} -le 255 ]; do
+	while [ ${b} -le 254 ]; do
 		#echo "a=${a}, b=${b}"
 		target="${prefix}.${a}.${b}"
 		#echo "Testing ${target}"
 		if ping ${target} -c 1 1>/dev/null; then
 			output_message "++++ Found ${target}!!!!!"
 		else
-			output_message "(nothing at ${target})"
+			output_message "  (nothing at ${target})"
 		fi
 		b=$(expr ${b} + 1)
 	done
