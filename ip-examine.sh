@@ -3,6 +3,8 @@
 usage="Usage: $(basename $0) [-h|--help] IP
 Returns locally-determined information regarding the specified IP.
 
+May run as a normal user, or as root - in which case more information (ex: OS fingerprinting) may be reported.
+
 Ex: '$(basename $0) 10.0.7.14'.
 "
 
@@ -24,6 +26,16 @@ ${usage}" 1>&2
 	exit 5
 
 fi
+
+
+is_root=1
+
+if [ $(id -u) = "0" ]; then
+	is_root=0
+fi
+
+#echo "is_root=${is_root}"
+
 
 target_ip="$1"
 
@@ -72,7 +84,11 @@ if [ -x "${traceroute}" ]; then
 	echo " - determining a route to this IP:"
 
 	# ICMP (-I) does not require root permissions, whereas TCP (-T) does:
-	"${traceroute}" -I "${target_ip}"
+	if [ $is_root -eq 0 ]; then
+		"${traceroute}" -T "${target_ip}"
+	else
+		"${traceroute}" -I "${target_ip}"
+	fi
 
 else
 
@@ -92,5 +108,19 @@ if [ -x "${arp}" ]; then
 else
 
 	echo "(no 'arp' executable found, no local ARP cache searched)"
+
+fi
+
+
+if [ $is_root -eq 0 ]; then
+
+	nmap="$(which nmap)"
+
+	if [ -x "${nmap}" ]; then
+
+		echo " - fingerprinting this host (WARNING: longer operation):"
+		${nmap} -d0 -O "${target_ip}" 2>&1 | grep '\(MAC Address\|OS\)' | grep -v 'OS detection performed.'
+
+	fi
 
 fi
