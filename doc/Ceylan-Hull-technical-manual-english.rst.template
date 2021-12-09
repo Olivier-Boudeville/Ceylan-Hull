@@ -539,13 +539,13 @@ The advantages of this procedure as a whole are: strong and unique password, str
 Firewall configuration
 ======================
 
+- `iptables-inspect.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables-inspect.sh>`_: lists the currently-used firewall rules for the chains of the main tables
+
 - `iptables.rules-Gateway.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Gateway.sh>`_: manages a well-configured firewall suitable for a gateway host with masquerading and various services
 
 - `iptables.rules-Minimal-gateway.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Minimal-gateway.sh>`_: sets up a minimal yet functional firewall suitable for a gateway host
 
 - `iptables.rules-LANBox.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-LANBox.sh>`_: manages a well-configured firewall suitable for a LAN host
-
-- `iptables.rules-inspect.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-inspect.sh>`_: lists the currently-used firewall rules
 
 - `iptables.rules-FullDisabling.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-FullDisabling.sh>`_: disables all firewall rules
 
