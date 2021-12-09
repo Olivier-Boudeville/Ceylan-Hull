@@ -1,0 +1,19 @@
+[Unit]
+Description=Sets this computer as a NAT gateway
+Before=network-pre.target
+Wants=network-pre.target
+
+[Service]
+ExecStart=/usr/local/bin/iptables.rules-Gateway.sh start
+ExecReload=/usr/local/bin/iptables.rules-Gateway.sh reload
+
+# Disabled as too dangerous:
+# (locked-out from server if accessed from SSH)
+#ExecStop=/usr/local/bin/iptables.rules-Gateway.sh stop
+
+# Otherwise any start will trigger just afterwards a stop! 
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
