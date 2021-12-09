@@ -4,7 +4,7 @@ verbose=1
 default_ip_start="192.168"
 
 usage="Usage: $(basename $0) [-h|--help] [-v|--verbose] [IP_START=XXX.YYY|XXX.YYY.ZZZ]
-Scans all IPs starting from IP_START (default one being ${default_ip_start}), searching for ICMP ping answers (useful to locate some devices in a local network). Prerably to be run as a non-priviledged user.
+Scans all IPs starting from IP_START (default one being ${default_ip_start}), searching for ICMP ping answers (useful to locate some devices in a local network). Preferably to be run as a non-priviledged user.
 
 Ex:
  - '$(basename $0) 192.100' will search in 192.100.*.*
