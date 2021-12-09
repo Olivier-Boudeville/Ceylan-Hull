@@ -103,6 +103,9 @@ Listing of the recommended shell scripts per usage
 --------------------------------------------------
 
 
+.. _`filesystems`:
+
+
 Related to Filesystems
 ======================
 
@@ -195,6 +198,8 @@ To remove filesystem elements
 
 
 
+.. _`process management`:
+
 Related to (UNIX) Processes
 ===========================
 
@@ -218,6 +223,9 @@ Related to (UNIX) Processes
 
 
 
+.. _`network management`:
+
+
 Related to Network Management
 =============================
 
@@ -229,6 +237,7 @@ Related to Network Management
 
 - `ip-scan.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-scan.sh>`_: scans all IPs with any specified prefix, searching for ICMP ping answers (useful to locate some devices in a local network)
 
+- `ip-examine.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-examine.sh>`_: returns locally-determined information regarding the specified IP (ping answer, reverse DNS name, traceroute and ARP)
 
 
 
