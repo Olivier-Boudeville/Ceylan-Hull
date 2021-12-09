@@ -4,6 +4,7 @@ script_opts="{start|stop|reload|restart|force-reload|status|disable}"
 
 usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall suitable for a gateway host with masquerading and various services."
 
+# For more information, read http://howtos.esperide.org/Networking.html.
 
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-Gateway
@@ -75,7 +76,16 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 #
 #  - starts the firewall: systemctl start iptables
 #
-#  - check it just for this session: iptables -L
+#  - check it just for this session:
+#      - iptables -L with DNS resolution of listed IPs
+#      - iptables -nL with no DNS resolution of listed IPs (faster, stealthier)
+#      - iptables -nvL with no DNS resolution of listed IPs and more information
+#      (best)
+#
+#  - to perform manual changes in rules:
+#      - list: iptables -L --line-numbers
+#      - delete based on chain name and line number: iptables -D CHAIN_NAME LINE
+#           Ex: iptables -D OUTPUT 2
 #
 #  - check that iptables is meant to be started at boot:
 #        systemctl is-enabled iptables.service
@@ -151,7 +161,7 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-21"
+version="s-22"
 
 
 # Now the settings are not embedded anymore in this script, but in the next
@@ -476,7 +486,7 @@ start_it_up()
 
 	fi
 
-	## We are masquerading the full LAN:
+	## We are masquerading the full LAN (including the DHCP subnet):
 	${iptables} -t nat -A POSTROUTING -o ${net_if} -s 10.0.0.0/8 -j MASQUERADE
 
 	# NAT reduces the MTU, so counter-measure:
@@ -502,8 +512,8 @@ start_it_up()
 	#
 	#${iptables} -t nat -A PREROUTING -i ${lan_if} -p tcp --dport 80 -j REDIRECT --to-port ${AD_FILTER_PORT}
 
-	# To access from the LAN  (ex: a multimedia box, or a local computer
-	# to tune the telecom box) to a telecom box with such IP (may be superfluous):
+	# To access from the LAN (ex: a multimedia box, or a local computer to tune
+	# the telecom box) to a telecom box with such IP (may be superfluous):
 	#
 	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -d ${telecom_box} -j ACCEPT
 
@@ -589,10 +599,10 @@ start_it_up()
 
 
 	# If the IP of the gateway interface on the DMZ is assigned by a telecom box
-	# in router mode (hence IP-level, not frame-level like when in bridge mode)
-	# through DHCP (for example in the 192.168.0.0/24 range, say 192.168.0.1),
-	# one may would like to block incoming traffic that would originate from
-	# that box.
+	# in router mode (hence IP-level, not frame/MAC-level like when in bridge
+	# mode) through DHCP (for example in the 192.168.0.0/24 range, say
+	# 192.168.0.1), one may would like to block incoming traffic that would
+	# originate from that box.
 	#
 	# However this rule shall remain *deactivated*, otherwise web access to the
 	# gateway public address from the LAN will fail; presumably because the
