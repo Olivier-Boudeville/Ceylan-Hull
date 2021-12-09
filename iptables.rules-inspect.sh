@@ -10,7 +10,19 @@ if [ ! $(id -u) -eq 0 ]; then
 
 fi
 
+# Default table: filter; also: nat
+# Chains: INPUT, OUTPUT, FORWARD
+# A list of rules per chain.
+
+
 iptables=/sbin/iptables
+
+# Line numbers are useful to designate a rule afterwards (ex: to delete it).
+# -L: list all rules of selected chain or all chains
+# -v: verbose
+# -n: numeric only, no (slower) resolution
+#
+opts="--line-numbers -L -v -n"
 
 (
 
@@ -18,20 +30,24 @@ iptables=/sbin/iptables
 	echo " - listing all 'filter' rules:"
 	echo
 
-	${iptables} -L
+	# -L: list all rules of selected chain or all chains
+	# -v: verbose
+	# -n: numeric only, no (slower) resolution
+	#
+	${iptables} ${opts}
 
 	echo
 	echo " - printing all 'filter' rules:"
 	echo
-	${iptables} -S
+	${iptables} --list-rules
 
 
 	echo
 	echo " - listing all 'nat' rules:"
 	echo
-	${iptables} -t nat -L
+	${iptables} -t nat ${opts}
 
 	echo
 	echo " - printing all 'nat' rules:"
 	echo
-	${iptables} -t nat -S )  | more
+	${iptables} -t nat --list-rules ) | more
