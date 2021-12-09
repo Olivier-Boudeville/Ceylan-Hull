@@ -1,14 +1,35 @@
 #!/bin/sh
 
-default_prefix="192.168"
+verbose=1
+default_ip_start="192.168"
 
-usage="Usage: $(basename $0) [-h|--help] [IP_PREFIX=XXX.YYY]
-Scans all IPs with IP_PREFIX (default one being ${default_prefix}), searching for ICMP ping answers (useful to locate some devices in a local network). Prerably to be run as a non-priviledged user.
+usage="Usage: $(basename $0) [-h|--help] [-v|--verbose] [IP_START=XXX.YYY|XXX.YYY.ZZZ]
+Scans all IPs starting from IP_START (default one being ${default_ip_start}), searching for ICMP ping answers (useful to locate some devices in a local network). Prerably to be run as a non-priviledged user.
 
-Ex: $(basename $0) 192.100
+Ex:
+ - '$(basename $0) 192.100' will search in 192.100.*.*
+ - '$(basename $0) 10.0.77' will search in 10.0.77.*
 
-To interrupt a scan, one may use CTRL-Z then 'kill %1' (otherwise one can directly kill the script's process).
+Note: scanning is slow.
+To interrupt a scan, one may use CTRL-C.
 "
+
+
+if [ "$1" = "-h" ] || [ "$1" = "-h" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
+fi
+
+if [ "$1" = "-v" ] || [ "$1" = "--verbose" ]; then
+
+	echo "(verbose mode activated)"
+	verbose=0
+	shift
+
+fi
 
 if [ $# -ge 2 ]; then
 
@@ -19,56 +40,119 @@ ${usage}" 1>&2
 
 fi
 
-if [ "$1" = "-h" ] || [ "$1" = "-h" ]; then
+ip_start="$1"
 
-	echo "${usage}"
+if [ -z "${ip_start}" ]; then
+	#echo "  Error, no IP start specified.
+#${usage}" 1>&2
 
-	exit 0
+	#exit 10
+
+	ip_start="${default_ip_start}"
 
 fi
 
-prefix="$1"
+# We split an IPv4 address in its 4 components: a.b.c.d.
+#
+# For d, not keeping:
+# - 0, as designating a network
+# - 255, as designating a broadcast address
+
+a_start=$(echo "${ip_start}" | awk -F\. '{print $1}')
+
+if [ -z "${a_start}" ]; then
+	echo "  Error, invalid IP start specified ('${ip_start}').
+${usage}" 1>&2
+
+	exit 50
+
+fi
+
+a_stop="${a_start}"
+
+b_start=$(echo "${ip_start}" | awk -F\. '{print $2}')
+
+if [ -z "${b_start}" ]; then
+	echo "  Error, invalid IP start specified ('${ip_start}').
+${usage}" 1>&2
+
+	exit 55
+
+fi
+
+b_stop="${b_start}"
+
+
+c_start=$(echo "${ip_start}" | awk -F\. '{print $3}')
+
+
+if [ -n "${c_start}" ]; then
+	c_stop="${c_start}"
+else
+	c_start="0"
+	c_stop="254"
+fi
+
+d_start=$(echo "${ip_start}" | awk -F\. '{print $4}')
+
+if [ -n "${d_start}" ]; then
+	echo "  Error, invalid IP start specified ('${ip_start}').
+${usage}" 1>&2
+
+	exit 60
+
+fi
+
+d_start="1"
+d_stop="254"
+
 
 if [ -z "${prefix}" ]; then
-	prefix="192.168"
+	prefix="${default_ip_start}"
 fi
 
 log_file="ip-scan.log"
 
+trap 'echo "  (scan has been stopped by user)"; exit' INT
 
 output_message()
 {
 
-	echo "$*" >> ${log_file}
+	echo "$*" >> "${log_file}"
 	echo "$*"
 
 }
 
-output_message "Searching ICMP-responding IP addresses in prefix '${prefix}' at $(date)"
+output_message "   Scanning all ICMP-responding IP addresses from ${a_start}.${b_start}.${c_start}.${d_start} to ${a_stop}.${b_stop}.${c_stop}.${d_stop} at $(date)"
 output_message
 
-a=0
-b=1
+# a and b not to change:
+a="${a_start}"
+b="${b_start}"
 
-# Not keeping 255 for a or b, as these are broadcast addresses:
-while [ ${a} -le 254 ]; do
 
-	echo " - exploring range ${prefix}.${a}.1-254"
+c="${c_start}"
+d="${d_start}"
 
-	while [ ${b} -le 254 ]; do
-		#echo "a=${a}, b=${b}"
-		target="${prefix}.${a}.${b}"
+
+while [ ${c} -le ${c_stop} ]; do
+
+	echo " - exploring range ${a}.${b}.${c}.${d}-${d_stop}"
+
+	while [ ${d} -le ${d_stop} ]; do
+		target="${a}.${b}.${c}.${d}"
 		#echo "Testing ${target}"
-		if ping ${target} -c 1 1>/dev/null; then
+		if ping "${target}" -c 1 1>/dev/null; then
 			output_message "++++ Found ${target}!!!!!"
 		else
-			output_message "  (nothing at ${target})"
+			[ $verbose -eq 1 ] || output_message "  (nothing at ${target})"
 		fi
-		b=$(expr ${b} + 1)
+		d=$(expr ${d} + 1)
 	done
 
-	a=$(expr ${a} + 1)
-	b=1
+
+	c=$(expr ${c} + 1)
+	d=1
 
 done
 
