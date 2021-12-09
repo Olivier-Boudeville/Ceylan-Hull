@@ -29,7 +29,7 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Sunday, December 5, 2021</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Thursday, December 9, 2021</td>
 </tr>
 <tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
@@ -157,7 +157,7 @@
 <div class="section" id="listing-of-the-recommended-shell-scripts-per-usage">
 <h1><a class="toc-backref" href="#id20">Listing of the recommended shell scripts per usage</a></h1>
 <div class="section" id="related-to-filesystems">
-<h2><a class="toc-backref" href="#id21">Related to Filesystems</a></h2>
+<span id="filesystems"></span><h2><a class="toc-backref" href="#id21">Related to Filesystems</a></h2>
 <div class="section" id="to-search-for-files-and-content">
 <h3><a class="toc-backref" href="#id22">To search for files and content</a></h3>
 <ul class="simple">
@@ -221,7 +221,7 @@
 </div>
 </div>
 <div class="section" id="related-to-unix-processes">
-<h2><a class="toc-backref" href="#id29">Related to (UNIX) Processes</a></h2>
+<span id="process-management"></span><h2><a class="toc-backref" href="#id29">Related to (UNIX) Processes</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/top.sh">top.sh</a>: triggers the best &quot;top&quot; available, to monitor processes and system resources</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh">watch.sh</a>: tracks (over time) processes that may be transient</li>
@@ -234,12 +234,13 @@
 </ul>
 </div>
 <div class="section" id="related-to-network-management">
-<h2><a class="toc-backref" href="#id30">Related to Network Management</a></h2>
+<span id="network-management"></span><h2><a class="toc-backref" href="#id30">Related to Network Management</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh">test-network.sh</a>: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-network.sh">monitor-network.sh</a>: polls periodically one's local connection to the Internet, to detect (possibly intermittent) outages, notifying them if requested and helping their diagnosis</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/manage-wifi.sh">manage-wifi.sh</a>: starts/gets status/scans/stops the wifi support</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-scan.sh">ip-scan.sh</a>: scans all IPs with any specified prefix, searching for ICMP ping answers (useful to locate some devices in a local network)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-examine.sh">ip-examine.sh</a>: returns locally-determined information regarding the specified IP (ping answer, reverse DNS name, traceroute and ARP)</li>
 </ul>
 </div>
 <div class="section" id="for-development">
@@ -441,10 +442,10 @@
 <div class="section" id="firewall-configuration">
 <h2><a class="toc-backref" href="#id50">Firewall configuration</a></h2>
 <ul class="simple">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables-inspect.sh">iptables-inspect.sh</a>: lists the currently-used firewall rules for the chains of the main tables</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Gateway.sh">iptables.rules-Gateway.sh</a>: manages a well-configured firewall suitable for a gateway host with masquerading and various services</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Minimal-gateway.sh">iptables.rules-Minimal-gateway.sh</a>: sets up a minimal yet functional firewall suitable for a gateway host</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-LANBox.sh">iptables.rules-LANBox.sh</a>: manages a well-configured firewall suitable for a LAN host</li>
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-inspect.sh">iptables.rules-inspect.sh</a>: lists the currently-used firewall rules</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-FullDisabling.sh">iptables.rules-FullDisabling.sh</a>: disables all firewall rules</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-TemporaryDisabling.sh">iptables.rules-TemporaryDisabling.sh</a>: disables temporarily all firewall rules</li>
 </ul>
