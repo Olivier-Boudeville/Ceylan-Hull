@@ -1,16 +1,20 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] FILE_TO_IMPORT: imports specified file into a newly-launched instance of Blender.
+usage="Usage: $(basename $0) [-h|--help] FILE_TO_IMPORT: imports the specified file into a newly-launched instance of Blender that will automatically focus on the loaded content.
+
+More precisely, allows to import directly in Blender various file formats from the command-line, rather than doing it interactively. Takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint onto the loaded objects.
+
   Supported file formats (extension are case-independant):
-	- glTF 2.0 (extension: '*.gltf')
+	- glTF 2.0 (extensions: '*.gltf'/'*.glb')
 	- Collada/DAE (extension: '*.dae')
 	- FBX (extension: '*.fbx')
 	- IFC (extension: '*.ifc')
 
-Note that this script depends on Ceylan-Snake (see http://snake.esperide.org)
-"
+  Options:
+	-h or --help: displays this help
 
-# -h or --help: displays this help
+Note that this script depends on the Ceylan-Snake Blender importer (https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-importers), and that, for an IFC to be imported, the BIM add-on must have already been installed in Blender (see https://blenderbim.org/).
+"
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -25,6 +29,7 @@ if [ ! $# -eq 1 ]; then
 
 	echo "  Error, exactly one parameter must be specified.
 ${usage}" 1>&2
+
 	exit 10
 
 fi
@@ -62,71 +67,17 @@ if [ ! -f "${file_to_import}" ] && [ ! -L "${file_to_import}" ]; then
 
 fi
 
-ext="$(echo "${file_to_import}" | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
+# Now a single Python import script is used, rather than one per file format:
+#ext="$(echo "${file_to_import}" | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 #echo "Extension: '${ext}'."
 
+import_script="${python_importers_dir}/blender_import.py"
 
-if [ "${ext}" = "gltf" ]; then
+if [ ! -f "${import_script}" ]; then
 
-	gltf_script="${python_importers_dir}/blender_import_gltf.py"
-
-	if [ ! -f "${gltf_script}" ]; then
-
-		echo "  Error, import script for glTF 2.0 ('${gltf_script}') not found." 1>&2
-		exit 30
-
-	fi
-
-	${blender} --python "${gltf_script}" -- "${file_to_import}"
-
-
-elif [ "${ext}" = "dae" ]; then
-
-	dae_script="${python_importers_dir}/blender_import_dae.py"
-
-	if [ ! -f "${dae_script}" ]; then
-
-		echo "  Error, import script for Collada/DAE ('${dae_script}') not found." 1>&2
+		echo "  Error, import script ('${import_script}') not found." 1>&2
 		exit 35
 
 	fi
 
-	${blender} --python "${dae_script}" -- "${file_to_import}"
-
-
-elif [ "${ext}" = "fbx" ]; then
-
-
-	fbx_script="${python_importers_dir}/blender_import_fbx.py"
-
-	if [ ! -f "${fbx_script}" ]; then
-
-		echo "  Error, import script for FBX ('${fbx_script}') not found." 1>&2
-		exit 40
-
-	fi
-
-	${blender} --python "${fbx_script}" -- "${file_to_import}"
-
-
-elif [ "${ext}" = "ifc" ]; then
-
-
-	ifc_script="${python_importers_dir}/blender_import_ifc.py"
-
-	if [ ! -f "${ifc_script}" ]; then
-
-		echo "  Error, import script for IFC ('${ifc_script}') not found." 1>&2
-		exit 45
-
-	fi
-
-	${blender} --python "${ifc_script}" -- "${file_to_import}"
-
-
-else
-
-	echo "  Error, unsupported file format (extension: '${ext}')." 1>&2
-	exit 50
-
-fi
+${blender} --python "${import_script}" -- "${file_to_import}"
