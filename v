@@ -125,6 +125,28 @@ chooseEog()
 }
 
 
+chooseBlender()
+{
+
+	#echo "Blender selected."
+
+	editor="$(which blender 2>/dev/null)"
+	editor_short_name="Blender"
+
+}
+
+
+chooseBlenderImporter()
+{
+
+	#echo "Blender importer selected."
+
+	editor="$(which blender-import.sh 2>/dev/null)"
+	editor_short_name="Blender importer"
+
+}
+
+
 chooseFirefox()
 {
 
@@ -761,6 +783,22 @@ view_selected_element()
 
 	fi
 
+	if [ "${extension}" = "blend" ]; then
+
+		chooseBlender
+		applyEditor
+		exit 0
+
+	fi
+
+	# Blender will not open them, they must be imported instead:
+	if [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ] || [ "${extension}" = "ifc" ]; then
+
+		chooseBlenderImporter
+		applyEditor
+		exit 0
+
+	fi
 
 	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
 
