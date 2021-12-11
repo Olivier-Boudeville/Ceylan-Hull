@@ -110,6 +110,17 @@ chooseBlender()
 }
 
 
+chooseBlenderImporter()
+{
+
+	#echo "Blender importer selected."
+
+	editor="$(which blender-import.sh 2>/dev/null)"
+	editor_short_name="Blender importer"
+
+}
+
+
 chooseInkscape()
 {
 
@@ -908,25 +919,13 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 	fi
 
-	if [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ]; then
+	if [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ]; then
 
 		chooseGimp
 		applyEditor
 		exit 0
 
 	fi
-
-
-	# Not relevant, as for Blender will not open them, as they must be imported
-	# instead:
-	#
-	#if [ "${extension}" = "dae" -o "${extension}" = "gltf" ]; then
-	#
-	#	chooseBlender
-	#	applyEditor
-	#	exit 0
-	#
-	#fi
 
 	if [ "${extension}" = "blend" ]; then
 
@@ -935,6 +934,16 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 		exit 0
 
 	fi
+
+	# Blender will not open them, they must be imported instead:
+	if [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ] || [ "${extension}" = "ifc" ]; then
+
+		chooseBlenderImporter
+		applyEditor
+		exit 0
+
+	fi
+
 
 	if [ "${extension}" = "template" ]; then
 
