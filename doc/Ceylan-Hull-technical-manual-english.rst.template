@@ -348,6 +348,8 @@ For Voice Synthesis / Text-To-Speech
 
 - `test-voices.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-voices.sh>`_: tests all supported voices
 
+See also the `Ceylan-Myriad speech support <http://myriad.esperide.org/#TTS>`_.
+
 
 
 For Video
@@ -364,8 +366,9 @@ For 3D
 
 .. _blender:
 
-- `blender-import.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh>`_: allows to import directly in `Blender <https://www.blender.org/>`_ various file formats (ex: glTF 2.0 i.e. ``*.gltf/*.glb``, Collada i.e. ``*.dae``, FBX i.e. ``*.fbx``, IFC BIM files i.e. ``*.ifc``) from the command-line, rather than doing it interactively; takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint onto the loaded objects; depends on the `Ceylan-Snake Blender importer <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-importers>`_
+- `blender-import.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh>`_: allows to import directly in `Blender <https://www.blender.org/>`_ various file formats (ex: glTF 2.0 i.e. ``*.gltf/*.glb``, Collada i.e. ``*.dae``, FBX i.e. ``*.fbx``, IFC BIM files i.e. ``*.ifc``) from the command-line, rather than doing it interactively; takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint directly onto the loaded objects; depends on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
 
+- `blender-convert.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh>`_: allows to convert, directly from the command-line, a 3D file format into a preferred one (ex: gltF 2.0), thanks to a non-interactive Blender; depends also on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
 
 
 
