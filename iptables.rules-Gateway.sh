@@ -317,10 +317,11 @@ start_it_up()
 	${iptables} -X
 	${iptables} -Z
 
-	${iptables} -F -t nat
-	${iptables} -X -t nat
-	${iptables} -Z -t nat
-
+	for table in nat mangle raw security; do
+		${iptables} -F -t ${table}
+		${iptables} -X -t ${table}
+		${iptables} -Z -t ${table}
+	done
 
 	# Set up a default DROP policy for the built-in chains.
 	#
