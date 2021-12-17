@@ -726,6 +726,28 @@ view_selected_element()
 
 	fi
 
+	if [ "${extension}" = "xml" ] || [ "${extension}" = "XML" ]; then
+
+		viewer="$(which xmllint 2>/dev/null)"
+
+		if [ -x "${viewer}" ]; then
+
+			viewer_short_name="xmllint"
+			run_in_background=1
+
+			applyViewer
+			exit 0
+
+		else
+
+			echo "Warning: no 'xmllint' tool available, defaulting to Emacs." 1>&2
+			chooseEmacs
+			applyViewer
+			exit 0
+
+		fi
+
+	fi
 
 	if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
 
@@ -758,7 +780,7 @@ view_selected_element()
 
 	fi
 
-	if [ "${extension}" = "ogg" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
+	if [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
 
 		# Another option is: vlc.
 
