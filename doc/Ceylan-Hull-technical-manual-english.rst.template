@@ -371,6 +371,9 @@ For 3D
 - `blender-convert.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh>`_: allows to convert, directly from the command-line, a 3D file format into a preferred one (ex: gltF 2.0), thanks to a non-interactive Blender; depends also on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
 
 
+See also: `Ceylan's HOWTO regarding 3D <http://howtos.esperide.org/ThreeDimensional.html>`_.
+
+
 
 For Snapshots (Camera Pictures)
 -------------------------------
