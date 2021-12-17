@@ -371,7 +371,7 @@ For 3D
 - `blender-convert.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh>`_: allows to convert, directly from the command-line, a 3D file format into a preferred one (ex: gltF 2.0), thanks to a non-interactive Blender; depends also on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
 
 
-See also: `Ceylan's HOWTO regarding 3D <http://howtos.esperide.org/ThreeDimensional.html>`_.
+See also `Ceylan's HOWTO regarding 3D <http://howtos.esperide.org/ThreeDimensional.html>`_.
 
 
 
@@ -553,6 +553,9 @@ The advantages of this procedure as a whole are: strong and unique password, str
 .. [#] Depending on the use, the suffix for a site may be different from the site name, provided of course a translation table is kept on your side (typically in said credentials file). For example, one just has to record that for ``http://someacme.com`` he chose ``deneb-bluetiger@myfoobar.org`` (stealthier/less obvious - but then harder to incriminate a rogue website).
 
 
+See also `Ceylan's HOWTO regarding cybersecurity <https://howtos.esperide.org/Cybersecurity.html>`_.
+
+
 
 Firewall configuration
 ======================
@@ -570,8 +573,11 @@ Firewall configuration
 - `iptables.rules-TemporaryDisabling.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-TemporaryDisabling.sh>`_: disables temporarily all firewall rules
 
 
-
 .. iptables.rules-OrgeServer.sh
+
+
+See also `Ceylan's HOWTO section regarding firewall management <https://howtos.esperide.org/Networking.html#firewall-management>`_.
+
 
 
 
