@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] PACKAGE_NAME: installs a package on Arch Linux, either a standard pacman one, or from the AUR.
+usage="Usage: $(basename $0) [-h|--help] PACKAGE_NAME: installs a package on Arch Linux, found as either a standard Arch one (with pacman), or as an AUR package.
 
 To be run as a non-priviledged user (sudo used whenever necessary)."
 
