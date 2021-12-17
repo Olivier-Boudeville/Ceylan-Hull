@@ -102,7 +102,7 @@ if [ $already_unlocked -eq 1 ]; then
 
 	#echo "Unlocking credentials: from ${locked_file} to ${unlocked_file}."
 
-	read -p  "Enter lock password:" -s passphrase
+	read -p  "Enter lock password for credentials: " -s passphrase
 
 	#echo "passphrase = '${passphrase}'"
 
@@ -120,17 +120,17 @@ if [ $already_unlocked -eq 1 ]; then
 
 	#echo "crypt_opts=$crypt_opts"
 
-	if ${crypt_tool} -d ${crypt_opts} --output ${unlocked_file} ${locked_file} 1>/dev/null 2>&1; then
+	if ${crypt_tool} -d ${crypt_opts} --output "${unlocked_file}" "${locked_file}" 1>/dev/null 2>&1; then
 
 		#echo "(credentials unlocked in ${unlocked_file})"
-		echo "(credentials unlocked)"
+		echo "(credentials unlocked and displayed)"
 
 		${shred_tool} --force --remove --zero "${locked_file}"
 		res="$?"
 
 		if [ ! ${res} -eq 0 ]; then
 
-			echo "  Error, shredding of '${locked_file}' failed (code: $res), removing it." 1>&2
+			echo "  Error, shredding of '${locked_file}' failed (code: ${res}), removing it." 1>&2
 			/bin/rm -f "${locked_file}"
 
 			exit 35
@@ -139,7 +139,7 @@ if [ $already_unlocked -eq 1 ]; then
 
 	else
 
-		echo "  Error, unlocking failed, stopping, locked file '${locked_file}' left as it is." 1>&2
+		echo "  Error, unlocking failed (possibly wrong passphrase), stopping, locked file '${locked_file}' left as it is." 1>&2
 
 		exit 40
 
@@ -153,14 +153,54 @@ fi
 
 #echo "Use lock-credentials.sh to perform the reverse operation."
 
-emacsclient --create-frame "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
 
-echo "(locking now the credentials)"
+# We do not want the requested next Emacs-based credentials opening to integrate
+# into any prior launched Emacs instance (nor do we want new file openings to
+# happen in this instance), so we create a separate Emacs server:
+#
+# (otherwise this script will be confused as not detecting the closing of the
+# credentials buffer, leading to the coexisting of ciphered and clear-text
+# credentials):
+#
+server_name="ceylan-hull-credentials-server"
+
+#echo "Securing an Emacs daemon named '${server_name}'"
+
+# No change in the displayed warning if a '--with-x-toolkit=lucid' option is
+# added:
+#
+
+# Would fail if already running (hence from the second credentials opening):
+#emacs --daemon="${server_name}"
+
+# Not working, the server-name is not known yet:
+#emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
+
+# Launch this specific daemon iff needed:
+#
+# (returning zero to test availability)
+#
+if ! emacsclient -s "${server_name}" -e 0 1>/dev/null 2>&1; then
+	#echo "No Emacs daemon '${server_name}' found existing, launching it."
+	emacs --daemon="${server_name}" 1>/dev/null 2>&1
+else
+	#echo "Emacs daemon '${server_name}' found already existing, using it."
+	:
+fi
+
+#echo "Connecting Emacs client to '${server_name}'."
+
+# -nw not used anymore; possibly that '--alternate-editor=emacs' is useless in
+# -this context:
+#
+emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
+
+#echo "(locking now the credentials)"
 
 # No passphrase wanted to be specified on the command-line:
 #lock-credentials.sh [{passphrase}]
 
-${crypt_tool} -c ${crypt_opts} --output ${locked_file} ${unlocked_file} 1>/dev/null 2>/dev/null
+${crypt_tool} -c ${crypt_opts} --output "${locked_file}" "${unlocked_file}" 1>/dev/null 2>/dev/null
 
 res="$?"
 
@@ -175,14 +215,14 @@ if [ ! ${res} -eq 0 ]; then
 fi
 
 
-# Re-enabled read operations (more discrete, and needed by GIT to commit newer
+# Re-enabled read operations (more discrete, and needed by Git to commit newer
 # versions):
 #
 #chmod 000 "${locked_file}"
 if chmod 400 "${locked_file}"; then
 
 	#echo "(credentials locked in ${locked_file})"
-	echo "(credentials locked)"
+	echo "(credentials locked again)"
 	${shred_tool} --force --remove --zero "${unlocked_file}"
 	res="$?"
 
