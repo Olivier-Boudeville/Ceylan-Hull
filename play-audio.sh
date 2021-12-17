@@ -26,7 +26,7 @@ say()
 
 player_name="mplayer"
 
-player=$(which "${player_name}" 2>/dev/null)
+player="$(which "${player_name}" 2>/dev/null)"
 
 # For mplayer:
 player_opt="-vc null -vo null -quiet"
