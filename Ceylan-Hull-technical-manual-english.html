@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
 <title>Welcome to the Ceylan-Hull documentation</title>
 <meta content="Hull, shell, scripts, sh, bash" name="keywords" />
 <link rel="stylesheet" href="pygments-default.css" type="text/css" />
@@ -29,7 +29,7 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Thursday, December 9, 2021</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Friday, December 17, 2021</td>
 </tr>
 <tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
@@ -46,7 +46,7 @@
 <p><span class="raw-html">This Hull documentation is also available in the PDF format (see <a href="Ceylan-Hull-technical-manual-english.pdf">Ceylan-Hull-technical-manual-english.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/">here</a>.</span></p>
 <p></p>
 <div class="section" id="overview">
-<h1><a class="toc-backref" href="#id19">Overview</a></h1>
+<h1><a class="toc-backref" href="#id21">Overview</a></h1>
 <p>Here are <strong>a few scripts, sorted by themes, that may be convenient for at least some users</strong>.</p>
 <p>Many of them can display their intended usage on the console by specifying them the <tt class="docutils literal"><span class="pre">-h</span></tt> / <tt class="docutils literal"><span class="pre">--help</span></tt> command-line option.</p>
 <p>In each category, scripts are roughly sorted by decreasing interest/update status. The scripts that we deem the most useful are described more precisely at the end of this document.</p>
@@ -63,110 +63,110 @@
 <div class="contents topic" id="id1">
 <span id="table-of-contents"></span><p class="topic-title"><strong>Table of Contents</strong></p>
 <ul class="simple">
-<li><a class="reference internal" href="#overview" id="id19">Overview</a></li>
-<li><a class="reference internal" href="#listing-of-the-recommended-shell-scripts-per-usage" id="id20">Listing of the recommended shell scripts per usage</a><ul>
-<li><a class="reference internal" href="#related-to-filesystems" id="id21">Related to Filesystems</a><ul>
-<li><a class="reference internal" href="#to-search-for-files-and-content" id="id22">To search for files and content</a></li>
-<li><a class="reference internal" href="#to-list-filesystem-elements" id="id23">To list filesystem elements</a></li>
-<li><a class="reference internal" href="#to-fix-names-paths-permissions-content" id="id24">To fix names, paths, permissions, content</a></li>
-<li><a class="reference internal" href="#to-inspect-file-and-directory-content" id="id25">To inspect file and directory content</a></li>
-<li><a class="reference internal" href="#to-compare-files-and-trees" id="id26">To compare files and trees</a></li>
-<li><a class="reference internal" href="#to-copy-transfer" id="id27">To copy/transfer</a></li>
-<li><a class="reference internal" href="#to-remove-filesystem-elements" id="id28">To remove filesystem elements</a></li>
+<li><a class="reference internal" href="#overview" id="id21">Overview</a></li>
+<li><a class="reference internal" href="#listing-of-the-recommended-shell-scripts-per-usage" id="id22">Listing of the recommended shell scripts per usage</a><ul>
+<li><a class="reference internal" href="#related-to-filesystems" id="id23">Related to Filesystems</a><ul>
+<li><a class="reference internal" href="#to-search-for-files-and-content" id="id24">To search for files and content</a></li>
+<li><a class="reference internal" href="#to-list-filesystem-elements" id="id25">To list filesystem elements</a></li>
+<li><a class="reference internal" href="#to-fix-names-paths-permissions-content" id="id26">To fix names, paths, permissions, content</a></li>
+<li><a class="reference internal" href="#to-inspect-file-and-directory-content" id="id27">To inspect file and directory content</a></li>
+<li><a class="reference internal" href="#to-compare-files-and-trees" id="id28">To compare files and trees</a></li>
+<li><a class="reference internal" href="#to-copy-transfer" id="id29">To copy/transfer</a></li>
+<li><a class="reference internal" href="#to-remove-filesystem-elements" id="id30">To remove filesystem elements</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#related-to-unix-processes" id="id29">Related to (UNIX) Processes</a></li>
-<li><a class="reference internal" href="#related-to-network-management" id="id30">Related to Network Management</a></li>
-<li><a class="reference internal" href="#for-development" id="id31">For Development</a></li>
-<li><a class="reference internal" href="#for-version-control-system-vcs" id="id32">For Version Control System (VCS)</a></li>
-<li><a class="reference internal" href="#replacement-related" id="id33">Replacement-related</a></li>
-<li><a class="reference internal" href="#multimedia-related" id="id34">Multimedia-related</a><ul>
-<li><a class="reference internal" href="#for-audio" id="id35">For Audio</a></li>
-<li><a class="reference internal" href="#for-voice-synthesis-text-to-speech" id="id36">For Voice Synthesis / Text-To-Speech</a></li>
-<li><a class="reference internal" href="#for-video" id="id37">For Video</a></li>
-<li><a class="reference internal" href="#for-3d" id="id38">For 3D</a></li>
-<li><a class="reference internal" href="#for-snapshots-camera-pictures" id="id39">For Snapshots (Camera Pictures)</a></li>
+<li><a class="reference internal" href="#related-to-unix-processes" id="id31">Related to (UNIX) Processes</a></li>
+<li><a class="reference internal" href="#related-to-network-management" id="id32">Related to Network Management</a></li>
+<li><a class="reference internal" href="#for-development" id="id33">For Development</a></li>
+<li><a class="reference internal" href="#for-version-control-system-vcs" id="id34">For Version Control System (VCS)</a></li>
+<li><a class="reference internal" href="#replacement-related" id="id35">Replacement-related</a></li>
+<li><a class="reference internal" href="#multimedia-related" id="id36">Multimedia-related</a><ul>
+<li><a class="reference internal" href="#for-audio" id="id37">For Audio</a></li>
+<li><a class="reference internal" href="#for-voice-synthesis-text-to-speech" id="id38">For Voice Synthesis / Text-To-Speech</a></li>
+<li><a class="reference internal" href="#for-video" id="id39">For Video</a></li>
+<li><a class="reference internal" href="#for-3d" id="id40">For 3D</a></li>
+<li><a class="reference internal" href="#for-snapshots-camera-pictures" id="id41">For Snapshots (Camera Pictures)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#cctv-related" id="id40">CCTV-related</a></li>
-<li><a class="reference internal" href="#document-related" id="id41">Document-related</a></li>
-<li><a class="reference internal" href="#system-related" id="id42">System-related</a><ul>
-<li><a class="reference internal" href="#admin-related" id="id43">Admin-related</a></li>
-<li><a class="reference internal" href="#to-install-software" id="id44">To install software</a></li>
-<li><a class="reference internal" href="#system-information-related" id="id45">System information-related</a></li>
-<li><a class="reference internal" href="#convenience-related" id="id46">Convenience-related</a></li>
-<li><a class="reference internal" href="#distribution-related" id="id47">Distribution-related</a></li>
+<li><a class="reference internal" href="#cctv-related" id="id42">CCTV-related</a></li>
+<li><a class="reference internal" href="#document-related" id="id43">Document-related</a></li>
+<li><a class="reference internal" href="#system-related" id="id44">System-related</a><ul>
+<li><a class="reference internal" href="#admin-related" id="id45">Admin-related</a></li>
+<li><a class="reference internal" href="#to-install-software" id="id46">To install software</a></li>
+<li><a class="reference internal" href="#system-information-related" id="id47">System information-related</a></li>
+<li><a class="reference internal" href="#convenience-related" id="id48">Convenience-related</a></li>
+<li><a class="reference internal" href="#distribution-related" id="id49">Distribution-related</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#for-encryption" id="id48">For encryption</a></li>
-<li><a class="reference internal" href="#for-security" id="id49">For security</a></li>
-<li><a class="reference internal" href="#firewall-configuration" id="id50">Firewall configuration</a></li>
-<li><a class="reference internal" href="#for-smartphones" id="id51">For smartphones</a></li>
-<li><a class="reference internal" href="#for-archive-management" id="id52">For archive management</a></li>
-<li><a class="reference internal" href="#web-related-facilities" id="id53">Web-related facilities</a></li>
-<li><a class="reference internal" href="#for-user-notifications" id="id54">For user notifications</a></li>
-<li><a class="reference internal" href="#shell-helpers" id="id55">Shell Helpers</a></li>
-<li><a class="reference internal" href="#about-configuration" id="id56">About Configuration</a><ul>
-<li><a class="reference internal" href="#for-keyboards" id="id57">For keyboards</a></li>
-<li><a class="reference internal" href="#of-environment-and-related" id="id58">Of Environment and related</a></li>
+<li><a class="reference internal" href="#for-encryption" id="id50">For encryption</a></li>
+<li><a class="reference internal" href="#for-security" id="id51">For security</a></li>
+<li><a class="reference internal" href="#firewall-configuration" id="id52">Firewall configuration</a></li>
+<li><a class="reference internal" href="#for-smartphones" id="id53">For smartphones</a></li>
+<li><a class="reference internal" href="#for-archive-management" id="id54">For archive management</a></li>
+<li><a class="reference internal" href="#web-related-facilities" id="id55">Web-related facilities</a></li>
+<li><a class="reference internal" href="#for-user-notifications" id="id56">For user notifications</a></li>
+<li><a class="reference internal" href="#shell-helpers" id="id57">Shell Helpers</a></li>
+<li><a class="reference internal" href="#about-configuration" id="id58">About Configuration</a><ul>
+<li><a class="reference internal" href="#for-keyboards" id="id59">For keyboards</a></li>
+<li><a class="reference internal" href="#of-environment-and-related" id="id60">Of Environment and related</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#script-related" id="id59">Script-related</a></li>
-<li><a class="reference internal" href="#launch-related" id="id60">Launch-related</a></li>
-<li><a class="reference internal" href="#miscellaneous" id="id61">Miscellaneous</a></li>
+<li><a class="reference internal" href="#script-related" id="id61">Script-related</a></li>
+<li><a class="reference internal" href="#launch-related" id="id62">Launch-related</a></li>
+<li><a class="reference internal" href="#miscellaneous" id="id63">Miscellaneous</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#detailed-description-of-some-frequently-used-scripts" id="id62">Detailed description of some frequently-used scripts</a></li>
-<li><a class="reference internal" href="#shell-configuration" id="id63">Shell Configuration</a></li>
-<li><a class="reference internal" href="#windows-shell-related-support" id="id64">Windows Shell-related Support</a><ul>
-<li><a class="reference internal" href="#id11" id="id65">Overview</a></li>
-<li><a class="reference internal" href="#main-choices" id="id66">Main Choices</a></li>
-<li><a class="reference internal" href="#more-detailed-msys2-information" id="id67">More Detailed MSYS2 Information</a><ul>
-<li><a class="reference internal" href="#packages" id="id68">Packages</a></li>
-<li><a class="reference internal" href="#paths" id="id69">Paths</a></li>
-<li><a class="reference internal" href="#symbolic-links" id="id70">Symbolic Links</a></li>
+<li><a class="reference internal" href="#detailed-description-of-some-frequently-used-scripts" id="id64">Detailed description of some frequently-used scripts</a></li>
+<li><a class="reference internal" href="#shell-configuration" id="id65">Shell Configuration</a></li>
+<li><a class="reference internal" href="#windows-shell-related-support" id="id66">Windows Shell-related Support</a><ul>
+<li><a class="reference internal" href="#id13" id="id67">Overview</a></li>
+<li><a class="reference internal" href="#main-choices" id="id68">Main Choices</a></li>
+<li><a class="reference internal" href="#more-detailed-msys2-information" id="id69">More Detailed MSYS2 Information</a><ul>
+<li><a class="reference internal" href="#packages" id="id70">Packages</a></li>
+<li><a class="reference internal" href="#paths" id="id71">Paths</a></li>
+<li><a class="reference internal" href="#symbolic-links" id="id72">Symbolic Links</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#other-installations" id="id71">Other Installations</a></li>
-<li><a class="reference internal" href="#more-detailed-windows-terminal-information" id="id72">More Detailed Windows Terminal Information</a></li>
-<li><a class="reference internal" href="#shell" id="id73">Shell</a></li>
-<li><a class="reference internal" href="#getting-ceylan-hull" id="id74">Getting Ceylan-Hull</a></li>
-<li><a class="reference internal" href="#text-editor" id="id75">Text Editor</a></li>
-<li><a class="reference internal" href="#gotchas" id="id76">Gotchas</a><ul>
-<li><a class="reference internal" href="#stdout-is-not-a-tty" id="id77"><tt class="docutils literal">stdout is not a tty</tt></a></li>
+<li><a class="reference internal" href="#other-installations" id="id73">Other Installations</a></li>
+<li><a class="reference internal" href="#more-detailed-windows-terminal-information" id="id74">More Detailed Windows Terminal Information</a></li>
+<li><a class="reference internal" href="#shell" id="id75">Shell</a></li>
+<li><a class="reference internal" href="#getting-ceylan-hull" id="id76">Getting Ceylan-Hull</a></li>
+<li><a class="reference internal" href="#text-editor" id="id77">Text Editor</a></li>
+<li><a class="reference internal" href="#gotchas" id="id78">Gotchas</a><ul>
+<li><a class="reference internal" href="#stdout-is-not-a-tty" id="id79"><tt class="docutils literal">stdout is not a tty</tt></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#post-install" id="id78">Post-Install</a></li>
-<li><a class="reference internal" href="#a-word-about-alternate-choices-and-other-environments" id="id79">A Word about Alternate Choices and Other Environments</a><ul>
-<li><a class="reference internal" href="#msys" id="id80">MSYS</a></li>
-<li><a class="reference internal" href="#id17" id="id81">MinGW</a></li>
-<li><a class="reference internal" href="#cygwin" id="id82">Cygwin</a></li>
-<li><a class="reference internal" href="#id18" id="id83">WSL</a></li>
+<li><a class="reference internal" href="#post-install" id="id80">Post-Install</a></li>
+<li><a class="reference internal" href="#a-word-about-alternate-choices-and-other-environments" id="id81">A Word about Alternate Choices and Other Environments</a><ul>
+<li><a class="reference internal" href="#msys" id="id82">MSYS</a></li>
+<li><a class="reference internal" href="#id19" id="id83">MinGW</a></li>
+<li><a class="reference internal" href="#cygwin" id="id84">Cygwin</a></li>
+<li><a class="reference internal" href="#id20" id="id85">WSL</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#see-also" id="id84">See also</a></li>
-<li><a class="reference internal" href="#support" id="id85">Support</a></li>
-<li><a class="reference internal" href="#please-react" id="id86">Please React!</a></li>
-<li><a class="reference internal" href="#ending-word" id="id87">Ending Word</a></li>
+<li><a class="reference internal" href="#see-also" id="id86">See also</a></li>
+<li><a class="reference internal" href="#support" id="id87">Support</a></li>
+<li><a class="reference internal" href="#please-react" id="id88">Please React!</a></li>
+<li><a class="reference internal" href="#ending-word" id="id89">Ending Word</a></li>
 </ul>
 </div>
 <p></p>
 </div>
 <div class="section" id="listing-of-the-recommended-shell-scripts-per-usage">
-<h1><a class="toc-backref" href="#id20">Listing of the recommended shell scripts per usage</a></h1>
+<h1><a class="toc-backref" href="#id22">Listing of the recommended shell scripts per usage</a></h1>
 <div class="section" id="related-to-filesystems">
-<span id="filesystems"></span><h2><a class="toc-backref" href="#id21">Related to Filesystems</a></h2>
+<span id="filesystems"></span><h2><a class="toc-backref" href="#id23">Related to Filesystems</a></h2>
 <div class="section" id="to-search-for-files-and-content">
-<h3><a class="toc-backref" href="#id22">To search for files and content</a></h3>
+<h3><a class="toc-backref" href="#id24">To search for files and content</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh">wh</a> (&quot;where&quot;) : a more convenient &quot;find&quot;; see the <a class="reference internal" href="#wh-full-usage">wh full usage</a></li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep">regrep</a>: recursive grep for the ones that lack it; see the <a class="reference internal" href="#regrep-full-usage">regrep full usage</a></li>
 </ul>
 </div>
 <div class="section" id="to-list-filesystem-elements">
-<h3><a class="toc-backref" href="#id23">To list filesystem elements</a></h3>
+<h3><a class="toc-backref" href="#id25">To list filesystem elements</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-filesystem-entries-by-size.sh">list-filesystem-entries-by-size.sh</a>: lists, from any specified directory otherwise from the current one, the direct filesystem entries (local files and directories), sorted by decreasing size of their content</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-files-in-tree-by-size.sh">list-files-in-tree-by-size.sh</a>: lists, from any specified directory otherwise from the current one, all files in tree, sorted by decreasing size of their content</li>
@@ -175,7 +175,7 @@
 </ul>
 </div>
 <div class="section" id="to-fix-names-paths-permissions-content">
-<h3><a class="toc-backref" href="#id24">To fix names, paths, permissions, content</a></h3>
+<h3><a class="toc-backref" href="#id26">To fix names, paths, permissions, content</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-filename.sh">fix-filename.sh</a>: &quot;corrects&quot; the name of the specified file (or directory), to remove spaces and quotes (replaced by '-'), accentuated characters in it, etc.</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-paths-in-tree.sh">fix-paths-in-tree.sh</a>: does the same as <tt class="docutils literal"><span class="pre">fix-filename.sh</span></tt>, yet in a tree</li>
@@ -189,7 +189,7 @@
 </ul>
 </div>
 <div class="section" id="to-inspect-file-and-directory-content">
-<h3><a class="toc-backref" href="#id25">To inspect file and directory content</a></h3>
+<h3><a class="toc-backref" href="#id27">To inspect file and directory content</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/compute-checksum-in-tree.sh">compute-checksum-in-tree.sh</a>: computes the checksum of all files in specified tree and stores them in the specified text output file</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-tree-stats.sh">display-tree-stats.sh</a>: displays simple, key stats about the specified tree (typically in order to compare merged trees)</li>
@@ -197,7 +197,7 @@
 </ul>
 </div>
 <div class="section" id="to-compare-files-and-trees">
-<h3><a class="toc-backref" href="#id26">To compare files and trees</a></h3>
+<h3><a class="toc-backref" href="#id28">To compare files and trees</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-dir.sh">diff-dir.sh</a>: performs a (single-level, non-recursive) comparison of the content of the two specified directories</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-tree.sh">diff-tree.sh</a>: compares all files that are present both in first and second trees, and warns if they are not identical; warns too if some files are in one directory but not in the other</li>
@@ -206,13 +206,13 @@
 <p>See also: Myriad's <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/apps/merge-tool/merge.sh">merge.sh</a> script, a considerably more powerful tool for comparing, uniquifying, merging trees.</p>
 </div>
 <div class="section" id="to-copy-transfer">
-<h3><a class="toc-backref" href="#id27">To copy/transfer</a></h3>
+<h3><a class="toc-backref" href="#id29">To copy/transfer</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/transfer-tree.sh">transfer-tree.sh</a>: copies (possibly through the network) a tree existing in one location to another one, in a merge-friendly manner</li>
 </ul>
 </div>
 <div class="section" id="to-remove-filesystem-elements">
-<h3><a class="toc-backref" href="#id28">To remove filesystem elements</a></h3>
+<h3><a class="toc-backref" href="#id30">To remove filesystem elements</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a> (for &quot;secure rm&quot;): stores deleted files in a trash directory, instead of deleting them directly; see the <a class="reference internal" href="#srm-full-usage">srm full usage</a></li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/empty-trash.sh">empty-trash.sh</a>: empties the trash directory that can be filled thanks to our <tt class="docutils literal">srm</tt> script</li>
@@ -221,7 +221,7 @@
 </div>
 </div>
 <div class="section" id="related-to-unix-processes">
-<span id="process-management"></span><h2><a class="toc-backref" href="#id29">Related to (UNIX) Processes</a></h2>
+<span id="process-management"></span><h2><a class="toc-backref" href="#id31">Related to (UNIX) Processes</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/top.sh">top.sh</a>: triggers the best &quot;top&quot; available, to monitor processes and system resources</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh">watch.sh</a>: tracks (over time) processes that may be transient</li>
@@ -234,7 +234,7 @@
 </ul>
 </div>
 <div class="section" id="related-to-network-management">
-<span id="network-management"></span><h2><a class="toc-backref" href="#id30">Related to Network Management</a></h2>
+<span id="network-management"></span><h2><a class="toc-backref" href="#id32">Related to Network Management</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh">test-network.sh</a>: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-network.sh">monitor-network.sh</a>: polls periodically one's local connection to the Internet, to detect (possibly intermittent) outages, notifying them if requested and helping their diagnosis</li>
@@ -244,7 +244,7 @@
 </ul>
 </div>
 <div class="section" id="for-development">
-<h2><a class="toc-backref" href="#id31">For Development</a></h2>
+<h2><a class="toc-backref" href="#id33">For Development</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-copyright-notices.sh">update-copyright-notices.sh</a>: updates the copyright notices of code of specified type found from specified root directory (to run at each new year)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-all-copyright-notices.sh">update-all-copyright-notices.sh</a>: updates the copyright notices of code of specified type found from specified root directory, based on the specified year range</li>
@@ -258,7 +258,7 @@
 <p>See also the Ceylan-HOWTOs section about <a class="reference external" href="http://howtos.esperide.org/Build.html">build tools</a> and the Erlang-related <a class="reference external" href="http://myriad.esperide.org/#erlang-dedicated-scripts">Ceylan-Myriad scripts</a>.</p>
 </div>
 <div class="section" id="for-version-control-system-vcs">
-<h2><a class="toc-backref" href="#id32">For Version Control System (VCS)</a></h2>
+<h2><a class="toc-backref" href="#id34">For Version Control System (VCS)</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci">dci</a>: assists efficiently and conveniently the commit of specified file(s)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci-all">dci-all</a>: selects recursively from current directory the files that should be committed (either added or modified), and commits them; for each of the modified files, shows the diff with previous version before requesting a commit message</li>
@@ -274,7 +274,7 @@
 </ul>
 </div>
 <div class="section" id="replacement-related">
-<h2><a class="toc-backref" href="#id33">Replacement-related</a></h2>
+<h2><a class="toc-backref" href="#id35">Replacement-related</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-file.sh">replace-in-file.sh</a>: replaces in specified file the specified target pattern with the replacement one</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-tree.sh">replace-in-tree.sh</a>: replaces, in files matching the specified pattern found from the current directory, the specified target pattern with the replacement one</li>
@@ -284,9 +284,9 @@
 </ul>
 </div>
 <div class="section" id="multimedia-related">
-<h2><a class="toc-backref" href="#id34">Multimedia-related</a></h2>
+<h2><a class="toc-backref" href="#id36">Multimedia-related</a></h2>
 <div class="section" id="for-audio">
-<h3><a class="toc-backref" href="#id35">For Audio</a></h3>
+<h3><a class="toc-backref" href="#id37">For Audio</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh">play-audio.sh</a>: performs an audio-only playback of specified content files (including video ones) and directories</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/listen-to-radio.sh">listen-to-radio.sh</a>: plays the stream of various Internet radios</li>
@@ -299,7 +299,7 @@
 </ul>
 </div>
 <div class="section" id="for-voice-synthesis-text-to-speech">
-<h3><a class="toc-backref" href="#id36">For Voice Synthesis / Text-To-Speech</a></h3>
+<h3><a class="toc-backref" href="#id38">For Voice Synthesis / Text-To-Speech</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/say.sh">say.sh</a>: says specified text, based on text to speech</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-speech.sh">record-speech.sh</a>: records the specified speech with specified voice in the specified prefixed filename</li>
@@ -308,22 +308,25 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-espeak-voices.sh">test-espeak-voices.sh</a>: tests the voices supported by espeak</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-voices.sh">test-voices.sh</a>: tests all supported voices</li>
 </ul>
+<p>See also the <a class="reference external" href="http://myriad.esperide.org/#TTS">Ceylan-Myriad speech support</a>.</p>
 </div>
 <div class="section" id="for-video">
-<h3><a class="toc-backref" href="#id37">For Video</a></h3>
+<h3><a class="toc-backref" href="#id39">For Video</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh">convert-mov-to-x264-mp4.sh</a>: converts specified MOV file to MP4</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh">fix-video-mode.sh</a>: forces a specified video resolution</li>
 </ul>
 </div>
 <div class="section" id="for-3d">
-<h3><a class="toc-backref" href="#id38">For 3D</a></h3>
-<ul class="simple">
-<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh">blender-import.sh</a>: allows to import directly in <a class="reference external" href="https://www.blender.org/">Blender</a> various file formats (ex: glTF 2.0 i.e. <tt class="docutils literal">*.gltf</tt>, IFC i.e. <tt class="docutils literal">*.ifc</tt>) from the command-line, rather than doing it interactively, with: a Blender launch, a splash screen, default primitives to remove/disable (cube, light, camera, collection), an import menu with a dialog to go through the whole filesystem; depends on the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-importers">Ceylan-Snake importers</a></li>
+<h3><a class="toc-backref" href="#id40">For 3D</a></h3>
+<ul class="simple" id="blender">
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh">blender-import.sh</a>: allows to import directly in <a class="reference external" href="https://www.blender.org/">Blender</a> various file formats (ex: glTF 2.0 i.e. <tt class="docutils literal"><span class="pre">*.gltf/*.glb</span></tt>, Collada i.e. <tt class="docutils literal">*.dae</tt>, FBX i.e. <tt class="docutils literal">*.fbx</tt>, IFC BIM files i.e. <tt class="docutils literal">*.ifc</tt>) from the command-line, rather than doing it interactively; takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint directly onto the loaded objects; depends on the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support">Ceylan-Snake Blender support</a></li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh">blender-convert.sh</a>: allows to convert, directly from the command-line, a 3D file format into a preferred one (ex: gltF 2.0), thanks to a non-interactive Blender; depends also on the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support">Ceylan-Snake Blender support</a></li>
 </ul>
+<p>See also: <a class="reference external" href="http://howtos.esperide.org/ThreeDimensional.html">Ceylan's HOWTO regarding 3D</a>.</p>
 </div>
 <div class="section" id="for-snapshots-camera-pictures">
-<h3><a class="toc-backref" href="#id39">For Snapshots (Camera Pictures)</a></h3>
+<h3><a class="toc-backref" href="#id41">For Snapshots (Camera Pictures)</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh">rename-snapshot.sh</a>: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension; new assigned names are typically '20160703-foo-bar.jpeg'; if no filename is specified, operates on all files of the current directory</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh">rename-snapshots.sh</a>: renames <em>all</em> snapshots found from current directory, so that they respect better naming conventions</li>
@@ -334,7 +337,7 @@
 </div>
 </div>
 <div class="section" id="cctv-related">
-<h2><a class="toc-backref" href="#id40">CCTV-related</a></h2>
+<h2><a class="toc-backref" href="#id42">CCTV-related</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh">monitor-cctv.sh</a>: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh">fetch-cctv-monitorings.sh</a>: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user</li>
@@ -342,7 +345,7 @@
 </ul>
 </div>
 <div class="section" id="document-related">
-<h2><a class="toc-backref" href="#id41">Document-related</a></h2>
+<h2><a class="toc-backref" href="#id43">Document-related</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh">check-rst-includes.sh</a>: checks that all RST files found from current directory are included once and only once in the sources found</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh">convert-rst-to-mediawiki.sh</a>: converts specified RST source file in a mediawiki counterpart file</li>
@@ -357,9 +360,9 @@
 <p>One may also rely on the <a class="reference external" href="http://myriad.esperide.org/#to-generate-documentation">Ceylan-Myriad's scripts for documentation</a>, notably <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh">generate-docutils.sh</a> and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh">generate-pdf-from-rst.sh</a>.</p>
 </div>
 <div class="section" id="system-related">
-<h2><a class="toc-backref" href="#id42">System-related</a></h2>
+<h2><a class="toc-backref" href="#id44">System-related</a></h2>
 <div class="section" id="admin-related">
-<h3><a class="toc-backref" href="#id43">Admin-related</a></h3>
+<h3><a class="toc-backref" href="#id45">Admin-related</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-filesystem.sh">check-filesystem.sh</a>: checks for errors, and repairs if needed, the specified  filesystem</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-ntp.sh">check-ntp.sh</a>: reports the current, local NTP status</li>
@@ -376,7 +379,7 @@
 </ul>
 </div>
 <div class="section" id="to-install-software">
-<h3><a class="toc-backref" href="#id44">To install software</a></h3>
+<h3><a class="toc-backref" href="#id46">To install software</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-rebar3.sh">install-rebar3.sh</a>: installs the rebar3 Erlang build tool</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-godot.sh">install-godot.sh</a>: installs the Godot 3D engine</li>
@@ -384,14 +387,14 @@
 </ul>
 </div>
 <div class="section" id="system-information-related">
-<h3><a class="toc-backref" href="#id45">System information-related</a></h3>
+<h3><a class="toc-backref" href="#id47">System information-related</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-opengl-information.sh">display-opengl-information.sh</a>: displays information regarding the local OpenGL support</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-raid-status.sh">display-raid-status.sh</a>: displays information regarding a local RAID array.</li>
 </ul>
 </div>
 <div class="section" id="convenience-related">
-<h3><a class="toc-backref" href="#id46">Convenience-related</a></h3>
+<h3><a class="toc-backref" href="#id48">Convenience-related</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/activate-keyboard-backlighting.sh">activate-keyboard-backlighting.sh</a>: (des)activates (per-level) the keyboard backlighting</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/disable-touchpad-if-mouse-available.sh">disable-touchpad-if-mouse-available.sh</a>: ensures that the touchpad (if any) is enabled iff there is no mouse connected</li>
@@ -400,16 +403,17 @@
 </ul>
 </div>
 <div class="section" id="distribution-related">
-<h3><a class="toc-backref" href="#id47">Distribution-related</a></h3>
+<h3><a class="toc-backref" href="#id49">Distribution-related</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro.sh">update-distro.sh</a>: updates the current distribution, and traces it</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro-mirrors.sh">update-distro-mirrors.sh</a>: updates the mirrors used for packages by the current distribution</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-aur-installer.sh">update-aur-installer.sh</a>: installs or updates our recommended, local AUR (<em>Arch User Repository</em>) installer, possibly because of a <tt class="docutils literal">pacman</tt> update breaking the previous AUR installer instance</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-arch-package.sh">install-arch-package.sh</a>: installs a package on Arch Linux, found as either a standard Arch one (with pacman), or as an AUR package; any needed prior installation or update of an AUR installer is managed automatically</li>
 </ul>
 </div>
 </div>
 <div class="section" id="for-encryption">
-<h2><a class="toc-backref" href="#id48">For encryption</a></h2>
+<h2><a class="toc-backref" href="#id50">For encryption</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh">crypt.sh</a>: encrypts in a standard way and as strongly as reasonably possible the specified file(s), and removes their unencrypted sources</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/decrypt.sh">decrypt.sh</a>: decrypts specified file(s) (does not remove their encrypted version)</li>
@@ -417,7 +421,7 @@
 <p>Note also Ceylan-Myriad's support for <a class="reference external" href="http://myriad.esperide.org/#for-basic-old-school-ciphering">basic, old-school ciphering</a>, a complementary solution, and also our <a class="reference external" href="http://howtos.esperide.org/Cybersecurity.html">mini-HOWTO regarding cybersecurity</a>.</p>
 </div>
 <div class="section" id="for-security">
-<h2><a class="toc-backref" href="#id49">For security</a></h2>
+<h2><a class="toc-backref" href="#id51">For security</a></h2>
 <ul class="simple">
 <li>for the management of credentials (i.e. sets of login/password pairs):<ul>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/open-credentials.sh">open-credentials.sh</a>: unlocks (decrypts) the credential file whose path is read from the user environment, and opens it; once closed, re-locks it (with the same passphrase)</li>
@@ -431,16 +435,16 @@
 <p>One may also rely on Myriad's <a class="reference external" href="https://myriad.esperide.org/#script-based-apps">generate-password.sh</a> script in order to generate safe, strong passwords (typically one per account listed based the <tt class="docutils literal"><span class="pre">*-credentials.sh</span></tt> scripts just above).</p>
 <p>On a side note, we also recommend registering a domain name of one's own (ex: <tt class="docutils literal">myfoobar.org</tt>) and settting up a catch-all regarding the recipient email addresses (so that all emails sent to <tt class="docutils literal">*&#64;myfoobar.org</tt> are routed to your own personal email address).</p>
 <p>Then, to avoid messing with your wildcard naming in terms of email addresses, you may choose first any conventional, meaningless email address prefix (ex: <tt class="docutils literal">deneb</tt>) to be dedicated to per-service communications. Next step is, in order to register to any online service (let's say it is named <tt class="docutils literal"><span class="pre">http://someacme.com</span></tt>), to declare to this service that your email address is <tt class="docutils literal"><span class="pre">deneb-someacme&#64;myfoobar.org</span></tt> (or perhaps <tt class="docutils literal"><span class="pre">deneb-someacmedotcom&#64;myfoobar.org</span></tt> if some ambiguity could remain). You would then generate a corresponding password with <tt class="docutils literal"><span class="pre">generate-password.sh</span></tt> and store the email/password pair among the credentials managed by the scripts above.</p>
-<p>The advantages of this procedure as a whole are: strong and unique password, stronger pair of credentials as the login is not constant (hence less predictable <a class="footnote-reference" href="#id3" id="id2">[1]</a>), and if ever you start receiving spam targeted to <tt class="docutils literal"><span class="pre">deneb-someacme&#64;myfoobar.org</span></tt> then the corresponding website (ex: <tt class="docutils literal"><span class="pre">http://someacme.com</span></tt>) may have some explanations to share...</p>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
+<p>The advantages of this procedure as a whole are: strong and unique password, stronger pair of credentials as the login is not constant (hence less predictable <a class="footnote-reference" href="#id5" id="id4">[1]</a>), and if ever you start receiving spam targeted to <tt class="docutils literal"><span class="pre">deneb-someacme&#64;myfoobar.org</span></tt> then the corresponding website (ex: <tt class="docutils literal"><span class="pre">http://someacme.com</span></tt>) may have some explanations to share...</p>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>Depending on the use, the suffix for a site may be different from the site name, provided of course a translation table is kept on your side (typically in said credentials file). For example, one just has to record that for <tt class="docutils literal"><span class="pre">http://someacme.com</span></tt> he chose <tt class="docutils literal"><span class="pre">deneb-bluetiger&#64;myfoobar.org</span></tt> (stealthier/less obvious - but then harder to incriminate a rogue website).</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[1]</a></td><td>Depending on the use, the suffix for a site may be different from the site name, provided of course a translation table is kept on your side (typically in said credentials file). For example, one just has to record that for <tt class="docutils literal"><span class="pre">http://someacme.com</span></tt> he chose <tt class="docutils literal"><span class="pre">deneb-bluetiger&#64;myfoobar.org</span></tt> (stealthier/less obvious - but then harder to incriminate a rogue website).</td></tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="firewall-configuration">
-<h2><a class="toc-backref" href="#id50">Firewall configuration</a></h2>
+<h2><a class="toc-backref" href="#id52">Firewall configuration</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables-inspect.sh">iptables-inspect.sh</a>: lists the currently-used firewall rules for the chains of the main tables</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Gateway.sh">iptables.rules-Gateway.sh</a>: manages a well-configured firewall suitable for a gateway host with masquerading and various services</li>
@@ -451,7 +455,7 @@
 </ul>
 </div>
 <div class="section" id="for-smartphones">
-<h2><a class="toc-backref" href="#id51">For smartphones</a></h2>
+<h2><a class="toc-backref" href="#id53">For smartphones</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/adb-pull.sh">adb-pull.sh</a>: uploads specified local files, possibly based on expressions to the already connected and authorizing Android device</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/adb-push.sh">adb-push.sh</a>: downloads in the current directory, from the already connected and authorizing Android device, files and directories (recursively)</li>
@@ -461,7 +465,7 @@
 </ul>
 </div>
 <div class="section" id="for-archive-management">
-<h2><a class="toc-backref" href="#id52">For archive management</a></h2>
+<h2><a class="toc-backref" href="#id54">For archive management</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/archive-emails.sh">archive-emails.sh</a>: archives properly and reliably (compressed, cyphered, possibly transferred) the user emails</li>
 <li>Manages reference version of files, by storing them in a &quot;vault&quot;:<ul>
@@ -476,7 +480,7 @@
 </ul>
 </div>
 <div class="section" id="web-related-facilities">
-<h2><a class="toc-backref" href="#id53">Web-related facilities</a></h2>
+<h2><a class="toc-backref" href="#id55">Web-related facilities</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-html-map.sh">generate-html-map.sh</a>: generates a simple HTML map with links from the available pages in specified web root</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/backup-directory.sh">backup-directory.sh</a>: backups specified directory to specified backup directory on the specified server, using specified SSH port</li>
@@ -493,7 +497,7 @@
 </ul>
 </div>
 <div class="section" id="for-user-notifications">
-<h2><a class="toc-backref" href="#id54">For user notifications</a></h2>
+<h2><a class="toc-backref" href="#id56">For user notifications</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/notify.sh">notify.sh</a>: notifies the user about specified message, possibly with a title and a category</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-at.sh">timer-at.sh</a>: requests to trigger a timer notification at specified (absolute) timestamp</li>
@@ -505,7 +509,7 @@
 </ul>
 </div>
 <div class="section" id="shell-helpers">
-<h2><a class="toc-backref" href="#id55">Shell Helpers</a></h2>
+<h2><a class="toc-backref" href="#id57">Shell Helpers</a></h2>
 <p>To facilitate shell sessions:</p>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mo">mo</a>: shorthand for a relevant version of <tt class="docutils literal">more</tt></li>
@@ -515,9 +519,9 @@
 </ul>
 </div>
 <div class="section" id="about-configuration">
-<h2><a class="toc-backref" href="#id56">About Configuration</a></h2>
+<h2><a class="toc-backref" href="#id58">About Configuration</a></h2>
 <div class="section" id="for-keyboards">
-<h3><a class="toc-backref" href="#id57">For keyboards</a></h3>
+<h3><a class="toc-backref" href="#id59">For keyboards</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reset-keyboard-mode.sh">reset-keyboard-mode.sh</a>: resets the keyboard mode, typically should it have been modified by a misbehaving program</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-keyboard-layout.sh">set-keyboard-layout.sh</a>: sets the X keyboard layout</li>
@@ -526,7 +530,7 @@
 </ul>
 </div>
 <div class="section" id="of-environment-and-related">
-<h3><a class="toc-backref" href="#id58">Of Environment and related</a></h3>
+<h3><a class="toc-backref" href="#id60">Of Environment and related</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unset-all-environment-variables.sh">unset-all-environment-variables.sh</a>: unsets all environment variables, typically to rule out stranger account-related side-effects</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-local-environment.sh">set-local-environment.sh</a>: sets up a few installation conventions</li>
@@ -534,7 +538,7 @@
 </div>
 </div>
 <div class="section" id="script-related">
-<h2><a class="toc-backref" href="#id59">Script-related</a></h2>
+<h2><a class="toc-backref" href="#id61">Script-related</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/protect-special-characters.sh">protect-special-characters.sh</a>: prevents special characters in specified expression from being interpreted by tools like sed</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/encode-to-rot13.sh">encode-to-rot13.sh</a>: returns a ROT13-encoded version of specified parameters</li>
@@ -545,7 +549,7 @@
 </ul>
 </div>
 <div class="section" id="launch-related">
-<h2><a class="toc-backref" href="#id60">Launch-related</a></h2>
+<h2><a class="toc-backref" href="#id62">Launch-related</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e">e</a>: to edit (i.e. open potentially for updating) smartly all kinds of files; see also our <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e.bash">bash autocomplete settings</a> so that your shell automatically filters the arguments that it suggests whenever executing this <tt class="docutils literal">e</tt> script from a command-line</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v">v</a>: to view (i.e. open for reading only) smartly all kinds of files and directories</li>
@@ -554,7 +558,7 @@
 </ul>
 </div>
 <div class="section" id="miscellaneous">
-<h2><a class="toc-backref" href="#id61">Miscellaneous</a></h2>
+<h2><a class="toc-backref" href="#id63">Miscellaneous</a></h2>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/eat-CPU-cycles.sh">eat-CPU-cycles.sh</a>: generates some CPU load</li>
 </ul>
@@ -562,7 +566,7 @@
 </div>
 </div>
 <div class="section" id="detailed-description-of-some-frequently-used-scripts">
-<span id="srm-full-usage"></span><span id="regrep-full-usage"></span><span id="wh-full-usage"></span><h1><a class="toc-backref" href="#id62">Detailed description of some frequently-used scripts</a></h1>
+<span id="srm-full-usage"></span><span id="regrep-full-usage"></span><span id="wh-full-usage"></span><h1><a class="toc-backref" href="#id64">Detailed description of some frequently-used scripts</a></h1>
 <dl class="docutils">
 <dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh">wh</a></dt>
 <dd><p class="first"><tt class="docutils literal">wh</tt> (for &quot;where&quot;): searches (as a more user-friendly 'find') all files and directories matching &lt;filePattern&gt;, from &lt;starting_directory&gt; if specified, otherwise from current directory.</p>
@@ -591,9 +595,9 @@
 <div class="line">-q or --quiet: be specifically quiet, just listing matches</div>
 <div class="line">-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)</div>
 <div class="line">-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames</div>
-<div class="line">-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only <a href="#id6"><span class="problematic" id="id7">*</span></a>.rst files)</div>
+<div class="line">-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only <a href="#id8"><span class="problematic" id="id9">*</span></a>.rst files)</div>
 </div>
-<p>Example: regrep -i 'little red rooster' '<a href="#id8"><span class="problematic" id="id9">*</span></a>.txt'</p>
+<p>Example: regrep -i 'little red rooster' '<a href="#id10"><span class="problematic" id="id11">*</span></a>.txt'</p>
 <p class="last">See also: <a class="reference external" href="https://myriad.esperide.org/#searching-for-erlang-elements">ergrep</a> (for searching specifically in Erlang files), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep">pygrep</a> (Python version) and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep">cgrep</a> (C version)</p>
 </dd>
 <dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a></dt>
@@ -608,18 +612,18 @@
 </dl>
 </div>
 <div class="section" id="shell-configuration">
-<h1><a class="toc-backref" href="#id63">Shell Configuration</a></h1>
+<h1><a class="toc-backref" href="#id65">Shell Configuration</a></h1>
 <p>One may also have a look at our related Ceylan-Heavy's <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Heavy/tree/master/src/conf/environment">generic, flexible shell configuration</a> (namely <tt class="docutils literal">.bashrc*</tt> files).</p>
 </div>
 <div class="section" id="windows-shell-related-support">
-<span id="relevant-context"></span><h1><a class="toc-backref" href="#id64">Windows Shell-related Support</a></h1>
-<div class="section" id="id11">
-<h2><a class="toc-backref" href="#id65">Overview</a></h2>
-<p>The idea here is to go another route than using the highly-integrated graphical tools available on Windows <a class="footnote-reference" href="#id13" id="id12">[2]</a>, by replicating there the Unix tools that we know and like (albeit in a somehow more limited, less efficient form). Then most of the Ceylan-Hull scripts get available on Windows as well.</p>
-<table class="docutils footnote" frame="void" id="id13" rules="none">
+<span id="relevant-context"></span><h1><a class="toc-backref" href="#id66">Windows Shell-related Support</a></h1>
+<div class="section" id="id13">
+<h2><a class="toc-backref" href="#id67">Overview</a></h2>
+<p>The idea here is to go another route than using the highly-integrated graphical tools available on Windows <a class="footnote-reference" href="#id15" id="id14">[2]</a>, by replicating there the Unix tools that we know and like (albeit in a somehow more limited, less efficient form). Then most of the Ceylan-Hull scripts get available on Windows as well.</p>
+<table class="docutils footnote" frame="void" id="id15" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id12">[2]</a></td><td>Many prefer instead, when it comes to programming, to rely on <a class="reference external" href="https://en.wikipedia.org/wiki/Visual_Studio_Code">Visual Studio Code</a> with various SDK (ex: .Net ones) and many add-ons for scaffolding (like <a class="reference external" href="https://code.visualstudio.com/docs/setup/setup-overview#_how-do-i-create-and-run-a-new-project">Yeoman</a>, Yo - that relies on <tt class="docutils literal">npm</tt>, a .Net package manager like <a class="reference external" href="https://www.nuget.org/">NuGet</a> , a <a class="reference external" href="http://www.omnisharp.net">Omnisharp server</a>, VCS support, language support, etc, rather than creating a Unix-like environment. That's not our case!</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id14">[2]</a></td><td>Many prefer instead, when it comes to programming, to rely on <a class="reference external" href="https://en.wikipedia.org/wiki/Visual_Studio_Code">Visual Studio Code</a> with various SDK (ex: .Net ones) and many add-ons for scaffolding (like <a class="reference external" href="https://code.visualstudio.com/docs/setup/setup-overview#_how-do-i-create-and-run-a-new-project">Yeoman</a>, Yo - that relies on <tt class="docutils literal">npm</tt>, a .Net package manager like <a class="reference external" href="https://www.nuget.org/">NuGet</a> , a <a class="reference external" href="http://www.omnisharp.net">Omnisharp server</a>, VCS support, language support, etc, rather than creating a Unix-like environment. That's not our case!</td></tr>
 </tbody>
 </table>
 <div class="admonition note">
@@ -628,7 +632,7 @@
 </div>
 </div>
 <div class="section" id="main-choices">
-<h2><a class="toc-backref" href="#id66">Main Choices</a></h2>
+<h2><a class="toc-backref" href="#id68">Main Choices</a></h2>
 <p>Here are the choices that we recommend:</p>
 <ul>
 <li><p class="first">use of <a class="reference external" href="https://www.msys2.org/">MSYS2</a> (&quot;<em>Minimal System 2</em>&quot;), a <a class="reference external" href="https://en.wikipedia.org/wiki/Mingw-w64#MSYS2">software distribution and a development platform for Microsoft Windows</a> based on Mingw-w64 and Cygwin, that helps deploying code from the Unix world on Windows; this collection of tools and libraries provides a full, easy-to-use environment for building, installing and running native Windows software; we preferred the <a class="reference external" href="https://www.msys2.org/docs/what-is-msys2">MSYS2</a> option over the <a class="reference external" href="https://www.mingw-w64.org/">MinGW</a> or <a class="reference external" href="https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux">WSL</a> ones</p>
@@ -646,9 +650,9 @@ $ pacman --noconfirm --needed -Sy man-db diffutils make gcc emacs tree mingw-w64
 </ul>
 </div>
 <div class="section" id="more-detailed-msys2-information">
-<h2><a class="toc-backref" href="#id67">More Detailed MSYS2 Information</a></h2>
+<h2><a class="toc-backref" href="#id69">More Detailed MSYS2 Information</a></h2>
 <div class="section" id="packages">
-<h3><a class="toc-backref" href="#id68">Packages</a></h3>
+<h3><a class="toc-backref" href="#id70">Packages</a></h3>
 <p>As mentioned, MSYS2 uses <tt class="docutils literal">pacman</tt> to manage its packages, and comes with 3 different package repositories:</p>
 <ul class="simple">
 <li><tt class="docutils literal">msys2</tt>: containing MSYS2-dependent software</li>
@@ -677,18 +681,18 @@ $ pacman --noconfirm --needed -Sy mingw-w64-x86_64-aspell
 </pre>
 </div>
 <div class="section" id="paths">
-<h3><a class="toc-backref" href="#id69">Paths</a></h3>
+<h3><a class="toc-backref" href="#id71">Paths</a></h3>
 <p>For a user named <tt class="docutils literal">my_user_name</tt>, the user directory (home) as used by MSYS (<tt class="docutils literal">/home/my_user_name</tt>) corresponds by default to <tt class="docutils literal"><span class="pre">C:\msys64\home\my_user_name</span></tt>.</p>
 </div>
 <div class="section" id="symbolic-links">
-<h3><a class="toc-backref" href="#id70">Symbolic Links</a></h3>
+<h3><a class="toc-backref" href="#id72">Symbolic Links</a></h3>
 <p>Apparently, links are, in this Windows filesystem context, at least by default, not symbolic, but &quot;physical&quot; ones (<em>hard links</em>): <tt class="docutils literal">ln <span class="pre">-s</span></tt> <em>copies</em> the source rather than creating a symbolic link (more information: <a class="reference external" href="https://stackoverflow.com/questions/52495298/symbolic-links-cygwin-vs-msys2-vs-win-10-mklink">[1]</a>, <a class="reference external" href="https://www.joshkel.com/2018/01/18/symlinks-in-windows/">[2]</a>). At best creating a link results in a deep copy.</p>
 <p>Solutions may exist to benefit from real symlinks, but MSYS2 would have to be specifically configured and run with extended permissions (&quot;native priviledges&quot;).</p>
 <p>We encountered related issues with GIT repositories that had been created in an Unix environment and that contained symlinks which, on a clone made on Windows, were replaced by a file containing the name (as a text!) of the target element at which the symlink originally pointed. Weird and unfortunate.</p>
 </div>
 </div>
 <div class="section" id="other-installations">
-<h2><a class="toc-backref" href="#id71">Other Installations</a></h2>
+<h2><a class="toc-backref" href="#id73">Other Installations</a></h2>
 <p>These punctual installations are not done through MSYS2.</p>
 <p>For Erlang :</p>
 <ul class="simple">
@@ -697,7 +701,7 @@ $ pacman --noconfirm --needed -Sy mingw-w64-x86_64-aspell
 </ul>
 </div>
 <div class="section" id="more-detailed-windows-terminal-information">
-<h2><a class="toc-backref" href="#id72">More Detailed Windows Terminal Information</a></h2>
+<h2><a class="toc-backref" href="#id74">More Detailed Windows Terminal Information</a></h2>
 <p><a class="reference external" href="https://github.com/microsoft/terminal">Windows Terminal</a> (see its <a class="reference external" href="https://github.com/microsoft/terminal/releases">project repository</a>) is installed by default, and supports tabs (one per running shell).</p>
 <p>It shall be configured according to <a class="reference external" href="https://www.msys2.org/docs/terminals/">this source</a>, by clicking on the <tt class="docutils literal">V</tt> (downward arrow) then on <tt class="docutils literal">Settings</tt>.</p>
 <p>The suggested JSON sections define, in addition to the <tt class="docutils literal">MSYS/MSYS2</tt> terminal entry, two MinGW-related entries that surprisingly are not compliant with our <tt class="docutils literal">bashrc</tt> conventions (they enter an infinite loop apparently).</p>
@@ -726,14 +730,14 @@ $ pacman --noconfirm --needed -Sy mingw-w64-x86_64-aspell
 </ul>
 </div>
 <div class="section" id="shell">
-<h2><a class="toc-backref" href="#id73">Shell</a></h2>
+<h2><a class="toc-backref" href="#id75">Shell</a></h2>
 <p>The <tt class="docutils literal">.bashrc.MSYS</tt> <a class="reference external" href="#symbolic-links">symlink</a> obtained from <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Heavy/tree/master/src/conf/environment">Ceylan-Heavy</a> may have to be fixed with:</p>
 <pre class="code bash literal-block">
 $ cp .bashrc.Linux .bashrc.MSYS
 </pre>
 </div>
 <div class="section" id="getting-ceylan-hull">
-<h2><a class="toc-backref" href="#id74">Getting Ceylan-Hull</a></h2>
+<h2><a class="toc-backref" href="#id76">Getting Ceylan-Hull</a></h2>
 <p>It will be found by our shell configuration; obtaining it is just a matter of:</p>
 <pre class="code bash literal-block">
 $ mkdir -p ~/Software/ceylan/ <span class="o">&amp;&amp;</span> <span class="nb">cd</span> <span class="nv">$_</span>
@@ -741,21 +745,21 @@ $ git clone https://github.com/Olivier-Boudeville/Ceylan-Hull hull
 </pre>
 </div>
 <div class="section" id="text-editor">
-<h2><a class="toc-backref" href="#id75">Text Editor</a></h2>
+<h2><a class="toc-backref" href="#id77">Text Editor</a></h2>
 <p>Once Emacs has been installed and configured (see <a class="reference internal" href="#main-choices">Main Choices</a>), its graphical version can be run via <tt class="docutils literal">/mingw64/bin/emacs</tt> (its console version is in <tt class="docutils literal">/usr/bin/emacs</tt> and appears in the PATH generally before it).</p>
 <p>Our <tt class="docutils literal">init.el</tt> defines the <tt class="docutils literal">WINDOWS_HOME</tt> environment variable to locate easily the Windows user directory from MSYS2 (knowing the aforementioned <a class="reference external" href="#symbolic-links">issue with symlinks</a>).</p>
 </div>
 <div class="section" id="gotchas">
-<h2><a class="toc-backref" href="#id76">Gotchas</a></h2>
+<h2><a class="toc-backref" href="#id78">Gotchas</a></h2>
 <div class="section" id="stdout-is-not-a-tty">
-<h3><a class="toc-backref" href="#id77"><tt class="docutils literal">stdout is not a tty</tt></a></h3>
+<h3><a class="toc-backref" href="#id79"><tt class="docutils literal">stdout is not a tty</tt></a></h3>
 <p>This error occurs when attempting to execute a program (let's name it <tt class="docutils literal">P</tt>) that happens to be reported as not found.</p>
 <p>Rather than running it as <tt class="docutils literal">P</tt>, prefer specifying either <tt class="docutils literal">P.exe</tt> or <tt class="docutils literal">winpty P.exe</tt> (see <a class="reference external" href="https://github.com/rprichard/winpty">winpty</a>).</p>
 <p>As many program aliases as needed can be defined in one's <tt class="docutils literal">.bashrc</tt>.</p>
 </div>
 </div>
 <div class="section" id="post-install">
-<h2><a class="toc-backref" href="#id78">Post-Install</a></h2>
+<h2><a class="toc-backref" href="#id80">Post-Install</a></h2>
 <p>These operations are long, but very useful:</p>
 <pre class="code bash literal-block">
 $ /usr/bin/mandb --quiet
@@ -763,16 +767,16 @@ $ updatedb --localpaths<span class="o">=</span><span class="s1">'/ /c/'</span>
 </pre>
 </div>
 <div class="section" id="a-word-about-alternate-choices-and-other-environments">
-<h2><a class="toc-backref" href="#id79">A Word about Alternate Choices and Other Environments</a></h2>
+<h2><a class="toc-backref" href="#id81">A Word about Alternate Choices and Other Environments</a></h2>
 <div class="section" id="msys">
-<h3><a class="toc-backref" href="#id80">MSYS</a></h3>
+<h3><a class="toc-backref" href="#id82">MSYS</a></h3>
 <p>MSYS is a <strong>collection of GNU utilities</strong> such as <tt class="docutils literal">bash</tt>, <tt class="docutils literal">make</tt>, <tt class="docutils literal">gawk</tt> and <tt class="docutils literal">grep</tt> to allow building of applications and programs that depend on traditionally Unix tools to be present.</p>
 <p>MSYS is a fork of an old Cygwin version (<tt class="docutils literal">msys.dll</tt> is a fork of <tt class="docutils literal">cygwin.dll</tt>) with a number of tweaks aimed at improved Windows integration, whereby the automatic POSIX path translation when invoking native Windows programs is arguably the most significant. MSYS is intended to supplement <a class="reference external" href="https://www.mingw-w64.org/">MinGW</a> and the deficiencies of the cmd shell.</p>
 <p>MSYS by itself does not contain a compiler or a C library, therefore does not give the ability to port Unix programs over to Windows nor does it provide any Unix specific functionality like case-sensitive filenames.</p>
 <p>Users looking for such functionality should refer to <a class="reference internal" href="#cygwin">Cygwin</a>.</p>
 </div>
-<div class="section" id="id17">
-<h3><a class="toc-backref" href="#id81">MinGW</a></h3>
+<div class="section" id="id19">
+<h3><a class="toc-backref" href="#id83">MinGW</a></h3>
 <p>MinGW is a set of <strong>C/C++ compilers allowing the generation of Windows executables with no specific dependency</strong> towards DLL like the ones of Cygwin; only the usual MSVC runtime is needed, which belongs to any installation of Microsoft Windows.</p>
 <p>Compared to Cygwin:</p>
 <ul class="simple">
@@ -783,13 +787,13 @@ $ updatedb --localpaths<span class="o">=</span><span class="s1">'/ /c/'</span>
 <p>MinGW forked from version 1.3.3 of Cygwin.</p>
 </div>
 <div class="section" id="cygwin">
-<h3><a class="toc-backref" href="#id82">Cygwin</a></h3>
+<h3><a class="toc-backref" href="#id84">Cygwin</a></h3>
 <p>Cygwin has for goal to create a <strong>complete Unix/POSIX environment on Windows</strong>.</p>
 <p>The Cygwin gcc and environment default to producing binaries linked to the (GPL) Cygwin DLL (<tt class="docutils literal">cygwin.dll</tt> or <tt class="docutils literal">cygwin1.dll</tt>).</p>
 <p>So Cygwin allows to build Unix programs for Windows with little to no modification through a dependency on the Cygwin DLL (where MinGW does not involve such dependency but requires the program to be specifically adapted for Windows).</p>
 </div>
-<div class="section" id="id18">
-<h3><a class="toc-backref" href="#id83">WSL</a></h3>
+<div class="section" id="id20">
+<h3><a class="toc-backref" href="#id85">WSL</a></h3>
 <p>It seems MSYS2 is still better than WSL as it has a more native Windows experience, and offers direct Unix-like usage on Windows.</p>
 <p>Other solutions such as <a class="reference external" href="https://chocolatey.org/">Chocolatey</a> (a package manager for Windows) exist, but we preferred to stick to a more Unix flavour.</p>
 <p>Most of the Ceylan-Hull scripts should be operational in such a context.</p>
@@ -797,7 +801,7 @@ $ updatedb --localpaths<span class="o">=</span><span class="s1">'/ /c/'</span>
 </div>
 </div>
 <div class="section" id="see-also">
-<h1><a class="toc-backref" href="#id84">See also</a></h1>
+<h1><a class="toc-backref" href="#id86">See also</a></h1>
 <ul class="simple">
 <li>the <tt class="docutils literal">tests</tt> subdirectory, for a few tests of specific facilities provided here</li>
 <li>the <tt class="docutils literal"><span class="pre">mostly-obsolete</span></tt> subdirectory, for the scripts we deprecated</li>
@@ -805,15 +809,15 @@ $ updatedb --localpaths<span class="o">=</span><span class="s1">'/ /c/'</span>
 </ul>
 </div>
 <div class="section" id="support">
-<h1><a class="toc-backref" href="#id85">Support</a></h1>
+<h1><a class="toc-backref" href="#id87">Support</a></h1>
 <p>Bugs, questions, remarks, patches, requests for enhancements, etc. are to be reported to the <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull">project interface</a> (typically <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/issues">issues</a>) or directly at the email address mentioned at the beginning of this document.</p>
 </div>
 <div class="section" id="please-react">
-<h1><a class="toc-backref" href="#id86">Please React!</a></h1>
+<h1><a class="toc-backref" href="#id88">Please React!</a></h1>
 <p>If you have information more detailed or more recent than those presented in this document, if you noticed errors, neglects or points insufficiently discussed, drop us a line! (for that, follow the <a class="reference internal" href="#support">Support</a> guidelines).</p>
 </div>
 <div class="section" id="ending-word">
-<h1><a class="toc-backref" href="#id87">Ending Word</a></h1>
+<h1><a class="toc-backref" href="#id89">Ending Word</a></h1>
 <p>In the hope that Ceylan-Hull will be of use for you as well!</p>
 <p><span class="raw-html"><center><img src="hull-title.png" width="15%"></img></center></span>
 </p>
