@@ -182,20 +182,35 @@ server_name="ceylan-hull-credentials-server"
 #
 if ! emacsclient -s "${server_name}" -e 0 1>/dev/null 2>&1; then
 	#echo "No Emacs daemon '${server_name}' found existing, launching it."
-	emacs --daemon="${server_name}" 1>/dev/null 2>&1
+	emacs --daemon="${server_name}" #1>/dev/null 2>&1
 else
 	#echo "Emacs daemon '${server_name}' found already existing, using it."
 	:
 fi
 
-#echo "Connecting Emacs client to '${server_name}'."
+echo "Connecting Emacs client to '${server_name}'."
 
 # -nw not used anymore; possibly that '--alternate-editor=emacs' is useless in
 # -this context:
 #
-emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
+#echo emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs
 
-#echo "(locking now the credentials)"
+# 'emacsclient -s ceylan-hull-credentials-server' pay return '*ERROR*: Args out
+# of range: [], 0', good luck for finding the cause...
+#
+if ! emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
+
+   echo "Warning: displaying in Emacs apparently failed, trying again after killing server and restarting it." 1>&2
+
+   kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
+
+   emacs --daemon="${server_name}" #1>/dev/null 2>&1
+
+   emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs #1>/dev/null 2>&1
+
+fi
+
+echo "(locking now the credentials)"
 
 # No passphrase wanted to be specified on the command-line:
 #lock-credentials.sh [{passphrase}]
