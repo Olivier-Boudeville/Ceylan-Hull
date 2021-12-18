@@ -89,7 +89,6 @@ else
 	# yay expected to be available and functional from here.
 
 	# Will request root priviledges:
-
 	${yay} -S "${package_name}" --needed --noconfirm
 
 fi
