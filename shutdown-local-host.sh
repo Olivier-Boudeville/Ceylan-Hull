@@ -46,19 +46,19 @@ if [ $halt -eq 0 ]; then
 
 	echo "
 
-System will shutdown now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel)...
+System will shutdown now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel, possibly some other drivers)...
 "
 
 else
 
 	echo "
 
-System will reboot now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel)...
+System will reboot now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel, possibly some other drivers)...
 "
 
 fi
 
-read -p "  Press Enter key to continue (CTRL-C to abort)" value
+read -p "  Press the Enter key to continue (CTRL-C to abort)" value
 
 
 echo " - performing first a general system update"
@@ -93,7 +93,8 @@ fi
 # - on computer having a graphical card, after the kernel update the graphic
 # drivers should better be reinstalled; either this is done automatically -
 # through dkms (not always working properly, apparently), or it can be done
-# explicitly, with for example: pacman -Su nvidia nvidia-utils nvidia-lts
+# explicitly, with for example: 'pacman -Su nvidia nvidia-utils nvidia-lts'.
+#
 # Refer to https://wiki.archlinux.org/title/NVIDIA#Installation.
 
 
@@ -109,7 +110,9 @@ if lsmod 2>/dev/null | grep nvidia; then
 
 	echo "The use of a Nvidia driver has been detected, forcing a corresponding upgrade in turn."
 
-	# Not --needed:
+	# Not '--needed', we want to force the matching with any newly installed
+	# kernel (the whole process is fragile enough):
+	#
 	if ! pacman --noconfirm -Sy nvidia nvidia-utils; then
 
 		echo "  Error, nvidia update failed." 1>&2
