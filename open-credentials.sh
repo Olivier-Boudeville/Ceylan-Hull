@@ -176,13 +176,15 @@ server_name="ceylan-hull-credentials-server"
 # Not working, the server-name is not known yet:
 #emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
 
+emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
+
 # Launch this specific daemon iff needed:
 #
 # (returning zero to test availability)
 #
 if ! emacsclient -s "${server_name}" -e 0 1>/dev/null 2>&1; then
 	#echo "No Emacs daemon '${server_name}' found existing, launching it."
-	emacs --daemon="${server_name}" #1>/dev/null 2>&1
+	emacs ${emacs_server_opts} #1>/dev/null 2>&1
 else
 	#echo "Emacs daemon '${server_name}' found already existing, using it."
 	:
@@ -193,20 +195,27 @@ echo "Connecting Emacs client to '${server_name}'."
 # -nw not used anymore; possibly that '--alternate-editor=emacs' is useless in
 # -this context:
 #
-#echo emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs
+emacs_client_opts="--create-frame -s ${server_name}"
 
-# 'emacsclient -s ceylan-hull-credentials-server' pay return '*ERROR*: Args out
+#echo emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs
+
+# 'emacsclient -s ceylan-hull-credentials-server' may return '*ERROR*: Args out
 # of range: [], 0', good luck for finding the cause...
 #
-if ! emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
+if ! emacsclient ${emacs_server_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
 
-   echo "Warning: displaying in Emacs apparently failed, trying again after killing server and restarting it." 1>&2
+   echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
 
    kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
 
-   emacs --daemon="${server_name}" #1>/dev/null 2>&1
+	echo "Relaunching Emacs daemon '${server_name}'."
+	emacs ${emacs_server_opts} #1>/dev/null 2>&1
 
-   emacsclient --create-frame -s "${server_name}" "${unlocked_file}" --alternate-editor=emacs #1>/dev/null 2>&1
+	# Paranoid:
+	sleep 1
+
+	# Retry:
+   emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs #1>/dev/null 2>&1
 
 fi
 
