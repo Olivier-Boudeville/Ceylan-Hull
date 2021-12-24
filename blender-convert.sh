@@ -70,10 +70,17 @@ conversion_script="${blender_support_dir}/blender_convert.py"
 
 if [ ! -f "${conversion_script}" ]; then
 
-		echo "  Error, conversion script ('${conversion_script}') not found." 1>&2
-		exit 35
+	echo "  Error, conversion script ('${conversion_script}') not found." 1>&2
+	exit 35
 
 fi
+
+
+# For Draco support (see
+# http://howtos.esperide.org/ThreeDimensional.html#draco):
+#
+export BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/lib
+
 
 # Needing to locate for example the blender_snake helper module:
 cd "${blender_support_dir}"

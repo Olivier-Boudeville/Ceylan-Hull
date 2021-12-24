@@ -77,10 +77,17 @@ import_script="${blender_support_dir}/blender_import.py"
 
 if [ ! -f "${import_script}" ]; then
 
-		echo "  Error, import script ('${import_script}') not found." 1>&2
-		exit 35
+	echo "  Error, import script ('${import_script}') not found." 1>&2
+	exit 35
 
 fi
+
+
+# For Draco support, if ever needed (see
+# http://howtos.esperide.org/ThreeDimensional.html#draco):
+#
+export BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/lib
+
 
 # Needing to locate for example the blender_snake helper module:
 cd "${blender_support_dir}"
