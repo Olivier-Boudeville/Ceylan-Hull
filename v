@@ -131,6 +131,7 @@ chooseF3d()
 
 	viewer="$(which f3d)"
 	viewer_short_name="F3D"
+	viewer_opt="--verbose"
 
 }
 
@@ -1070,7 +1071,7 @@ view_element()
 	fi
 
 
-	if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
+	if [ "${extension}" = "json" ]; then
 
 		viewer="$(which jq 2>/dev/null)"
 
