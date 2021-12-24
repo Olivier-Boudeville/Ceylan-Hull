@@ -2,7 +2,7 @@
 
 usage="Usage: $(basename $0) [-h|--help] PACKAGE_NAME: installs a package on Arch Linux, found as either a standard Arch one (with pacman), or as an AUR package; any needed prior installation or update of an AUR installer is managed automatically.
 
-To be run as a non-priviledged user (sudo used whenever necessary)."
+To be run preferably as a non-priviledged user (sudo used whenever necessary)."
 
 # See also update-aur-installer.sh and update-distro.sh.
 
@@ -22,7 +22,7 @@ package_name="$1"
 
 echo "Looking up package '${package_name}'..."
 
-if pacman -Q "${package_name}" 1>/dev/null 2>&1; then
+if pacman -Ss "^${package_name}$" 1>/dev/null 2>&1; then
 
 	echo "Found as an Arch Linux official package, installing it if needed."
 	sudo pacman -S "${package_name}" --needed --noconfirm
