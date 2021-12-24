@@ -372,8 +372,13 @@ For 3D
 
 - `update-fbx.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-fbx.sh>`_: updates the specified FBX file so that it adopts a (hopefully) more recent version thereof (currently: FBX 7.3), typically able to be loaded by tools like Blender
 
+- `kill-unity3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-unity3d.sh>`_: kills all processes related to Unity3D (including UnityHub)
 
-See also `Ceylan's HOWTO regarding 3D <http://howtos.esperide.org/ThreeDimensional.html>`_.
+
+See also:
+
+- the installation_ section
+- `Ceylan's HOWTO regarding 3D <http://howtos.esperide.org/ThreeDimensional.html>`_.
 
 
 
@@ -463,6 +468,8 @@ Admin-related
 
 
 
+.. _installation:
+
 To install software
 -------------------
 
@@ -472,7 +479,7 @@ To install software
 
 - `install-godot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-godot.sh>`_: installs the Godot 3D engine
 
-- `install-unity3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-unity3d.sh>`_: install the Unity3D engine
+- `install-unity3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-unity3d.sh>`_: installs the Unity3D engine
 
 
 
