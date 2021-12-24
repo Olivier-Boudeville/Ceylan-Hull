@@ -124,14 +124,24 @@ chooseEog()
 
 }
 
+chooseF3d()
+{
+
+	#echo "F3D selected."
+
+	viewer="$(which f3d)"
+	viewer_short_name="F3D"
+
+}
+
 
 chooseBlender()
 {
 
 	#echo "Blender selected."
 
-	editor="$(which blender 2>/dev/null)"
-	editor_short_name="Blender"
+	viewer="$(which blender 2>/dev/null)"
+	viewer_short_name="Blender"
 
 }
 
@@ -141,8 +151,8 @@ chooseBlenderImporter()
 
 	#echo "Blender importer selected."
 
-	editor="$(which blender-import.sh 2>/dev/null)"
-	editor_short_name="Blender importer"
+	viewer="$(which blender-import.sh 2>/dev/null)"
+	viewer_short_name="Blender importer"
 
 }
 
@@ -805,21 +815,30 @@ view_selected_element()
 		exit 0
 
 	fi
-	
+
 
 	if [ "${extension}" = "blend" ]; then
 
 		chooseBlender
-		applyEditor
+		applyViewer
 		exit 0
 
 	fi
 
 	# Blender will not open them, they must be imported instead:
-	if [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ] || [ "${extension}" = "ifc" ]; then
+	if [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ]; then
+
+		chooseF3d
+		applyViewer
+		exit 0
+
+	fi
+
+	# Blender will not open them, they must be imported instead:
+	if [ "${extension}" = "ifc" ]; then
 
 		chooseBlenderImporter
-		applyEditor
+		applyViewer
 		exit 0
 
 	fi
