@@ -376,15 +376,15 @@ autoSelectEditor()
 
 		if [ $prefer_emacs -eq 0 ]; then
 
-			if [ -z "$editor" ]; then
+			if [ -z "${editor}" ]; then
 				chooseEmacs
 			fi
 
-			if [ -z "$editor" ]; then
+			if [ -z "${editor}" ]; then
 				chooseXemacs
 			fi
 
-			if [ -z "$editor" ]; then
+			if [ -z "${editor}" ]; then
 				chooseNedit
 			fi
 
@@ -392,15 +392,15 @@ autoSelectEditor()
 
 			if [ $prefer_nedit -eq 0 ]; then
 
-				if [ -z "$editor" ]; then
+				if [ -z "${editor}" ]; then
 					chooseNedit
 				fi
 
-				if [ -z "$editor" ]; then
+				if [ -z "${editor}" ]; then
 					chooseEmacs
 				fi
 
-				if [ -z "$editor" ]; then
+				if [ -z "${editor}" ]; then
 					chooseXemacs
 				fi
 
@@ -408,11 +408,11 @@ autoSelectEditor()
 
 				chooseEmacs
 
-				if [ -z "$editor" ]; then
+				if [ -z "${editor}" ]; then
 					chooseXemacs
 				fi
 
-				if [ -z "$editor" ]; then
+				if [ -z "${editor}" ]; then
 					chooseNedit
 				fi
 
@@ -429,7 +429,7 @@ autoSelectEditor()
 
 	fi
 
-	if [ -n "$editor" ]; then
+	if [ -n "${editor}" ]; then
 		return
 	fi
 
@@ -738,7 +738,7 @@ fi
 parameters=""
 
 # Last filtering:
-#for arg in $remaining_parameters ; do
+#for arg in $remaining_parameters; do
 for arg in "$@"; do
 
 	if [ "${arg}" = "-s" ]; then
@@ -871,8 +871,8 @@ multi_win=1
 # In case of a *list* of filenames, the detected extension will be the one of
 # the last filename:
 #
-extension="$(echo ${parameters}| sed 's|^.*\.||1')"
-#extension=$(echo $1| sed 's|^.*\.||1')
+extension="$(echo ${parameters}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
+#extension=$(echo $1| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')
 
 
 #echo "C: parameters = '${parameters}'"
@@ -881,7 +881,7 @@ extension="$(echo ${parameters}| sed 's|^.*\.||1')"
 
 if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
-	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
+	if [ "${extension}" = "pdf" ]; then
 
 		echo "  Warning: do you really want to *edit* this PDF file (not just display it)? (y/n) [n]"
 		read answer
@@ -911,15 +911,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	fi
 
 
-	if [ "${extension}" = "png" ] || [ "${extension}" = "xcf" ]; then
-
-		chooseGimp
-		applyEditor
-		exit 0
-
-	fi
-
-	if [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ]; then
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "tga" ] || [ "${extension}" = "xcf" ]; then
 
 		chooseGimp
 		applyEditor
@@ -978,7 +970,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	fi
 
 
-	if [ "${extension}" = "svg" -o "${extension}" = "svgz" ]; then
+	if [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ]; then
 
 		chooseInkscape
 		applyEditor
@@ -1013,10 +1005,10 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	fi
 
 
-	if [ "${extension}" = "gz" ]  || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
+	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
 
 		# Is it a compressed trace file?
-		if echo $parameters| grep '.traces' 1>/dev/null ; then
+		if echo ${parameters} | grep '.traces' 1>/dev/null; then
 			# In this case trigger next clause, as LogMX can handle it:
 			extension="traces"
 		fi
