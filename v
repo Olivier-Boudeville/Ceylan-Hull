@@ -235,6 +235,7 @@ chooseNedit()
 }
 
 
+
 # For the *emacs, we use a window width of 83 instead of 80 to compensate
 # for the line numbers. However the length of that number depends on the
 # number of lines (ex: more than 1000 lines implies 4 digits on the left).
@@ -677,9 +678,9 @@ view_selected_element()
 
 	fi
 
-	extension="$(echo ${file_elem}| sed 's|^.*\.||1')"
-	#extension="$(echo $@ | sed 's|^.*\.||1')"
-	#extension="$(echo $1| sed 's|^.*\.||1')"
+	extension="$(echo ${file_elem}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
+	#extension="$(echo $@ | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
+	#extension="$(echo $1| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
 	#echo "file_elem = ${file_elem}"
 	#echo "extension = ${extension}"
@@ -694,7 +695,7 @@ view_selected_element()
 	#
 	#fi
 
-	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
+	if [ "${extension}" = "pdf" ]; then
 
 		chooseEvince
 		applyViewer
@@ -710,7 +711,7 @@ view_selected_element()
 
 	fi
 
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] || [ "${extension}" = "svg" -o "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] ; then
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ]  || [ "${extension}" = "tga" ] ; then
 
 		chooseEog
 		applyViewer
@@ -804,6 +805,7 @@ view_selected_element()
 		exit 0
 
 	fi
+	
 
 	if [ "${extension}" = "blend" ]; then
 
@@ -1032,7 +1034,7 @@ view_element()
 
 	fi
 
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" -o "${extension}" = "jpg" ] || [ "${extension}" = "svg" -o "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] ; then
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ]; then
 
 		chooseEog
 		applyViewer
