@@ -183,11 +183,15 @@ emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_n
 # (returning zero to test availability)
 #
 if ! emacsclient -s "${server_name}" -e 0 1>/dev/null 2>&1; then
+
 	#echo "No Emacs daemon '${server_name}' found existing, launching it."
-	emacs ${emacs_server_opts} #1>/dev/null 2>&1
+	emacs ${emacs_server_opts} 1>/dev/null 2>&1
+
 else
+
 	#echo "Emacs daemon '${server_name}' found already existing, using it."
 	:
+
 fi
 
 echo "Connecting Emacs client to '${server_name}'."
@@ -204,18 +208,18 @@ emacs_client_opts="--create-frame -s ${server_name}"
 #
 if ! emacsclient ${emacs_server_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
 
-   echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
+	echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
 
-   kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
+	kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
 
 	echo "Relaunching Emacs daemon '${server_name}'."
-	emacs ${emacs_server_opts} #1>/dev/null 2>&1
+	emacs ${emacs_server_opts} 1>/dev/null 2>&1
 
 	# Paranoid:
 	sleep 1
 
 	# Retry:
-   emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs #1>/dev/null 2>&1
+	emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
 
 fi
 
