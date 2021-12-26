@@ -48,7 +48,7 @@ if [ -z "${url}" ]; then
 
 fi
 
-wget=$(which wget)
+wget="$(which wget)"
 
 if [ ! -x "${wget}" ]; then
 
@@ -59,7 +59,7 @@ fi
 
 # Tries to be a good (not so bad at least) netizen.
 
-log_suffix=$(echo "${url}" | sed 's|^.*://||1')
+log_suffix="$(echo "${url}" | sed 's|^.*://||1')"
 
 log_file="$(date '+%Y%m%d-%Hh%Mm%S')-wget-for-${log_suffix}.log"
 
@@ -75,18 +75,24 @@ echo "(corresponding log stored in ${log_file})"
 #
 set -o pipefail
 
-${wget} -e robots=off --no-check-certificate --no-proxy --mirror --recursive --level=inf --convert-links --backup-converted --page-requisites --adjust-extension --continue --connect-timeout=45 --waitretry=65 --force-directories --ignore-length --wait=${wait_time} --random-wait --limit-rate=${max_rate} --no-verbose --user-agent="${user_agent}" ${url} 2>&1 | tee ${log_file}
+
+# If set on a single test (i.e. 'if ${wget}...'), apparently the outcome does
+# not seem right (error returned despite fetch success).
+
+# Removed: '--backup-converted' (no need to keep .orig files)
+
+${wget} -e robots=off --no-check-certificate --no-proxy --mirror --recursive --level=inf --convert-links --page-requisites --adjust-extension --continue --connect-timeout=45 --waitretry=65 --force-directories --ignore-length --wait=${wait_time} --random-wait --limit-rate=${max_rate} --no-verbose --user-agent="${user_agent}" "${url}" 2>&1 | tee "${log_file}"
 
 
 if [ $? -eq 0 ]; then
 
 	echo "Fetch success."
-	notify.sh "Website fetch success."
+	notify.sh "Website fetch success for ${url}."
 
 else
 
 	echo "Fetch failure!" 1>&2
-	notify.sh "Website fetch failure."
+	notify.sh "Website fetch failure for ${url}."
 
 	exit 100
 
