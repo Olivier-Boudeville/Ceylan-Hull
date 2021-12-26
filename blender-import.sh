@@ -4,10 +4,11 @@ usage="Usage: $(basename $0) [-h|--help] FILE_TO_IMPORT: imports the specified f
 
 More precisely, allows to import directly in Blender various file formats from the command-line, rather than doing it interactively. Takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint onto the loaded objects.
 
-  Supported file formats (extensions are case-independant):
+  Supported file formats (extensions are case-independent):
 	- glTF 2.0 (extensions: '*.gltf'/'*.glb')
 	- Collada/DAE (extension: '*.dae')
 	- FBX (extension: '*.fbx')
+	- OBJ (extension: '*.obj')
 	- IFC (extension: '*.ifc')
 
   Options:

@@ -2,10 +2,11 @@
 
 usage="Usage: $(basename $0) [-h|--help] FILE_TO_CONVERT: converts the specified file to the glTF 2.0 binary format (*.glb).
 
-  Supported input file formats (extensions are case-independant):
+  Supported input file formats (extensions are case-independent):
 	- glTF 2.0 as JSON (extension: '*.gltf')
 	- Collada/DAE (extension: '*.dae')
 	- FBX (extension: '*.fbx')
+	- OBJ (extension: '*.obj')
 	- IFC (extension: '*.ifc')
 
   Options:
