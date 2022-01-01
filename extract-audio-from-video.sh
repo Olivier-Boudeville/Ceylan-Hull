@@ -67,11 +67,20 @@ echo " Generating from video file '${video_file}' following audio one: '${audio_
 
 # -vn: disable video recording
 # -acodec: set thes audio codec
-# -y: overwrite output files without asking.
-# -aq: set the audio quality; http://wiki.hydrogenaud.io/index.php?title=Recommended_Ogg_Vorbis#Recommended_Encoder_Settings
-# -nostdin: explicitly disable console interactions
+# -y: overwrite output files without asking
+# -aq: set the audio quality
+#  * see http://wiki.hydrogenaud.io/index.php?title=Recommended_Ogg_Vorbis#Recommended_Encoder_Settings
+#  * 5 results in ~160 kbps (insufficient in some cases, found surprisingly
+# noisy), whereas 6 results in ~192 kbps (apparently perfect)
 #
-if ${encoder} -i "${video_file}" -vn -acodec libvorbis -aq 5 -nostdin -y -loglevel warning "${audio_file}"; then
+# -nostdin: explicitly disable console interactions
+
+#quality=5
+
+# Better:
+quality=6
+
+if ${encoder} -i "${video_file}" -vn -acodec libvorbis -aq ${quality} -nostdin -y -loglevel warning "${audio_file}"; then
 
 	echo
 	echo "  Generation of '${audio_file}' is successful."
