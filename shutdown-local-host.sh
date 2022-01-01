@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-r|--reboot]: shutdowns (otherwise: reboots) current, local host after having performed any relevant system update.
+usage="Usage: $(basename $0) [-h|--help] [-r|--reboot]: shutdowns (otherwise, with the option: reboots) the current, local host just after having performed any relevant, automated system update.
   -r or --reboot: reboots instead of shutting down "
 
 
@@ -108,7 +108,7 @@ if lsmod 2>/dev/null | grep nvidia; then
 	# drm_kms_helper        303104  1 nvidia_drm
 	# drm                   589824  6 drm_kms_helper,nvidia,nvidia_drm
 
-	echo "The use of a Nvidia driver has been detected, forcing a corresponding upgrade in turn."
+	echo "The use of a Nvidia driver has been detected, forcing a corresponding upgrade in turn (after the kernel)."
 
 	# Not '--needed', we want to force the matching with any newly installed
 	# kernel (the whole process is fragile enough):
