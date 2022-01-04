@@ -120,12 +120,12 @@ per_year_script="$(dirname $0)/update-copyright-notices.sh"
 
 if [ ! -x "${per_year_script}" ]; then
 
-	echo "  Error, no update script found (${per_year_script})." 1>&2
+	echo "  Error, no update script found ('${per_year_script}')." 1>&2
 
 	exit 55
 
 fi
 
-for y in ${years} ; do echo "---> searching for year ${y}-${max_year}, to be replaced by ${y}-${new_year} ${notice}" ; ${per_year_script} --quiet ${code_type} ${root_dir} "${y}-${max_year} ${notice}" "${y}-${new_year} ${notice}" ; echo ; done
+for y in ${years}; do echo "---> searching for year ${y}-${max_year}, to be replaced by ${y}-${new_year} ${notice}"; ${per_year_script} --quiet ${code_type} ${root_dir} "${y}-${max_year} ${notice}" "${y}-${new_year} ${notice}"; echo; done
 
 echo "Replacements done."
