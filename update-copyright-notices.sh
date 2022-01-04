@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# See also update-all-copyright-notices.sh for more global updates.
-
 do_debug=1
 
 #new_year=$(date '+%Y')
@@ -21,6 +19,7 @@ Note that if PREVIOUS_NOTICE contains characters that are meaningful in terms of
 
 Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
 
+See also update-all-copyright-notices.sh for more global (multi-year) updates.
 "
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -37,14 +36,15 @@ be_quiet=1
 
 if [ $# -eq 5 ]; then
 
-	if [ $1 = "--quiet" ]; then
+	if [ "$1" = "--quiet" ]; then
 
 		be_quiet=0
 		shift
 
 	else
 
-		echo "  Error, unknown '$1' option. ${usage}" 1>&2
+		echo "  Error, unknown '$1' option.
+${usage}" 1>&2
 		exit 2
 
 	fi
@@ -112,16 +112,15 @@ cd "${root_dir}"
 replace_name="replace-in-file.sh"
 
 base_dir="$(dirname $0)"
-replace_script=$(PATH=${base_dir}:${PATH} which ${replace_name} 2>/dev/null)
+replace_script="$(PATH=${base_dir}:${PATH} which ${replace_name} 2>/dev/null)"
 #echo "replace_script = ${replace_script}"
 
 if [ ! -x "${replace_script}" ]; then
 
-	echo "  Error, no executable replacement script (${replace_name}) found." 1>&2
+	echo "  Error, no executable replacement script ('${replace_name}') found." 1>&2
 	exit 3
 
 fi
-
 
 
 if [ ${code_type} -eq 1 ]; then
@@ -179,26 +178,26 @@ for f in ${target_files}; do
 		#echo "  + found in $f"
 
 		# Target pattern found, let's replace it:
-		${replace_script} "${old_notice}" "${new_notice}" $f
+		${replace_script} "${old_notice}" "${new_notice}" "$f"
 		count=$(expr ${count} + 1)
 
 	else
 
 		# Not found, searching for similar entries:
 
-		res=$(/bin/cat $f | grep -i 'copyright ' 2>&1)
+		res="$(/bin/cat $f | grep -i 'copyright ' 2>&1)"
 
-		#echo "res = '$res'"
+		#echo "res = '${res}'"
 		#echo "target_pattern = '${target_pattern}'"
 
-		if [ -z "$res" ]; then
+		if [ -z "${res}" ]; then
 
 			[ $be_quiet -eq 1 ] && echo "  + no copyright notice at all found in $f"
 
 		else
 
 			# Do not insist too much on changes already performed:
-			if grep -e "${replacement_pattern}" $f 1>/dev/null 2>&1 ; then
+			if grep -e "${replacement_pattern}" "$f" 1>/dev/null 2>&1; then
 
 				echo "  (latest copyright notice found in $f)"
 
