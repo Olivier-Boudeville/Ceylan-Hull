@@ -837,7 +837,9 @@ Here are the choices that we recommend:
 
 - use of `MSYS2 <https://www.msys2.org/>`_ ("*Minimal System 2*"), a `software distribution and a development platform for Microsoft Windows <https://en.wikipedia.org/wiki/Mingw-w64#MSYS2>`_ based on Mingw-w64 and Cygwin, that helps deploying code from the Unix world on Windows; this collection of tools and libraries provides a full, easy-to-use environment for building, installing and running native Windows software; we preferred the `MSYS2 <https://www.msys2.org/docs/what-is-msys2>`_ option over the `MinGW <https://www.mingw-w64.org/>`_ or `WSL <https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux>`_ ones
 
-- MSYS2 reusing some elements from `Arch Linux <https://archlinux.org/>`_, packages are to be installed with ``pacman``; we recommend to start installing the following base packages with::
+- MSYS2 reusing some elements from `Arch Linux <https://archlinux.org/>`_, packages are to be installed with ``pacman``; we recommend to start installing the following base packages with:
+
+.. code:: bash
 
   $ pacman -Syu
   $ pacman --noconfirm --needed -Sy man-db diffutils make gcc emacs tree mingw-w64-x86_64-emacs mingw-w64-x86_64-meld3
@@ -864,7 +866,9 @@ As mentioned, MSYS2 uses ``pacman`` to manage its packages, and comes with 3 dif
 
 Most of the mainstream package in the GNU/Linux world can be obtained, and installing them does not require administrator permissions.
 
-We recommend the following extra packages::
+We recommend the following extra packages:
+
+.. code:: bash
 
  $ pacman --noconfirm --needed -Sy mingw-w64-x86_64-aspell
   mingw-w64-x86_64-aspell-fr mingw-w64-x86_64-binutils mingw-w64-x86_64-bzip2
