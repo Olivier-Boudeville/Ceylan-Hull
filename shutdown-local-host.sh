@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) [-h|--help] [-r|--reboot]: shutdowns (otherwise, with the option: reboots) the current, local host just after having performed any relevant, automated system update.
-  -r or --reboot: reboots instead of shutting down "
+  -r or --reboot: reboots instead of shutting down"
 
 
 if [ ! "$(id -u)" -eq 0 ]; then
@@ -63,7 +63,7 @@ read -p "  Press the Enter key to continue (CTRL-C to abort)" value
 
 echo " - performing first a general system update"
 
-if ! pacman --noconfirm -Sy; then
+if ! pacman --noconfirm -Syu; then
 
 	echo "  Error, general update failed." 1>&2
 	exit 5
@@ -97,8 +97,8 @@ fi
 #
 # Refer to https://wiki.archlinux.org/title/NVIDIA#Installation.
 
-
-if lsmod 2>/dev/null | grep nvidia; then
+# Not used anymore, as modules may fail to load and then would not be updated;
+#if lsmod 2>/dev/null | grep nvidia; then
 
 	# Output example:
 	#
@@ -108,28 +108,41 @@ if lsmod 2>/dev/null | grep nvidia; then
 	# drm_kms_helper        303104  1 nvidia_drm
 	# drm                   589824  6 drm_kms_helper,nvidia,nvidia_drm
 
-	echo "The use of a Nvidia driver has been detected, forcing a corresponding upgrade in turn (after the kernel)."
+# More relevant:
+if lspci 2>/dev/null | grep NVIDIA 1>/dev/null; then
+
+	# Output example:
+	#
+	# 01:00.0 VGA compatible controller: NVIDIA Corporation GP106 [GeForce GTX
+	# 1060 6GB] (rev a1)
+	# 01:00.1 Audio device: NVIDIA Corporation GP106 High Definition Audio
+	# Controller (rev a1)
+
+	echo "The use of a NVidia device has been detected, forcing a corresponding upgrade in turn of its drivers (after the kernel)."
 
 	# Not '--needed', we want to force the matching with any newly installed
 	# kernel (the whole process is fragile enough):
 	#
 	if ! pacman --noconfirm -Sy nvidia nvidia-utils; then
 
-		echo "  Error, nvidia update failed." 1>&2
+		echo "  Error, NVidia update failed." 1>&2
 		exit 15
 
 	fi
 
 fi
 
+# A bit of sleep to be able to read:
 if [ $halt -eq 0 ]; then
 
 	echo "Stopping now for good."
+	sleep 1
 	shutdown --poweroff now
 
 else
 
 	echo "Rebooting now."
+	sleep 1
 	# Better than 'reboot':
 	shutdown --reboot now
 
