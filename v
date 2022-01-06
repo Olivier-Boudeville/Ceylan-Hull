@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2021 Olivier Boudeville
+# Copyright (C) 2010-2022 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -722,7 +722,7 @@ view_selected_element()
 
 	fi
 
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ]  || [ "${extension}" = "tga" ] ; then
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ]  || [ "${extension}" = "tga" ]; then
 
 		chooseEog
 		applyViewer
@@ -738,7 +738,7 @@ view_selected_element()
 
 	fi
 
-	if [ "${extension}" = "xml" ] || [ "${extension}" = "XML" ]; then
+	if [ "${extension}" = "xml" ]; then
 
 		viewer="$(which xmllint 2>/dev/null)"
 
@@ -761,7 +761,7 @@ view_selected_element()
 
 	fi
 
-	if [ "${extension}" = "json" ] || [ "${extension}" = "JSON" ]; then
+	if [ "${extension}" = "json" ]; then
 
 		viewer="$(which jq 2>/dev/null)"
 
@@ -1019,7 +1019,7 @@ view_element()
 	#echo "content_type = ${content_type}"
 
 	# Synonyms for extensions:
-	if [ "${extension}" = "jpg" ] || [ "${extension}" = "JPG" ] || [ "${extension}" = "JPEG" ]; then
+	if [ "${extension}" = "jpg" ] || [ "${extension}" = "jpeg" ]; then
 
 		extension="jpeg"
 
@@ -1067,29 +1067,6 @@ view_element()
 		chooseFirefox
 		applyViewer
 		exit 0
-
-	fi
-
-
-	if [ "${extension}" = "json" ]; then
-
-		viewer="$(which jq 2>/dev/null)"
-
-		if [ -x "${viewer}" ]; then
-
-			viewer_opt="."
-			viewer_short_name="jq"
-			applyViewer
-			exit 0
-
-		else
-
-			echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
-			chooseEmacs
-			applyViewer
-			exit 0
-
-		fi
 
 	fi
 
