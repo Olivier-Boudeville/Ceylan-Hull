@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2021 Olivier Boudeville
+# Copyright (C) 2010-2022 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -342,7 +342,7 @@ chooseVi()
 	VI="$(which vi 2>/dev/null)"
 
 	editor="${VI}"
-	editor_short_name="vi"
+	editor_short_name="Vi"
 	multi_win=1
 
 }
@@ -532,14 +532,14 @@ applyEditor()
 
 		if [ ${multi_win} -eq 0 ]; then
 
-			if [ "${editor_short_name}" = "emacs" ]; then
+			if [ "${editor_short_name}" = "Emacs" ]; then
 
 				# To get rid of silly message:
 				# "(emacs:12040): GLib-WARNING **: g_set_prgname() called
 				# multiple times"
 				#
 				[ $verbose -eq 1 ] || echo "Running (multiwin) '${editor} ${editor_opt} $f'..."
-				${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
+				${editor} ${editor_opt} "$f" 1>/dev/null 2>&1 &
 
 				# Small delay added, otherwise specifying multiple files
 				# apparently may freeze emacs to death, losing all pending
@@ -554,17 +554,17 @@ applyEditor()
 
 					# Ever happens?
 					[ $verbose -eq 1 ] || echo "Running (monowin, in background) '${editor} ${editor_opt} $f'..."
-					${editor} ${editor_opt} $f 1>/dev/null 2>&1 &
+					${editor} ${editor_opt} "$f" 1>/dev/null 2>&1 &
 
 				else
 					[ $verbose -eq 1 ] || echo "Running (monowin, in foreground) '${editor} ${editor_opt} $f'..."
-					${editor} ${editor_opt} $f 1>/dev/null 2>&1
+					${editor} ${editor_opt} "$f" 1>/dev/null 2>&1
 
 				fi
 
 			fi
 
-			if [ "{editor_short_name}" = "nedit" ]; then
+			if [ "${editor_short_name}" = "Nedit" ]; then
 				sleep 1
 			fi
 
@@ -589,6 +589,7 @@ applyEditor()
 	done
 
 }
+
 
 
 displayEditors()
@@ -998,7 +999,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	if [ "${extension}" = "dia" ]; then
 
 		editor="$(which dia)"
-		editor_short_name="dia"
+		editor_short_name="Dia"
 		applyEditor
 		exit 0
 

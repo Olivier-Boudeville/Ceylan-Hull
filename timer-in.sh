@@ -11,24 +11,34 @@ See also:
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
 	echo "${usage}"
+
 	exit
+
 fi
 
 
 if [ -z "$1" ]; then
+
 	echo "  Error, no target duration specified.
 ${usage}" 1>&2
+
 	exit 1
+
 fi
 
 
 if [ -z "$3" ]; then
+
 	title="Time is up"
 	message="$2"
+
 else
+
 	title="$2"
 	message="$3"
+
 fi
 
 notify_script="$(which notify.sh 2>/dev/null)"
@@ -36,17 +46,19 @@ notify_script="$(which notify.sh 2>/dev/null)"
 first_audio_player="$(which playwave 2>/dev/null)"
 second_audio_player="$(which wavplay 2>/dev/null)"
 third_audio_player="$(which mplayer 2>/dev/null)"
+fourth_audio_player="$(which cvlc 2>/dev/null)"
+
+audio_player_opts=""
 
 if [ -x "${first_audio_player}" ]; then
 	audio_player="${first_audio_player}"
-else
-	if [ -x "${second_audio_player}" ]; then
-		audio_player="${second_audio_player}"
-	else
-		if [ -x "${third_audio_player}" ]; then
-			audio_player="${third_audio_player}"
-		fi
-	fi
+elif [ -x "${second_audio_player}" ]; then
+	audio_player="${second_audio_player}"
+elif [ -x "${third_audio_player}" ]; then
+	audio_player="${third_audio_player}"
+elif [ -x "${fourth_audio_player}" ]; then
+	audio_player="${fourth_audio_player}"
+	audio_player_opts="--quiet --novideo --play-and-exit"
 fi
 
 # Can also be obtained from OpenOffice
@@ -58,14 +70,13 @@ bong_sound="${LOANI_REPOSITORY}/OSDL-data/gong.wav"
 # record-speech.sh --voice-id 33 --speech-prefix "timer-end" --message 'The timer says: time is up!!!!'
 time_out_sound="${LOANI_REPOSITORY}/OSDL-data/timer-end.wav"
 
-#bong_count=1
-bong_count=0
+bong_count=1
 
 
 
 bong()
 {
-	${audio_player} ${bong_sound} 1>/dev/null 2>&1 &
+	${audio_player} ${audio_player_opts} "${bong_sound}" 1>/dev/null 2>&1 &
 	echo "Bong! "
 }
 
@@ -74,7 +85,7 @@ bong()
 time_has_come()
 {
 
-	${audio_player} "${time_out_sound}" 1>/dev/null 2>&1
+	${audio_player} ${audio_player_opts} "${time_out_sound}" 1>/dev/null 2>&1
 	#echo "Dinner is ready!"
 	#echo "Time has come!"
 
@@ -96,18 +107,29 @@ if [ ! -x "${audio_player}" ]; then
 
 fi
 
-if [ ! -f "${time_out_sound}" ]; then
 
-	echo "  Error, time-out sound file not found (${time_out_sound})." 1>&2
-	exit 3
+if [ ! -f "${bong_sound}" ]; then
+
+	other_bong_sound="/usr/lib/libreoffice/share/gallery/sounds/beam.wav"
+
+	if [ ! -f "${other_bong_sound}" ]; then
+
+		echo "  Error, gong sound file not found (no '${bong_sound}' or '${other_bong_sound}')." 1>&2
+		exit 4
+
+	else
+
+		bong_sound="${other_bong_sound}"
+
+	fi
 
 fi
 
 
-if [ ! -f "${bong_sound}" ]; then
+if [ ! -f "${time_out_sound}" ]; then
 
-	echo "  Error, gong sound file not found (${bong_sound})." 1>&2
-	exit 4
+	echo "Warning: time-out sound file not found ('${time_out_sound}'), using '${bong_sound}' instead." 1>&2
+	time_out_sound="${bong_sound}"
 
 fi
 
@@ -195,17 +217,19 @@ sleep ${duration_secs}
 
 actual_stop_time="$(date '+%H:%M:%S')"
 
-#echo ".... time is up!"
+#echo ".... time is up! (1)"
 
 count=1
 
 while [ "${count}" -le "${bong_count}" ]; do
+
 	bong
 	sleep 1
 	count=$((${count}+1))
+
 done
 
-#echo ".... time is up!"
+#echo ".... time is up! (2)"
 time_has_come
 
 count=1
@@ -223,8 +247,10 @@ done
 
 # Enforce default:
 if [ -z "${title}" ]; then
+
 	title="Time is up"
 	message="After ${user_duration}, at ${actual_stop_time}."
+
 fi
 
 #echo "Notifying with title='${title}' and message='${message}'."
