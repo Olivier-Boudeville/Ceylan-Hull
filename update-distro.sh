@@ -51,7 +51,7 @@ fi
 # Only standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
-if [ "$(id -u)" -eq 0 ]; then
+if [ "$(id -u)" = "0" ]; then
 
 	lock_file="/var/lib/pacman/db.lck"
 
@@ -84,18 +84,18 @@ if [ "$(id -u)" -eq 0 ]; then
 	fi
 
 	# Erases the previous log as well, to avoid accumulation:
-	echo "Updating the distribution now, at $(date)..." 1>${log_file}
+	echo "Updating the distribution now, at $(date)..." 1>"${log_file}"
 
 	case "${distro_type}" in
 
 		"Debian")
 			if [ $quiet -eq 1 ]; then
 
-				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a  ${log_file}
+				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a "${log_file}"
 
 			else
 
-				( apt-get update && apt-get -y upgrade ) 1>>${log_file} #2>&1
+				( apt-get update && apt-get -y upgrade ) 1>>"${log_file}" #2>&1
 
 			fi
 			;;
@@ -109,14 +109,14 @@ if [ "$(id -u)" -eq 0 ]; then
 			if [ $quiet -eq 1 ]; then
 
 				# To be run from the command-line:
-				pacman ${pacman_opt} 2>&1 | tee -a ${log_file}
+				pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"
 
 			else
 
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				pacman ${pacman_opt} 1>>${log_file} #2>&1
+				pacman ${pacman_opt} 1>>"${log_file}" #2>&1
 
 			fi
 
@@ -134,15 +134,15 @@ if [ "$(id -u)" -eq 0 ]; then
 	if [ ${res} -eq 0 ]; then
 
 		echo "... update done successfully"
-		echo "... update done successfully" 1>>${log_file}
+		echo "... update done successfully" 1>>"${log_file}"
 
 	else
 
 		# pacman -Syyu might be your friend then...
 
-		echo "... update failed ($res). Refer to sent mail for further information." 1>>${log_file}
+		echo "... update failed (${res}). Refer to sent mail for further information." 1>>"${log_file}"
 
-		echo "... update failed ($res), on " $(date '+%A, %B %-e, %Y at %T')"."
+		echo "... update failed (${res}), on $(date '+%A, %B %-e, %Y at %T')."
 		echo "Failure logged in '${log_file}' on $(hostname -f)."
 
 	fi
