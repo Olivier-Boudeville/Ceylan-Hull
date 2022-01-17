@@ -956,7 +956,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 		if [ -e "${template_file}" ]; then
 
-			echo "## Warning: '${parameters}' was requested to be edited, whereas '${template_file}' exists; editing the former one instead." 1>&2
+			echo "## Warning: '${parameters}' was requested to be edited, whereas '${template_file}' exists; editing the latter one instead." 1>&2
 
 			parameters="${template_file}"
 
