@@ -59,8 +59,9 @@ standalone=1
 run_in_background=0
 
 
-#verbose=0
+# To be set to 0 to display extra information:
 verbose=1
+#verbose=0
 
 
 # Function section.
@@ -180,6 +181,46 @@ chooseMplayer()
 	viewer_opt="-nolirc -quiet -msglevel all=0"
 
 }
+
+
+# Relying on our Ceylan-Hull's script; executing it directly (rather than
+# through this script) shall be preferred though, as this offers more
+# flexibility/options.
+#
+choosePlayAudio()
+{
+
+	#echo "PlayAudio selected."
+
+	play_script_name="play-audio.sh"
+
+	play_script="$(which ${play_script_name} 2>/dev/null)"
+
+	if [ ! -x "${play_script}" ]; then
+
+		echo "Warning: Ceylan-Hull's '${play_script_name}' not found, defaulting to Mplayer." 1>&2
+
+		chooseMplayer
+
+	else
+
+		viewer="${play_script}"
+		viewer_short_name="Ceylan-Hull's '${play_script_name}'"
+
+		# No simple way to display the usage notification of the player only
+		# once, as each file to view is managed separately of the others (and it
+		# is better that way).
+
+		# Displays usage notification just once, not one time per file:
+		#"${viewer}" --just-notification
+
+		# For each of the next calls:
+		#viewer_opt="--no-notification"
+
+	fi
+
+}
+
 
 
 chooseNedit()
@@ -394,6 +435,8 @@ chooseMore()
 autoSelectViewer()
 {
 
+	[ $verbose -eq 1 ] || echo "Auto-selecting viewer"
+
 	# Take the best one (watch out the order!):
 
 	viewer=""
@@ -499,6 +542,8 @@ applyViewer()
 	# Garbled:
 	#echo "parameters = ${parameters}"
 
+	#echo "file_elem = ${file_elem}"
+
 	if [ ! -x "${viewer}" ]; then
 
 		echo "  Error, the '${viewer_short_name}' tool is not available." 1>&2
@@ -506,8 +551,10 @@ applyViewer()
 
 	fi
 
-	# Let's hope the display is OK.
+	# Let's hope any display needed is OK.
 
+	# To separate each file managed in turn:
+	echo
 
 	if [ -z "${DISPLAY}" ]; then
 
@@ -700,9 +747,9 @@ view_selected_element()
 	#
 	#if [ "${extension}" = "erl" ]; then
 	#
-	#	chooseJedit
-	#	applyViewer
-	#	exit 0
+	#   chooseJedit
+	#   applyViewer
+	#   exit 0
 	#
 	#fi
 
@@ -795,15 +842,11 @@ view_selected_element()
 	if [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
 
 		# Another option is: vlc.
-
-		chooseMplayer
+		#chooseMplayer
+		choosePlayAudio
 
 		# Otherwise difficult to control/stop:
 		run_in_background=1
-
-		applyViewer
-
-		exit 0
 
 	fi
 
@@ -876,7 +919,7 @@ view_selected_element()
 	fi
 
 
-	autoSelectViewer
+
 
 	if [ ${do_show} -eq 0 ]; then
 
@@ -1137,7 +1180,11 @@ view_element()
 	fi
 
 
-	autoSelectViewer
+	if [ -z "${viewer}" ]; then
+
+		autoSelectViewer
+
+	fi
 
 	if [ ${do_show} -eq 0 ]; then
 
