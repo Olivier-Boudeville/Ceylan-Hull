@@ -1,19 +1,27 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--recursive|-r] [file1/directory1 file/directory2 ...]
+usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recursive|-r] [file_or_directory1 file_or_directory2 ...]
 
-  Performs an audio-only playback of specified content files (including video ones) and directories:
-	  --announce: announce the filename that will be played immediatly (with espeak)
-	  --quiet: no console output wanted
-	  --recursive: (also) select content files automatically and recursively, from the current directory
-  (default: no announce, not quiet, not recursive - unless no files nor directories are specified)
+ Performs an audio-only playback of the specified content files (including video ones) and directories, possibly with the following options:
+  --announce: announces the filename that will be played immediately (with espeak)
+  --quiet: does no perform console output
+  --shuffle: plays the specified elements in a random order
+  --recursive: selects content files automatically and recursively, from the current directory
 
-  Note: the underlying audio player remains responsive (to console-level interaction, for example to pause it).
+(default: no announce, not quiet, no shuffle, not recursive - unless no files nor directories are specified)
+
+  Notes:
+   - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
+   - for smaller size and processing effort, video content may be replaced by pure audio one, thanks to our extract-audio-from-video.sh script
 "
 
-# Hidden option, useful for recursive uses: "--no-notification"
+# Hidden options:
+#  - useful for recursive uses: "--no-notification"
+#  - just displays usage notification and exits: "--just-notification"
 
 espeak="$(which espeak 2>/dev/null)"
+
+#echo "$(basename $0) parameters: $*"
 
 
 say()
@@ -21,6 +29,24 @@ say()
 
 	#echo "$*"
 	${espeak} --punct="" "$*" 2>/dev/null
+
+}
+
+
+display_notification()
+{
+
+	if [ "${player_name}" = "mplayer" ]; then
+
+		echo " Using mplayer, hence one may hit:"
+		echo "  - <space> to pause/unpause the current playback"
+		echo "  - '/' to decrease the volume, '*' to increase it"
+		echo "  - 'U' at any moment to stop the current playback and jump to any next one"
+		echo "  - <CTRL-C> to stop all playbacks"
+		echo "  - left and right arrow keys to go backward/forward in the current playback"
+		echo
+
+	fi
 
 }
 
@@ -50,6 +76,7 @@ fi
 
 do_announce=1
 be_quiet=1
+do_shuffle=1
 be_recursive=1
 display_notification=0
 
@@ -60,7 +87,7 @@ while [ ! $# -eq 0 ]; do
 
 	#echo "(examining $1)"
 
-	if [ "$1" = "--announce" -o "$1" = "-a" ]; then
+	if [ "$1" = "--announce" ] || [ "$1" = "-a" ]; then
 
 		shift
 		token_eaten=0
@@ -77,14 +104,19 @@ while [ ! $# -eq 0 ]; do
 	fi
 
 
-	if [ "$1" = "--quiet" -o "$1" = "-q" ]; then
+	if [ "$1" = "--quiet" ] || [ "$1" = "-q" ]; then
 		shift
 		token_eaten=0
 		be_quiet=0
 	fi
 
+	if [ "$1" = "--shuffle" ] || [  "$1" = "-s" ]; then
+		shift
+		token_eaten=0
+		do_shuffle=0
+	fi
 
-	if [ "$1" = "--recursive" -o "$1" = "-r" ]; then
+	if [ "$1" = "--recursive" ] || [  "$1" = "-r" ]; then
 		shift
 		token_eaten=0
 		be_recursive=0
@@ -97,8 +129,14 @@ while [ ! $# -eq 0 ]; do
 		display_notification=1
 	fi
 
+	if [ "$1" = "--just-notification" ]; then
+		shift
+		token_eaten=0
+		display_notification
+		exit 0
+	fi
 
-	if [ "$1" = "--help" -o "$1" = "-h" ]; then
+	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 
 		shift
 		token_eaten=0
@@ -126,37 +164,41 @@ done
 #echo "display_notification=${display_notification}"
 
 if [ $display_notification -eq 0 ]; then
-
-	if [ "${player_name}" = "mplayer" ]; then
-
-		echo " Using mplayer, hence one may hit:"
-		echo "  - <space> to pause/unpause the current playback"
-		echo "  - 'U' at any moment to stop the current playback and jump to any next one"
-		echo "  - <CTRL-C> to stop all playbacks"
-		echo "  - left and right arrow keys to go backward/forward in the current playback"
-		echo
-
-	fi
-
+	display_notification
 fi
+
 
 
 if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
 
 	echo " (playing recursively from $(pwd))"
 
-	# A sort is performed, as otherwise the 'find' order is pretty meaningless,
-	# whereas quite often songs of an album have a common prefix then their
-	# number in the series than a siffix (ex: My_GROUP-MY_ALBUM-07-Mantract.mp3)
-	#
+	# A sort is performed, as otherwise the 'find' order is pretty
+	# meaningless/arbitrary (ex: 'PREFIX-11.ogg' would be selected before
+	# 'PREFIX-7.ogg'), whereas quite often songs of an album have a common
+	# prefix then their number in the series than a suffix (ex:
+	# My_GROUP-MY_ALBUM-07-Mantract.mp3)
+
 	files="${files} $(find . -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' -o -iname '*.mp4' -o -iname '*.avi' | sort 2>/dev/null)"
 
 fi
 
+
 #echo "files=${files}"
 
+if [ $do_shuffle -eq 0 ]; then
 
-for f in ${files}; do
+	ordered_files="$(echo ${files} | tr ' ' '\n' | shuf -)"
+	#echo "Shuffled files = ${ordered_files}"
+
+else
+
+	ordered_files="${files}"
+
+fi
+
+
+for f in ${ordered_files}; do
 
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ]; then
