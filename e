@@ -55,7 +55,19 @@ prefer_nedit=1
 # Tells whether we want to launch a standalone editor (default: no):
 standalone=1
 
+
+# Useful to discriminate between tools (graphical ones shall be run in
+# background, whereas in-terminal ones not) and contexts of use (ex: emacs may a
+# graphical tool if X support is available, whereas it would be an in-terminal
+# one on an headless server):
+#
 run_in_background=0
+
+# May not be defined:
+if [ "${HULL_NO_GRAPHICAL_OUTPUT}" = "0" ]; then
+	# If in text-only mode, one foreground editor instance per console:
+	run_in_background=1
+fi
 
 
 # Function section.
@@ -237,13 +249,18 @@ chooseEmacs()
 	# whereas the next ones will be deemed (wrongly) non-existing and thus to be
 	# created.
 	#
-	# So, EMACS being found either with 'which', the same shall be done for
-	# EMACSCLIENT (so no tests with hardcoded paths shall be used here)
+	# So, EMACS being found with 'which', the same shall be done for EMACSCLIENT
+	# (so no tests with hardcoded paths shall be used here)
 
 	if [ -x "${EMACS}" ]; then
 
-		if [ $standalone -eq 0 ]; then
+		editor_short_name="Emacs"
 
+		if [ $run_in_background -eq 0 ]; then
+
+			# Finally emacsclient seems always available with graphical emacs,
+			# and seems more relevant generally:
+			#
 			EMACS_CLIENT="$(which emacsclient 2>/dev/null)"
 
 			if [ ! -x "${EMACS_CLIENT}" ]; then
@@ -253,49 +270,37 @@ chooseEmacs()
 
 			fi
 
-			# Default:
 			editor="${EMACS_CLIENT}"
-			# Tried with no luck: -a '' or --daemon:
-			editor_opt="--create-frame --alternate-editor=emacs"
+			multi_win=0
 
-		else
+			if [ $standalone -eq 0 ]; then
 
-			# Finally emacsclient seems always available with emacs, and seems
-			# more relevant generally:
+				# Tried with no luck: -a '' or --daemon:
+				editor_opt="--create-frame --alternate-editor=emacs"
 
-			# if [ ! -x "${EMACS}" ]; then
+			else
 
-			#	EMACS="/usr/bin/emacs"
-
-			#	if [ ! -x "${EMACS}" ]; then
-
-			#		echo " Error, no (standalone) emacs available." 1>&2
-			#		exit 56
-
-			#	fi
-
-			# fi
-
-			EMACS_CLIENT="$(which emacsclient 2>/dev/null)"
-
-			if [ ! -x "${EMACS_CLIENT}" ]; then
-
-				echo " Error, no emacs client available." 1>&2
-				exit 56
+				editor_opt="--alternate-editor=emacs"
 
 			fi
 
-			# Default:
-			editor="${EMACS_CLIENT}"
-			#editor="${EMACS}"
-			editor_opt="--alternate-editor=emacs"
+		else
+
+			# Shall run in a terminal, typically if being on an headless server:
+			editor="${EMACS}"
+			#editor_opt="--create-frame"
+			multi_win=1
 
 		fi
 
-		editor_short_name="Emacs"
 
-		multi_win=0
-		# run_in_background unchanged
+		# run_in_background shall remain unchanged, as it is context-dependent
+		# (ex: whether X is available or not, see HULL_NO_GRAPHICAL_OUTPUT).
+
+	else
+
+		echo " Error, no (standalone) emacs available." 1>&2
+		exit 56
 
 	fi
 
