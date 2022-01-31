@@ -324,13 +324,14 @@ if [ $display_notification -eq 0 ]; then
 
 	if [ "${player_name}" = "mplayer" ]; then
 
+		# Duplicated in play-audio.sh:
 		echo " Using mplayer, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
-		#echo "  - 'U' at any moment to stop the current playback and jump to any next one"
-		#echo "  - <CTRL-C> to stop all playbacks"
+		echo "  - '/' to decrease the volume, '*' to increase it"
+		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
 		echo "  - left and right arrow keys to go backward/forward in the current playback"
 		echo "  - <Enter> or <Escape> to toggle between this stream ('${stream_label}') and the fallback one ('${fallback_label}')"
-		#echo "  - <CTRL-C> to stop all playbacks"
+		echo "  - <CTRL-C> to stop all playbacks"
 		echo
 
 	fi
