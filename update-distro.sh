@@ -1,8 +1,12 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-q]: updates the current distribution, and traces it.
-  Option -q: quiet mode, no output if no error (suitable for crontab)
-  Supported distributions: Arch, Debian."
+usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [--even-ignored]: updates the current distribution, and traces it.
+
+ Options (order must be respected):
+   - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
+   - '--even-ignored': updates all packages, even the ones that are declared to be ignored (in /etc/pacman.conf)
+
+ Supported distributions: Arch, previously Debian."
 
 
 # Many problems with Haskell:
@@ -38,12 +42,33 @@ fi
 
 #echo "Distro type: ${distro_type}"
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit
+
+fi
+
 
 quiet=1
+even_ignored=1
 
 if [ "$1" = "-q" ]; then
 
 	quiet=0
+	shift
+
+fi
+
+
+if [ "$1" = "--even-ignored" ]; then
+
+	even_ignored=0
+
+	forced_packages="$(cat /etc/pacman.conf | grep '^IgnorePkg' | sed 's|^IgnorePkg = ||1')"
+
+	shift
 
 fi
 
@@ -111,12 +136,25 @@ if [ "$(id -u)" = "0" ]; then
 				# To be run from the command-line:
 				pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"
 
+				if [ -n "${forced_packages}" ]; then
+
+					pacman -Sy --noconfirm ${forced_packages} 2>&1 | tee -a "${log_file}"
+
+				fi
+
 			else
 
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
 				pacman ${pacman_opt} 1>>"${log_file}" #2>&1
+
+				if [ -n "${forced_packages}" ]; then
+
+					pacman -Sy --noconfirm ${forced_packages} 1>>"${log_file}" #2>&1
+
+				fi
+
 
 			fi
 
