@@ -26,13 +26,13 @@ usage="Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs
   Opens for reading/writing the set of specified files with the 'best' available editor.
 
   Options are:
-	  '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display (can also be disabled once for all in the environment by setting the HULL_NO_GRAPHICAL_OUTPUT variable to the 0 value)
-	  '${show_opt}' to display only the chosen settings (not executing them)
-	  '-e' or '--emacs' to prefer Emacs over all other auto-selected editors
-	  '-n' or '--nedit' to prefer Nedit over all other auto-selected editors
-	  '-f' or '--find' to first look-up specified file from current directory, before opening it
-	  '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)
-	  '-l' or '--locate' to open the single file (if any) found thanks to 'locate'
+   '${no_x_opt}' to prevent selecting a graphical editor, notably if there is no available X display (can also be disabled once for all in the environment by setting the HULL_NO_GRAPHICAL_OUTPUT variable to the 0 value)
+   '${show_opt}' to display only the chosen settings (not executing them)
+   '-e' or '--emacs' to prefer Emacs over all other auto-selected editors
+   '-n' or '--nedit' to prefer Nedit over all other auto-selected editors
+   '-f' or '--find' to first look-up specified file from current directory, before opening it
+   '-s' or '--standalone' to prefer not using the server-based version of the selected editor, if applicable (useful to avoid reusing any already opened window)
+   '-l' or '--locate' to open the single file (if any) found thanks to 'locate'
 "
 
 # Note: a special syntax is recognised as well: 'e A_FILE -s', which is
@@ -486,7 +486,20 @@ applyEditor()
 	# Open the files in parallel or sequentially:
 	for f in ${parameters}; do
 
-		if [ ! -f "$f" ]; then
+		# The user may specify 'some_file.ext' whereas a
+		# 'some_file.ext.template' file exists. In this case, we consider that
+		# the former is generated from the latter, and thus the latter (the
+		# template) shall be edited instead, so:
+		#
+		template_file="$f.template"
+
+		if [ -f "${template_file}" ]; then
+
+			echo "## Warning: '$f' was requested to be edited, whereas '${template_file}' exists; editing the latter one instead." 1>&2
+
+			f="${template_file}"
+
+		elif [ ! -f "$f" ]; then
 
 			# Sometimes a filename followed by some garbage is specified
 			# (ex: a regrep might return "class_X.erl:construct");
@@ -523,6 +536,7 @@ applyEditor()
 				   echo "  (non-existing file '$f' has been automatically translated to existing file '${new_f}')"
 
 				   f="${new_f}"
+
 				fi
 
 			fi
@@ -953,21 +967,6 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 
 	if [ "${extension}" = "rst" ]; then
-
-		# Check that if wanting to edit X.rst, no X.rst.template exists
-		# (hopefully a single filename was specified):
-		#
-		template_file="${parameters}.template"
-
-		if [ -e "${template_file}" ]; then
-
-			echo "## Warning: '${parameters}' was requested to be edited, whereas '${template_file}' exists; editing the latter one instead." 1>&2
-
-			parameters="${template_file}"
-
-			# Leaving extension to RST.
-
-		fi
 
 		chooseEmacs
 		applyEditor
