@@ -58,6 +58,18 @@ fi
 unlocked_file="${main_credentials_path}.dat"
 locked_file="${main_credentials_path}"
 
+credential_dir="$(dirname ${unlocked_file})"
+
+tmp_file="${credential_dir}/.tmp.swap.dat~"
+
+if [ -e "${tmp_file}" ]; then
+
+	echo "  Error, UNENCRYPTED temporary file '${tmp_file}' already exists. Most probablty to be removed." 1>&2
+
+	exit 55
+
+fi
+
 
 # Expected to be found locked:
 already_unlocked=1
@@ -268,5 +280,13 @@ else
 	echo "  Error, permissions could not be changed (code: ${res}), stopping, unlocked file '${unlocked_file}' left as it is." 1>&2
 
 	exit 55
+
+fi
+
+if [ -e "${tmp_file}" ]; then
+
+	echo "  Error, an UNENCRYPTED temporary file '${tmp_file}' has been created; it shall be removed now." 1>&2
+
+	exit 60
 
 fi
