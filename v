@@ -839,14 +839,23 @@ view_selected_element()
 
 	fi
 
-	if [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
 
-		# Another option is: vlc.
-		#chooseMplayer
+	# Audio file:
+	if [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ]; then
+
 		choosePlayAudio
 
 		# Otherwise difficult to control/stop:
 		run_in_background=1
+
+	fi
+
+
+	# Video file:
+	if [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
+
+		# Another option is: vlc.
+		chooseMplayer
 
 	fi
 
