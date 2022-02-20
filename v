@@ -664,6 +664,26 @@ view_selected_element()
 	file_elem="$1"
 
 	[ $verbose -eq 1 ] || echo "(viewing '${file_elem}')"
+	# Tentative name clean-up:
+
+	if [ ! -f "${file_elem}" ]; then
+
+		# Sometimes a filename followed by some garbage is specified (ex: a
+		# regrep might return "class_X.erl:construct"); here we try to fix the
+		# filename by removing all characters after the first semicolon; we also
+		# remove any 'file://' prefix:
+
+		new_file_elem="$(echo ${file_elem} | sed 's|^file://||1' | sed 's|:.*$||1')"
+
+		if [ ! "${new_file_elem}" = "${file_elem}" ]; then
+
+			echo "  (non-existing file '${file_elem}' has been automatically translated to file '${new_file_elem}')"
+
+			file_elem="${new_file_elem}"
+
+		fi
+
+	fi
 
 	if [ $do_find -eq 0 ]; then
 
@@ -736,7 +756,9 @@ view_selected_element()
 
 	fi
 
+	# Normalising all extensions to lowercase first:
 	extension="$(echo ${file_elem}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
+	
 	#extension="$(echo $@ | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 	#extension="$(echo $1| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
@@ -753,6 +775,30 @@ view_selected_element()
 	#
 	#fi
 
+
+	content_type="$(file -b ${file_elem} | sed 's| .*$||1')"
+	#echo "content_type = ${content_type}"
+
+	# Synonyms for extensions:
+	if [ "${extension}" = "jpg" ] || [ "${extension}" = "jpeg" ]; then
+
+		extension="jpeg"
+
+	fi
+
+	if [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
+
+		# Extension being a dot then 3 or 4 letters:
+		renamed_elem="$(echo ${file_elem} | sed 's|.\{3,4\}[a-zA-Z]$|.webp|1')"
+		echo "Warning: file '${file_elem}' has a JPEG-related extension yet its content is RIFF: fixing its actual extension, renaming it to '${renamed_elem}'." 1>&2
+		/bin/mv "${file_elem}" "${renamed_elem}"
+
+		file_elem="${renamed_elem}"
+		extension="webp"
+
+	fi
+
+	
 	if [ "${extension}" = "pdf" ]; then
 
 		chooseEvince
@@ -899,268 +945,7 @@ view_selected_element()
 	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
 
 		# Is it a compressed trace file?
-		if echo ${file_elem}| grep '.traces' 1>/dev/null; then
-			# In this case trigger next clause, as LogMX can handle it:
-			extension="traces"
-		fi
-
-	fi
-
-
-	if [ "${extension}" = "traces" ]; then
-
-		LOGMX="$(which logmx.sh)"
-
-		if [ ! -x "${LOGMX}" ]; then
-
-			echo "  (no LogMX found, using default viewer for traces)"
-
-		else
-
-			viewer="${LOGMX}"
-			viewer_short_name="LogMX"
-
-		fi
-
-		applyViewer
-		exit 0
-
-	fi
-
-
-
-
-	if [ ${do_show} -eq 0 ]; then
-
-		echo "Chosen viewer: ${viewer_short_name}"
-		echo "Complete viewer command: ${viewer} ${viewer_opt}"
-		echo "Multiwin: ${multi_win}"
-		exit 0
-
-	fi
-
-
-	if [ -z "${viewer}" ]; then
-
-		echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim, vi or more) can be used. Stopping now." 1>&2
-		exit 1
-
-	fi
-
-	#echo "Applying finally the viewer"
-
-	applyViewer
-
-}
-
-
-
-
-# Manages the (single) file element specified in $1.
-view_element()
-{
-
-	file_elem="$1"
-
-	#echo "(viewing '${file_elem}')"
-
-	# Tentative name clean-up:
-
-	if [ ! -f "${file_elem}" ]; then
-
-		# Sometimes a filename followed by some garbage is specified (ex: a
-		# regrep might return "class_X.erl:construct"); Here we try to fix the
-		# filename by remove all characters after the first semicolon; we also
-		# remove any 'file://' prefix:
-
-		new_file_elem="$(echo ${file_elem}| sed 's|^file://||1' | sed 's|:.*$||1')"
-
-		if [ ! "${new_file_elem}" = "${file_elem}" ]; then
-
-			echo "  (non-existing file '${file_elem}' has been automatically translated to file '${new_file_elem}')"
-
-			file_elem="${new_file_elem}"
-
-		fi
-
-	fi
-
-
-	if [ $do_find -eq 0 ]; then
-
-		# Any initial whitespace removed:
-		target_file="$(echo "${file_elem}" | sed 's|^ ||1' | sed 's|:.*$||1')"
-		#echo "target_file = ${target_file}"
-
-		target_path="$(find . -name '${target_file}')"
-
-		if [ -z "${target_path}" ]; then
-
-			echo "  (file '${target_file}' not found, nothing done)"
-
-		else
-
-			echo "  (file '${target_file}' found as '${target_path}')"
-
-		fi
-
-		file_elem="${target_path}"
-
-	fi
-
-
-	if [ $do_locate -eq 0 ]; then
-
-		# Any initial whitespace removed:
-		target_file="$(echo ${file_elem} | sed 's|^ ||1' | sed 's|:.*$||1')"
-		#echo "target_file = ${target_file}"
-
-		target_path="$(/bin/locate --limit 1 --existing '${target_file}')"
-
-		if [ -z "${target_path}" ]; then
-
-			echo "  (file '${target_file}' not found, nothing done)"
-
-		else
-
-			echo "  (file '${target_file}' found as '${target_path}')"
-
-		fi
-
-		file_elem="${target_path}"
-
-	fi
-
-	# Default:
-	multi_win=1
-
-	# Special-case for directories:
-	if [ -d "${file_elem}" ]; then
-
-		chooseMultimediaViewer
-
-		dir="${file_elem}"
-
-		#echo "(viewing directory '${dir}')"
-
-		${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
-
-		exit 0
-
-	fi
-
-
-	extension="$(echo ${file_elem} | sed 's|^.*\.||1')"
-	#extension="$(echo $@ | sed 's|^.*\.||1')"
-	#extension="$(echo $1| sed 's|^.*\.||1')"
-
-	#echo "file_elem = ${file_elem}"
-	#echo "extension = ${extension}"
-
-	# Deactivated for the moment:
-	#
-	#if [ "${extension}" = "erl" ]; then
-	#
-	#	chooseJedit
-	#	applyViewer
-	#	exit 0
-	#
-	#fi
-
-	content_type="$(file -b ${file_elem} | sed 's| .*$||1')"
-	#echo "content_type = ${content_type}"
-
-	# Synonyms for extensions:
-	if [ "${extension}" = "jpg" ] || [ "${extension}" = "jpeg" ]; then
-
-		extension="jpeg"
-
-	fi
-
-	if [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
-
-		# Extension being a dot then 3 or 4 letters:
-		renamed_elem=$(echo ${file_elem} | sed 's|.\{3,4\}[a-zA-Z]$|.webp|1')
-		echo "Warning: file '${file_elem}' has a JPEG-related extension yet its content is RIFF: fixing its actual extension, renaming it to '${renamed_elem}'." 1>&2
-		/bin/mv "${file_elem}" "${renamed_elem}"
-
-		file_elem="${renamed_elem}"
-		extension="webp"
-
-	fi
-
-
-	if [ "${extension}" = "pdf" ] || [ "${extension}" = "PDF" ]; then
-
-		chooseEvince
-		applyViewer
-		exit 0
-
-	fi
-
-	if [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
-
-		chooseLibreOffice
-		applyViewer
-		exit 0
-
-	fi
-
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ]; then
-
-		chooseEog
-		applyViewer
-		exit 0
-
-	fi
-
-	if [ "${extension}" = "webp" ]; then
-
-		chooseFirefox
-		applyViewer
-		exit 0
-
-	fi
-
-
-	if [ "${extension}" = "html" ]; then
-
-		chooseFirefox
-		applyViewer
-		exit 0
-
-	fi
-
-	if [ "${extension}" = "ogg" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
-
-		# Another option is: vlc.
-
-		chooseMplayer
-
-		# Otherwise difficult to control/stop:
-		run_in_background=1
-
-		applyViewer
-
-		exit 0
-
-	fi
-
-
-	if [ "${extension}" = "dia" ]; then
-
-		viewer="$(which dia)"
-		viewer_short_name="dia"
-		applyViewer
-		exit 0
-
-	fi
-
-
-	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
-
-		# Is it a compressed trace file?
-		if echo ${file_elem}| grep '.traces' 1>/dev/null; then
+		if echo "${file_elem}" | grep '.traces' 1>/dev/null; then
 			# In this case trigger next clause, as LogMX can handle it:
 			extension="traces"
 		fi
@@ -1195,20 +980,13 @@ view_element()
 
 	fi
 
+
 	if [ ${do_show} -eq 0 ]; then
 
 		echo "Chosen viewer: ${viewer_short_name}"
 		echo "Complete viewer command: ${viewer} ${viewer_opt}"
 		echo "Multiwin: ${multi_win}"
 		exit 0
-
-	fi
-
-
-	if [ -z "${viewer}" ]; then
-
-		echo "  Error, none of the registered viewers (neditc, nc, nedit, nano, vim, vi or more) can be used. Stopping now." 1>&2
-		exit 1
 
 	fi
 
