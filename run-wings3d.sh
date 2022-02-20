@@ -62,4 +62,6 @@ else
 
 	erl -pa "${wings_path}"/ebin -run wings_start start_halt ${exec_opts} &
 
+	echo
+
 fi
