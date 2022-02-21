@@ -3,7 +3,15 @@
 # (not sh, as we prefer 'read' to support a "no echo" option)
 
 
-usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh."
+usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh.
+
+Note that we recommend that such sensitive files have for first line:
+
+// -*-mode:asciidoc; mode:sensitive-minor; fill-column:132-*-
+
+in order to prevent then Emacs from creating backup/auto-save files for this
+content.
+"
 
 
 crypt_tool_name="gpg"
@@ -60,11 +68,12 @@ locked_file="${main_credentials_path}"
 
 credential_dir="$(dirname ${unlocked_file})"
 
-tmp_file="${credential_dir}/.tmp.swap.dat~"
+# Backup file, not auto-save one:
+backup_file="${credential_dir}/.tmp.swap.dat~"
 
-if [ -e "${tmp_file}" ]; then
+if [ -e "${backup_file}" ]; then
 
-	echo "  Error, UNENCRYPTED temporary file '${tmp_file}' already exists. Most probablty to be removed." 1>&2
+	echo "  Error, UNENCRYPTED temporary file '${backup_file}' already exists. Most probably to be removed." 1>&2
 
 	exit 55
 
@@ -283,10 +292,15 @@ else
 
 fi
 
-if [ -e "${tmp_file}" ]; then
+if [ -e "${backup_file}" ]; then
 
-	echo "  Error, an UNENCRYPTED temporary file '${tmp_file}' has been created; it shall be removed now." 1>&2
+	#echo "  Error, an UNENCRYPTED temporary file '${backup_file}' has been created; it shall be removed now." 1>&2
 
-	exit 60
+	#exit 60
+
+	echo "(warning: an UNENCRYPTED temporary file '${backup_file}' is existing, removing it now)"
+
+	# Apparently always obsolete anyway:
+	/bin/rm -f "${backup_file}"
 
 fi
