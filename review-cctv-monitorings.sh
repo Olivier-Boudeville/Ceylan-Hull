@@ -13,6 +13,8 @@ auto_play=0
 viewer_name="mplayer"
 viewer_opts="-speed 25"
 
+suffix=", Commander"
+#suffix=""
 
 token_eaten=0
 
@@ -131,7 +133,7 @@ if [ $do_fetch -eq 0 ]; then
 	#
 	#fi
 
-	message="CCTV recordings have been fetched, hit Enter to review them."
+	message="CCTV recordings have been fetched, hit Enter to review them${suffix}."
 
 	echo "${message}"
 
@@ -158,14 +160,14 @@ count="$(echo ${recordings} | wc -w)"
 # Clearer:
 if [ "${count}" = "0" ]; then
 
-	message="No recordings was found."
+	message="No recordings was found${suffix}."
 	echo "${message}"
 	say.sh "${message}"
 	exit 0
 
 fi
 
-message="${count} recordings found."
+message="${count} recordings found${suffix}."
 echo "${message}"
 say.sh "${message}"
 
@@ -182,9 +184,9 @@ for f in ${recordings}; do
 
 			echo " - viewing $f"
 
-			${viewer} ${viewer_opts} $f 1>/dev/null 2>&1
+			${viewer} ${viewer_opts} "$f" 1>/dev/null 2>&1
 
-			#cvlc $f 1>/dev/null
+			#cvlc "$f" 1>/dev/null
 
 			# Deletion to happen at end, as a whole, rather than immediately:
 			if [ $auto_play -eq 1 ]; then
