@@ -1,16 +1,16 @@
 #!/bin/sh
 
 #root_dir=$(pwd)/$(dirname $0)/../..
-root_dir=$(pwd)
+root_dir="$(pwd)"
 
 #echo root_dir = $root_dir
 
-cd ${root_dir}
+cd "${root_dir}"
 
 
 script_name="fix-unbreakable-spaces.sh"
 
-cleaner_script=$(which ${script_name})
+cleaner_script="$(which ${script_name})"
 
 if [ ! -x "${cleaner_script}" ]; then
 
@@ -28,17 +28,18 @@ echo "Will clean all unbreakable spaces in source files from ${root_dir}:"
 selection_filter=" -name '*.erl' -o -name '*.hrl' -o -name '*.txt' -o -name '*.rst' -o -name 'GNU*' -o -name '*.py' -o -name '*.css' -o -name '*.sh' -o -name '*.html' -o -name '*.java' -o -name '*.h' -o -name '*.cc' -o -name '*.inc' -o -name '*.am' -o -name '*.in' "
 
 
-find . -name .svn -prune -o  \( -type f -a \( -name '*.erl' -o -name '*.hrl' -o -name '*.txt' -o -name '*.rst' -o -name 'GNU*' -o -name '*.py' -o -name '*.css' -o -name '*.sh' -o -name '*.html' -o -name '*.java' -o -name '*.h' -o -name '*.cc' -o -name '*.inc' -o -name '*.am' -o -name '*.in'  \) \) -exec echo  '{}' ';'
+find . -name .svn -prune -o \( -type f -a \( -name '*.erl' -o -name '*.hrl' -o -name '*.txt' -o -name '*.rst' -o -name 'GNU*' -o -name '*.py' -o -name '*.css' -o -name '*.sh' -o -name '*.html' -o -name '*.java' -o -name '*.h' -o -name '*.cc' -o -name '*.inc' -o -name '*.am' -o -name '*.in' \) \) -exec echo '{}' ';'
 
 
 read -p "Proceed? (a check-in must have been performed beforehand) (y/n) [n] " res
 
-if [ "$res" = "y" ]; then
+if [ "${res}" = "y" ]; then
+
 	echo "Cleaning now..."
 
-	find . -name .svn -prune -o  \( -type f -a \(  -name '*.erl' -o -name '*.hrl' -o -name '*.txt' -o -name '*.rst' -o -name 'GNU*' -o -name '*.py' -o -name '*.css' -o -name '*.sh' -o -name '*.html' -o -name '*.java' -o -name '*.h' -o -name '*.cc' -o -name '*.inc' -o -name '*.am' -o -name '*.in'  \) \) -exec ${cleaner_script} '{}' ';'
+	find . -name .svn -prune -o \( -type f -a \( -name '*.erl' -o -name '*.hrl' -o -name '*.txt' -o -name '*.rst' -o -name 'GNU*' -o -name '*.py' -o -name '*.css' -o -name '*.sh' -o -name '*.html' -o -name '*.java' -o -name '*.h' -o -name '*.cc' -o -name '*.inc' -o -name '*.am' -o -name '*.in' \) \) -exec ${cleaner_script} '{}' ';'
 
-	echo "Note: should the 'fix-unbreakable-spaces.sh' script have been modified by this operation, of course this 'fixed' version should not be committed."
+	echo "Note: should the 'fix-unbreakable-spaces.sh' script have been modified by this operation, of course this 'fixed' version should *not* be committed."
 
 else
 
