@@ -483,6 +483,9 @@ applyEditor()
 
 	# Let's hope the display is OK.
 
+	# Allows not to sleep if a single file is opened (usual case):
+	first_file=0
+
 	# Open the files in parallel or sequentially:
 	for f in ${parameters}; do
 
@@ -564,7 +567,11 @@ applyEditor()
 				# apparently may freeze emacs to death, losing all pending
 				# changes...
 				#
-				sleep 1
+				if [ $first_file -eq 0 ]; then
+					first_file=1
+				else
+					sleep 1
+				fi
 
 			else
 
@@ -581,10 +588,6 @@ applyEditor()
 
 				fi
 
-			fi
-
-			if [ "${editor_short_name}" = "Nedit" ]; then
-				sleep 1
 			fi
 
 		else
