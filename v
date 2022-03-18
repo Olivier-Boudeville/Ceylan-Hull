@@ -546,7 +546,7 @@ applyViewer()
 
 	if [ ! -x "${viewer}" ]; then
 
-		echo "  Error, the '${viewer_short_name}' tool is not available." 1>&2
+		echo "  Error, the '${viewer_short_name}' tool (searched as '${viewer}') is not available." 1>&2
 		exit 10
 
 	fi
@@ -758,7 +758,7 @@ view_selected_element()
 
 	# Normalising all extensions to lowercase first:
 	extension="$(echo ${file_elem}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
-	
+
 	#extension="$(echo $@ | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 	#extension="$(echo $1| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
@@ -798,7 +798,7 @@ view_selected_element()
 
 	fi
 
-	
+
 	if [ "${extension}" = "pdf" ]; then
 
 		chooseEvince
@@ -959,7 +959,8 @@ view_selected_element()
 
 		if [ ! -x "${LOGMX}" ]; then
 
-			echo "  (no LogMX found, using default viewer for traces)"
+			echo "  (no LogMX found, using Emacs for traces)"
+			chooseEmacs
 
 		else
 
