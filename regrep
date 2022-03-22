@@ -2,14 +2,14 @@
 
 usage="$(basename $0): recursive grep for the ones that lack it.
 
-  Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+  Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
 
   Options:
 	-v or --verbose: be specifically verbose
 	-q or --quiet: be specifically quiet, just listing matches
-	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
+	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, displays its filename only once (implies quiet); typically useful in scripts
 	-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
-	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst and *.rst.template files)
 
   Example: $(basename $0) -i 'little red rooster' '*.txt'"
 
@@ -159,7 +159,7 @@ filter_on_file="$1"
 if [ $verbose -eq 0 ]; then
 
 	echo "Will search in following files:"
-	if [ -z "$filter_on_file" ]; then
+	if [ -z "${filter_on_file}" ]; then
 		"${find}" . -exec /bin/ls '{}' ';' 2>/dev/null
 	else
 		"${find}" . -exec /bin/ls '{}' "${force_multi_files}" ';' 2>/dev/null
@@ -168,7 +168,7 @@ if [ $verbose -eq 0 ]; then
 fi
 
 
-if [ -z "$filter_on_file" ]; then
+if [ -z "${filter_on_file}" ]; then
 
 	[ $quiet -eq 0 ] || echo "
 	Recursive grep for expression <${searched_expression}> in all files:
@@ -188,25 +188,26 @@ if [ -z "$filter_on_file" ]; then
 
 	else
 
-		# No filter specified, using '*.rst':
-		"${find}" . -name tmp-rst -prune -o ${name_opt} '*.rst' -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null
+		# No filter specified, using '*.rst' and '*.rst.template':
+		"${find}" . -name tmp-rst -prune -o \( ${name_opt} '*.rst' -o ${name_opt} '*.rst.template' \) -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null
 
 	fi
 
 else
 
 	[ $quiet -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all files matching <$filter_on_file>:
+	Recursive grep for expression <${searched_expression}> in all files matching <${filter_on_file}>:
 	"
 
 	if [ $restructured_mode -eq 1 ]; then
 
 		if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . ${name_opt} "$filter_on_file" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null
+			"${find}" . ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null
 
 		else
-			"${find}" . ${name_opt} "$filter_on_file" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+
+			"${find}" . ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
@@ -214,11 +215,11 @@ else
 
 		if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null
+			"${find}" . -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null
 
 		else
 
-			"${find}" . -name tmp-rst -prune -o ${name_opt} "$filter_on_file" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			"${find}" . -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' "${force_multi_files}" ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
