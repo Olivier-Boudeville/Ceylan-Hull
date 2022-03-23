@@ -20,7 +20,9 @@ play_stream()
 	# Allows to display the group and song name, typically as sent by Radio
 	# Paradise:
 	#
-	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | awk -F\' '{print "    -> " $2}'; then
+	# (note that song names may contain single quotes, like in: "I'm All Right")
+	#
+	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1"; then
 
 		echo "(stopping all playbacks)"
 		exit 0
