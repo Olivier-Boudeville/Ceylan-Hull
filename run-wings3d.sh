@@ -10,6 +10,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
+
 if [ ! "$#" -eq 0 ]; then
 
 	echo "  Error, unexpected argument specified.
@@ -37,7 +38,7 @@ if [ -x "${wings3d}" ]; then
 
 	echo "(running '${wings3d}', as found in PATH)"
 
-	"${wings3d}"
+	"${wings3d}" &
 
 else
 
@@ -48,7 +49,7 @@ else
 
 	if [ ! -d "${wings_path}" ]; then
 
-		echo "  Error, no Wings3D installation found (no '{wings_path}'); refer to https://github.com/dgud/wings/blob/master/BUILD.unix and/or use our 'install-wings3d.sh' script." 1>&2
+		echo "  Error, no Wings3D installation found (no '${wings_path}'); refer to https://github.com/dgud/wings/blob/master/BUILD.unix and/or use our 'install-wings3d.sh' script." 1>&2
 
 		exit 15
 
