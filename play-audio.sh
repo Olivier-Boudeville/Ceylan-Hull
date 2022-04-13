@@ -3,10 +3,10 @@
 usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recursive|-r] [file_or_directory1 file_or_directory2 ...]
 
  Performs an audio-only playback of the specified content files (including video ones) and directories, possibly with the following options:
-  --announce: announces the filename that will be played immediately (with espeak)
-  --quiet: does no perform console output
-  --shuffle: plays the specified elements in a random order
-  --recursive: selects content files automatically and recursively, from the current directory
+  --announce or -a: announces the filename that will be played immediately (with vocal synthesis)
+  --quiet or -q: does no perform console output
+  --shuffle or -s: plays the specified elements in a random order
+  --recursive or -r: selects content files automatically and recursively, from the current directory
 
 (default: no announce, not quiet, no shuffle, not recursive - unless no files nor directories are specified)
 
@@ -73,7 +73,7 @@ if [ ! -x "${player}" ]; then
 fi
 
 # Could be used with mplayer:
-#mplayer_cmd="${player} -msglevel identify=6 $f |grep -e '^ID_'|grep -v ID_AUDIO_ID |grep -v ID_DEMUXER |grep -v ID_FILENAME |grep -v ALSA"
+#mplayer_cmd="${player} -msglevel identify=6 $f | grep -e '^ID_' | grep -v ID_AUDIO_ID | grep -v ID_DEMUXER | grep -v ID_FILENAME | grep -v ALSA"
 
 
 do_announce=1
@@ -212,7 +212,7 @@ for f in ${ordered_files}; do
 		echo "(going through playlist in '${f}')"
 
 		# Stripping comment-based annotations such as #EXTM3U or #EXTINF:
-		$0 --no-notification $(/bin/cat "${f}" | grep -v '^#')
+		"$0" --no-notification $(/bin/cat "${f}" | grep -v '^#')
 
 	else
 
@@ -226,17 +226,15 @@ for f in ${ordered_files}; do
 
 			if [ $do_announce -eq 0 ]; then
 
-				say_name="$(basename ${f}|sed 's|\..*$||1')"
+				say_name="$(basename ${f} | sed 's|\..*$||1')"
 				#echo "say_name = ${say_name}"
 
 				say "Playing " "${say_name}"
 
 			fi
 
-			${player} ${player_opt} "${f}" 1>/dev/null 2>&1
-
 			# Useful to stop the overall reading as a whole:
-			if [ ! $? -eq 0 ]; then
+			if ! ${player} ${player_opt} "${f}" 1>/dev/null 2>&1; then
 
 				echo "Playback of ${f} failed, stopping." 1>&2
 				exit 20
