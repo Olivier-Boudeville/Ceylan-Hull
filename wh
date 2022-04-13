@@ -163,7 +163,7 @@ else
 
 	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: ${find} . ${exclude_command} ${name_opt} \"${target_pattern}\" -print #2>/dev/null | more"
 
-	${find} ${find_opt} . ${exclude_command} ${name_opt} "${target_pattern}" -print 2>/dev/null | more
+	${find} ${find_opt} . ${exclude_command} ${name_opt} "${target_pattern}" -print 2>/dev/null # | more
 
 fi
 
