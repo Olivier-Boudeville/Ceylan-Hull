@@ -20,6 +20,7 @@ usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recu
 #  - just displays usage notification and exits: "--just-notification"
 
 espeak="$(which espeak 2>/dev/null)"
+notify_cmd="$(which notify-send 2>/dev/null)"
 
 #echo "$(basename $0) parameters: $*"
 
@@ -51,6 +52,13 @@ display_notification()
 	fi
 
 }
+
+# To display playback notifications:
+do_display=1
+
+if [ -x "${notify_cmd}" ]; then
+	do_display=0
+fi
 
 player_name="mplayer"
 
@@ -230,6 +238,16 @@ for f in ${ordered_files}; do
 				#echo "say_name = ${say_name}"
 
 				say "Playing " "${say_name}"
+
+			fi
+
+			if [ $do_display -eq 0 ]; then
+
+				album_name="$(basename $(dirname $(realpath ${f})))"
+
+				song_name="$(basename ${f} | sed 's|\..*$||1' | sed 's|\.| |g' | sed 's|-| |g')"
+
+				${notify_cmd} "Playing now, from ${album_name}:" "${song_name}"  --icon=audio-x-generic
 
 			fi
 
