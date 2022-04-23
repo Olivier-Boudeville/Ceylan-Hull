@@ -24,6 +24,16 @@ play_stream()
 	#
 	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1"; then
 
+		# We would like to simultaneously let the song name be echoed on the
+		# terminal and be used as the text of a desktop notification, but we did
+		# not manage (because of the line buffering?) to use a song name twice;
+		# tried to add:
+		#
+		# | xargs -d $'\n' sh -c 'for arg do echo "A1$arg"; echo "A2$arg"; done' _ ; then
+
+		# Nevertheless the following works as expected:
+		# echo Foo | xargs -d $'\n' sh -c 'for arg do echo "A1$arg"; echo "A2$arg"; done' _
+
 		echo "(stopping all playbacks)"
 		exit 0
 
