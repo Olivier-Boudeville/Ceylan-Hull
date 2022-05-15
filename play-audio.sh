@@ -243,7 +243,7 @@ for f in ${ordered_files}; do
 
 			if [ $do_display -eq 0 ]; then
 
-				album_name="$(basename $(dirname $(realpath ${f})))"
+				album_name="$(basename $(dirname $(realpath ${f})) | sed 's|-| |g')"
 
 				song_name="$(basename ${f} | sed 's|\..*$||1' | sed 's|\.| |g' | sed 's|-| |g')"
 
