@@ -17,5 +17,10 @@ strong
 table
 tit
 toc
-doc/index.html
+doc/*.html
+doc/*.aux
+doc/Ceylan-Hull-technical-manual-english.pdf
+doc/Ceylan-Hull-technical-manual-english.rst
+doc/*.tex
+doc/*.toc
 *.log
