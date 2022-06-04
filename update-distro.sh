@@ -78,6 +78,7 @@ log_file="/root/.last-distro-update"
 
 if [ "$(id -u)" = "0" ]; then
 
+	# Implies Arch:
 	lock_file="/var/lib/pacman/db.lck"
 
 	if [ -e "${lock_file}" ]; then
@@ -134,7 +135,13 @@ if [ "$(id -u)" = "0" ]; then
 			if [ $quiet -eq 1 ]; then
 
 				# To be run from the command-line:
-				pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"
+				# (problem: tee hides the error return code)
+				if ! pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based update failed." 1>&2
+					exit 5
+
+				fi
 
 				if [ -n "${forced_packages}" ]; then
 
@@ -147,7 +154,12 @@ if [ "$(id -u)" = "0" ]; then
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				pacman ${pacman_opt} 1>>"${log_file}" #2>&1
+				if ! pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based update failed." 1>&2
+					exit 25
+
+				fi
 
 				if [ -n "${forced_packages}" ]; then
 
