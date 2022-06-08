@@ -5,8 +5,14 @@ usage="$(basename $0): displays information regarding the local OpenGL support."
 echo "Getting informations about OpenGL support..."
 echo
 
+
+# Not specifying (explicitly) the display to use, as this convention may change
+# from a distro to another, and may lead to errors like 'Invalid
+# MIT-MAGIC-COOKIE-1 keyError: unable to open display :0:'.
+
 # First display:
-DISPLAY=:0
+#DISPLAY=:0
+#DISPLAY=:1
 
 echo "  * Hardware-accelerated rendering:"
 glxinfo="$(which glxinfo 2>/dev/null)"
@@ -30,7 +36,7 @@ lspci | grep "VGA"
 echo
 
 echo "  * Installed GL libraries:"
-/bin/ls -l /usr/lib/libGL.so*
+/bin/ls -l /usr/lib/libGL.so* /usr/lib/x86_64-linux-gnu/libGL.so* 2>/dev/null
 echo
 
 echo "  * AIGLX status: "
