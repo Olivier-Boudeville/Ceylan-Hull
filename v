@@ -714,7 +714,8 @@ view_selected_element()
 		target_file="$(echo ${file_elem} | sed 's|^ ||1' | sed 's|:.*$||1')"
 		#echo "target_file = ${target_file}"
 
-		target_path="$(/bin/locate --limit 1 --existing '${target_file}')"
+		target_path="$(/bin/locate --limit 1 --existing ${target_file})"
+		#echo "target_path = ${target_path}"
 
 		if [ -z "${target_path}" ]; then
 
