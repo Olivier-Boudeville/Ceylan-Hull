@@ -31,7 +31,7 @@ echo "  Recording system settings of host ${host_id} in file '${target_file}'...
 
 unset LANG
 
-echo -e "\n\nThese are the system settings of host ${host_id} as they were on $(date '+%A, %B %-e, %Y') at $(date '+%H:%M:%S').\n" > "${target_file}"
+echo -e "\n\nThese are the system settings of host ${host_id} as they were on $(date '+%A, %B %-e, %Y') at $(date '+%H:%M:%S'), as recorded thanks to '$(basename $0)'.\n" > "${target_file}"
 
 
 exec_cmd()
@@ -73,6 +73,8 @@ exec_cmd "lshw"
 exec_cmd "lspci"
 
 exec_cmd "lsusb"
+
+exec_cmd "sensors"
 
 
 
