@@ -31,7 +31,7 @@ echo "  Recording system settings of host ${host_id} in file '${target_file}'...
 
 unset LANG
 
-echo -e "\n\nThese are the system settings of host $(host_id) as they were on $(date '+%A, %B %-e, %Y') at $(date '+%H:%M:%S').\n" > ${target_file}
+echo -e "\n\nThese are the system settings of host ${host_id} as they were on $(date '+%A, %B %-e, %Y') at $(date '+%H:%M:%S'), as recorded thanks to '$(basename $0)'.\n" > "${target_file}"
 
 
 exec_cmd()
@@ -39,9 +39,9 @@ exec_cmd()
 
 	cmd="$1"
 
-	echo -e "\n\n **** executing '${cmd}'" >> ${target_file}
+	echo -e "\n\n **** executing '${cmd}'" >> "${target_file}"
 
-	${cmd} >> ${target_file}
+	${cmd} >> "${target_file}"
 
 	if [ ! $? -eq 0 ]; then
 
@@ -73,6 +73,8 @@ exec_cmd "lshw"
 exec_cmd "lspci"
 
 exec_cmd "lsusb"
+
+exec_cmd "sensors"
 
 
 
@@ -119,8 +121,8 @@ exec_cmd "ip addr"
 
 exec_cmd "ip link"
 
-for f in /etc/netctl/* ; do if [ -f "$f" ]; then echo "\n\n **** listing content of file '$f': "; cat "$f" ; fi ; done >> ${target_file}
+for f in /etc/netctl/* ; do if [ -f "$f" ]; then echo "\n\n **** listing content of file '$f': "; cat "$f" ; fi ; done >> "${target_file}"
 
 exec_cmd "iptables -nL"
 
-echo -e "\n\nEnd of system report." >> ${target_file}
+echo -e "\n\nEnd of system report." >> "${target_file}"
