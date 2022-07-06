@@ -2,10 +2,27 @@
 
 current_date="$(date '+%Y%m%d')"
 
-usage="Usage: $(basename $0) OLD_PREFIX NEW_PREFIX [DEFAULT_DATE]: renames snapshots found from current directory, so that they respect better naming conventions.
+usage="Usage: $(basename $0) [-h|--help] OLD_PREFIX NEW_PREFIX [DEFAULT_DATE]: renames snapshots found from current directory, so that they respect better naming conventions.
 Ex: '$(basename $0) P1010 hello 20101023' will transform picture filenames like P1010695.JPG into 20101023-hello-695.jpeg, and will ensure it is not an executable file.
 If a creation timestamp can be found among the image EXIF metadata, it will be retained, otherwise the specified date will be used, otherwise the current date (${current_date}) will be.
 "
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit 0
+
+fi
+
+
+if [ $# -le 1 ]; then
+
+	echo "  Error, too few parameters.
+${usage}"
+	exit 3
+
+fi
+
 
 if [ $# -ge 4 ]; then
 
@@ -15,6 +32,7 @@ ${usage}" 1>&2
 	exit 4
 
 fi
+
 
 old_prefix="$1"
 
@@ -39,7 +57,7 @@ ${usage}" 1>&2
 
 fi
 
-snapshots=$(find . -iname '*.JPG' -o -iname '*.jpeg')
+snapshots="$(find . -iname '*.JPG' -o -iname '*.jpeg')"
 
 #echo "snapshots = ${snapshots}"
 
@@ -58,8 +76,11 @@ else
 
 	if [ ! ${string_len} -eq 8 ]; then
 
-		echo "  Error, default date expected to be 8-character long (had '${date}')." 1>&2
-		exit 8
+		echo "  The default date was expected to be 8-character long (had '${default_date}'); shall we continue anyway? [y/N]." 1>&2
+		read res
+		if [ ! "$res" = "y" ]; then
+			exit 8
+		fi
 
 	fi
 
@@ -90,14 +111,15 @@ for f in ${snapshots}; do
 
 	fi
 
-	chmod -x $f
+	chmod -x "$f"
 
 	target_file=$(echo $f | sed 's|.JPG$|.jpeg|1' | sed 's|.JPEG$|.jpeg|1' | sed 's|.jpg$|.jpeg|1' | sed "s|${old_prefix}|${date}-${new_prefix}-|1")
 
 
 	if [ "$f" = "${target_file}" ]; then
 
-		echo "  ('$f' name left as is by renaming rule)"
+		#echo "  ('$f' name left as is by renaming rule)"
+		:
 
 	else
 
@@ -105,9 +127,7 @@ for f in ${snapshots}; do
 		message=$(echo "    $f -> ${target_file} (${suffix})"| sed 's|./||g')
 		echo "${message}"
 
-		/bin/mv "$f" "${target_file}"
-
-		if [ ! $? -eq 0 ]; then
+		if ! /bin/mv "$f" "${target_file}"; then
 			echo "Error, renaming failed." 1>&2
 			exit 10
 		fi
