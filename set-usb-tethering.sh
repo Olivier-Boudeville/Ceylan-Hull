@@ -68,8 +68,15 @@ if [ -z "${if_name}" ]; then
 
 fi
 
-
 #echo "if_name = ${if_name}"
+
+if [ ! "$(echo ${if_name} | wc -w)" = "1" ]; then
+
+	echo " Error, multiple network interfaces found: '${if_name}'." 1>&2
+
+	exit 20
+
+fi
 
 
 if [ "$1" = "--stop" ]; then
