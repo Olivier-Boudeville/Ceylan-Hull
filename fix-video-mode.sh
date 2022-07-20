@@ -1,6 +1,20 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): forces a specified video resolution."
+usage="Usage: $(basename $0) [-h|--help] [-w]: forces a specified video resolution.
+
+Options:
+ -h or --help: this help
+ -w: applies settings for running on windowed mode
+"
+
+if [ $1 = "-h" ] || [ $1 = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 0
+
+fi
+
 
 xrandr=/usr/bin/xrandr
 
@@ -15,6 +29,14 @@ current_res=$(${xrandr} | grep '*' | awk '{print $1}')
 
 # Other laptop LCD (more recent):
 target_res="1920x1080"
+
+if [ "$1" = "-w" ]; then
+
+	# Other laptop LCD (more recent), emulated in windowed mode:
+	target_res="1600x900"
+
+fi
+
 
 #echo "Current resolution is ${current_res}"
 
