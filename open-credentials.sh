@@ -5,12 +5,12 @@
 
 usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh.
 
-Note that we recommend that such sensitive files have for first line:
+Note that we recommend that such sensitive files follows the conventions in https://anirudhsasikumar.net/blog/2005.01.21.html and, besides relying on a corresponding init.el, have for first line:
 
 // -*-mode:asciidoc; mode:sensitive-minor; fill-column:132-*-
 
-in order to prevent then Emacs from creating backup/auto-save files for this
-content.
+in order to prevent Emacs from creating backup/auto-save files for this
+content (which are securty risks).
 "
 
 
@@ -73,9 +73,20 @@ backup_file="${credential_dir}/.tmp.swap.dat~"
 
 if [ -e "${backup_file}" ]; then
 
-	echo "  Error, UNENCRYPTED temporary file '${backup_file}' already exists. Most probably to be removed." 1>&2
+	echo "  Error, an UNENCRYPTED backup file '${backup_file}' is already existing. Most probably to be removed first." 1>&2
 
 	exit 55
+
+fi
+
+
+autosave_file=="${credential_dir}/#.tmp.swap.dat#"
+
+if [ -e "${autosave_file}" ]; then
+
+	echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' is already existing. It shall be integrated or removed first." 1>&2
+
+	exit 56
 
 fi
 
@@ -144,7 +155,7 @@ if [ $already_unlocked -eq 1 ]; then
 	if ${crypt_tool} -d ${crypt_opts} --output "${unlocked_file}" "${locked_file}" 1>/dev/null 2>&1; then
 
 		#echo "(credentials unlocked in ${unlocked_file})"
-		echo "(credentials unlocked and displayed)"
+		echo "(credentials unlocked and displayed; when finished, just exit the editor to re-lock automatically)"
 
 		${shred_tool} --force --remove --zero "${locked_file}"
 		res="$?"
@@ -197,7 +208,9 @@ server_name="ceylan-hull-credentials-server"
 # Not working, the server-name is not known yet:
 #emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
 
-emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
+# We now rely on the sensitive-mode defined in our init.el:
+#emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
+emacs_server_opts="--no-site-file --no-splash --daemon=${server_name}"
 
 # Launch this specific daemon iff needed:
 #
@@ -292,15 +305,29 @@ else
 
 fi
 
+
+emacs_conf="~/.emacs/init.el"
+
+sensitive_hint="does your ${emacs_conf} file include the expected definition of the 'sensitive-mode' minor mode?)"
+
 if [ -e "${backup_file}" ]; then
 
-	#echo "  Error, an UNENCRYPTED temporary file '${backup_file}' has been created; it shall be removed now." 1>&2
+	#echo "  Error, an UNENCRYPTED backup file '${backup_file}' has been created; it shall be removed now." 1>&2
 
 	#exit 60
 
-	echo "(warning: an UNENCRYPTED temporary file '${backup_file}' is existing, removing it now)"
+	echo "(warning: an UNENCRYPTED backup file '${backup_file}' was left existing, removing it now; ${sensitive_hint}"
 
 	# Apparently always obsolete anyway:
 	/bin/rm -f "${backup_file}"
+
+fi
+
+
+if [ -e "${autosave_file}" ]; then
+
+	echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' has been created. To be integrated or removed now, as it is an ongoing security risk; ${sensitive_hint}" 1>&2
+
+	exit 56
 
 fi
