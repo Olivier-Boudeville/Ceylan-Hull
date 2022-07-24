@@ -697,6 +697,8 @@ view_selected_element()
 
 			echo "  (file '${target_file}' not found, nothing done)"
 
+			exit 15
+
 		else
 
 			echo "  (file '${target_file}' found as '${target_path}')"
