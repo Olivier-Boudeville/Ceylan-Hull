@@ -5,6 +5,7 @@ hide_suffix="-hidden"
 usage="Usage: $(basename $0) [-r] [FILE_ELEMENTS]: unhides specified files or directories (simply by removing the '${hide_suffix}' suffix from their name).
   If no element is specified, unhides all (hidden) elements found (directly) in the current directory.
   If the '-r' option (recursive lookup) is specified, unhides all (hidden) elements found from the current directory (recursively).
+  If an element is not found, the same element once suffixed will be tried.
 
 See also: the reciprocal script 'hide.sh'."
 
@@ -45,9 +46,19 @@ for e in ${target_elems}; do
 
 	if [ ! -e "${source_element}" ]; then
 
-		echo "  Error, the element '${source_element}' does not exist.
+		suffixed_source_element="${source_element}${hide_suffix}"
+
+		if [ ! -e "${suffixed_source_element}" ]; then
+
+			echo "  Error, the element '${source_element}' does not exist (not even if suffixing it).
 ${usage}" 1>&2
-		exit 10
+			exit 10
+
+		else
+
+			source_element="${suffixed_source_element}"
+
+		fi
 
 	fi
 
