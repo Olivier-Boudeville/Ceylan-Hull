@@ -133,14 +133,26 @@ if [ $do_fetch -eq 0 ]; then
 	#
 	#fi
 
-	message="CCTV recordings have been fetched, hit Enter to review them${suffix}."
+	if [ -z "$(/bin/ls *.mkv 2>/dev/null)" ]; then
 
-	echo "${message}"
+		message="No recording was available, nothing to review, Commander."
+		echo "${message}"
+		say.sh "${message}"
 
-	# As the fetch might have been long, notification useful:
-	say.sh "${message}"
+		exit
 
-	read answer
+	else
+
+		message="CCTV recordings have been fetched, hit Enter to review them${suffix}."
+
+		echo "${message}"
+
+		# As the fetch might have been long, notification useful:
+		say.sh "${message}"
+
+		read answer
+
+	fi
 
 fi
 
