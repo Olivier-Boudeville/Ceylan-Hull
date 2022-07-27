@@ -135,7 +135,7 @@ if [ $do_fetch -eq 0 ]; then
 
 	if [ -z "$(/bin/ls *.mkv 2>/dev/null)" ]; then
 
-		message="No recording was available, nothing to review, Commander."
+		message="No recording was available, nothing to review${suffix}."
 		echo "${message}"
 		say.sh "${message}"
 
@@ -172,7 +172,7 @@ count="$(echo ${recordings} | wc -w)"
 # Clearer:
 if [ "${count}" = "0" ]; then
 
-	message="No recordings was found${suffix}."
+	message="No recording was found${suffix}."
 	echo "${message}"
 	say.sh "${message}"
 	exit 0
