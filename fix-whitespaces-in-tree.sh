@@ -9,7 +9,7 @@ target_filenames="Makefile rebar.config .gitignore LICENSE"
 
 
 usage="Usage: $(basename $0) [-h|--help] ROOT_DIRECTORY: fixes whitespace problems in all eligible files found from the specified root directory tree.
-Useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the upcoming meaningful others.
+Useful, when operating on a fork, to properly whitespace-format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the upcoming meaningful others.
 Target extensions are: '${target_extensions}'.
 Target filenames are: '${target_filenames}'.
 "

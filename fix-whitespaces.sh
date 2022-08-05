@@ -1,10 +1,18 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) A_FILE: fixes whitespace problems into the specified file.
-Useful to properly format files that shall committed, even if not using Emacs as editor of choice."
+usage="Usage: $(basename $0) A_FILE: fixes whitespace problems in the specified file.
+Useful to properly whitespace-format files that shall be committed (even if not using Emacs as editor of choice)."
 
 # Refer to http://myriad.esperide.org/#emacs-settings for the prior
 # configuration of Emacs.
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit
+
+fi
+
 
 target_file="$1"
 
@@ -26,7 +34,6 @@ if [ ! -f "${target_file}" ]; then
 fi
 
 #echo "Fixing '${target_file}'..."
-
 
 emacs="$(which emacs 2>/dev/null)"
 
