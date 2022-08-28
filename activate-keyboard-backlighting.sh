@@ -1,11 +1,9 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [level]: activates the keyboard backlighting; for level 0: 0%, i.e. switched off; for level 1: 50%; for level 2 (the default, if none is specified): 100%."
+usage="Usage: $(basename $0) [-h|--help] [level]: activates the keyboard backlighting; for level 0: 0%, i.e. switched off; for level 1: 50%; for level 2 (the default, if none is specified): 100%.
 
-# Note that at least with some Thinkpad (ex: T470), Fn-Spacebar (unless Fn and
-# Ctrl are swapped) cycles through backlighting levels.
-
-#echo $usage
+Note that at least with some Thinkpad (ex: T470), hitting Fn-Spacebar (unless Fn and Ctrl are swapped) allows to cycle through backlighting levels.
+"
 
 if [ ! $(id -u) -eq 0 ]; then
 
@@ -24,7 +22,7 @@ if [ ! -x "${ctrl_tool}" ]; then
 fi
 
 
-device_opt=--device='tpacpi::kbd_backlight'
+device_opt="--device='tpacpi::kbd_backlight'"
 
 echo "(current brightness level is $(${ctrl_tool} ${device_opt} get))"
 
