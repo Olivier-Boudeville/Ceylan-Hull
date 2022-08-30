@@ -6,6 +6,8 @@ usage="Usage: $(basename $0) [-h|--help]: locks immediately the screen."
 # might be your best friend, as at least sometimes correct logins are rejected
 # and will lead to have one's account blocked for 10 minutes repeatedly...
 
+# Consider also 'xfce4-session-logout --suspend' or 'systemctl suspend'.
+
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
