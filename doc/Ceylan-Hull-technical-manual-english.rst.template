@@ -556,6 +556,8 @@ For security
 
 - `lock-screen.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-screen.sh>`_: locks immediately the screen
 
+- `suspend-local-host.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/suspend-local-host.sh>`_: suspends immediately the local host, and ensures that it will resume in a locked state
+
 - `inspect-opened-ports.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/inspect-opened-ports.sh>`_: lists the local TCP/UDP ports that are currently opened
 
 .. - `ftp-only-shell.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ftp-only-shell.sh>`_
