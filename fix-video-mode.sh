@@ -7,7 +7,7 @@ Options:
  -w: applies settings for running on windowed mode
 "
 
-if [ $1 = "-h" ] || [ $1 = "--help" ]; then
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
 
