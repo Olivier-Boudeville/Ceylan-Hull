@@ -27,7 +27,7 @@
 
 
 :raw-html:`<center><img src="hull-title.png" width="20%"></img>`
-:raw-latex:`\centering \includegraphics[scale=0.3]{hull-title.png}`
+:raw-latex:`\begin{center} \includegraphics[scale=0.3]{hull-title.png} \end{center}`
 
 
 
