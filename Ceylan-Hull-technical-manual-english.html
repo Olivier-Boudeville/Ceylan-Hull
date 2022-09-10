@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <title>Welcome to the Ceylan-Hull documentation</title>
 <meta content="Hull, shell, scripts, sh, bash" name="keywords" />
 <link rel="stylesheet" href="pygments-default.css" type="text/css" />
@@ -29,7 +29,7 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Saturday, June 4, 2022</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Wednesday, September 7, 2022</td>
 </tr>
 <tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
@@ -315,6 +315,7 @@
 <h3><a class="toc-backref" href="#toc-entry-19">For Video</a></h3>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh">convert-mov-to-x264-mp4.sh</a>: converts specified MOV file to MP4</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-single-screen.sh">set-single-screen.sh</a>: adapts the displays so that, whether or not an external screen is connected, there is exactly one screen enabled (hence: either a laptop one or an external one; neither both nor none)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh">fix-video-mode.sh</a>: forces a specified video resolution</li>
 </ul>
 </div>
@@ -441,6 +442,7 @@
 </ul>
 </li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-screen.sh">lock-screen.sh</a>: locks immediately the screen</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/suspend-local-host.sh">suspend-local-host.sh</a>: suspends immediately the local host, and ensures that it will resume in a locked state</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/inspect-opened-ports.sh">inspect-opened-ports.sh</a>: lists the local TCP/UDP ports that are currently opened</li>
 </ul>
 <p>One may also rely on Myriad's <a class="reference external" href="https://myriad.esperide.org/#script-based-apps">generate-password.sh</a> script in order to generate safe, strong passwords (typically one per account listed based the <tt class="docutils literal"><span class="pre">*-credentials.sh</span></tt> scripts just above).</p>
@@ -608,9 +610,9 @@
 <div class="line">-q or --quiet: be specifically quiet, just listing matches</div>
 <div class="line">-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)</div>
 <div class="line">-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames</div>
-<div class="line">-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only <a href="#system-message-1"><span class="problematic" id="problematic-1">*</span></a>.rst files)</div>
+<div class="line">-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)</div>
 </div>
-<p>Example: regrep -i 'little red rooster' '<a href="#system-message-2"><span class="problematic" id="problematic-2">*</span></a>.txt'</p>
+<p>Example: regrep -i 'little red rooster' '*.txt'</p>
 <p class="last">See also: <a class="reference external" href="https://myriad.esperide.org/#searching-for-erlang-elements">ergrep</a> (for searching specifically in Erlang files), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep">pygrep</a> (Python version) and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep">cgrep</a> (C version)</p>
 </dd>
 <dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a></dt>
