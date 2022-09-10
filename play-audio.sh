@@ -177,6 +177,22 @@ if [ $display_notification -eq 0 ]; then
 	display_notification
 fi
 
+#echo "files=${files}"
+
+# Not recursive yet, but may become:
+if [ ${be_recursive} -eq 1 ]; then
+	for e in ${files}; do
+
+		if [ -d "${e}" ]; then
+			echo " (as '${e}' is a directory, switching to recursive)"
+			be_recursive=0
+			break
+			#else
+			#   echo "${e} is not a directory"
+		fi
+
+	done
+fi
 
 
 if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
