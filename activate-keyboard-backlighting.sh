@@ -21,8 +21,12 @@ if [ ! -x "${ctrl_tool}" ]; then
 
 fi
 
+device="tpacpi::kbd_backlight"
 
-device_opt="--device='tpacpi::kbd_backlight'"
+# If ever wanting to control the screen brightness:
+#device="intel_backlight"
+
+device_opt="--device=${device}"
 
 echo "(current brightness level is $(${ctrl_tool} ${device_opt} get))"
 
