@@ -63,6 +63,7 @@ if [ -n "${if}" ]; then
 
 else
 
+	# Could be "wlp4s0", etc.:
 	if="wlo1"
 	echo "Unable to guess wifi interface, assuming ${if}."
 
@@ -96,7 +97,6 @@ elif [ "${arg}" = "stop" ]; then
 	#${iw} dev ${if} link
 
 elif [ "${arg}" = "scan" ]; then
-
 
 	# If the wifi interface is reported as blocked, one may use for example:
 	# 'rfkill unblock 1'.
@@ -134,10 +134,11 @@ fi
 #	Soft blocked: no
 #	Hard blocked: no
 #
-# If hard blocked, toggle an hardware button.
+# If hard blocked, toggle an hardware button (e.g. Ctrl-F8 on a Thinkpad whose
+# Fn/Ctrl have been swapped in the BIOS).
 #
 # If soft blocked, push once the wireless key (ex: F8 or F12, or 'rfkill unblock
-# 1')
+# 1', or use this script with its 'start' argument)
 #
 # Then re-check.
 
@@ -149,7 +150,7 @@ fi
 # netctl start "wlo1-100_Fils_d'Ariane"
 
 # If failed:
-# ip link set wlo1 down
+# ip link set ${if} down
 # netctl start "wlo1-100_Fils_d'Ariane"
 
 # Otherwise:
