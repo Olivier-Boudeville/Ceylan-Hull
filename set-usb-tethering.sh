@@ -143,6 +143,8 @@ connect()
 
 	else
 
+		echo "(DHCP request failed)"
+
 		if [ ${retries} -eq 0 ]; then
 
 			notify " Error, unable to obtain an ip address from interface, all retries failed, giving up." 1>&2
