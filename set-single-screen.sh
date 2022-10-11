@@ -42,7 +42,7 @@ desktop_screen_status=$("${xrandr}" -q | grep "${desktop_screen}" | awk '{print 
 
 #echo "desktop_screen_status = ${desktop_screen_status}"
 
-if [ ${desktop_screen_status} = "disconnected" ]; then
+if [ "${desktop_screen_status}" = "disconnected" ]; then
 
 	echo "The desktop screen is not connected; thus: ensuring that the laptop screen is enabled."
 	if ! ${xrandr} --output ${laptop_screen} --auto; then
@@ -50,7 +50,7 @@ if [ ${desktop_screen_status} = "disconnected" ]; then
 		exit 15
 	fi
 
-elif [ ${desktop_screen_status} = "connected" ]; then
+elif [ "${desktop_screen_status}" = "connected" ]; then
 
 	echo "The desktop screen is connected; thus: ensuring it is enabled, and disabling the laptop screen."
 
@@ -68,7 +68,7 @@ elif [ ${desktop_screen_status} = "connected" ]; then
 
 else
 
-	echo "  Error, unable to detect the status of desktop screen (got '${desktop_screen_status}')." 1>&2
+	echo "  Error, unable to detect the status of desktop screen (got '${desktop_screen_status}'). Is a dock powered?" 1>&2
 	exit 50
 
 fi
