@@ -46,5 +46,7 @@ locker_cmd="xscreensaver-command"
 
 ${locker_cmd} --lock && systemctl suspend
 
-# Timestamp may not be updated yet (time jump):
-echo "... awoken from locked suspend on $(date)"
+# Timestamp may not be updated yet (time jump) hence is likely faulty:
+#echo "... awoken from locked suspend on $(date)"
+
+echo "... awoken from locked suspend"
