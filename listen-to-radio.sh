@@ -22,7 +22,9 @@ play_stream()
 	#
 	# (note that song names may contain single quotes, like in: "I'm All Right")
 	#
-	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1"; then
+	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1; s|';||1"; then
+
+	#if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1"; then
 
 		# We would like to simultaneously let the song name be echoed on the
 		# terminal and be used as the text of a desktop notification, but we did
@@ -115,6 +117,10 @@ le_mouv_long_opt="--le-mouv"
 le_mouv_url="http://direct.mouv.fr/live/mouv-midfi.mp3"
 le_mouv_label="Le Mouv"
 
+blp_short_opt="-blp"
+blp_long_opt="--blp"
+blp_url="http://stream2.blpradio.fr:80/blpradio"
+blp_label="BLP Radio (la radio de la MJC Boby Lapointe de Villebon-sur-Yvette)"
 
 default_url="${france_info_url}"
 default_label="${france_info_label}"
@@ -125,20 +131,21 @@ fallback_label="${france_culture_label}"
 
 # [${}|${}]
 
-usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be:
-  - for Radio France:
-	* ${france_culture_short_opt} | ${france_culture_long_opt}
-	* ${france_musique_short_opt} | ${france_musique_long_opt}
-	* ${france_info_short_opt} | ${france_info_long_opt}
-	* ${france_inter_short_opt} | ${france_inter_long_opt}
-	* ${fip_short_opt} | ${fip_long_opt}
-  - for Radio Paradise:
-	* ${radio_paradise_main_short_opt} | ${radio_paradise_main_long_opt}
-	* ${radio_paradise_mellow_short_opt} | ${radio_paradise_mellow_long_opt}
-	* ${radio_paradise_rock_short_opt} | ${radio_paradise_rock_long_opt}
-	* ${radio_paradise_world_short_opt} | ${radio_paradise_world_long_opt}
- - Oui FM: ${oui_fm_short_opt} | ${oui_fm_long_opt}
- - Le Mouv': ${le_mouv_short_opt} | ${le_mouv_long_opt}
+usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be, for:
+  - Radio France:
+	* ${france_culture_label}: ${france_culture_short_opt} | ${france_culture_long_opt}
+	* ${france_musique_label}: ${france_musique_short_opt} | ${france_musique_long_opt}
+	* ${france_info_label}: ${france_info_short_opt} | ${france_info_long_opt}
+	* ${france_inter_label}: ${france_inter_short_opt} | ${france_inter_long_opt}
+	* ${fip_label}: ${fip_short_opt} | ${fip_long_opt}
+  - Radio Paradise:
+	* ${radio_paradise_main_label}: ${radio_paradise_main_short_opt} | ${radio_paradise_main_long_opt}
+	* ${radio_paradise_mellow_label}: ${radio_paradise_mellow_short_opt} | ${radio_paradise_mellow_long_opt}
+	* ${radio_paradise_rock_label}: ${radio_paradise_rock_short_opt} | ${radio_paradise_rock_long_opt}
+	* ${radio_paradise_world_label}: ${radio_paradise_world_short_opt} | ${radio_paradise_world_long_opt}
+  - ${oui_fm_label}: ${oui_fm_short_opt} | ${oui_fm_long_opt}
+  - ${le_mouv_label}: ${le_mouv_short_opt} | ${le_mouv_long_opt}
+  - ${blp_label}: ${blp_short_opt} | ${blp_long_opt}
 
 Outputs the audio streams of specified (online) radio, either preset or based on its specified stream URL.
 
@@ -281,6 +288,15 @@ while [ ! $# -eq 0 ]; do
 
 		stream_url="${le_mouv_url}"
 		stream_label="${le_mouv_label}"
+
+	fi
+
+	if [ "$1" = "${blp_short_opt}" ] || [ "$1" = "${blp_long_opt}" ]; then
+
+		token_eaten=0
+
+		stream_url="${blp_url}"
+		stream_label="${blp_label}"
 
 	fi
 
