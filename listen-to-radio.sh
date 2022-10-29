@@ -119,6 +119,8 @@ le_mouv_label="Le Mouv"
 
 blp_short_opt="-blp"
 blp_long_opt="--blp"
+
+# blp_url="http://stream2.blpradio.fr:80/blpradio-HQ"
 blp_url="http://stream2.blpradio.fr:80/blpradio"
 blp_label="BLP Radio (la radio de la MJC Boby Lapointe de Villebon-sur-Yvette)"
 
