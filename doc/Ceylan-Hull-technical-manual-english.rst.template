@@ -726,6 +726,16 @@ Of Environment and related
 
 
 
+Cooling-related
+---------------
+
+- `get-temperatures.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-temperatures.sh>`_: to return a list of the temperatures known of the system, for various components (cores, disks, motherboard, etc.)
+
+- `apply-fan-settings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/apply-fan-settings.sh>`_: to apply fan settings adequate for a silent yet well-cooled computer (see script comments to trigger it appropriately and also to grant appropriate permissions to other convenience programs)
+
+
+
+
 Script-related
 ==============
 
