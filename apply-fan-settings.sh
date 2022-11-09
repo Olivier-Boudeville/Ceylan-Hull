@@ -70,6 +70,9 @@ base_device_dir="/sys/devices"
 # To explore more in-depth:
 # $ journalctl -u fan-control.service
 
+# To check the corresponding script logs:
+# $ cat /root/.last-fan-control
+
 # And to request that, from now on, it is always launched:
 # $ systemctl enable fan-control.service
 
@@ -123,7 +126,6 @@ if [ -n "$1" ]; then
 	elif [ "$1" = "post" ]; then
 
 		echo "Applying fan setting for post-${next_action}..." | tee --append "${log_file}"
-
 
 	else
 		echo "  Error, invalid parameter specified ('$1')." | tee --append "${log_file}" 1>&2
@@ -244,7 +246,23 @@ elif [ "${hostname}" = "fugu" ]; then
 
 	echo "  Applying fan settings for ${hostname}" | tee --append "${log_file}"
 
-	motherboard_dir="${base_device_dir}/platform/nct6775.2592/hwmon/hwmon3"
+	motherboard_dir="${base_device_dir}/platform/nct6775.2560/hwmon/hwmon3"
+
+	# Actually only 2 3 exist:
+	#smart_ids="1 2 3 4 5"
+	smart_ids="2 3"
+
+	pwm_ids="${smart_ids}"
+
+	smart_fan_iv_mode=5
+
+	echo " - setting PWM fans ${smart_ids} to 'Smart Fan IV' (automatic) mode" | tee --append "${log_file}"
+
+	for p in ${smart_ids}; do
+
+		echo ${smart_fan_iv_mode} > ${motherboard_dir}/pwm${p}_enable
+
+	done
 
 else
 
