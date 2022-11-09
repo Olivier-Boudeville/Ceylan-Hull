@@ -1,10 +1,16 @@
 #!/bin/sh
 
+usage="  Usage: $(basename $0): triggers the best 'top' available: runs an appropriate tool to monitor processes and system resources.
+Currently: htop preferred over atop preferred over classical top."
 
-# Triggers the best 'top' available: triggers an appropriate tool to monitor
-# processes and system resources.
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-# Currently: htop preferred over atop preferred over classical top.
+	echo "${usage}"
+
+	exit
+
+fi
+
 
 args="$*"
 #echo "args = ${args}"
@@ -31,7 +37,21 @@ if [ -z "${htop}" ]; then
 	if [ -z "${atop}" ]; then
 
 		#echo " (running top)"
-		top ${args}
+
+		# Expecting /bin/top:
+		top="$(which top 2>/dev/null)"
+
+		if [ -z "${top}" ]; then
+
+			echo "  Error, no top-like tool found." 1>&2
+
+			exit 15
+
+		else
+
+			top ${args}
+
+		fi
 
 	else
 
@@ -49,6 +69,7 @@ if [ -z "${htop}" ]; then
 
 else
 
+	# Selecting F6 ("SortBy") then PERCENT_CPU is often useful:
 	${htop} ${args}
 
 fi
