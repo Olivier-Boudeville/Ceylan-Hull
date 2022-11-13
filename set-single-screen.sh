@@ -28,6 +28,12 @@ laptop_screen="DP-3"
 #
 desktop_screen="DP-6.2"
 
+
+# Alternate reference, typically if having plugged-in the computer to another
+# screen:
+#
+alternate_desktop_screen="DP-6"
+
 xrandr=$(which xrandr 2>/dev/null)
 
 if [ ! -x "${xrandr}" ]; then
@@ -38,19 +44,33 @@ if [ ! -x "${xrandr}" ]; then
 fi
 
 
-desktop_screen_status=$("${xrandr}" -q | grep "${desktop_screen}" | awk '{print $2}')
+# Grepping with a space is necessary, otherwise "DP-6.2" would match "DP-6":
+desktop_screen_status=$("${xrandr}" -q | grep "${desktop_screen} " | awk '{print $2}')
 
 #echo "desktop_screen_status = ${desktop_screen_status}"
 
 if [ "${desktop_screen_status}" = "disconnected" ]; then
 
-	echo "The desktop screen is not connected; thus: ensuring that the laptop screen is enabled."
-	if ! ${xrandr} --output ${laptop_screen} --auto; then
-		echo "  Error, failed to enable laptop screen." 1>&2
-		exit 15
+	desktop_screen="${alternate_desktop_screen}"
+
+	desktop_screen_status=$("${xrandr}" -q | grep "${desktop_screen} " | awk '{print $2}')
+
+	#echo "desktop_screen_status = ${desktop_screen_status}"
+
+	if [ "${desktop_screen_status}" = "disconnected" ]; then
+
+		echo "The desktop screen is not connected; thus: ensuring that the laptop screen is enabled."
+		if ! ${xrandr} --output ${laptop_screen} --auto; then
+			echo "  Error, failed to enable laptop screen." 1>&2
+			exit 15
+		fi
+
 	fi
 
-elif [ "${desktop_screen_status}" = "connected" ]; then
+fi
+
+
+if [ "${desktop_screen_status}" = "connected" ]; then
 
 	echo "The desktop screen is connected; thus: ensuring it is enabled, and disabling the laptop screen."
 
