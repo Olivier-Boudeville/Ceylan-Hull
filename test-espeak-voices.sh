@@ -2,9 +2,11 @@
 
 # See also: Content-indexing/audio/speech-synthesis/Espeak-without-MBROLA.rst
 
-usage="Usage: $(basename $0): tests the voices supported by espeak"
+usage="Usage: $(basename $0): tests the voices supported by espeak.
 
   Tests espeak voices by recording a test sentence with each of them, and comparing the MD5sum for each resulting WAV file.
+
+  Note that such voice synthesis is mostly obsolete and replaced by neural voices.
 "
 
 
@@ -12,7 +14,7 @@ usage="Usage: $(basename $0): tests the voices supported by espeak"
 get_espeak_voice_for()
 {
 	voice_type=$1
-	returned_voices=`espeak --voices=${voice_type} |grep -v mb | awk '{ print $4 }'|grep -v VoiceName|grep -v mbrola`
+	returned_voices=$(espeak --voices=${voice_type} |grep -v mb | awk '{ print $4 }'|grep -v VoiceName|grep -v mbrola)
 }
 
 
@@ -30,12 +32,12 @@ ESPEAK_VOICES="${ESPEAK_EN_VOICES} ${ESPEAK_FR_VOICES} ${ESPEAK_VARIANT_VOICES}"
 
 #echo "ESPEAK_VOICES = ${ESPEAK_VOICES}"
 
-for v in ${ESPEAK_VOICES} ; do echo "Voice = $v" ;  echo "Esperide Software presents: In the Hall of the Mountain King." |  espeak -v $v -w $v.wav; play-sounds.sh --quiet $v.wav ; done
+for v in ${ESPEAK_VOICES}; do echo "Voice = $v"; echo "Esperide Software presents: In the Hall of the Mountain King." |  espeak -v $v -w $v.wav; play-audio.sh --quiet $v.wav; done
 
 ESPEAK_RETAINED_LIST=""
 
 /bin/rm -f voices-md5-unsorted.txt voices-md5-sorted.txt
 
-for f in *.wav; do md5sum $f >> voices-md5-unsorted.txt ; done
+for f in *.wav; do md5sum $f >> voices-md5-unsorted.txt; done
 
-cat voices-md5-unsorted.txt | sort >> voices-md5-sorted.txt
+/bin/cat voices-md5-unsorted.txt | sort >> voices-md5-sorted.txt
