@@ -1,6 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) A_FILE: fixes whitespace problems in the specified file.
+quiet_opt="--quiet"
+
+usage="Usage: $(basename $0) [${quiet_opt}] A_FILE: fixes whitespace problems in the specified file.
 Useful to properly whitespace-format files that shall be committed (even if not using Emacs as editor of choice)."
 
 # Refer to http://myriad.esperide.org/#emacs-settings for the prior
@@ -13,6 +15,14 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
+verbose=0
+
+if [ "$1" = "${quiet_opt}" ]; then
+
+	verbose=1
+	shift
+	
+fi
 
 target_file="$1"
 
@@ -57,7 +67,7 @@ if [ ! $? -eq 0 ]; then
 
 fi
 
-echo "  + file '${target_file}' cleaned up"
+[ $verbose -eq 1 ] || echo "  + file '${target_file}' cleaned up"
 
 # Possibly created by emacs:
 /bin/rm -f "${target_file}~" 2>/dev/null

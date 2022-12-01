@@ -260,9 +260,9 @@ For Development
 
 - `test-with-valgrind.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-with-valgrind.sh>`_: uses Valgrind to perform quality test on the specified executable
 
-- `reformat-source-style.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style.sh>`_: applies some style change to specified file
+- `reformat-source-file.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-file.sh>`_: updates (in-place) the specified source file so that it complies with our conventions, be it Erlang, C/C++ or of many other file types
 
-- `reformat-source-style-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-style-in-tree.sh>`_: applies some style change to C/C++ files in specified tree
+- `reformat-source-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-files-in-tree.sh>`_: reformats all supported files of various types recursively found; notably useful when forking a repository, in order to canonicalise it as a whole
 
 
 See also the Ceylan-HOWTOs section about `build tools <http://howtos.esperide.org/Build.html>`_ and the Erlang-related `Ceylan-Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
