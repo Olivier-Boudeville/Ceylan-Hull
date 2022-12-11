@@ -82,6 +82,11 @@ reformat_erlang_source_file()
 	# In-place:
 	if "${erlang_formatter}" --write "${target_file}"; then
 
+		# As even just-reformatted source code files are not always
+		# whitespate-clean:
+		#
+		reformat_base_file "${target_file}"
+
 		#echo "(${target_file} successfully reformatted)"
 		exit 0
 
@@ -108,6 +113,11 @@ reformat_c_like_source_file()
 	# In-place:
 	if "${c_like_formatter}" --style=LLVM -i "${target_file}"; then
 
+		# As even just-reformatted source code files are not always
+		# whitespate-clean:
+		#
+		reformat_base_file "${target_file}"
+
 		#echo "(${target_file} successfully reformatted)"
 		exit 0
 
@@ -130,6 +140,8 @@ reformat_base_file()
 	echo " - reformatting base file '${target_file}'"
 
 	check_whitespace_formatter
+
+	#echo "Running: " "${whitespace_formatter}" --quiet "${target_file}"
 
 	# In-place:
 	if "${whitespace_formatter}" --quiet "${target_file}"; then
@@ -244,9 +256,12 @@ case "${extension}" in
 		reformat_base_file "${target_file}"
 		;;
 
+	"css")
+		reformat_base_file "${target_file}"
+		;;
 
 	*)
-		if [ "${target_file}" = "GNUmakefile" ] || [ "${target_file}" = "makefile" ] || [ "${target_file}" = "Makefile" ] [ "${target_file}" = ".gitignore" ]; then
+		if [ "${target_file}" = "GNUmakefile" ] || [ "${target_file}" = "makefile" ] || [ "${target_file}" = "Makefile" ] || [ "${target_file}" = ".gitignore" ]; then
 
 			reformat_base_file "${target_file}"
 
