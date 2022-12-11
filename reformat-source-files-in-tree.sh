@@ -51,7 +51,10 @@ echo  "    Reformatting all source-like files found from '${target_dir}'..."
 
 #find "${target_dir}"  \( -name "$PATTERN_ONE" -o -name "$PATTERN_TWO" \) -exec $STYLE_CONVERTER '{}' ';'
 
-find "${target_dir}" -type f -exec "${reformatter}" '{}' ';'
+# Too long paths displayed:
+#find "${target_dir}" -type f -exec "${reformatter}" '{}' ';'
+
+cd "${target_dir}" && find . -type f -exec "${reformatter}" '{}' ';'
 
 echo "
 Once done, if appropriate, we recommend committing all these reformatting changes as a whole (e.g. from a Git root, 'git add -u . && git commit -m \"Source files reformatted as a whole for uniformity.\"') in order to better trace the actual differences that will be introduced afterwards."
