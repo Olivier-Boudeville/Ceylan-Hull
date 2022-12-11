@@ -4,7 +4,7 @@ usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [--even-ignored]: updates 
 
  Options (order must be respected):
    - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
-   - '--even-ignored': updates all packages, even the ones that are declared to be ignored (in /etc/pacman.conf)
+   - '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.
 
  Supported distributions: Arch, previously Debian."
 
@@ -129,17 +129,30 @@ if [ "$(id -u)" = "0" ]; then
 		"Arch")
 			# Consider as well a 'yaourt -Sy' or alike?
 
+			keyring_opt="-S --needed --noconfirm archlinux-keyring"
+
 			# Too many updates blocked by Haskell-related packages:
-			pacman_opt="-Syu --noconfirm --ignore=ghc"
+			base_update_opt="-Syu --noconfirm --ignore=ghc"
+
+			# We start by updating the Arch keyring, as otherwise, updates made
+			# after a longer duration are bound to fail due to expired keys:
 
 			if [ $quiet -eq 1 ]; then
 
 				# To be run from the command-line:
 				# (problem: tee hides the error return code)
-				if ! pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"; then
+
+				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based Arch key update failed." 1>&2
+					exit 5
+
+				fi
+
+				if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
 
 					echo "  Error, pacman-based update failed." 1>&2
-					exit 5
+					exit 7
 
 				fi
 
@@ -154,10 +167,19 @@ if [ "$(id -u)" = "0" ]; then
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				if ! pacman ${pacman_opt} 2>&1 | tee -a "${log_file}"; then
+				# (currently the same commands as if in quiet mode)
+
+				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based Arch key update failed." 1>&2
+					exit 25
+
+				fi
+
+				if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
 
 					echo "  Error, pacman-based update failed." 1>&2
-					exit 25
+					exit 27
 
 				fi
 
