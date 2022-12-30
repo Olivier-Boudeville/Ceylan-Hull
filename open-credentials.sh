@@ -5,12 +5,14 @@
 
 usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh.
 
-Note that we recommend that such sensitive files follows the conventions in https://anirudhsasikumar.net/blog/2005.01.21.html and, besides relying on a corresponding init.el, have for first line:
+Note that we recommend that such sensitive files follow the conventions in
+https://anirudhsasikumar.net/blog/2005.01.21.html; notably, for such a use case,
+backup files shall be disabled for this content (as they are obvious
+security risks).
+
+For Emacs, besides relying on a corresponding init.el, have for first line:
 
 // -*-mode:asciidoc; mode:sensitive-minor; fill-column:132-*-
-
-in order to prevent Emacs from creating backup/auto-save files for this
-content (which are securty risks).
 "
 
 
@@ -69,6 +71,13 @@ locked_file="${main_credentials_path}"
 credential_dir="$(dirname ${unlocked_file})"
 
 # Backup file, not auto-save one:
+#
+# (auto-saving is having the editor trigger a save by itself after some time,
+# overwriting prior content...)
+#
+# Apparently the same for Emacs and Gedit (although we actually never found
+# Gedit backup files):
+#
 backup_file="${credential_dir}/.tmp.swap.dat~"
 
 if [ -e "${backup_file}" ]; then
@@ -80,13 +89,40 @@ if [ -e "${backup_file}" ]; then
 fi
 
 
-autosave_file=="${credential_dir}/#.tmp.swap.dat#"
+# We were using initially Emacs (a private server/client instance thereof) to
+# avoid any interference with any base Emacs used, yet despite many attempts, no
+# configuration was reliable enough (often an unencrypted version was left
+# behind, as various cases led to a closing/crashing thereof not being detected
+# by this script); now we recommend using another editor for credentials, it
+# proved a lot safer:
+#
+#editor="emacs"
+editor="gedit"
 
-if [ -e "${autosave_file}" ]; then
 
-	echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' is already existing. It shall be integrated or removed first." 1>&2
+has_autosave=0
 
-	exit 56
+if [ "${editor}" = "emacs" ]; then
+
+	autosave_file="${credential_dir}/#.tmp.swap.dat#"
+
+elif [ "${editor}" = "gedit" ]; then
+
+	# The "autosave-file" here is the same as the edited file.
+	has_autosave=1
+
+fi
+
+
+if [ ${has_autosave} -eq 0 ]; then
+
+	if [ -e "${autosave_file}" ]; then
+
+		echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' is already existing. It shall be integrated or removed first." 1>&2
+
+		exit 56
+
+	fi
 
 fi
 
@@ -186,76 +222,124 @@ fi
 #echo "Use lock-credentials.sh to perform the reverse operation."
 
 
-# We do not want the requested next Emacs-based credentials opening to integrate
-# into any prior launched Emacs instance (nor do we want new file openings to
-# happen in this instance), so we create a separate Emacs server:
-#
-# (otherwise this script will be confused as not detecting the closing of the
-# credentials buffer, leading to the coexisting of ciphered and clear-text
-# credentials):
-#
-server_name="ceylan-hull-credentials-server"
+if [ "${editor}" = "emacs" ]; then
 
-#echo "Securing an Emacs daemon named '${server_name}'"
+	# We do not want the requested next Emacs-based credentials opening to
+	# integrate into any prior launched Emacs instance (nor do we want new file
+	# openings to happen in this instance), so we create a separate Emacs
+	# server:
+	#
+	# (otherwise this script will be confused as not detecting the closing of
+	# the credentials buffer, leading to the coexisting of ciphered and
+	# clear-text credentials):
+	#
+	server_name="ceylan-hull-credentials-server"
 
-# No change in the displayed warning if a '--with-x-toolkit=lucid' option is
-# added:
-#
+	#echo "Securing an Emacs daemon named '${server_name}'"
 
-# Would fail if already running (hence from the second credentials opening):
-#emacs --daemon="${server_name}"
+	# No change in the displayed warning if a '--with-x-toolkit=lucid' option is
+	# added:
+	#
 
-# Not working, the server-name is not known yet:
-#emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
+	# Would fail if already running (hence from the second credentials opening):
+	#emacs --daemon="${server_name}"
 
-# We now rely on the sensitive-mode defined in our init.el:
-#emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
-emacs_server_opts="--no-site-file --no-splash --daemon=${server_name}"
+	# Not working, the server-name is not known yet:
+	#emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
 
-# Launch this specific daemon iff needed:
-#
-# (returning zero to test availability)
-#
-if ! emacsclient -s "${server_name}" -e 0 1>/dev/null 2>&1; then
+	# We now rely on the sensitive-mode defined in our init.el:
+	#emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
+	emacs_server_opts="--no-site-file --no-splash --daemon=${server_name}"
 
-	#echo "No Emacs daemon '${server_name}' found existing, launching it."
-	emacs ${emacs_server_opts} 1>/dev/null 2>&1
+	emacsclient="$(which emacsclient 2>/dev/null)"
+
+	if [ ! -x "${emacsclient}" ]; then
+
+		echo "  Error, no emacsclient executable found." 1>&2
+		exit 55
+
+	fi
+
+	emacs="$(which emacs 2>/dev/null)"
+
+	if [ ! -x "${emacs}" ]; then
+
+		echo "  Error, no emacs executable found." 1>&2
+		exit 56
+
+	fi
+
+	# Launch this specific daemon iff needed:
+	#
+	# (returning zero to test availability)
+	#
+	if ! "${emacsclient}" -s "${server_name}" -e 0 1>/dev/null 2>&1; then
+
+		#echo "No Emacs daemon '${server_name}' found existing, launching it."
+		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
+
+	else
+
+		#echo "Emacs daemon '${server_name}' found already existing, using it."
+		:
+
+	fi
+
+	echo "Connecting Emacs client to '${server_name}'."
+
+	# -nw not used anymore; possibly that '--alternate-editor=emacs' is useless
+	# in this context:
+	#
+	emacs_client_opts="--create-frame -s ${server_name}"
+
+	#echo emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs
+
+	# 'emacsclient -s ceylan-hull-credentials-server' may return '*ERROR*: Args
+	# out of range: [], 0', good luck for finding the cause...
+	#
+	if ! ${emacsclient} ${emacs_server_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
+
+		echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
+
+		kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
+
+		echo "Relaunching Emacs daemon '${server_name}'."
+		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
+
+		# Paranoid:
+		sleep 1
+
+		# Retry:
+		${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
+
+	fi
+
+
+elif [ "${editor}" = "gedit" ]; then
+
+	gedit="$(which gedit 2>/dev/null)"
+
+	if [ ! -x "${gedit}" ]; then
+
+		echo "  Error, no gedit executable found." 1>&2
+		exit 60
+
+	fi
+
+	if ! ${gedit} --standalone "${unlocked_file}" 1>/dev/null 2>&1; then
+
+		echo "  Error, gedit failed to open '${unlocked_file}'." 1>&2
+		exit 70
+
+	fi
 
 else
 
-	#echo "Emacs daemon '${server_name}' found already existing, using it."
-	:
+	echo "  Error, no editor selected (abnormal)." 1>&2
+	exit 17
 
 fi
 
-echo "Connecting Emacs client to '${server_name}'."
-
-# -nw not used anymore; possibly that '--alternate-editor=emacs' is useless in
-# -this context:
-#
-emacs_client_opts="--create-frame -s ${server_name}"
-
-#echo emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs
-
-# 'emacsclient -s ceylan-hull-credentials-server' may return '*ERROR*: Args out
-# of range: [], 0', good luck for finding the cause...
-#
-if ! emacsclient ${emacs_server_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
-
-	echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
-
-	kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
-
-	echo "Relaunching Emacs daemon '${server_name}'."
-	emacs ${emacs_server_opts} 1>/dev/null 2>&1
-
-	# Paranoid:
-	sleep 1
-
-	# Retry:
-	emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
-
-fi
 
 echo "(locking now the credentials)"
 
@@ -306,9 +390,6 @@ else
 fi
 
 
-emacs_conf="~/.emacs/init.el"
-
-sensitive_hint="does your ${emacs_conf} file include the expected definition of the 'sensitive-mode' minor mode?)"
 
 if [ -e "${backup_file}" ]; then
 
@@ -316,18 +397,35 @@ if [ -e "${backup_file}" ]; then
 
 	#exit 60
 
-	echo "(warning: an UNENCRYPTED backup file '${backup_file}' was left existing, removing it now; ${sensitive_hint}"
+	if [ "${editor}" = "emacs" ]; then
 
-	# Apparently always obsolete anyway:
-	/bin/rm -f "${backup_file}"
+		emacs_conf="~/.emacs/init.el"
+
+		sensitive_hint="; does your ${emacs_conf} file include the expected definition of the 'sensitive-mode' minor mode?"
+
+		echo "(warning: an UNENCRYPTED backup file '${backup_file}' was left existing, removing it now${sensitive_hint})"
+
+		# Apparently always obsolete anyway:
+		/bin/rm -f "${backup_file}"
+
+	#elif [ "${editor}" = "gedit" ]; then
+	else
+
+		echo "Warning: an UNENCRYPTED backup file '${backup_file}' was left existing, please remove it now." 1>&2
+
+	fi
 
 fi
 
 
-if [ -e "${autosave_file}" ]; then
+if [ ${has_autosave} -eq 0 ]; then
 
-	echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' has been created. To be integrated or removed now, as it is an ongoing security risk; ${sensitive_hint}" 1>&2
+	if [ -e "${autosave_file}" ]; then
 
-	exit 56
+		echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' has been created. To be integrated or removed now, as it is an ongoing security risk${sensitive_hint}" 1>&2
+
+		exit 56
+
+	fi
 
 fi
