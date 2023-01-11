@@ -34,7 +34,7 @@ if [ ! -d "${email_root}" ]; then
 
 fi
 
-archive_tool=$(which snapshot.sh 2>/dev/null)
+archive_tool="$(which snapshot.sh 2>/dev/null)"
 
 if [ ! -x "${archive_tool}" ]; then
 
@@ -53,7 +53,7 @@ if [ ! $? -eq 0 ]; then
 
 fi
 
-generated_file=$(date "+%Y%m%d")-.thunderbird-snapshot.tar.xz.gpg
+generated_file="$(date "+%Y%m%d")-.thunderbird-snapshot.tar.xz.gpg"
 
 if [ ! -f "${generated_file}" ]; then
 
@@ -67,13 +67,13 @@ target_dir="${HOME}/Archives/Courriels"
 
 mkdir -p "${target_dir}"
 
-target_file=$(date "+%Y%m%d")-courriels-thunderbird.tar.xz.gpg
+target_file="$(date "+%Y%m%d")-courriels-thunderbird.tar.xz.gpg"
 
 target_path="${target_dir}/${target_file}"
 
-mv -f $generated_file "${target_path}"
+mv -f ${generated_file} "${target_path}"
 
-size=$(du -sh "${target_path}" | cut -f 1)
+size="$(du -sh "${target_path}" | cut -f 1)"
 
 echo
 echo "Emails have been successfully archived in ${target_dir}/${target_file}, whose size is ${size}."
