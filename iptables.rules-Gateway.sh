@@ -17,11 +17,11 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 ### END INIT INFO
 
 
-# This script configures the firewall for a gateway (ex: between an ADSL or
+# This script configures the firewall for a gateway (e.g. between an ADSL or
 # optic fiber connection providing an Internet connection and the LAN).
 #
 # The "DMZ" corresponds here to the link between the Gateway and the Internet
-# device (ex: telecom set-top box):
+# device (e.g. telecom set-top box):
 #
 # Client computer - (LAN) - Gateway - (DMZ) - Internet device - (Internet)
 
@@ -33,14 +33,15 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 #
 # More precisely:
 # - trust the LAN: allow outgoing traffic, provided in its initiated internally
+# - from authorized IP addresses
 # - distrust the Internet: by default, block new incoming traffic
 # - prefer dropping packets to rejecting them (less information given)
 #
 # As a consequence, unless specified otherwise (thanks to a specific rule), a
-# program running on the gateway (ex: BEAM or EPMD) will be able to send data to
-# whomever it wants on the Internet and receive answers, yet *not* be able to
-# listen to incoming traffic as it will receive none (since that inbound new
-# traffic will be blocked).
+# program running on the gateway (e.g. BEAM or EPMD) will be able to send data
+# to whomever it wants on the Internet and receive answers, yet *not* be able to
+# listen to incoming new traffic, as it will receive none (since that inbound
+# new traffic will be blocked).
 
 
 
@@ -48,7 +49,7 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 # This script is under GPL.
 
 # Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14 (article
-# written by Christophe Grenier, grenier@cgsecurity.org)
+# written by Christophe Grenier, grenier@cgsecurity.org).
 
 
 # For older distributions, this script is meant to be copied in /etc/init.d, to
@@ -84,15 +85,15 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 #
 #  - to perform manual changes in rules:
 #      - list: iptables -L --line-numbers
-#      - delete based on chain name and line number: iptables -D CHAIN_NAME LINE
-#           Ex: iptables -D OUTPUT 2
+#      - delete based on chain name and line number:
+#           'iptables -D CHAIN_NAME LINE' (e.g. 'iptables -D OUTPUT 2')
 #
 #  - check that iptables is meant to be started at boot:
 #        systemctl is-enabled iptables.service
 #      if not, run: systemctl enable iptables.service
 
 
-# An alternate, preferred method is to rely on a
+# An alternate, preferred method is now to rely on a
 # /etc/systemd/system/iptables.rules-Gateway.service file, which is to recreate
 # from scratch (based on code rather than data) the targeted rules.
 #
@@ -121,16 +122,16 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 # sh -x /path/to/this/file
 
 # Causes the script to exit on error as soon as a command failed.
-# Disabled, as some commands may fail (ex: modprobe)
+# Disabled, as some commands may fail (e.g. modprobe).
 #set -e
 
 
 # Full path of the programs we need, change them to your needs:
-iptables=/sbin/iptables
-modprobe=/sbin/modprobe
-echo=/bin/echo
-lsmod=/sbin/lsmod
-rmmod=/sbin/rmmod
+iptables="/sbin/iptables"
+modprobe="/sbin/modprobe"
+echo="/bin/echo"
+lsmod="/sbin/lsmod"
+rmmod="/sbin/rmmod"
 
 
 if [ ! $(id -u) -eq 0 ]; then
@@ -145,8 +146,8 @@ fi
 # Not used anymore by distros like Arch:
 #init_file="/lib/lsb/init-functions"
 
-#if [ -f "$init_file" ]; then
-#	. "$init_file"
+#if [ -f "${init_file}" ]; then
+#   . "${init_file}"
 #fi
 
 
@@ -154,14 +155,14 @@ fi
 # Useful with iptables --list|grep '\[v' or iptables -nL |grep '\[v' to check
 # whether rules are up-to-date.
 #
-# Very useful as well: iptables -S
+# Very useful as well: 'iptables -S'.
 #
 # One may also use: 'journalctl -kf' to monitor live the corresponding kernel
 # logs.
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-22"
+version="s-23"
 
 
 # Now the settings are not embedded anymore in this script, but in the next
@@ -271,10 +272,10 @@ default_epmd_port=4369
 start_it_up()
 {
 
-	$echo "Setting Gateway firewall rules, version $version."
+	$echo "Setting Gateway firewall rules, version ${version}."
 
 	$echo >> "${log_file}"
-	$echo "# ---- Setting Gateway firewall rules, version $version, on $(date)." >> "${log_file}"
+	$echo "# ---- Setting Gateway firewall rules, version ${version}, on $(date)." >> "${log_file}"
 	$echo >> "${log_file}"
 
 
@@ -284,8 +285,8 @@ start_it_up()
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
-	#if $lsmod 2>/dev/null | grep -q ipchains ; then
-	#	$rmmod ipchains
+	#if $lsmod 2>/dev/null | grep -q ipchains; then
+	#   $rmmod ipchains
 	#fi
 
 	# Note: see modprobe notes above.
@@ -307,8 +308,8 @@ start_it_up()
 	# Starts by disabling IP forwarding:
 	$echo "0" > /proc/sys/net/ipv4/ip_forward
 
-	# These lines are here in case rules are already in place and the script is
-	# ever rerun on the fly.
+	# These lines are here should rules be already in place and the script be
+	# run on the fly.
 	#
 	# We want to remove all rules and pre-existing user defined chains, and to
 	# zero the counters before we implement new rules:
@@ -406,15 +407,15 @@ start_it_up()
 
 	# These log rules will not affect the destiny of any packet:
 
-	# All interfaces, all states:
+	# Log gateway-forwarded packets on all interfaces and all states:
 	#${iptables} -A FORWARD -p tcp --dport 80 -s ${test_client_ip} -j LOG --log-prefix "[FW-FWD-O] "
 	#${iptables} -A FORWARD -p tcp --sport 80 -d ${test_client_ip} -j LOG --log-prefix "[FW-FWD-I] "
 
-	# All interfaces, all states:
+	# Log outbound packets on all interfaces and all states:
 	#${iptables} -A OUTPUT -p tcp --dport 80 -s ${test_client_ip} -j LOG --log-prefix "[FW-OUT-O] "
 	#${iptables} -A OUTPUT -p tcp --sport 80 -d ${test_client_ip} -j LOG --log-prefix "[FW-OUT-I] "
 
-	# All interfaces, all states:
+	# Log inbound packets on all interfaces and all states:
 	#${iptables} -A INPUT -p tcp --dport 80 -s ${test_client_ip} -j LOG --log-prefix "[FW-IN-O] "
 	#${iptables} -A INPUT -p tcp --sport 80 -d ${test_client_ip} -j LOG --log-prefix "[FW-IN-I] "
 
@@ -471,7 +472,7 @@ start_it_up()
 	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -s ${multimedia_box} -j LOG --log-prefix "[FW-Box-out] "
 	#${iptables} -A FORWARD -i ${net_if} -o ${lan_if} -d ${multimedia_box} -j LOG --log-prefix "[FW-Box-in]"
 
-	if [ "$enable_iptv" = "true" ]; then
+	if [ "${enable_iptv}" = "true" ]; then
 
 		# So that the ISP content servers can join the LAN in terms of
 		# multicast:
@@ -513,8 +514,9 @@ start_it_up()
 	#
 	#${iptables} -t nat -A PREROUTING -i ${lan_if} -p tcp --dport 80 -j REDIRECT --to-port ${AD_FILTER_PORT}
 
-	# To access from the LAN (ex: a multimedia box, or a local computer to tune
-	# the telecom box) to a telecom box with such IP (may be superfluous):
+	# To access from the LAN (e.g. a multimedia box, or a local computer to tune
+	# the telecom box) to a telecom box with such IP, past the gateway (may be
+	# superfluous):
 	#
 	#${iptables} -A FORWARD -i ${lan_if} -o ${net_if} -d ${telecom_box} -j ACCEPT
 
@@ -566,14 +568,14 @@ start_it_up()
 	#
 	${iptables} -A INPUT -m pkttype --pkt-type broadcast -j DROP
 
-	if [ "$enable_iptv" = "true" ]; then
+	if [ "${enable_iptv}" = "true" ]; then
 
 		# Needed for the IGMP proxy, in both ways:
 		${iptables} -A INPUT -d 224.0.0.0/4 -j ACCEPT
 
 	fi
 
-	if [ "$use_dht" = "true" ]; then
+	if [ "${use_dht}" = "true" ]; then
 
 		${iptables} -A INPUT -i ${net_if} -p udp -m udp --dport ${dht_udp_port} -j ACCEPT
 
@@ -590,7 +592,7 @@ start_it_up()
 	# If an (optional) TCP port range is specified, accepts corresponding
 	# LAN-originating packets addressed to this gateway:
 	#
-	if [ "$enable_unfiltered_tcp_range" = "true" ]; then
+	if [ "${enable_unfiltered_tcp_range}" = "true" ]; then
 
 		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 
@@ -657,9 +659,20 @@ start_it_up()
 	#${iptables} -A INPUT -p tcp --dport 21 -m state --state NEW -j ACCEPT
 
 
+	# For untrusted local (LAN) hosts (e.g. "smart devices" such as cameras)
+	# that should not be allowed to freely communicate (notably access the
+	# Internet):
+	#
+	for host in ${filtered_local_hosts}; do
+
+		${iptables} -A INPUT -i ${lan_if} -p all --source "${host}" -j DROP
+		${iptables} -A FORWARD -i ${lan_if} -p all --source "${host}" -j DROP
+
+	done
+
 	# Orge section:
 
-	if [ "$enable_orge" = "true" ]; then
+	if [ "${enable_orge}" = "true" ]; then
 
 		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
 
@@ -677,9 +690,9 @@ start_it_up()
 	fi
 
 	# String comparison as may not be defined:
-	if [ "$orge_epmd_port" = "$default_epmd_port" ]; then
+	if [ "${orge_epmd_port}" = "${default_epmd_port}" ]; then
 
-		$echo "Warning: Orge is using the default Erlang EPMD port ($default_epmd_port); this is strongly discouraged." 1>&2
+		$echo "Warning: Orge is using the default Erlang EPMD port (${default_epmd_port}); this is strongly discouraged." 1>&2
 
 	else
 
@@ -687,16 +700,16 @@ start_it_up()
 		# only (still wanting to be able to launch named nodes from that
 		# gateway), to avoid any security hazard at this level:
 		#
-		${iptables} -A INPUT -i ${net_if} -p tcp --dport $default_epmd_port -j DROP
+		${iptables} -A INPUT -i ${net_if} -p tcp --dport ${default_epmd_port} -j DROP
 
 		# If our own EPMD port is set, we explicitly prevent anyone but the LAN
 		# to access it:
 		#
 		if [ -n "${orge_epmd_port}" ]; then
 
-			${iptables} -A INPUT -i ${net_if} -p tcp --dport $orge_epmd_port -j DROP
+			${iptables} -A INPUT -i ${net_if} -p tcp --dport ${orge_epmd_port} -j DROP
 
-			${iptables} -A INPUT -i ${lan_if} -p tcp --dport $orge_epmd_port -j ACCEPT
+			${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${orge_epmd_port} -j ACCEPT
 
 		fi
 
@@ -731,7 +744,7 @@ start_it_up()
 
 	# Sending emails:
 
-	if [ "$enable_smtp" = "true" ]; then
+	if [ "${enable_smtp}" = "true" ]; then
 
 		# Basic setting:
 
@@ -740,7 +753,7 @@ start_it_up()
 
 		# IMAP is a protocol which runs on 143 and 993 (SSL) ports
 
-		# Ex: Dovecot:
+		# For example Dovecot:
 
 		#${iptables} -A INPUT -p tcp --dport 143 -m state --state NEW -j ACCEPT
 		#${iptables} -A INPUT -p tcp --dport 993 -m state --state NEW -j ACCEPT
@@ -780,6 +793,7 @@ start_it_up()
 	#${iptables} -A INPUT -p tcp --dport 1720 -j ACCEPT
 	#${iptables} -A INPUT -p udp --dport 5000:5006 -j ACCEPT
 
+
 	## LOOPBACK
 
 	# Allow unlimited traffic on the loopback interface, e.g. needed for KDE,
@@ -803,7 +817,7 @@ start_it_up()
 
 	# ---------------- NTP ---------------------
 
-	# Local clients can ask for gateway-synchronized time:
+	# Local clients can ask for gateway-synchronised time:
 	${iptables} -A INPUT -i ${lan_if} -p udp --dport 123 -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 
@@ -836,7 +850,7 @@ shut_it_down()
 	# Not only one may end up not being protected, but one may also be locked
 	# out of the gateway if this command is issued remotely, e.g. through SSH,
 	# whose connection will be lost after this call, preventing from restarting
-	# the service again...
+	# the service again... So such disabling may not be a good idea.
 
 	$echo "Disabling Gateway firewall rules (DANGER!)."
 
@@ -857,7 +871,8 @@ shut_it_down()
 }
 
 
-script_name=$(basename $0)
+
+script_name="$(basename $0)"
 
 case "$1" in
 
@@ -866,14 +881,14 @@ case "$1" in
 	;;
 
   stop)
-	  $echo "Warning: if this script is executed remotely (ex: through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (ex: 'systemctl restart iptables.rules-Gateway.service') would be then a better solution."
-	  $echo "Proceed anyway? [y/n] (default: n)"
-	  read answer
-	  if [ "${answer}" = "y" ]; then
-		  shut_it_down
-	  else
-		  $echo "(stop aborted)"
-	  fi
+	$echo "Warning: if this script is executed remotely (e.g. through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (e.g. 'systemctl restart iptables.rules-Gateway.service') would be then a better solution."
+	$echo "Proceed anyway? [y/n] (default: n)"
+	read answer
+	if [ "${answer}" = "y" ]; then
+		shut_it_down
+	else
+		$echo "(stop aborted)"
+	fi
 	;;
 
   reload|force-reload)
@@ -911,13 +926,14 @@ case "$1" in
   *)
 	$echo " Error, no appropriate action specified." >&2
 
-	if [ -z "$NAME" ]; then
+	if [ -z "${NAME}" ]; then
+
 		# Launched from the command-line:
 		$echo "${usage}" >&2
 
 	else
 
-		$echo "Usage: /etc/init.d/$NAME ${script_opts}" >&2
+		$echo "Usage: /etc/init.d/${NAME} ${script_opts}" >&2
 
 	fi
 
