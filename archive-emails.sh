@@ -1,8 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): archives properly and reliably (compressed, cyphered, possibly transferred) the user emails."
+usage="Usage: $(basename $0): archives properly and reliably (compressed, cyphered, possibly transferred) the user emails. Always useful/safer, even for IMAP accounts."
 
-# (typically: thunderbird local state).
+# (typically: evolution or thunderbird local state).
 
 # Note: one should have cleaned up one's email base first (removing useless
 # emails and larger attachments, emptying the trash, compacting folders, etc.)
@@ -15,17 +15,39 @@ if [ ! $# -eq 0 ]; then
 
 fi
 
+#target_client="thunderbird"
+target_client="evolution"
 
-if ps -edf | grep thunderbird | grep -v grep 1>/dev/null 2>&1; then
+if [ "${target_client}" = "thunderbird" ]; then
 
-	echo "   Error, your email client (thunderbird) seems to be still running." 1>&2
-	exit 5
+	email_root="./.thunderbird"
+
+	# For the leading dot:
+	snapshot_name=".thunderbird"
+
+elif [ "${target_client}" = "evolution" ]; then
+
+	email_root="./.local/share/evolution"
+	snapshot_name="evolution"
 
 fi
 
+
+# Evolution processes never stopped:
+if [ ! "${target_client}" = "evolution" ]; then
+
+	if ps -edf | grep "${target_client}" | grep -v grep 1>/dev/null 2>&1; then
+
+		echo "   Error, your email client (${target_client}) seems to be still running, please shut it down first." 1>&2
+		exit 5
+
+	fi
+
+fi
+
+
 cd ~
 
-email_root="./.thunderbird"
 
 if [ ! -d "${email_root}" ]; then
 
@@ -44,7 +66,7 @@ if [ ! -x "${archive_tool}" ]; then
 fi
 
 echo "   Archiving now the current email base...."
-${archive_tool} ${email_root}
+${archive_tool} "${email_root}"
 
 if [ ! $? -eq 0 ]; then
 
@@ -53,7 +75,8 @@ if [ ! $? -eq 0 ]; then
 
 fi
 
-generated_file="$(date "+%Y%m%d")-.thunderbird-snapshot.tar.xz.gpg"
+
+generated_file="$(date "+%Y%m%d")-${snapshot_name}-snapshot.tar.xz.gpg"
 
 if [ ! -f "${generated_file}" ]; then
 
@@ -67,19 +90,20 @@ target_dir="${HOME}/Archives/Courriels"
 
 mkdir -p "${target_dir}"
 
-target_file="$(date "+%Y%m%d")-courriels-thunderbird.tar.xz.gpg"
+target_file="$(date "+%Y%m%d")-courriels-${target_client}.tar.xz.gpg"
 
 target_path="${target_dir}/${target_file}"
 
-mv -f ${generated_file} "${target_path}"
+/bin/mv -f ${generated_file} "${target_path}"
 
 size="$(du -sh "${target_path}" | cut -f 1)"
 
 echo
 echo "Emails have been successfully archived in ${target_dir}/${target_file}, whose size is ${size}."
 
+
 if [ -n "${TO_EMAIL_ARCHIVE}" ]; then
 
-	/bin/scp $SP "$target_path" "${TO_EMAIL_ARCHIVE}" && echo "Email archive also transferred to ${TO_EMAIL_ARCHIVE}."
+	/bin/scp $SP "${target_path}" "${TO_EMAIL_ARCHIVE}" && echo "Email archive also transferred to ${TO_EMAIL_ARCHIVE}."
 
 fi
