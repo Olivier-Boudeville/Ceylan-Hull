@@ -162,7 +162,7 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-23"
+version="s-24"
 
 
 # Now the settings are not embedded anymore in this script, but in the next
@@ -265,8 +265,8 @@ fi
 
 # Not a parameter:
 
-# Erlang default:
-default_epmd_port=4369
+
+erlang_default_epmd_port=4369
 
 
 start_it_up()
@@ -280,7 +280,15 @@ start_it_up()
 
 
 	$echo "Interfaces: LAN is ${lan_if}, Internet is ${net_if}." >> "${log_file}"
-	$echo "Services: Orge is '${enable_orge}' (port: ${orge_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), IPTV is '${enable_iptv}', SMTP is '${enable_smtp}', SSH port is '${ssh_port}'." >> "${log_file}"
+	$echo "Summary of services:" >> "${log_file}"
+	$echo " - ban rules enabled? ${enable_ban_rules} (ban file: '${ban_file}')" >> "${log_file}"
+	$echo " - filtered local hosts: ${filtered_local_hosts}" >> "${log_file}"
+	$echo " - Myriad default EPMD port: ${myriad_default_epmd_port}" >> "${log_file}"
+	$echo " - Universal servers enabled? ${enable_universal_server} (US EPMD port range: ${us_lowest_epmd_port}:${us_highest_epmd_port})" >> "${log_file}"
+	$echo " - Orge enabled? ${enable_orge} (port: ${orge_epmd_port}), TCP filter range set? ${enable_unfiltered_tcp_range} (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port})" >> "${log_file}"
+	$echo " - IPTV enabled? ${enable_iptv}" >> "${log_file}"
+	$echo " - SMTP enabled? ${enable_smtp}" >> "${log_file}"
+	$echo " - SSH port: ${ssh_port}" >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
@@ -670,13 +678,86 @@ start_it_up()
 
 	done
 
+
+	# For all Erlang developments based on the default Myriad EPMD port:
+	#
+	# We explicitly filter out this port on the WAN interface (if ever a mistake
+	# opened it), but enable it on the LAN:
+	#
+	if [ -n "${myriad_default_epmd_port}" ]; then
+
+		$echo "Enabling the Myriad default EPMD port (${myriad_default_epmd_port}) only on the LAN."
+
+		${iptables} -A INPUT -i ${net_if} -p tcp --dport ${myriad_default_epmd_port} -j DROP
+
+		${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${myriad_default_epmd_port} -j ACCEPT
+
+		# Unless they match (which is not expected), we also explicitly filter
+		# out the *Erlang-default* EPMD port, on the WAN interface only (still
+		# wanting to be able to launch named nodes from that gateway), to avoid
+		# any security hazard at this level:
+		#
+		if [ "${myriad_default_epmd_port}" != "${erlang_default_epmd_port}" ]; then
+
+			${iptables} -A INPUT -i ${net_if} -p tcp --dport ${erlang_default_epmd_port} -j DROP
+
+		fi
+
+	fi
+
+
+	# Universal server section:
+
+	# We explicitly prevent anyone but the LAN to access the US EPMD port range:
+	if [ "${enable_universal_server}" = "true" ]; then
+
+		if [ -z "${us_lowest_epmd_port}" ] || [ -z "${us_highest_epmd_port}" ]; then
+
+			$echo " Error, Universal Server enabled but EPMD port bounds not properly defined." 1>&2
+			exit 54
+
+		fi
+
+		$echo "Enabling the Universal Server default EPMD port range (from ${us_lowest_epmd_port} to ${us_highest_epmd_port}) only on the LAN."
+
+		${iptables} -A INPUT -i ${net_if} -p tcp --match multiport --dports ${us_lowest_epmd_port}:${us_highest_epmd_port} -j DROP
+
+		${iptables} -A INPUT -i ${lan_if} -p tcp --match multiport --dports ${us_lowest_epmd_port}:${us_highest_epmd_port} -j ACCEPT
+
+	fi
+
+
 	# Orge section:
 
 	if [ "${enable_orge}" = "true" ]; then
 
-		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
+		$echo "Orge enabled, applying its firewall settings (EPMD port: ${orge_epmd_port})."
 
+		# For Erlang epmd daemon (allowing that would be a *major* security hazard):
 		#${iptables} -A INPUT -p tcp --dport ${orge_epmd_port} -m state --state NEW -j ACCEPT
+
+		# String comparison, as may not be defined:
+		if [ "${orge_epmd_port}" = "${erlang_default_epmd_port}" ]; then
+
+			$echo "Warning: Orge is using the default Erlang EPMD port (${erlang_default_epmd_port}); this is strongly discouraged." 1>&2
+
+		else
+
+			# Orge uses here its own port.
+
+
+			# If our own EPMD port is set, we explicitly prevent anyone but the
+			# LAN to access it:
+			#
+			if [ -n "${orge_epmd_port}" ]; then
+
+				${iptables} -A INPUT -i ${net_if} -p tcp --dport ${orge_epmd_port} -j DROP
+
+				${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${orge_epmd_port} -j ACCEPT
+
+			fi
+
+		fi
 
 		# For the listening socket of TCP Orge server:
 		${iptables} -A INPUT -p tcp --dport 9512 -m state --state NEW -j ACCEPT
@@ -686,32 +767,6 @@ start_it_up()
 
 		# For the main UDP Orge server socket:
 		${iptables} -A INPUT -p udp --dport 9512 -m state --state NEW -j ACCEPT
-
-	fi
-
-	# String comparison as may not be defined:
-	if [ "${orge_epmd_port}" = "${default_epmd_port}" ]; then
-
-		$echo "Warning: Orge is using the default Erlang EPMD port (${default_epmd_port}); this is strongly discouraged." 1>&2
-
-	else
-
-		# We explicitly filter out the *default* EPMD port, on the WAN interface
-		# only (still wanting to be able to launch named nodes from that
-		# gateway), to avoid any security hazard at this level:
-		#
-		${iptables} -A INPUT -i ${net_if} -p tcp --dport ${default_epmd_port} -j DROP
-
-		# If our own EPMD port is set, we explicitly prevent anyone but the LAN
-		# to access it:
-		#
-		if [ -n "${orge_epmd_port}" ]; then
-
-			${iptables} -A INPUT -i ${net_if} -p tcp --dport ${orge_epmd_port} -j DROP
-
-			${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${orge_epmd_port} -j ACCEPT
-
-		fi
 
 	fi
 
