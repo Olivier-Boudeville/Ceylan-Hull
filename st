@@ -5,6 +5,9 @@ Option:
  -f: full information
 "
 
+# Otherwise mostly blank screen to dismiss:
+pager_opt="--exit-on-eof"
+
 # Select relevant version control client:
 
 if [ -d 'CVS' ]; then
@@ -32,11 +35,11 @@ else
 		# We find it more convenient to only start from the current directory,
 		# rather than inspecting the full repository (hence the dot):
 		#
-		git ${git_opt} status .
+		git ${git_opt} status . | more ${pager_opt}
 
 	else
 
-		git ${git_opt} status $*
+		git ${git_opt} status $* | more ${pager_opt}
 
 	fi
 
