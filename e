@@ -57,8 +57,8 @@ standalone=1
 
 
 # Useful to discriminate between tools (graphical ones shall be run in
-# background, whereas in-terminal ones not) and contexts of use (ex: emacs may a
-# graphical tool if X support is available, whereas it would be an in-terminal
+# background, whereas in-terminal ones not) and contexts of use (e.g. emacs may
+# a graphical tool if X support is available, whereas it would be an in-terminal
 # one on an headless server):
 #
 run_in_background=0
@@ -205,9 +205,9 @@ chooseNedit()
 
 
 
-# For the *emacs, we use a window width of 83 instead of 80 to compensate
-# for the line numbers. However the length of that number depends on the
-# number of lines (ex: more than 1000 lines implies 4 digits on the left).
+# For the *emacs, we use a window width of 83 instead of 80 to compensate for
+# the line numbers. However the length of that number depends on the number of
+# lines (e.g. more than 1000 lines implies 4 digits on the left).
 
 chooseXemacs()
 {
@@ -295,7 +295,7 @@ chooseEmacs()
 
 
 		# run_in_background shall remain unchanged, as it is context-dependent
-		# (ex: whether X is available or not, see HULL_NO_GRAPHICAL_OUTPUT).
+		# (e.g. whether X is available or not, see HULL_NO_GRAPHICAL_OUTPUT).
 
 	else
 
@@ -505,7 +505,7 @@ applyEditor()
 		elif [ ! -f "$f" ]; then
 
 			# Sometimes a filename followed by some garbage is specified
-			# (ex: a regrep might return "class_X.erl:construct");
+			# (e.g. a regrep might return "class_X.erl:construct");
 			# Here we try to fix the filename - should such a file exist:
 
 			new_f="$(echo "$f"| sed 's|:.*$||1')"
@@ -522,7 +522,7 @@ applyEditor()
 
 			else
 
-				# In some cases (ex: find-record-definition.sh) we have a
+				# In some cases (e.g. find-record-definition.sh) we have a
 				# trailing dash to remove:
 				#
 				# Not as simple as:
@@ -744,9 +744,10 @@ if [ ${do_show} -eq 0 ]; then
 	displayEditors
 fi
 
-# A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
-# then apparently there is no easy way in sh to preserve that space (the script
-# will understand that two files are listed, 'hello' and 'world.txt').
+# A problem is that if a specified file includes spaces (e.g. 'hello
+# world.txt'), then apparently there is no easy way in sh to preserve that space
+# (the script will understand that two files are listed, 'hello' and
+# 'world.txt').
 #
 # See
 # https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters for more details.
@@ -986,7 +987,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 	fi
 
-	# No json-specified rule (ex: 'jq' just a viewer).
+	# No json-specified rule (e.g. 'jq' just a viewer).
 
 	# HTML files are to be edited (hence no special case here)
 
@@ -1026,21 +1027,25 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 	if [ "${extension}" = "traces" ]; then
 
-		LOGMX="$(which logmx.sh)"
+		# Editing here, not viewing:
 
-		if [ ! -x "${LOGMX}" ]; then
+		# LOGMX="$(which logmx.sh)"
 
-			echo "  (no LogMX found, using default editor for traces)"
+		# if [ ! -x "${LOGMX}" ]; then
 
-		else
+		#	echo "  (no LogMX found, using default editor for traces)"
 
-			editor="${LOGMX}"
-			editor_short_name="LogMX"
+		# else
 
-		fi
+		#	editor="${LOGMX}"
+		#	editor_short_name="LogMX"
 
-		applyEditor
-		exit 0
+		# fi
+
+		# applyEditor
+		# exit 0
+
+		chooseEmacs
 
 	fi
 
