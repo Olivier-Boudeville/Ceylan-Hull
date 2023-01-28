@@ -4,36 +4,44 @@ usage="Usage: $(basename $0): archives properly and reliably (compressed, cypher
 
 # (typically: evolution or thunderbird local state).
 
-# Note: one should have cleaned up one's email base first (removing useless
+# Notes:
+# - applies certainly to POP3 accounts, but also for safety on IMAP ones
+# - one should have cleaned up one's email base first (removing useless
 # emails and larger attachments, emptying the trash, compacting folders, etc.)
 # and shut down one's email client.
 
 if [ ! $# -eq 0 ]; then
 
-	echo "   Error, no parameter is to be specified to this script." 1>&2
+	echo "   Error, no parameter is to be specified to this script.
+${usage}" 1>&2
 	exit 4
 
 fi
 
-#target_client="thunderbird"
-target_client="evolution"
+
+# Awful PGP support:
+target_client="thunderbird"
+
+# Constant problems with at least some IMAP servers:
+#target_client="evolution"
+
 
 if [ "${target_client}" = "thunderbird" ]; then
 
-	email_root="./.thunderbird"
+	email_root="${HOME}/.thunderbird"
 
 	# For the leading dot:
-	snapshot_name=".thunderbird"
+	snapshot_name="thunderbird"
 
 elif [ "${target_client}" = "evolution" ]; then
 
-	email_root="./.local/share/evolution"
+	email_root="${HOME}/.local/share/evolution"
 	snapshot_name="evolution"
 
 fi
 
 
-# Evolution processes never stopped:
+# Evolution processes never stopped (or use '--force-shutdown'):
 if [ ! "${target_client}" = "evolution" ]; then
 
 	if ps -edf | grep "${target_client}" | grep -v grep 1>/dev/null 2>&1; then
