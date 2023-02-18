@@ -131,9 +131,13 @@ fallback_url="${france_culture_url}"
 fallback_label="${france_culture_label}"
 
 
-# [${}|${}]
+keep_vol_opt="--keep-volume"
 
-usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be, for:
+# Percentage of max volume:
+target_volume=30
+
+
+usage="Usage: $(basename $0) [${keep_vol_opt}] [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be, for:
   - Radio France:
 	* ${france_culture_label}: ${france_culture_short_opt} | ${france_culture_long_opt}
 	* ${france_musique_label}: ${france_musique_short_opt} | ${france_musique_long_opt}
@@ -150,6 +154,7 @@ usage="Usage: $(basename $0) [RADIO_OPT|STREAM_URL]: plays the specified Interne
   - ${blp_label}: ${blp_short_opt} | ${blp_long_opt}
 
 Outputs the audio streams of specified (online) radio, either preset or based on its specified stream URL.
+By default, unless the '${keep_vol_opt}' option is specified, sets also the detected audio output to ${target_volume}% of the maximum volume.
 
   Note:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
@@ -183,8 +188,17 @@ if [ ! -x "${player}" ]; then
 fi
 
 
+# Setting the volume automatically allows to avoid accidentally-loud playbacks:
+set_volume=0
+
+if [ "$1" = "${keep_vol_opt}" ]; then
+	set_volume=1
+	shift
+fi
+
 
 display_notification=0
+
 
 
 while [ ! $# -eq 0 ]; do
@@ -348,6 +362,28 @@ if [ -z "${stream_url}" ]; then
 fi
 
 
+if [ "${set_volume}" -eq 1 ]; then
+
+	echo "(not setting the volume)"
+
+else
+
+	# Assuming PulseAudio:
+	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+
+	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
+
+	if ! pactl -- set-sink-volume ${target_sink} "${target_volume}%"; then
+
+		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
+
+		exit 35
+
+	fi
+
+fi
+
+
 #echo "display_notification=${display_notification}"
 
 if [ $display_notification -eq 0 ]; then
@@ -367,6 +403,7 @@ if [ $display_notification -eq 0 ]; then
 	fi
 
 fi
+
 
 
 do_stop=1
