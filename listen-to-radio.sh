@@ -133,7 +133,7 @@ fallback_label="${france_culture_label}"
 
 keep_vol_opt="--keep-volume"
 
-# Percentage of max volume:
+# Percentage of maximum volume:
 target_volume=30
 
 
