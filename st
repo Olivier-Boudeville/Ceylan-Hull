@@ -8,6 +8,8 @@ Option:
 # Otherwise mostly blank screen to dismiss:
 pager_opt="--exit-on-eof"
 
+# With 'less', the -r option is useful to preserve colors.
+
 # Select relevant version control client:
 
 if [ -d 'CVS' ]; then
