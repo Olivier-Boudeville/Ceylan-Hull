@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): archives properly and reliably (compressed, cyphered, possibly transferred) the user emails. Always useful/safer, even for IMAP accounts."
+usage="Usage: $(basename $0): archives properly and reliably (compressed, cyphered, possibly transferred to a remote server) the user emails. Always useful/safer, even for IMAP accounts."
 
 # (typically: evolution or thunderbird local state).
 
@@ -19,10 +19,10 @@ ${usage}" 1>&2
 fi
 
 
-# Awful PGP support:
+# Poor OpenPGP support:
 target_client="thunderbird"
 
-# Constant problems with at least some IMAP servers:
+# Constant errors with at least some IMAP servers:
 #target_client="evolution"
 
 
@@ -30,13 +30,9 @@ if [ "${target_client}" = "thunderbird" ]; then
 
 	email_root="${HOME}/.thunderbird"
 
-	# For the leading dot:
-	snapshot_name="thunderbird"
-
 elif [ "${target_client}" = "evolution" ]; then
 
 	email_root="${HOME}/.local/share/evolution"
-	snapshot_name="evolution"
 
 fi
 
@@ -54,9 +50,6 @@ if [ ! "${target_client}" = "evolution" ]; then
 fi
 
 
-cd ~
-
-
 if [ ! -d "${email_root}" ]; then
 
 	echo "   Error, no root directory of email client found (${email_root})." 1>&2
@@ -64,19 +57,25 @@ if [ ! -d "${email_root}" ]; then
 
 fi
 
-archive_tool="$(which snapshot.sh 2>/dev/null)"
+archive_base_dir="$(dirname "${email_root}")"
+cd "${archive_base_dir}"
+
+
+snapshot_script="snapshot.sh"
+
+archive_tool="$(which ${snapshot_script} 2>/dev/null)"
 
 if [ ! -x "${archive_tool}" ]; then
 
-	echo "   Error, no executable archive tool found (snapshot.sh)." 1>&2
+	echo "   Error, no executable archive tool found (${snapshot_script})." 1>&2
 	exit 15
 
 fi
 
-echo "   Archiving now the current email base...."
-${archive_tool} "${email_root}"
+email_base_dir="$(basename "${email_root}")"
 
-if [ ! $? -eq 0 ]; then
+echo "   Archiving now the current email base...."
+if ! ${archive_tool} "${email_base_dir}"; then
 
 	echo "   Error, archive creation failed." 1>&2
 	exit 20
@@ -84,7 +83,7 @@ if [ ! $? -eq 0 ]; then
 fi
 
 
-generated_file="$(date "+%Y%m%d")-${snapshot_name}-snapshot.tar.xz.gpg"
+generated_file="$(date "+%Y%m%d")-${email_base_dir}-snapshot.tar.xz.gpg"
 
 if [ ! -f "${generated_file}" ]; then
 
@@ -102,7 +101,7 @@ target_file="$(date "+%Y%m%d")-courriels-${target_client}.tar.xz.gpg"
 
 target_path="${target_dir}/${target_file}"
 
-/bin/mv -f ${generated_file} "${target_path}"
+/bin/mv -f "${generated_file}" "${target_path}"
 
 size="$(du -sh "${target_path}" | cut -f 1)"
 
