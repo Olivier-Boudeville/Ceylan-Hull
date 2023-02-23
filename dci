@@ -2,6 +2,16 @@
 
 usage="Usage: $(basename $0) [FILES]: assists efficiently and conveniently the commit of specified file(s)."
 
+pager="$(which more 2>/dev/null)"
+#pager="$(which less 2>/dev/null)"
+
+# Otherwise mostly blank screen to dismiss:
+#
+# (yet unsupported on older versions of 'more')
+#
+#pager_opt="--exit-on-eof"
+pager_opt=""
+
 
 # Select relevant version control client:
 vcs_tool="svn"
@@ -61,35 +71,38 @@ else
 			echo "${arrow} Committing-in <${target}>:"
 
 			# Typically being on a console here:
-			git diff --staged "${target}"
+			git diff --staged "${target}" #| ${pager} ${pager_opt}
 
 			# Pause needed to read previous diff:
 			# Not needed as diff pauses: read do_not_care
 
 			git commit "${target}"
 
-
 		else
 
-			# Multi-frame/window here.
+			# Multi-frame/window here (the general case).
 			#
 			# (HULL_NO_GRAPHICAL_OUTPUT either defined to 1 or not defined)
 
 			# (not wanting the pager to truncate longer lines)
 
-			# Ex: version 1.7.2.5 does not support minimal:
-			#GIT_PAGER='' git diff --staged --minimal ${target}
-			GIT_PAGER='' git diff --staged "${target}"
-
+			# Appearing first, so that the commit can be commented in the
+			# spawned editor while paging the diffs thanks to the next command:
+			# (only drawback: not able anymore to detect aborted commits)
+			#
 			echo "${arrow} Committing-in <${target}>:"
-			git commit "${target}"
+			git commit "${target}" &
+
+			# Ex: version 1.7.2.5 does not support minimal:
+			#GIT_PAGER='' git diff --staged "${target}" | ${pager} ${pager_opt}
+			#GIT_PAGER='' git diff --staged --minimal "${target}"
+			git diff --staged --minimal "${target}"
 
 		fi
 
 		if [ ! $? -eq 0 ]; then
 
 			echo "Commit aborted for ${target}, unstaging it." 1>&2
-
 			git reset HEAD "${target}"
 
 		fi
