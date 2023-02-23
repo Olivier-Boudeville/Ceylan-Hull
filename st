@@ -5,8 +5,15 @@ Option:
  -f: full information
 "
 
+pager="$(which more 2>/dev/null)"
+
 # Otherwise mostly blank screen to dismiss:
-pager_opt="--exit-on-eof"
+#
+# (yet unsupported on older versions of 'more')
+#
+#pager_opt="--exit-on-eof"
+pager_opt=""
+
 
 # Select relevant version control client:
 
@@ -35,11 +42,11 @@ else
 		# We find it more convenient to only start from the current directory,
 		# rather than inspecting the full repository (hence the dot):
 		#
-		git ${git_opt} status . | more ${pager_opt}
+		git ${git_opt} status . | ${pager} ${pager_opt}
 
 	else
 
-		git ${git_opt} status $* | more ${pager_opt}
+		git ${git_opt} status $* | ${pager} ${pager_opt}
 
 	fi
 
