@@ -15,6 +15,8 @@ pager="$(which more 2>/dev/null)"
 pager_opt=""
 
 
+# With 'less', the -r option is useful to preserve colors.
+
 # Select relevant version control client:
 
 if [ -d 'CVS' ]; then

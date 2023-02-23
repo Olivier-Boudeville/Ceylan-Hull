@@ -1,14 +1,19 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recursive|-r] [file_or_directory1 file_or_directory2 ...]
+keep_vol_opt="--keep-volume"
+
+# Percentage of maximum volume:
+target_volume=30
+
+usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recursive|-r] [${keep_vol_opt}] [file_or_directory1 file_or_directory2 ...]
 
  Performs an audio-only playback of the specified content files (including video ones) and directories, possibly with the following options:
   --announce or -a: announces the filename that will be played immediately (with vocal synthesis)
   --quiet or -q: does no perform console output
   --shuffle or -s: plays the specified elements in a random order
   --recursive or -r: selects content files automatically and recursively, from the current directory
-
-(default: no announce, not quiet, no shuffle, not recursive - unless no files nor directories are specified)
+  ${keep_vol_opt}: does not set a default volume
+(default: no announce, not quiet, no shuffle, not recursive, detected audio output to ${target_volume}% of the maximum volume - unless no files nor directories are specified)
 
   Notes:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
@@ -90,6 +95,9 @@ do_shuffle=1
 be_recursive=1
 display_notification=0
 
+# Setting the volume automatically allows to avoid accidentally-loud playbacks:
+set_volume=0
+
 
 while [ ! $# -eq 0 ]; do
 
@@ -146,6 +154,11 @@ while [ ! $# -eq 0 ]; do
 		exit 0
 	fi
 
+	if [ "$1" = "${keep_vol_opt}" ]; then
+		shift
+		set_volume=1
+	fi
+
 	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 
 		shift
@@ -172,6 +185,30 @@ done
 #echo "be_quiet=${be_quiet}"
 #echo "be_recursive=${be_recursive}"
 #echo "display_notification=${display_notification}"
+#echo "set_volume=${set_volume}"
+
+
+if [ "${set_volume}" -eq 1 ]; then
+
+	echo "(not setting the volume)"
+
+else
+
+	# Assuming PulseAudio:
+	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+
+	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
+
+	if ! pactl -- set-sink-volume ${target_sink} "${target_volume}%"; then
+
+		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
+
+		exit 35
+
+	fi
+
+fi
+
 
 if [ $display_notification -eq 0 ]; then
 	display_notification

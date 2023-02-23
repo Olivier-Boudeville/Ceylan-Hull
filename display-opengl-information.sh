@@ -2,12 +2,12 @@
 
 usage="$(basename $0): displays information regarding the local OpenGL support."
 
-echo "Getting informations about OpenGL support..."
+echo "  Getting information about OpenGL support..."
 echo
 
 
 # Not specifying (explicitly) the display to use, as this convention may change
-# from a distro to another, and may lead to errors like 'Invalid
+# from a distribution to another, and may lead to errors like 'Invalid
 # MIT-MAGIC-COOKIE-1 keyError: unable to open display :0:'.
 
 # First display:
@@ -17,7 +17,6 @@ echo
 echo "  * Hardware-accelerated rendering:"
 glxinfo="$(which glxinfo 2>/dev/null)"
 
-
 if [ ! -x "${glxinfo}" ]; then
 
 	echo "  Error, glxinfo tool not found. Run for example: 'install-arch-package.sh glxinfo'." 1>&2
@@ -25,8 +24,8 @@ if [ ! -x "${glxinfo}" ]; then
 
 fi
 
-${glxinfo} | egrep "direct rendering"
-${glxinfo} | egrep "OpenGL .* string"
+${glxinfo} | grep -E "direct rendering"
+${glxinfo} | grep -E "OpenGL .* string"
 
 echo
 
