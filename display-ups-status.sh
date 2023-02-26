@@ -9,7 +9,7 @@ usage="Usage: $(basename $0) [UPS_NAME] [UPS_SERVER]: displays the status of spe
 # for d in $(upower -e); do echo "For $d: "; upower -i $d; done
 # (duplicates may be returned)
 
-upsc=$(which upsc 2>/dev/null)
+upsc="$(which upsc 2>/dev/null)"
 
 if [ -x "${upsc}" ]; then
 
@@ -35,7 +35,7 @@ else
 
 	# Otherwise: "Error contacting apcupsd @ localhost:3551: Connection refused"
 
-	apcc=$(which apcaccess 2>/dev/null)
+	apcc="$(which apcaccess 2>/dev/null)"
 
 	if [ -x "${apcc}" ]; then
 
