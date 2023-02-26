@@ -11,8 +11,9 @@ pager="$(which more 2>/dev/null)"
 #
 # (yet unsupported on older versions of 'more')
 #
-#pager_opt="--exit-on-eof"
-pager_opt=""
+# Then hit 'q' to exit:
+pager_opt="--exit-on-eof"
+#pager_opt=""
 
 
 # With 'less', the -r option is useful to preserve colors.
