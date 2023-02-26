@@ -501,8 +501,9 @@ System information-related
 
 - `display-opengl-information.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-opengl-information.sh>`_: displays information regarding the local OpenGL support
 
-- `display-raid-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-raid-status.sh>`_: displays information regarding a local RAID array.
+- `display-raid-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-raid-status.sh>`_: displays information regarding a local RAID array
 
+- `display-battery-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-battery-status.sh>`_: displays information regarding the status of local batteries (typically for a laptop)
 
 
 Convenience-related
