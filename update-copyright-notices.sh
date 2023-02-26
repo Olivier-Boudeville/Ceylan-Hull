@@ -12,7 +12,7 @@ CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
   - 'Erlang', for *.hrl, *.erl files
 
-Ex: $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
+For example $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
 This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 2008-2011 Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 
 Note that if PREVIOUS_NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
