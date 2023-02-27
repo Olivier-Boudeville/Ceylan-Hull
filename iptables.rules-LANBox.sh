@@ -152,7 +152,8 @@ fi
 #
 # Set to true iff this LAN computer is to host a DLNA server (ex: minidlna):
 #
-allow_dlna="true"
+#allow_dlna="true"
+allow_dlna="false"
 
 # For trivnet1 (TCP):
 trivnet1_tcp_port=8200
@@ -168,7 +169,8 @@ ssdp_udp_port=1900
 
 
 # By default, we do *not* filter out EPMD traffic (i.e. we accept it):
-allow_epmd="true"
+#allow_epmd="true"
+allow_epmd="false"
 
 # Over TCP:
 epmd_default_port=4369
@@ -197,7 +199,9 @@ tcp_unfiltered_high_port=55000
 # video stream through RTP, on UDP unprivileged ports that cannot be anticipated
 # (short of listening to the RTSP exchanges).
 #
-allow_rtsp="true"
+#allow_rtsp="true"
+allow_rtsp="false"
+
 
 # Connections to be initiated by this (trusted) LAN box, so not needed:
 #rtsp_tcp_port=554
