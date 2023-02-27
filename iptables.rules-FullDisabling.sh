@@ -1,31 +1,23 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0): disables all firewall rules."
 
-if [ ! `id -u` -eq 0 ] ; then
+if [ ! $(id -u) -eq 0 ]; then
 
 	echo "
 	Error, you must be root, aborting." 1>&2
-
-	exit 1
+	exit 5
 
 fi
 
 
+echo "Disabling *permanently* ALL iptables rules (beware, all traffic accepted!)."
 
-echo "Disabling permanently ALL iptables rules (beware, all traffic accepted!)."
 
-# Mangle removed, to avoid:
+iptables=/sbin/iptables
 
-#iptables v1.4.20: can't initialize iptables table `mangle': Table does not exist (do you need to insmod?)
-#Perhaps iptables or your kernel needs to be upgraded.
+${iptables} -F && ${iptables} -X && ${iptables} -Z && ${iptables} -F -t nat && ${iptables} -X -t nat && ${iptables} -Z -t nat && ${iptables} -P INPUT ACCEPT && ${iptables} -P FORWARD ACCEPT && ${iptables} -P OUTPUT ACCEPT
 
-# With mangle:
-#iptables -F && iptables -X && iptables -t nat -F && iptables -t nat -X && iptables -t mangle -F && iptables -t mangle -X && iptables -P INPUT ACCEPT && iptables -P FORWARD ACCEPT && iptables -P OUTPUT ACCEPT
-
-# Without mangle:
-iptables -F && iptables -X && iptables -t nat -F && iptables -t nat -X && iptables -P INPUT ACCEPT && iptables -P FORWARD ACCEPT && iptables -P OUTPUT ACCEPT
-
-# Tables that could be added: mangle, raw and security.
 
 if [ ! $? -eq 0 ] ; then
 

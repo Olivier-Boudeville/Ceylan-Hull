@@ -5,13 +5,11 @@ code
 def
 defel
 em
-fuda
 img
 imgr
 linked
 lnk
 lnkr
-newda
 ordered
 para
 sni
@@ -19,4 +17,10 @@ strong
 table
 tit
 toc
+doc/*.html
+doc/*.aux
+doc/Ceylan-Hull-technical-manual-english.pdf
+doc/Ceylan-Hull-technical-manual-english.rst
+doc/*.tex
+doc/*.toc
 *.log

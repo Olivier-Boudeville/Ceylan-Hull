@@ -1,0 +1,25 @@
+#!/bin/sh
+
+usage="Usage: $(basename $0) [-h|--help] COMMIT_MESSAGE: creates a commit from the current staging area, with the specified commit message."
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit
+
+fi
+
+if [ ! $# -eq 1 ]; then
+
+	echo "Invalid number of parameters.
+${usage}" 1>&2
+	exit 5
+
+fi
+
+commit_message="$1"
+
+
+# Supposing Git here.
+
+git commit -m "${commit_message}"

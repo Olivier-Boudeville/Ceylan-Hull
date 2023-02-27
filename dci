@@ -1,36 +1,46 @@
 #!/bin/sh
 
-# Useful to check-in efficiently (fast):
+usage="Usage: $(basename $0) [FILES]: assists efficiently and conveniently the commit of specified file(s)."
+
+pager="$(which more 2>/dev/null)"
+#pager="$(which less 2>/dev/null)"
+
+# Otherwise mostly blank screen to dismiss:
+#
+# (yet unsupported on older versions of 'more')
+#
+#pager_opt="--exit-on-eof"
+pager_opt=""
 
 
 # Select relevant version control client:
-TOOL="svn"
+vcs_tool="svn"
 
-if [ -d 'CVS' ] ; then
-	TOOL="cvs"
+if [ -d "CVS" ]; then
+	vcs_tool="cvs"
 fi
 
 
 target=$*
 arrow="---------------------> "
 
-echo "$arrow Showing diff for <$target>:"
+echo "$arrow Showing diff for <${target}>:"
 
 # CVS diff returns 1 whereas ok:
-if [ ${TOOL} = "cvs" ] ; then
+if [ ${vcs_tool} = "cvs" ]; then
 
-	${TOOL} diff $target
-	echo "$arrow Committing-in <$target>:"
-	${TOOL} ci $target
+	${vcs_tool} diff "${target}"
+	echo "${arrow} Committing-in <${target}>:"
+	${vcs_tool} ci "${target}"
 
 	echo "...done"
 
-elif [ -d ".svn" ] ; then
+elif [ -d ".svn" ]; then
 
-	if ${TOOL} diff $target | more ; then
+	if ${vcs_tool} diff "${target}" | more; then
 
-		echo "$arrow Committing-in <$target>:"
-		${TOOL} ci $target
+		echo "${arrow} Committing-in <${target}>:"
+		${vcs_tool} ci "${target}"
 
 		echo "...done"
 
@@ -38,8 +48,7 @@ elif [ -d ".svn" ] ; then
 
 else
 
-
-	if [ -z "$target" ] ; then
+	if [ -z "${target}" ]; then
 
 		# If no argument has been specified, default to incremental commits for
 		# all:
@@ -48,24 +57,53 @@ else
 
 	else
 
+		# Supposing Git here.
+
 		# In case was not added yet, to see the diffs at next stage:
-		git add $target
+		git add "${target}"
 
-		# We want to see what we are about to commit:
-		# (not wanting the pager to truncate longer lines)
+		# We want to see what we are about to commit; it depends on whether we
+		# can have a separate frame or not (on the console):
+		#
+		# (possibly not even defined)
+		if [ "${HULL_NO_GRAPHICAL_OUTPUT}" = "0" ]; then
 
-		# Ex: version 1.7.2.5 does not support minimal:
-		#GIT_PAGER='' git diff --staged --minimal $target
-		GIT_PAGER='' git diff --staged $target
+			echo "${arrow} Committing-in <${target}>:"
 
-		echo "$arrow Committing-in <$target>:"
-		git commit $target
+			# Typically being on a console here:
+			git diff --staged "${target}" #| ${pager} ${pager_opt}
 
-		if [ ! $? -eq 0 ] ; then
+			# Pause needed to read previous diff:
+			# Not needed as diff pauses: read do_not_care
 
-			echo "Commit aborted for $target, unstaging it." 1>&2
+			git commit "${target}"
 
-			git reset HEAD $target
+		else
+
+			# Multi-frame/window here (the general case).
+			#
+			# (HULL_NO_GRAPHICAL_OUTPUT either defined to 1 or not defined)
+
+			# (not wanting the pager to truncate longer lines)
+
+			# Appearing first, so that the commit can be commented in the
+			# spawned editor while paging the diffs thanks to the next command:
+			# (only drawback: not able anymore to detect aborted commits)
+			#
+			echo "${arrow} Committing-in <${target}>:"
+			git commit "${target}" &
+
+			# Ex: version 1.7.2.5 does not support minimal:
+			#GIT_PAGER='' git diff --staged "${target}" | ${pager} ${pager_opt}
+			#GIT_PAGER='' git diff --staged --minimal "${target}"
+			git diff --staged --minimal "${target}"
+
+		fi
+
+		if [ ! $? -eq 0 ]; then
+
+			echo "Commit aborted for ${target}, unstaging it." 1>&2
+			git reset HEAD "${target}"
 
 		fi
 

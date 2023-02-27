@@ -1,63 +1,86 @@
 #!/bin/sh
 
-# Absolutely needed, as otherwise sed will fail when using "י" as a parameter, in
-# ${SED} 's|י|e|g...
+# Absolutely needed, as otherwise sed will fail when using "י" as a parameter,
+# in ${sed} 's|י|e|g...
+#
 export LANG=
 
-SED=$(which sed | grep -v ridiculously)
-MV=$(which mv | grep -v ridiculously)
+# Necessary for iconv to handle properly 'י' for example:
+export LC_ALL=fr_FR.UTF-8
 
-USAGE="
+sed=$(which sed | grep -v ridiculously)
+mv=$(which mv | grep -v ridiculously)
+#tr=$(which tr | grep -v ridiculously)
+
+usage="
 Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
 
-if [ $# -eq 0 ] ; then
+if [ $# -eq 0 ]; then
 	echo "
 
-	Error, no argument given. $USAGE
+	Error, no argument given. ${usage}
 
 	" 1>&2
-	exit 1
+	exit 20
 fi
 
 
-ORIGINAL_NAME="$*"
+original_name="$*"
 
-if [ ! -e "${ORIGINAL_NAME}" ] ; then
+if [ ! -e "${original_name}" ]; then
+
 	echo "
 
-	Error, no entry named <${ORIGINAL_NAME}> exists. $USAGE
+	Error, no entry named <${original_name}> exists. ${usage}
 
 	" 1>&2
 
-	exit 2
+	exit 25
 
 fi
 
-#echo "Original name is: <${ORIGINAL_NAME}>"
+#echo "Original name is: <${original_name}>"
+
+# More efficient:
+# sed -e 's|[טיךכ]|e|' -e 's|[אבגדהו]|a|'
+
+# Tested yet not working:
+#
+# iconv -f $enc -t ASCII//TRANSLIT for all enc in $(iconv --list)
+# iso-8859-1 or iso-8859-15
+
+# tr 'י' 'e'
 
 
+# This iconv command has been a nightmare to obtain (see fr_FR.UTF-8 above).
+#
+# Useless then:
+#
+# | ${sed} 's|י|e|g' | ${sed} 's|ט|e|g' | ${sed} 's|ך|e|g' | ${sed} 's|א|a|g' | ${sed} 's|ג|a|g' | ${sed} 's|א|a|g' | ${sed} 's|מ|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ש|u|g' | ${sed} 's|פ|o|g'  | ${sed} 's|ע|o|g'
+#
+# 's|-\.|-|1' replaced with 's|-\.|.|1' to better manage extensions (preferring
+# '*.pdf' to '*-pdf').
+#
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} "s|'|-|g " | ${sed} 's|--|-|g' | ${sed} 's|-\.|.|1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
 
-CORRECTED_NAME=$(echo "${ORIGINAL_NAME}" | ${SED} 's| |-|g' | ${SED} 's|--|-|g' | ${SED} 's|י|e|g' | ${SED} 's|ט|e|g' | ${SED} 's|ך|e|g' | ${SED} 's|א|a|g' | ${SED} 's|ג|a|g' | ${SED} 's|א|a|g' | ${SED} 's|מ|i|g' | ${SED} 's|û|u|g' | ${SED} 's|ש|u|g' | ${SED} 's|פ|o|g'  | ${SED} 's|ע|o|g' | ${SED} 's|\[|-|g' | ${SED} 's|\]|-|g' | ${SED} 's|(||g'| ${SED} 's|)||g' | ${SED} 's|\.\.|.|g'| ${SED} 's|\,|.|g' | ${SED} 's|\.-|.|g' | ${SED} 's|!|-|g' | ${SED} "s|'|-|g " | ${SED} 's|--|-|g' | ${SED} 's|-\.|-|1' | ${SED} 's|-$||1')
 
+#echo "Corrected name is: <${corrected_name}>"
 
-#echo "Corrected name is: <${CORRECTED_NAME}>"
+if [ "${original_name}" != "${corrected_name}" ]; then
 
-
-if [ "${ORIGINAL_NAME}" != "${CORRECTED_NAME}" ]; then
-
-	if [ -f "${CORRECTED_NAME}" ]; then
+	if [ -f "${corrected_name}" ]; then
 		echo "
 
-		Error, an entry named <${CORRECTED_NAME}> already exists, corrected name for <${ORIGINAL_NAME}> collides with it, remove <${CORRECTED_NAME}> first.
+		Error, an entry named <${corrected_name}> already exists, corrected name for <${original_name}> collides with it, remove <${corrected_name}> first.
 		" 1>&2
-		exit 3
+		exit 30
 	fi
 
-	echo "  '${ORIGINAL_NAME}' renamed to '${CORRECTED_NAME}'"
-	${MV} -f "${ORIGINAL_NAME}" "${CORRECTED_NAME}"
+	echo "  '${original_name}' renamed to '${corrected_name}'"
+	${mv} -f "${original_name}" "${corrected_name}"
 
 #else
 
-#	echo "  (<${ORIGINAL_NAME}> left unchanged)"
+#	echo "  (<${original_name}> left unchanged)"
 
 fi

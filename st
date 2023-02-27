@@ -1,14 +1,30 @@
 #!/bin/sh
 
-# -f: full information.
+usage="Usage: $(basename $0) [-f] [FILES]: shows the current VCS status of the specified files.
+Option:
+ -f: full information
+"
+
+pager="$(which more 2>/dev/null)"
+
+# Otherwise mostly blank screen to dismiss:
+#
+# (yet unsupported on older versions of 'more')
+#
+# Then hit 'q' to exit:
+pager_opt="--exit-on-eof"
+#pager_opt=""
+
+
+# With 'less', the -r option is useful to preserve colors.
 
 # Select relevant version control client:
 
-if [ -d 'CVS' ] ; then
+if [ -d 'CVS' ]; then
 
 	cvs update -d $* 2>&1 | grep -v Updating
 
-elif [ -d '.svn' ] ; then
+elif [ -d '.svn' ]; then
 
 	if [ "$1" = "-f" ]; then
 		shift
@@ -24,16 +40,16 @@ else
 
 	git_opt="-c color.status=always"
 
-	if [ -z "${args}" ] ; then
+	if [ -z "${args}" ]; then
 
 		# We find it more convenient to only start from the current directory,
 		# rather than inspecting the full repository (hence the dot):
 		#
-		git ${git_opt} status .
+		git ${git_opt} status . | ${pager} ${pager_opt}
 
 	else
 
-		git ${git_opt} status $*
+		git ${git_opt} status $* | ${pager} ${pager_opt}
 
 	fi
 

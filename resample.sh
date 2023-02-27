@@ -1,24 +1,22 @@
 #!/bin/sh
 
-script_name=`basename $0`
-
-USAGE="
-Usage: ${script_name} --target-sample-rate FREQUENCY AUDIO_FILENAME
+usage="
+Usage: $(basename $0) --target-sample-rate FREQUENCY AUDIO_FILENAME
   Resamples the target audio file to the specified frequency, keeping the same bitdepth. Advances settings are chosen, and gain is finely tuned if necessary, to avoid clipping.
-Example: ${script_name} --target-sample-rate 22050 mySound.wav"
+Example: $(basename $0) --target-sample-rate 22050 mySound.wav"
 
 
-if [ ! $# -eq 3 ] ; then
+if [ ! $# -eq 3 ]; then
 
-	echo "Error, three parameters expected. ${USAGE}" 1>&2
+	echo "Error, three parameters expected. ${usage}" 1>&2
 	exit 5
 
 fi
 
 
-if [ ! "$1" = "--target-sample-rate" ] ; then
+if [ ! "$1" = "--target-sample-rate" ]; then
 
-	echo "Error, incorrect parameters specified. ${USAGE}" 1>&2
+	echo "Error, incorrect parameters specified. ${usage}" 1>&2
 	exit 6
 
 fi
@@ -27,15 +25,15 @@ fi
 target_frequency="$2"
 target_file="$3"
 
-if [ -z "${target_file}" ] ; then
+if [ -z "${target_file}" ]; then
 
-	echo "Error, no target file specified. ${USAGE}" 1>&2
+	echo "Error, no target file specified. ${usage}" 1>&2
 	exit 10
 
 fi
 
 
-if [ ! -f "${target_file}" ] ; then
+if [ ! -f "${target_file}" ]; then
 
 	echo "Error, target file (${target_file}) not found." 1>&2
 	exit 11
@@ -44,9 +42,9 @@ fi
 
 
 # Prefer any recently self-compiled version:
-sox_tool=`PATH=/usr/local/bin:$PATH which sox 2>/dev/null`
+sox_tool=$(PATH=/usr/local/bin:$PATH which sox 2>/dev/null)
 
-if [ ! -x "${sox_tool}" ] ; then
+if [ ! -x "${sox_tool}" ]; then
 
 	echo "Error, sox tool not found." 1>&2
 	exit 12
@@ -57,9 +55,9 @@ fi
 
 
 # Prefer any recently self-compiled version:
-soxi_tool=`PATH=/usr/local/bin:$PATH which soxi 2>/dev/null`
+soxi_tool=$(PATH=/usr/local/bin:$PATH which soxi 2>/dev/null)
 
-if [ ! -x "${soxi_tool}" ] ; then
+if [ ! -x "${soxi_tool}" ]; then
 
 	echo "Error, soxi tool not found." 1>&2
 	exit 13
@@ -84,7 +82,7 @@ echo "Resampling ${target_file} to ${target_frequency} Hz."
 
 # Phase setting: if resampling to < 40k, use intermediate phase (-I),
 # otherwise use linear phase (-L):
-if [ ${target_frequency} -le 40000 ] ; then
+if [ ${target_frequency} -le 40000 ]; then
 	echo " - using intermediate phase (resampling to less than 40 kHz)"
 	phase_opt="-I"
 else
@@ -100,7 +98,7 @@ target_bit_depth=`LANG= soxi ${target_file}|grep Precision|sed 's|^Precision    
 # If resampling (or changing speed, as it amounts to the same thing)
 # at/to > 16 bit depth (i.e. most commonly 24-bit), use VHQ (-v),
 # otherwise, use HQ.
-if [ ${target_bit_depth} -le 16 ] ; then
+if [ ${target_bit_depth} -le 16 ]; then
 	echo " - target bit depth: ${target_bit_depth} bits, using high quality"
 	quality_opt="-h"
 else
@@ -112,7 +110,7 @@ fi
 
 # If you're mastering to 16-bit, you also need to add 'dither'
 # (and in most cases noise-shaping) after the rate.
-if [ ${target_bit_depth} -eq 16 ] ; then
+if [ ${target_bit_depth} -eq 16 ]; then
 	echo " - mastering to 16-bit, using dithering with noise-shaping"
 	dither_opt="dither -s"
 else
@@ -146,9 +144,9 @@ used_solution=1
 
 # Solution 1: first to be used, working but maybe a bit too heavy.
 # Decreases the volume as long as samples had to be clipped:
-if [ $used_solution -eq 1 ] ; then
+if [ $used_solution -eq 1 ]; then
 
-	while [ $clipped -eq 0 ] ; do
+	while [ $clipped -eq 0 ]; do
 
 		${sox_tool} "${target_file}" --bits ${target_bit_depth} --comment "" "${tmp_file}" ${attenuation_opt} rate ${quality_opt} ${phase_opt} ${target_frequency} ${dither_opt} 2>${log_file}
 
@@ -172,7 +170,7 @@ if [ $used_solution -eq 1 ] ; then
 	/bin/rm -f ${log_file}
 
 
-elif [ $used_solution -eq 2 ] ; then
+elif [ $used_solution -eq 2 ]; then
 
 
 # Solution 2: simpler but unfortunately fails with some files
@@ -184,11 +182,11 @@ elif [ $used_solution -eq 2 ] ; then
 	${sox_tool} "${target_file}" --bits ${target_bit_depth} --comment "" "${tmp_file}" gain -h rate ${quality_opt} ${phase_opt} ${target_frequency} gain -r ${dither_opt}
 
 
-elif [ $used_solution -eq 3 ] ; then
+elif [ $used_solution -eq 3 ]; then
 
 # Solution 3: quite simple again (not working, not resampling):
 
-	loudest_clippless_volume=`${sox_tool} "${target_file}" -n stat -v`
+	loudest_clippless_volume=$(${sox_tool} "${target_file}" -n stat -v)
 
 	${sox_tool} "${target_file}" "${tmp_file}" vol ${loudest_clippless_volume}
 
@@ -197,7 +195,7 @@ fi
 
 res=$?
 
-if [ $res -eq 0 ] ; then
+if [ $res -eq 0 ]; then
 
 	/bin/mv -f "${tmp_file}" "${target_file}" && echo "File ${target_file} successfully resampled: "`file ${target_file}`
 

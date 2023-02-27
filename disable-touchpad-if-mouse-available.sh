@@ -9,30 +9,47 @@
 # So the current script shall be typically run when the X session is started; so
 # typically one may add, before the final exec of one's ~/.xinitrc:
 #
-# ~/Projects/LOANI-latest/LOANI-repository/ceylan/Ceylan-Hull/disable-touchpad-if-mouse-available.sh
+# $CEYLAN_HULL/disable-touchpad-if-mouse-available.sh
 
 # Two different methods may/have to be used to manage the touchpad.
 
 
-XINPUT=/bin/xinput
+xinput=$(which xinput 2>/dev/null)
 
-TOUCHPAD_ID=$($XINPUT | grep -i touchpad | cut -f2 | cut -d '=' -f2)
+if [ ! -x "${xinput}" ]; then
 
-CLIENT=$(which synclient 2>/dev/null)
+	echo "  Error, no 'xinput' executable found." 1>&2
+	exit 5
 
-if $XINPUT | grep -i mouse 1>/dev/null ; then
+fi
+
+
+client=$(which synclient 2>/dev/null)
+
+if [ ! -x "${synclient}" ]; then
+
+	echo "  Error, no 'synclient' executable found." 1>&2
+	exit 10
+
+fi
+
+
+touchpad_id=$(${xinput} | grep -i touchpad | cut -f2 | cut -d '=' -f2)
+
+
+if ${xinput} | grep -i mouse 1>/dev/null; then
 
 	#touch ~/TOUCHPAD_DISABLED
 
-	if $XINPUT set-prop $TOUCHPAD_ID "Device Enabled" 0 1>/dev/null ; then
+	if ${xinput} set-prop ${touchpad_id} "Device Enabled" 0 1>/dev/null; then
 
 		notify-send "Mouse found, touchpad disabled."
-		$CLIENT TouchpadOff=1
+		${client} TouchpadOff=1
 
 	else
 
-		notify-send "Mouse found, yet disabling of touchpad ($TOUCHPAD_ID) failed."
-		$CLIENT TouchpadOff=1
+		notify-send "Mouse found, yet disabling of touchpad ($touchpad_id) failed."
+		${client} TouchpadOff=1
 
 		exit 5
 
@@ -43,7 +60,7 @@ else
 	#touch ~/TOUCHPAD_ENABLED
 
 	notify-send "No mouse found, enabling touchpad."
-	$XINPUT set-prop $TOUCHPAD_ID "Device Enabled" 1
-	$CLIENT TouchpadOff=0
+	${xinput} set-prop ${touchpad_id} "Device Enabled" 1
+	${client} TouchpadOff=0
 
 fi

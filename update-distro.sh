@@ -1,7 +1,12 @@
 #!/bin/sh
 
-USAGE="Usage: $(basename $0) [-q]: updates the current distribution.
-  -q: quiet mode, no output if no error (suitable for crontab)"
+usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [--even-ignored]: updates the current distribution, and traces it.
+
+ Options (order must be respected):
+   - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
+   - '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.
+
+ Supported distributions: Arch, previously Debian."
 
 
 # Many problems with Haskell:
@@ -22,11 +27,11 @@ distro_type="Debian"
 
 distro_id_file="/etc/os-release"
 
-if [ -f "$distro_id_file" ] ; then
+if [ -f "${distro_id_file}" ]; then
 
-	source "$distro_id_file"
+	. "${distro_id_file}"
 
-	if [ "$NAME" = "Arch Linux" ] ; then
+	if [ "$NAME" = "Arch Linux" ]; then
 
 		distro_type="Arch"
 
@@ -35,14 +40,35 @@ if [ -f "$distro_id_file" ] ; then
 fi
 
 
-#echo "Distro type: $distro_type"
+#echo "Distro type: ${distro_type}"
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit
+
+fi
 
 
 quiet=1
+even_ignored=1
 
-if [ "$1" = "-q" ] ; then
+if [ "$1" = "-q" ]; then
 
 	quiet=0
+	shift
+
+fi
+
+
+if [ "$1" = "--even-ignored" ]; then
+
+	even_ignored=0
+
+	forced_packages="$(cat /etc/pacman.conf | grep '^IgnorePkg' | sed 's|^IgnorePkg = ||1')"
+
+	shift
 
 fi
 
@@ -50,20 +76,21 @@ fi
 # Only standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
-if [ $(id -u) -eq 0 ] ; then
+if [ "$(id -u)" = "0" ]; then
 
+	# Implies Arch:
 	lock_file="/var/lib/pacman/db.lck"
 
-	if [ -e "${lock_file}" ] ; then
+	if [ -e "${lock_file}" ]; then
 
 
-		if [ $quiet -eq 1 ] ; then
+		if [ $quiet -eq 1 ]; then
 
 			echo "Pacman lock file (${lock_file}) found; shall it be deleted first? [y/N]"
 
 			read answer
 
-			if [ "${answer}" = "y" ] ; then
+			if [ "${answer}" = "y" ]; then
 
 				/bin/rm -f "${lock_file}"
 				echo "  (lock file deleted)"
@@ -74,23 +101,27 @@ if [ $(id -u) -eq 0 ] ; then
 
 			fi
 
+		else
+
+			/bin/rm -f "${lock_file}"
+
 		fi
 
 	fi
 
 	# Erases the previous log as well, to avoid accumulation:
-	echo "Updating the distribution now, at $(date)..." 1>${log_file}
+	echo "Updating the distribution now, at $(date)..." 1>"${log_file}"
 
 	case "${distro_type}" in
 
 		"Debian")
-			if [ $quiet -eq 1 ] ; then
+			if [ $quiet -eq 1 ]; then
 
-				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a  ${log_file}
+				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a "${log_file}"
 
 			else
 
-				( apt-get update && apt-get -y upgrade ) 1>>${log_file} #2>&1
+				( apt-get update && apt-get -y upgrade ) 1>>"${log_file}" #2>&1
 
 			fi
 			;;
@@ -98,20 +129,66 @@ if [ $(id -u) -eq 0 ] ; then
 		"Arch")
 			# Consider as well a 'yaourt -Sy' or alike?
 
-			# Too many updates blocked by Haskell-related packages:
-			PACMAN_OPT="-Syu --noconfirm --ignore=ghc"
+			keyring_opt="-S --needed --noconfirm archlinux-keyring"
 
-			if [ $quiet -eq 1 ] ; then
+			# Too many updates blocked by Haskell-related packages:
+			base_update_opt="-Syu --noconfirm --ignore=ghc"
+
+			# We start by updating the Arch keyring, as otherwise, updates made
+			# after a longer duration are bound to fail due to expired keys:
+
+			if [ $quiet -eq 1 ]; then
 
 				# To be run from the command-line:
-				pacman ${PACMAN_OPT} 2>&1 | tee -a ${log_file}
+				# (problem: tee hides the error return code)
+
+				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based Arch key update failed." 1>&2
+					exit 5
+
+				fi
+
+				if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based update failed." 1>&2
+					exit 7
+
+				fi
+
+				if [ -n "${forced_packages}" ]; then
+
+					pacman -Sy --noconfirm ${forced_packages} 2>&1 | tee -a "${log_file}"
+
+				fi
 
 			else
 
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				pacman ${PACMAN_OPT} 1>>${log_file} #2>&1
+				# (currently the same commands as if in quiet mode)
+
+				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based Arch key update failed." 1>&2
+					exit 25
+
+				fi
+
+				if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+
+					echo "  Error, pacman-based update failed." 1>&2
+					exit 27
+
+				fi
+
+				if [ -n "${forced_packages}" ]; then
+
+					pacman -Sy --noconfirm ${forced_packages} 1>>"${log_file}" #2>&1
+
+				fi
+
 
 			fi
 
@@ -124,24 +201,26 @@ if [ $(id -u) -eq 0 ] ; then
 
 	esac
 
-
 	res=$?
 
-	if [ $res -eq 0 ] ; then
+	if [ ${res} -eq 0 ]; then
 
-		echo "... update done successfully" 1>>${log_file}
+		echo "... update done successfully"
+		echo "... update done successfully" 1>>"${log_file}"
 
 	else
 
-		echo "... update failed ($res). Refer to sent mail for further information." 1>>${log_file}
+		# pacman -Syyu might be your friend then...
 
-		echo "... update failed ($res), on " $(date '+%A, %B %-e, %Y at %T')"."
-		echo "Failure logged in '${log_file}' on" $(hostname -f) "."
+		echo "... update failed (${res}). Refer to sent mail for further information." 1>>"${log_file}"
+
+		echo "... update failed (${res}), on $(date '+%A, %B %-e, %Y at %T')."
+		echo "Failure logged in '${log_file}' on $(hostname -f)."
 
 	fi
 
 	# To propagate errors:
-	exit $res
+	exit ${res}
 
 else
 

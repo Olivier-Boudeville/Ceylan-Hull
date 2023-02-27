@@ -1,0 +1,1138 @@
+
+.. _Top:
+
+
+.. title:: Welcome to the Ceylan-Hull documentation
+
+.. comment stylesheet specified through GNUmakefile
+
+
+
+============================================
+*A collection of all kinds of shell scripts*
+============================================
+
+
+.. role:: raw-html(raw)
+   :format: html
+
+.. role:: raw-latex(raw)
+   :format: latex
+
+
+:raw-html:`<a name="hull_top"></a>`
+
+:raw-html:`<div class="banner"><p><em>Hull documentation</em> <a href="http://hull.esperide.org/">browse latest</a> <a href="https://olivier-boudeville.github.io/Ceylan-Hull/">browse mirror</a> <a href="Ceylan-Hull-technical-manual-english.pdf">get PDF</a> <a href="#hull_top">go to top</a> <a href="#hull_toc">go to toc</a> <a href="#hull_bottom">go to bottom</a> <a href="https://github.com/Olivier-Boudeville/Ceylan-Hull">go to project</a> <a href="mailto:about(dash)hull(at)esperide(dot)com?subject=[Ceylan-Hull]%20Remark">email us</a></p></div>`
+
+
+
+:raw-html:`<center><img src="hull-title.png" width="20%"></img>`
+:raw-latex:`\begin{center} \includegraphics[scale=0.3]{hull-title.png} \end{center}`
+
+
+
+:Organisation: Copyright (C) 2008-GENERATION_YEAR_TAG Olivier Boudeville
+:Contact: about (dash) hull (at) esperide (dot) com
+:Creation date: Sunday, August 17, 2008
+:Lastly updated: GENERATION_DATE_TAG
+:Version: PROJECT_VERSION_TAG
+:Status: Stable
+:Dedication: Users and maintainers of ``Ceylan-Hull``.
+:Abstract:
+
+	The role of ``Hull`` is to concentrate various, generic-purpose convenience shell scripts, on behalf of the `Ceylan <https://github.com/Olivier-Boudeville/Ceylan>`_ project.
+
+
+.. meta::
+   :keywords: Hull, shell, scripts, sh, bash
+
+:raw-html:`</center>`
+
+
+
+The latest version of this documentation is to be found at the `official Ceylan-Hull website <http://hull.esperide.org>`_ (``http://hull.esperide.org``).
+
+:raw-html:`This Hull documentation is also available in the PDF format (see <a href="Ceylan-Hull-technical-manual-english.pdf">Ceylan-Hull-technical-manual-english.pdf</a>), and mirrored <a href="http://olivier-boudeville.github.io/Ceylan-Hull/">here</a>.`
+
+:raw-latex:`The documentation is also mirrored \href{https://olivier-boudeville.github.io/Ceylan-Hull/}{here}.`
+
+
+--------
+Overview
+--------
+
+Here are **a few scripts, sorted by themes, that may be convenient for at least some users**.
+
+Many of them can display their intended usage on the console by specifying them the ``-h`` / ``--help`` command-line option.
+
+In each category, scripts are roughly sorted by decreasing interest/update status. The scripts that we deem the most useful are described more precisely at the end of this document.
+
+As much as possible, we try to name these scripts functionally rather than in terms of tools, so that the implementation they rely upon can be updated as transparently as possible (i.e. with as little change as possible in the user's habits).
+
+
+These scripts are intended for all kinds of Unices, especially GNU/Linux, yet most of them are believed to work on Windows as well, provided a `relevant context`_ exists there.
+
+
+Each script entry is a link pointing directly to the script itself. They may be directly obtained as a whole from the `Hull repository <https://github.com/Olivier-Boudeville/Ceylan-Hull>`_.
+
+Most of them are certainly not rocket science.
+
+
+.. Note:: A few of these scripts may be a bit outdated, as not all of them are daily used; rely on them with (a bit of) caution! (and tell us if you would like some of them to be updated)
+
+
+
+
+:raw-latex:`\pagebreak`
+
+:raw-html:`<a name="hull_toc"></a>`
+
+.. _`table of contents`:
+
+.. contents:: **Table of Contents**
+  :depth: 5
+
+
+
+
+:raw-latex:`\pagebreak`
+
+
+--------------------------------------------------
+Listing of the recommended shell scripts per usage
+--------------------------------------------------
+
+
+.. _`filesystems`:
+
+
+Related to Filesystems
+======================
+
+
+To search for files and content
+-------------------------------
+
+- `wh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh>`_ ("where") : a more convenient "find"; see the `wh full usage`_
+
+- `regrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep>`_: recursive grep for the ones that lack it; see the `regrep full usage`_
+
+
+
+To list filesystem elements
+---------------------------
+
+- `list-filesystem-entries-by-size.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-filesystem-entries-by-size.sh>`_: lists, from any specified directory otherwise from the current one, the direct filesystem entries (local files and directories), sorted by decreasing size of their content
+
+- `list-files-in-tree-by-size.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-files-in-tree-by-size.sh>`_: lists, from any specified directory otherwise from the current one, all files in tree, sorted by decreasing size of their content
+
+- `list-files-in-tree-by-most-recent-modification-time.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-files-in-tree-by-most-recent-modification-time.sh>`_: lists, from any specified directory otherwise from the current one, all files in tree, sorted from the most recently modified to the least
+
+- `list-local-directories.sh: <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-local-directories.sh>`_: lists all local, direct directories of any specified directory, or from the current one. Useful for overcrowded base directories
+
+
+
+To fix names, paths, permissions, content
+-----------------------------------------
+
+- `fix-filename.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-filename.sh>`_: "corrects" the name of the specified file (or directory), to remove spaces and quotes (replaced by '-'), accentuated characters in it, etc.
+
+- `fix-paths-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-paths-in-tree.sh>`_: does the same as ``fix-filename.sh``, yet in a tree
+
+- `fix-file-permissions.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-file-permissions.sh>`_: corrects, for all files in the current directory, the UNIX permissions for the most common file extensions
+
+- `fix-www-metadata.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-www-metadata.sh>`_: fixes the permissions in the current tree so it can be transferred as a whole without permission errors to a given server more than once (typically useful for third-party elements that are to populate web roots, like Mathjax)
+
+- `set-files-unexecutable-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-files-unexecutable-in-tree.sh>`_: ensures that all files found recursively from the current directory are not executable
+
+- `fix-unbreakable-spaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces.sh>`_: removes any unbreakable space in specified text file
+
+- `fix-unbreakable-spaces-in-source-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-unbreakable-spaces-in-source-tree.sh>`_: removes any unbreakable space in specified tree
+
+- `fix-null-width-spaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-null-width-spaces.sh>`_: removes any null-width (invisible Unicode) space into the specified text file
+
+- `fix-whitespaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh>`_: fixes whitespace problems (ex: series of spaces instead of tabulations, trailing whitespaces, etc.) into the specified text file; useful to properly format files that shall committed when not using Emacs as text editor
+
+- `fix-whitespaces-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces-in-tree.sh>`_: fixes whitespace problems (ex: series of spaces instead of tabulations, trailing whitespaces, etc.) in all elligible files found from specified root directory tree; useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others (just create a branch first, and tag once done)
+
+- `rename-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh>`_ (just an example of pattern substitution in filenames)
+
+
+
+To inspect file and directory content
+-------------------------------------
+
+- `compute-checksum-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/compute-checksum-in-tree.sh>`_: computes the checksum of all files in specified tree and stores them in the specified text output file
+
+- `display-tree-stats.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-tree-stats.sh>`_: displays simple, key stats about the specified tree (typically in order to compare merged trees)
+
+- `list-broken-symlinks.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-broken-symlinks.sh>`_: lists, from any specified directory, all the symbolic links that are broken
+
+
+
+To compare files and trees
+--------------------------
+
+- `diff-dir.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-dir.sh>`_: performs a (single-level, non-recursive) comparison of the content of the two specified directories
+
+- `diff-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-tree.sh>`_: compares all files that are present both in first and second trees, and warns if they are not identical; warns too if some files are in one directory but not in the other
+
+- `diff-json.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/diff-tree.sh>`_: compares the two specified JSON files, once their content has been put in a canonical, sorted form (knowing notably that their keys are allowed to be in arbitrary order)
+
+
+See also: Myriad's `merge.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/apps/merge-tool/merge.sh>`_ script, a considerably more powerful tool for comparing, uniquifying, merging trees.
+
+
+
+To copy/transfer
+----------------
+
+- `transfer-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/transfer-tree.sh>`_: copies (possibly through the network) a tree existing in one location to another one, in a merge-friendly manner
+
+
+
+To remove filesystem elements
+-----------------------------
+
+- `srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_ (for "secure rm"): stores deleted files in a trash directory, instead of deleting them directly; see the `srm full usage`_
+
+- `empty-trash.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/empty-trash.sh>`_: empties the trash directory that can be filled thanks to our ``srm`` script
+
+- `remove-broken-symlinks.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-broken-symlinks.sh>`_: removes from the specified directory all the symbolic links that are broken
+
+
+
+.. _`process management`:
+
+Related to (UNIX) Processes
+===========================
+
+- `top.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/top.sh>`_: triggers the best "top" available, to monitor processes and system resources
+
+- `watch.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/watch.sh>`_: tracks (over time) processes that may be transient
+
+- `monitor-demanding-processes.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-demanding-processes.sh>`_: monitors endlessly the most CPU-demanding processes. Typically useful to catch an otherwise idle process that uses a full core as soon as the system gets not actively used anymore
+
+- `benchmark-command.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/benchmark-command.sh>`_: returns a mean resource consumption for the specified shell command
+
+- `list-processes-by-size.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-size.sh>`_: lists processes by decreasing size in RAM
+
+- `list-processes-by-cpu-use.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-processes-by-cpu-use.sh>`_: lists processes by decreasing use of CPU
+
+- `kill-every.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-every.sh>`_: kills all processes that match specified name pattern
+
+- `kill-always.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-always.sh>`_: as long as this script is kept running, kills any process matching the specified name
+
+.. comment Moved to Ceylan-Traces with find-trace-output-files.sh: - `kill-trace-supervision-tool.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-trace-supervision-tool.sh>`_: kills all instances, run by the current user on the local host, of the tool that is used to perform trace (log) supervision
+
+
+
+.. _`network management`:
+
+
+Related to Network Management
+=============================
+
+- `test-network.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-network.sh>`_: diagnoses whether the various network basic facilities are functional (IP connectivity, DNS, on the LAN or on the WAN)
+
+- `monitor-network.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-network.sh>`_: polls periodically one's local connection to the Internet, to detect (possibly intermittent) outages, notifying them if requested and helping their diagnosis
+
+- `manage-wifi.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/manage-wifi.sh>`_: starts/gets status/scans/stops the wifi support
+
+- `ip-scan.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-scan.sh>`_: scans all IPs with any specified prefix, searching for ICMP ping answers (useful to locate some devices in a local network)
+
+- `ip-examine.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ip-examine.sh>`_: returns locally-determined information regarding the specified IP (ping answer, reverse DNS name, traceroute and ARP)
+
+
+
+For Development
+===============
+
+- `update-copyright-notices.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-copyright-notices.sh>`_: updates the copyright notices of code of specified type found from specified root directory (to run at each new year)
+
+- `update-all-copyright-notices.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-all-copyright-notices.sh>`_: updates the copyright notices of code of specified type found from specified root directory, based on the specified year range
+
+- `add-header-to-files.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/add-header-to-files.sh>`_: adds specified header to specified files
+
+- `remake.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remake.sh>`_: forces a remake of specified generated file (ex: ``.o`` or ``.beam``)
+
+- `list-core-dumps-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-core-dumps-in-tree.sh>`_: locates all core dump files in current tree
+
+- `test-with-valgrind.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-with-valgrind.sh>`_: uses Valgrind to perform quality test on the specified executable
+
+- `reformat-source-file.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-file.sh>`_: updates (in-place) the specified source file so that it complies with our conventions, be it Erlang, C/C++ or of many other file types
+
+- `reformat-source-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-files-in-tree.sh>`_: reformats all supported files of various types recursively found; notably useful when forking a repository, in order to canonicalise it as a whole
+
+
+See also the Ceylan-HOWTOs section about `build tools <http://howtos.esperide.org/Build.html>`_ and the Erlang-related `Ceylan-Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
+
+
+
+For Version Control System (VCS)
+================================
+
+- `dci <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci>`_: assists efficiently and conveniently the commit of specified file(s)
+
+- `dci-all <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dci-all>`_: selects recursively from current directory the files that should be committed (either added or modified), and commits them; for each of the modified files, shows the diff with previous version before requesting a commit message
+
+- `dif <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif>`_: shows on the console the differences between the current versions of the (possibly specified) files on the filesystem and the staged ones (i.e. the changes that might be added)
+
+- `difg <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difg>`_: graphical version of ``dif``
+
+- `dif-prev.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/dif-prev.sh>`_: compares the current (committed) version of specified file(s) with their previous one
+
+- `difs <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/difs>`_: shows the differences between the staged files and their committed version
+
+- `st <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/st>`_: shows the current VCS status of the specified files
+
+- `up <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/up>`_: updates the current local version of the VCS repository
+
+- `show-branch-hierarchy.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh>`_: shows the hierarchy of the branches in the current VCS repository
+
+- `list-tags-by-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh>`_: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one
+
+- `list-largest-vcs-blobs.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-largest-vcs-blobs.sh>`_: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size
+
+
+
+
+Replacement-related
+===================
+
+- `replace-in-file.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-file.sh>`_: replaces in specified file the specified target pattern with the replacement one
+
+- `replace-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-in-tree.sh>`_: replaces, in files matching the specified pattern found from the current directory, the specified target pattern with the replacement one
+
+- `substitute-pattern-in-file.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-file.sh>`_ (possible duplicate): replaces in specified file every source pattern by specified target one
+
+- `substitute-pattern-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/substitute-pattern-in-tree.sh>`_ (possible duplicate): substitutes every source pattern by specified target one in all files, starting recursively from current directory
+
+- `replace-lines-starting-by.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/replace-lines-starting-by.sh>`_: replaces in specified file every line starting with the specified pattern by the specified full line
+
+
+
+Multimedia-related
+==================
+
+
+For Audio
+---------
+
+- `play-audio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/play-audio.sh>`_: performs an audio-only playback of specified content files (including video ones) and directories
+
+- `listen-to-radio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/listen-to-radio.sh>`_: plays the stream of various Internet radios
+
+- `extract-audio-from-video.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh>`_: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback
+
+- `resample.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/resample.sh>`_: resamples the target audio file to the specified frequency, keeping the same bitdepth
+
+- `ogg-encode.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ogg-encode.sh>`_: encodes specified sound file in OggVorbis after having removed any leading and ending silences, adjusting volume
+
+- `convert-vorbis-to-mp3.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-to-mp3.sh>`_: converts a Vorbis-encoded Ogg file to MP3 (sometimes it is useful to use older players)
+
+- `convert-vorbis-tree-to-mp3.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-vorbis-tree-to-mp3.sh>`_: converts all Vorbis-encoded Ogg files to MP3 in specified tree
+
+- `trim-silence-in.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/trim-silence-in.sh>`_: removes any silence at begin and end of specified file, which is updated (initial content is thus not kept)
+
+
+
+For Voice Synthesis / Text-To-Speech
+------------------------------------
+
+- `say.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/say.sh>`_: says specified text, based on text to speech
+
+- `record-speech.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-speech.sh>`_: records the specified speech with specified voice in the specified prefixed filename
+
+- `install-speech-syntheses.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-speech-syntheses.sh>`_: installs all listed voices for speech synthesis
+
+- `get-and-install-MBROLA-and-voices.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-and-install-MBROLA-and-voices.sh>`_: installs MBROLA and corresponding voices
+
+- `test-espeak-voices.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-espeak-voices.sh>`_: tests the voices supported by espeak
+
+- `test-voices.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-voices.sh>`_: tests all supported voices
+
+See also the `Ceylan-Myriad speech support <http://myriad.esperide.org/#TTS>`_.
+
+
+
+For Video
+---------
+
+- `convert-mov-to-x264-mp4.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh>`_: converts specified MOV file to MP4
+
+- `set-single-screen.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-single-screen.sh>`_: adapts the displays so that, whether or not an external screen is connected, there is exactly one screen enabled (hence: either a laptop one or an external one; neither both nor none)
+
+- `fix-video-mode.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh>`_: forces a specified video resolution
+
+
+
+For 3D
+------
+
+.. _blender:
+
+- `blender-import.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh>`_: allows to import directly in `Blender <https://www.blender.org/>`_ various file formats (ex: glTF 2.0 i.e. ``*.gltf/*.glb``, Collada i.e. ``*.dae``, FBX i.e. ``*.fbx``, IFC BIM files i.e. ``*.ifc``) from the command-line, rather than doing it interactively; takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint directly onto the loaded objects; depends on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
+
+- `blender-convert.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh>`_: allows to convert, directly from the command-line, a 3D file format into a preferred one (ex: gltF 2.0), thanks to a non-interactive Blender; depends also on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
+
+.. _wings3D:
+
+- `install-wings3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-wings3d.sh>`_: installs `Wings3D <https://howtos.esperide.org/ThreeDimensional.html#wings3d>`_
+
+- `run-wings3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/run-wings3d.sh>`_: executes `Wings3D <https://howtos.esperide.org/ThreeDimensional.html#wings3d>`_
+
+
+- `update-fbx.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-fbx.sh>`_: updates the specified FBX file so that it adopts a (hopefully) more recent version thereof (currently: FBX 7.3), typically able to be loaded by tools like Blender
+
+- `kill-unity3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/kill-unity3d.sh>`_: kills all processes related to Unity3D (including UnityHub); if requested, also wipes out all persistent state of UnityHub and Unity3D itself (not including any user projects)
+
+
+See also:
+
+- the installation_ section
+- `Ceylan's HOWTO regarding 3D <http://howtos.esperide.org/ThreeDimensional.html>`_.
+
+
+
+For Snapshots (Camera Pictures)
+-------------------------------
+
+- `rename-snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshot.sh>`_: renames the specified picture file, based on its embedded date (used as a prefix, if appropriate), and with a proper extension; new assigned names are typically ``20160703-foo-bar.jpeg``; if no filename is specified, operates on all files of the current directory
+
+- `rename-snapshots.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-snapshots.sh>`_: renames *all* snapshots found from current directory, so that they respect better naming conventions
+
+- `remove-snapshot-metadata.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remove-snapshot-metadata.sh>`_: removes any metadata (typically EXIF) stored in the specified snapshot(s)
+
+- `generate-lighter-image.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-image.sh>`_: generates a lighter (smaller and of decreased quality) version of the specified image
+
+- `generate-lighter-images.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-lighter-images.sh>`_: reduces the size of *all* image files found in current directory
+
+
+
+CCTV-related
+============
+
+- `monitor-cctv.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh>`_: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio
+
+- `fetch-cctv-monitorings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh>`_: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user
+
+- `review-cctv-monitorings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh>`_: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before
+
+
+
+Document-related
+================
+
+- `check-rst-includes.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh>`_: checks that all RST files found from current directory are included once and only once in the sources found
+
+- `convert-rst-to-mediawiki.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh>`_: converts specified RST source file in a mediawiki counterpart file
+
+- `convert-mediawiki-to-gitlab-markdown.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mediawiki-to-gitlab-markdown.sh>`_: converts specified Mediawiki source file in a GitLab Markdown counterpart file
+
+- `generate-mermaid-diagram.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh>`_: generates a PNG file corresponding to the specified file describing a Mermaid diagram
+
+- `generate-pdf-from-latex.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh>`_: generates a PDF file from a LaTeX one, and displays it
+
+- `regenerate-rst-files.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh>`_: updates generated files from more recent docutils files
+
+- `track-rst-updates.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh>`_: tracks changes in the specified RST source file in order to regenerate the target file accordingly
+
+- `spell-check-rst-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh>`_: spellchecks all RST files found from current directory
+
+- `switch-text-encoding.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh>`_: reencodes the specified text file according to the specified encoding (by default Unicode, precisely ``utf-8``)
+
+
+One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
+
+
+
+
+System-related
+==============
+
+
+Admin-related
+-------------
+
+- `check-filesystem.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-filesystem.sh>`_: checks for errors, and repairs if needed, the specified  filesystem
+
+- `check-ntp.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-ntp.sh>`_: reports the current, local NTP status
+
+- `set-time-and-date-by-ntp.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-time-and-date-by-ntp.sh>`_: sets time and date by NTP thanks to specified or default server
+
+- `display-ups-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-ups-status.sh>`_: displays the status of specified UPS
+
+- `report-raid-disk-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-raid-disk-status.sh>`_: reports the status of the specified RAID array (script for automation)
+
+- `report-disk-smart-monitoring.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-disk-smart-monitoring.sh>`_: reports a state change of the specified SMART-compliant disk (script for automation)
+
+- `report-ups-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/report-ups-status.sh>`_: reports a state change of the specified UPS (script for automation)
+
+- `record-system-settings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/record-system-settings.sh>`_: records in-file the main system settings of the local host (typically for a durable storage in VCS to help later troubleshootings)
+
+- `get-host-information.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-host-information.sh>`_ (possible duplicate): returns the main system settings of the local host, and stores them in-file
+
+- `shutdown-local-host.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/shutdown-local-host.sh>`_: shutdowns current, local host after having performed any relevant system update
+
+- `update-locate-database.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-locate-database.sh>`_: updates the 'locate' database, for faster look-ups in filesystems
+
+- `mount-encrypted-usb-device.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-encrypted-usb-device.sh>`_: mounts specified LUKS-encrypted device (ex: a USB key, or a disk), as root or (preferably) as a normal user
+
+
+
+.. _installation:
+
+To install software
+-------------------
+
+.. install-stardict.sh
+
+- `install-rebar3.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-rebar3.sh>`_: installs the rebar3 Erlang build tool
+
+- `install-godot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-godot.sh>`_: installs the Godot 3D engine
+
+- `install-unity3d.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-unity3d.sh>`_: installs the Unity3D engine
+
+
+
+System information-related
+--------------------------
+
+- `display-opengl-information.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-opengl-information.sh>`_: displays information regarding the local OpenGL support
+
+- `display-raid-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-raid-status.sh>`_: displays information regarding a local RAID array
+
+- `display-battery-status.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-battery-status.sh>`_: displays information regarding the status of local batteries (typically for a laptop)
+
+
+Convenience-related
+-------------------
+
+- `activate-keyboard-backlighting.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/activate-keyboard-backlighting.sh>`_: (des)activates (per-level) the keyboard backlighting
+
+- `disable-touchpad-if-mouse-available.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/disable-touchpad-if-mouse-available.sh>`_: ensures that the touchpad (if any) is enabled iff there is no mouse connected
+
+- `toggle-touchpad-enabling.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/toggle-touchpad-enabling.sh>`_: toggles the touchpad activation state
+
+- `display-to-video-projector.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/display-to-video-projector.sh>`_: displays a screen to a video projector (various examples thereof)
+
+.. - `fix-acpi.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-acpi.sh>`_
+
+
+
+Distribution-related
+--------------------
+
+- `update-distro.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro.sh>`_: updates the current distribution, and traces it
+
+- `update-distro-mirrors.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-distro-mirrors.sh>`_: updates the mirrors used for packages by the current distribution
+
+- `update-aur-installer.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-aur-installer.sh>`_: installs or updates our recommended, local AUR (*Arch User Repository*) installer, possibly because of a ``pacman`` update breaking the previous AUR installer instance
+
+- `install-arch-package.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/install-arch-package.sh>`_: installs a package on Arch Linux, found as either a standard Arch one (with pacman), or as an AUR package; any needed prior installation or update of an AUR installer is managed automatically
+
+
+.. - `debian-updater.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/debian-updater.sh>`_
+
+
+
+For encryption
+==============
+
+- `crypt.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/crypt.sh>`_: encrypts in a standard way and as strongly as reasonably possible the specified file(s), and removes their unencrypted sources
+
+- `decrypt.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/decrypt.sh>`_: decrypts specified file(s) (does not remove their encrypted version)
+
+Note also Ceylan-Myriad's support for `basic, old-school ciphering <http://myriad.esperide.org/#for-basic-old-school-ciphering>`_, a complementary solution, and also our `mini-HOWTO regarding cybersecurity <http://howtos.esperide.org/Cybersecurity.html>`_.
+
+
+
+For security
+============
+
+- for the management of credentials (i.e. sets of login/password pairs):
+
+  - `open-credentials.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/open-credentials.sh>`_: unlocks (decrypts) the credential file whose path is read from the user environment, and opens it; once closed, re-locks it (with the same passphrase)
+
+  - `lock-credentials.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-credentials.sh>`_: locks (encrypts) the credential file whose path is read from the user environment
+
+  - `unlock-credentials.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unlock-credentials.sh>`_: unlocks (decrypts) the credential file whose path is read from the user environment
+
+- `lock-screen.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/lock-screen.sh>`_: locks immediately the screen
+
+- `suspend-local-host.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/suspend-local-host.sh>`_: suspends immediately the local host, and ensures that it will resume in a locked state
+
+- `inspect-opened-ports.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/inspect-opened-ports.sh>`_: lists the local TCP/UDP ports that are currently opened
+
+.. - `ftp-only-shell.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/ftp-only-shell.sh>`_
+
+
+One may also rely on Myriad's `generate-password.sh <https://myriad.esperide.org/#script-based-apps>`_ script in order to generate safe, strong passwords (typically one per account listed based the ``*-credentials.sh`` scripts just above).
+
+On a side note, we also recommend registering a domain name of one's own (ex: ``myfoobar.org``) and settting up a catch-all regarding the recipient email addresses (so that all emails sent to ``*@myfoobar.org`` are routed to your own personal email address).
+
+Then, to avoid messing with your wildcard naming in terms of email addresses, you may choose first any conventional, meaningless email address prefix (ex: ``deneb``) to be dedicated to per-service communications. Next step is, in order to register to any online service (let's say it is named ``http://someacme.com``), to declare to this service that your email address is ``deneb-someacme@myfoobar.org`` (or perhaps ``deneb-someacmedotcom@myfoobar.org`` if some ambiguity could remain). You would then generate a corresponding password with ``generate-password.sh`` and store the email/password pair among the credentials managed by the scripts above.
+
+The advantages of this procedure as a whole are: strong and unique password, stronger pair of credentials as the login is not constant (hence less predictable [#]_), and if ever you start receiving spam targeted to ``deneb-someacme@myfoobar.org`` then the corresponding website (ex: ``http://someacme.com``) may have some explanations to share...
+
+.. [#] Depending on the use, the suffix for a site may be different from the site name, provided of course a translation table is kept on your side (typically in said credentials file). For example, one just has to record that for ``http://someacme.com`` he chose ``deneb-bluetiger@myfoobar.org`` (stealthier/less obvious - but then harder to incriminate a rogue website).
+
+
+See also `Ceylan's HOWTO regarding cybersecurity <https://howtos.esperide.org/Cybersecurity.html>`_.
+
+
+
+Firewall configuration
+======================
+
+- `iptables-inspect.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables-inspect.sh>`_: lists the currently-used firewall rules for the chains of the main tables
+
+- `iptables.rules-Gateway.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Gateway.sh>`_: manages a well-configured firewall suitable for a gateway host with masquerading and various services
+
+- `iptables.rules-Minimal-gateway.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-Minimal-gateway.sh>`_: sets up a minimal yet functional firewall suitable for a gateway host
+
+- `iptables.rules-LANBox.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-LANBox.sh>`_: manages a well-configured firewall suitable for a LAN host
+
+- `iptables.rules-FullDisabling.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-FullDisabling.sh>`_: disables all firewall rules
+
+- `iptables.rules-TemporaryDisabling.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/iptables.rules-TemporaryDisabling.sh>`_: disables temporarily all firewall rules
+
+
+.. iptables.rules-OrgeServer.sh
+
+
+See also `Ceylan's HOWTO section regarding firewall management <https://howtos.esperide.org/Networking.html#firewall-management>`_.
+
+
+
+
+For smartphones
+===============
+
+- `adb-pull.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/adb-pull.sh>`_: uploads specified local files, possibly based on expressions to the already connected and authorizing Android device
+
+- `adb-push.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/adb-push.sh>`_: downloads in the current directory, from the already connected and authorizing Android device, files and directories (recursively)
+
+.. - `transfer-to-mobile.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/transfer-to-mobile.sh>`_
+
+- `set-usb-tethering.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-usb-tethering.sh>`_: sets (or stops) USB tethering on local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host
+
+
+
+For archive management
+======================
+
+- `archive-emails.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/archive-emails.sh>`_: archives properly and reliably (compressed, cyphered, possibly transferred) the user emails
+
+- Manages reference version of files, by storing them in a "vault":
+
+  - `catch.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/catch.sh>`_: stores a file in a vault directory and makes a symbolic link to it, so that even if current tree is removed, this file will not be lost
+
+  - `retrieve.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/retrieve.sh>`_: retrieves at least one file already stored in vault by creating link towards it, from current directory
+
+  - `update-directory-from-vault.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-directory-from-vault.sh>`_: updates all files in specified directory from their vault counterparts
+
+- `make-git-archive.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/make-git-archive.sh>`_: makes a backup (as an archived GIT bundle) of specified project directory, stored in specified archive directory
+
+- `snapshot.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/snapshot.sh>`_: performs a snapshot (tar.xz.gpg archive) of specified directory
+
+- `list-for-backup.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-for-backup.sh>`_: enumerates in current directory all files, specifies their name, size and MD5 sum, and stores the result in a relevant file
+
+
+
+Web-related facilities
+======================
+
+- `generate-html-map.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-html-map.sh>`_: generates a simple HTML map with links from the available pages in specified web root
+
+- `backup-directory.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/backup-directory.sh>`_: backups specified directory to specified backup directory on the specified server, using specified SSH port
+
+- `fetch-website.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-website.sh>`_: downloads correctly, recursively (fully but slowly) web content accessible from the specified URL
+
+.. - `detect-broken-links.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/detect-broken-links.sh>`_
+
+.. - `check-html-file.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-html-file.sh>`_
+
+.. - `tidy-html-file.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/tidy-html-file.sh>`_
+
+.. - `tidy-html-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/tidy-html-in-tree.sh>`_
+
+- `generate-awstats-report.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-awstats-report.sh>`_: to trigger the generation of an Awstats report (prefer using `US-Web <http://us-web.esperide.org>`_ instead)
+
+- `make-markup-shortcut-links.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/make-markup-shortcut-links.sh>`_: creates shortcuts (symlinks) for the ``put-*-markup.sh`` micro-scripts, in order to assist a bit the user of following languages:
+
+  - for HTML: ``bold``, ``box``, ``cent``, ``code``, ``def``, ``defel``, ``em``, ``img``, ``linked``, ``lnk``, ``ordered``, ``para``, ``sni``, ``strong``, ``table``, ``tit``, ``toc``
+  - for RST: ``imgr``, ``linkr``
+  - in general: ``fuda``, ``newda``
+
+
+
+For user notifications
+======================
+
+- `notify.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/notify.sh>`_: notifies the user about specified message, possibly with a title and a category
+
+- `timer-at.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-at.sh>`_: requests to trigger a timer notification at specified (absolute) timestamp
+
+- `timer-in.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-in.sh>`_: requests to trigger a timer notification in specified duration
+
+- `timer-every.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/timer-every.sh>`_: requests to trigger (indefinitely, just use CTRL-C to stop) a timer notification every specified duration
+
+- `start-jam-session.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/start-jam-session.sh>`_: starts a jam session interrupted by a notification every period, to avoid remaining still for too long
+
+- `bong.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/bong.sh>`_: plays the specified number of bong sound(s)
+
+- `beep.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/beep.sh>`_: plays a beep to notify the user of an event
+
+
+
+Shell Helpers
+=============
+
+To facilitate shell sessions:
+
+- `mo <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mo>`_: shorthand for a relevant version of ``more``
+
+- `hide.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/hide.sh>`_: hides specified file or directory (simply by adding a ``-hidden`` suffix to its filename), while `unhide.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unhide.sh>`_ does the reverse operation
+
+- `set-display.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-display.sh>`_: sets the X display to specified host; if none is specified, sets it to the local one
+
+- `get-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-date.sh>`_: returns the current date in our standard short format (ex: ``20210219``)
+
+
+
+About Configuration
+===================
+
+
+For keyboards
+-------------
+
+- `reset-keyboard-mode.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reset-keyboard-mode.sh>`_: resets the keyboard mode, typically should it have been modified by a misbehaving program
+
+- `set-keyboard-layout.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-keyboard-layout.sh>`_: sets the X keyboard layout
+
+- `set-french-keyboard.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-french-keyboard.sh>`_: sets the keyboard layout to the French (for all X)
+
+- `set-auto-repeat.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-auto-repeat.sh>`_: enables the keyboard auto-repeat mode (to issue multiple characters in case of longer keypresses)
+
+
+
+Of Environment and related
+--------------------------
+
+- `unset-all-environment-variables.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/unset-all-environment-variables.sh>`_: unsets all environment variables, typically to rule out stranger account-related side-effects
+
+
+- `set-local-environment.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-local-environment.sh>`_: sets up a few installation conventions
+
+
+
+Cooling-related
+---------------
+
+- `get-temperatures.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-temperatures.sh>`_: to return a list of the temperatures known of the system, for various components (cores, disks, motherboard, etc.)
+
+- `apply-fan-settings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/apply-fan-settings.sh>`_: to apply fan settings adequate for a silent yet well-cooled computer (see script comments to trigger it appropriately and also to grant appropriate permissions to other convenience programs)
+
+
+
+
+Script-related
+==============
+
+- `protect-special-characters.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/protect-special-characters.sh>`_: prevents special characters in specified expression from being interpreted by tools like sed
+
+- `encode-to-rot13.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/encode-to-rot13.sh>`_: returns a ROT13-encoded version of specified parameters
+
+- `default-locations.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/default-locations.sh>`_: detects the path of the most common UNIX-related tools (this script shall be sourced, not executed)
+
+.. - `shell-toolbox.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/shell-toolbox.sh>`_
+
+- `term-utils.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/term-utils.sh>`_: defines facilities to make a better use of terminals, as a very basic, limited text user interface (this script shall be sourced, not executed)
+
+
+
+
+Launch-related
+==============
+
+.. - `brave.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/brave.sh>`_
+
+- `e <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e>`_: to edit (i.e. open potentially for updating) smartly all kinds of files; see also our `bash autocomplete settings <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/e.bash>`_ so that your shell automatically filters the arguments that it suggests whenever executing this ``e`` script from a command-line
+- `v <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/v>`_: to view (i.e. open for reading only) smartly all kinds of files and directories
+- `email.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/email.sh/>`_ / `courriels.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/courriels.sh>`_: to launch a suitable e-mail client
+- `launch-irc.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/launch-irc.sh>`_: to launch a suitable IRC client
+
+
+
+Miscellaneous
+=============
+
+- `eat-CPU-cycles.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/eat-CPU-cycles.sh>`_: generates some CPU load
+
+
+
+
+:raw-latex:`\pagebreak`
+
+
+.. _`wh full usage`:
+.. _`regrep full usage`:
+.. _`srm full usage`:
+
+----------------------------------------------------
+Detailed description of some frequently-used scripts
+----------------------------------------------------
+
+
+`wh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh>`_
+  ``wh`` (for "where"): searches (as a more user-friendly 'find') all files and directories matching <filePattern>, from <starting_directory> if specified, otherwise from current directory.
+
+  | Usage: wh [-h|--help] [--verbose] [-q|--quiet] [--no-path] [--exclude-path <a directory>] <filePattern> [<startingDirectory>]
+
+  | Options:
+
+  | [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in $(wh -q 'foo*'); do...)
+  | --no-path: returns the filenames without any leading path
+  | --exclude-path DIR: excludes specified directory DIR from search
+
+
+
+`regrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep>`_
+  ``regrep``: recursive grep for the ones that lack it.
+
+  | Usage: regrep [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+
+  | Options:
+
+  | -v or --verbose: be specifically verbose
+  | -q or --quiet: be specifically quiet, just listing matches
+  | -f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
+  | -i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
+  | -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+
+  Example: regrep -i 'little red rooster' '*.txt'
+
+
+  See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files), `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version) and `cgrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep>`_ (C version)
+
+
+`srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_
+  ``srm`` (for "secure rm"): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.
+
+  | Usage: srm <files to delete securely>
+
+  | See also: empty-trash.sh
+
+
+
+-------------------
+Shell Configuration
+-------------------
+
+One may also have a look at our related Ceylan-Heavy's `generic, flexible shell configuration <https://github.com/Olivier-Boudeville/Ceylan-Heavy/tree/master/src/conf/environment>`_ (namely ``.bashrc*`` files).
+
+
+
+
+.. _`relevant context`:
+
+-----------------------------
+Windows Shell-related Support
+-----------------------------
+
+
+Overview
+========
+
+The idea here is to go another route than using the highly-integrated graphical tools available on Windows [#]_, by replicating there the Unix tools that we know and like (albeit in a somehow more limited, less efficient form). Then most of the Ceylan-Hull scripts get available on Windows as well.
+
+.. [#] Many prefer instead, when it comes to programming, to rely on `Visual Studio Code <https://en.wikipedia.org/wiki/Visual_Studio_Code>`_ with various SDK (ex: .Net ones) and many add-ons for scaffolding (like `Yeoman <https://code.visualstudio.com/docs/setup/setup-overview#_how-do-i-create-and-run-a-new-project>`_, Yo - that relies on ``npm``, a .Net package manager like `NuGet <https://www.nuget.org/>`_ , a `Omnisharp server <http://www.omnisharp.net>`_, VCS support, language support, etc, rather than creating a Unix-like environment. That's not our case!
+
+
+.. Note:: We have far less experience on the Windows platform than on the GNU/Linux ones, so misconceptions may be exposed in these sections. Please tell us if it is so!
+
+
+
+Main Choices
+============
+
+Here are the choices that we recommend:
+
+- use of `MSYS2 <https://www.msys2.org/>`_ ("*Minimal System 2*"), a `software distribution and a development platform for Microsoft Windows <https://en.wikipedia.org/wiki/Mingw-w64#MSYS2>`_ based on Mingw-w64 and Cygwin, that helps deploying code from the Unix world on Windows; this collection of tools and libraries provides a full, easy-to-use environment for building, installing and running native Windows software; we preferred the `MSYS2 <https://www.msys2.org/docs/what-is-msys2>`_ option over the `MinGW <https://www.mingw-w64.org/>`_ or `WSL <https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux>`_ ones
+
+- MSYS2 reusing some elements from `Arch Linux <https://archlinux.org/>`_, packages are to be installed with ``pacman``; we recommend to start installing the following base packages with:
+
+.. code:: bash
+
+  $ pacman -Syu
+  $ pacman --noconfirm --needed -Sy man-db diffutils make gcc emacs tree mingw-w64-x86_64-emacs mingw-w64-x86_64-meld3
+
+- our `shell configuration`_  and our `Emacs' one <http://myriad.esperide.org#emacs-settings>`_, as both support natively the Windows platform as well
+
+- in terms of terminal, we prefer ``Windows Terminal`` (and ``Powershell`` as a last resort); the default terminal available with MSYS2 is ``Mintty``, which we believe is fairly limited
+
+
+
+
+More Detailed MSYS2 Information
+===============================
+
+
+Packages
+--------
+
+As mentioned, MSYS2 uses ``pacman`` to manage its packages, and comes with 3 different package repositories:
+
+- ``msys2``: containing MSYS2-dependent software
+- ``mingw64``: containing 64-bit native Windows software (compiled with the mingw-w64 x86_64 toolchain)
+- ``mingw32``: containing 32-bit native Windows software (compiled with the mingw-w64 i686 toolchain)
+
+Most of the mainstream package in the GNU/Linux world can be obtained, and installing them does not require administrator permissions.
+
+We recommend the following extra packages:
+
+.. code:: bash
+
+ $ pacman --noconfirm --needed -Sy mingw-w64-x86_64-aspell
+  mingw-w64-x86_64-aspell-fr mingw-w64-x86_64-binutils mingw-w64-x86_64-bzip2
+  mingw-w64-x86_64-ca-certificates mingw-w64-x86_64-curl mingw-w64-x86_64-diffutils
+  mingw-w64-x86_64-eog mingw-w64-x86_64-evince mingw-w64-x86_64-file
+  mingw-w64-x86_64-freeglut mingw-w64-x86_64-freeimage mingw-w64-x86_64-gcc
+  mingw-w64-x86_64-gedit mingw-w64-x86_64-ghex mingw-w64-x86_64-gimp
+  mingw-w64-x86_64-jq mingw-w64-x86_64-lz4 mingw-w64-x86_64-lzo2
+  mingw-w64-x86_64-make mingw-w64-x86_64-meld3 mingw-w64-x86_64-openssl
+  mingw-w64-x86_64-python3 mingw-w64-x86_64-sed mingw-w64-x86_64-sqlite3
+  mingw-w64-x86_64-texlive-core mingw-w64-x86_64-texlive-extra-utils
+  mingw-w64-x86_64-texlive-fonts-recommended mingw-w64-x86_64-texlive-fonts-extra
+  mingw-w64-x86_64-texlive-lang-french mingw-w64-x86_64-texlive-latex-extra
+  mingw-w64-x86_64-texlive-latex-recommended mingw-w64-x86_64-texlive-plain-generic
+  mingw-w64-x86_64-texlive-science mingw-w64-x86_64-tzdata mingw-w64-x86_64-vlc
+  mingw-w64-x86_64-wget mingw-w64-x86_64-xz mingw-w64-x86_64-zlib
+  mingw-w64-x86_64-postgresql ccache
+
+
+
+Paths
+-----
+
+For a user named ``my_user_name``, the user directory (home) as used by MSYS (``/home/my_user_name``) corresponds by default to ``C:\msys64\home\my_user_name``.
+
+
+
+Symbolic Links
+--------------
+
+Apparently, links are, in this Windows filesystem context, at least by default, not symbolic, but "physical" ones (*hard links*): ``ln -s`` *copies* the source rather than creating a symbolic link (more information: `[1] <https://stackoverflow.com/questions/52495298/symbolic-links-cygwin-vs-msys2-vs-win-10-mklink>`_, `[2] <https://www.joshkel.com/2018/01/18/symlinks-in-windows/>`_). At best creating a link results in a deep copy.
+
+Solutions may exist to benefit from real symlinks, but MSYS2 would have to be specifically configured and run with extended permissions ("native priviledges").
+
+We encountered related issues with GIT repositories that had been created in an Unix environment and that contained symlinks which, on a clone made on Windows, were replaced by a file containing the name (as a text!) of the target element at which the symlink originally pointed. Weird and unfortunate.
+
+
+
+Other Installations
+===================
+
+These punctual installations are not done through MSYS2.
+
+For Erlang :
+
+- download the `Windows 64 bit binary version <https://www.erlang.org/downloads>`_
+- then ``erl.exe`` is installed as ``C:\Program Files\erl-x.y\bin`` (ex: ``x=24``, ``y=1``), i.e., from the MSYS2's point of view, ``/c/Program\ Files/erl-x.y/bin/``
+
+
+
+More Detailed Windows Terminal Information
+==========================================
+
+`Windows Terminal <https://github.com/microsoft/terminal>`_ (see its `project repository <https://github.com/microsoft/terminal/releases>`_) is installed by default, and supports tabs (one per running shell).
+
+It shall be configured according to `this source <https://www.msys2.org/docs/terminals/>`_, by clicking on the ``V`` (downward arrow) then on ``Settings``.
+
+The suggested JSON sections define, in addition to the ``MSYS/MSYS2`` terminal entry, two MinGW-related entries that surprisingly are not compliant with our ``bashrc`` conventions (they enter an infinite loop apparently).
+
+We thus recommend adding in the JSON configuration file of *Windows Terminal* only the next section::
+
+ [...]
+	{
+	  "guid": "{71160544-14d8-4194-af25-d05feeac7233}",
+	  "name": "MSYS / MSYS2",
+	  "commandline": "C:/msys64/msys2_shell.cmd -defterm -here -no-start -msys",
+	  "startingDirectory": "C:/msys64/home/%USERNAME%",
+	  "icon": "C:/msys64/msys2.ico",
+	  "fontFace": "Lucida Console",
+	  "fontSize": 9
+	},
+ [...]
+
+
+(or, at least, to set it as the default one)
+
+One should also define a shortcut to Windows Terminal in replacement of the MSYS2 one: enter ``wt`` in the Windows search bar and select "open the file location".
+
+This should lead to a directory like ``C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_1.8.1444.0_x64__8wekyb3d8bbwe`` in which ``wt.exe`` can be found, for which a shortcut may be created and placed on the desktop.
+
+In this terminal, the right click plays the usual UNIX role of the middle-click (in order to paste).
+
+One may:
+
+- in the ``Interaction`` menu, enable "copy automatically the selection in the clipboard" so that one (and not two) right click is sufficient to copy
+- in ``Parameters -> Profiles -> MSYS2 -> Appearance`` (not in "Color Settings" or alike, which centralises the *references* to which profiles may point), modify the colors of the MSYS2 profiles so that, notably, directory names are more readable, by example by pointing to the "One Half Dark" color setting (easier to read than the "Vintage" one)
+
+
+
+Shell
+=====
+
+The ``.bashrc.MSYS`` `symlink <#symbolic-links>`_ obtained from `Ceylan-Heavy <https://github.com/Olivier-Boudeville/Ceylan-Heavy/tree/master/src/conf/environment>`_ may have to be fixed with:
+
+.. code:: bash
+
+ $ cp .bashrc.Linux .bashrc.MSYS
+
+
+Getting Ceylan-Hull
+===================
+
+It will be found by our shell configuration; obtaining it is just a matter of:
+
+.. code:: bash
+
+ $ mkdir -p ~/Software/ceylan/ && cd $_
+ $ git clone https://github.com/Olivier-Boudeville/Ceylan-Hull hull
+
+
+
+Text Editor
+===========
+
+Once Emacs has been installed and configured (see `Main Choices`_), its graphical version can be run via ``/mingw64/bin/emacs`` (its console version is in ``/usr/bin/emacs`` and appears in the PATH generally before it).
+
+Our ``init.el`` defines the ``WINDOWS_HOME`` environment variable to locate easily the Windows user directory from MSYS2 (knowing the aforementioned `issue with symlinks <#symbolic-links>`_).
+
+
+
+Gotchas
+=======
+
+``stdout is not a tty``
+-----------------------
+
+This error occurs when attempting to execute a program (let's name it ``P``) that happens to be reported as not found.
+
+Rather than running it as ``P``, prefer specifying either ``P.exe`` or ``winpty P.exe`` (see `winpty <https://github.com/rprichard/winpty>`_).
+
+As many program aliases as needed can be defined in one's ``.bashrc``.
+
+
+
+Post-Install
+============
+
+These operations are long, but very useful:
+
+.. code:: bash
+
+ $ /usr/bin/mandb --quiet
+ $ updatedb --localpaths='/ /c/'
+
+
+
+
+A Word about Alternate Choices and Other Environments
+=====================================================
+
+
+MSYS
+----
+
+MSYS is a **collection of GNU utilities** such as ``bash``, ``make``, ``gawk`` and ``grep`` to allow building of applications and programs that depend on traditionally Unix tools to be present.
+
+MSYS is a fork of an old Cygwin version (``msys.dll`` is a fork of ``cygwin.dll``) with a number of tweaks aimed at improved Windows integration, whereby the automatic POSIX path translation when invoking native Windows programs is arguably the most significant. MSYS is intended to supplement MinGW_ and the deficiencies of the cmd shell.
+
+MSYS by itself does not contain a compiler or a C library, therefore does not give the ability to port Unix programs over to Windows nor does it provide any Unix specific functionality like case-sensitive filenames.
+
+Users looking for such functionality should refer to Cygwin_.
+
+
+MinGW
+-----
+
+MinGW is a set of **C/C++ compilers allowing the generation of Windows executables with no specific dependency** towards DLL like the ones of Cygwin; only the usual MSVC runtime is needed, which belongs to any installation of Microsoft Windows.
+
+Compared to Cygwin:
+
+- MinGW does not have a Unix (POSIX) emulation layer; as a result one's application needs to specifically be programmed to be able to run on Windows
+- so MinGW does not require a compatibility layer DLL, and thus programs do not need to be distributed with source code; Mingw + MSYS defaults to producing binaries linked to the platform C lib
+
+MinGW does not provide a GNU/Linux-like environment, that is MSYS and/or Cygwin.
+
+MinGW forked from version 1.3.3 of Cygwin.
+
+
+Cygwin
+------
+
+Cygwin has for goal to create a **complete Unix/POSIX environment on Windows**.
+
+The Cygwin gcc and environment default to producing binaries linked to the (GPL) Cygwin DLL (``cygwin.dll`` or ``cygwin1.dll``).
+
+So Cygwin allows to build Unix programs for Windows with little to no modification through a dependency on the Cygwin DLL (where MinGW does not involve such dependency but requires the program to be specifically adapted for Windows).
+
+
+WSL
+---
+
+It seems MSYS2 is still better than WSL as it has a more native Windows experience, and offers direct Unix-like usage on Windows.
+
+
+
+
+
+
+Other solutions such as `Chocolatey <https://chocolatey.org/>`_ (a package manager for Windows) exist, but we preferred to stick to a more Unix flavour.
+
+
+
+
+Most of the Ceylan-Hull scripts should be operational in such a context.
+
+
+--------
+See also
+--------
+
+- the ``tests`` subdirectory, for a few tests of specific facilities provided here
+- the ``mostly-obsolete`` subdirectory, for the scripts we deprecated
+- our `Emacs configuration <http://myriad.esperide.org#emacs-settings>`_ (in Ceylan-Myriad)
+
+
+-------
+Support
+-------
+
+Bugs, questions, remarks, patches, requests for enhancements, etc. are to be reported to the `project interface <https://github.com/Olivier-Boudeville/Ceylan-Hull>`_ (typically `issues <https://github.com/Olivier-Boudeville/Ceylan-Hull/issues>`_) or directly at the email address mentioned at the beginning of this document.
+
+
+
+-------------
+Please React!
+-------------
+
+If you have information more detailed or more recent than those presented in this document, if you noticed errors, neglects or points insufficiently discussed, drop us a line! (for that, follow the Support_ guidelines).
+
+
+
+-----------
+Ending Word
+-----------
+
+In the hope that Ceylan-Hull will be of use for you as well!
+
+:raw-html:`<center><img src="hull-title.png" width="15%"></img></center>`
+:raw-latex:`\begin{figure}[h] \centering \includegraphics[scale=0.2]{hull-title.png} \end{figure}`
+
+:raw-html:`<a name="hull_bottom"></a>`

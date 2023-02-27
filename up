@@ -1,10 +1,12 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0) [OPTS]: updates the current VCS repository."
+
 # Select relevant version control client:
 
-if [ -d 'CVS' ] ; then
+if [ -d 'CVS' ]; then
 	cvs update -d $*
-elif [ -d '.svn' ] ; then
+elif [ -d '.svn' ]; then
 	svn update $*
 else
 	git pull $*

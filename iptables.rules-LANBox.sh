@@ -1,5 +1,9 @@
 #!/bin/sh
 
+script_opts="{start|stop|reload|restart|force-reload|status|disable}"
+
+usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall suitable for a LAN host."
+
 
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-LANBox
@@ -14,16 +18,17 @@
 
 # This script configures the firewall for a mere LAN box client.
 
-# Written by Robert Penz (robert.penz@outertech.com)
+# Original version Written by Robert Penz (robert.penz@outertech.com).
 # This script is under GPL.
 
 # Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14
 # (article written by Christophe Grenier, grenier@cgsecurity.org)
 
-# This script is meant to be copied in /etc/init.d, to be set as executable, and
-# to be registered for future automatic launches by using: 'update-rc.d
-# iptables.rules-LANBox defaults' (better than being directly set as the target
-# of a symbolic link in: cd /etc/rc2.d && ln -s
+
+# For older distributions, this script is meant to be copied in /etc/init.d, to
+# be set as executable, and to be registered for future automatic launches by
+# using: 'update-rc.d iptables.rules-LANBox defaults' (better than being
+# directly set as the target of a symbolic link in: cd /etc/rc2.d && ln -s
 # ../init.d/iptables.rules-LANBox.sh).
 
 
@@ -61,7 +66,8 @@
 # filename cannot be changed, it is a system convention):
 #   'iptables-save > /etc/iptables/iptables.rules'
 #
-#  - restart the firewall: 'systemctl restart iptables ; systemctl status iptables'
+#  - restart the firewall: 'systemctl restart iptables ; systemctl status
+#  iptables'
 #
 #  - check it just for this session: 'iptables -L' (can any changes be found?)
 #
@@ -74,74 +80,69 @@
 
 # A 'logdrop' rule could be defined.
 
+# To debug more easily, by printing each line being executed first:
+#set -x
 
-if [ ! $(id -u) -eq 0 ] ; then
+# Or:
+# sh -x /path/to/this/file
 
-	echo "  Error, firewall rules can only be applied by root." 1>&2
+# Causes the script to exit on error as soon as a command failed.
+# Disabled, as some commands may fail (e.g. modprobe)
+#set -e
+
+
+# Full path of the programs we need, change them to your needs:
+iptables="/sbin/iptables"
+modprobe="/sbin/modprobe"
+echo="/bin/echo"
+lsmod="/sbin/lsmod"
+rmmod="/sbin/rmmod"
+
+
+if [ ! $(id -u) -eq 0 ]; then
+
+	${echo} "  Error, firewall rules can only be applied by root." 1>&2
 
 	exit 10
 
 fi
 
 
-# To debug more easily, by printing each line being executed first:
-#set -x
-
-# Causes the script to exit on error as soon as a command failed.
-# Disabled, as some commands may fail (ex: modprobe)
-#set -e
-
-
 # Not used anymore by distros like Arch:
-init_file="/lib/lsb/init-functions"
+#init_file="/lib/lsb/init-functions"
 
-if [ -f "$init_file" ] ; then
-	. "$init_file"
-fi
+#if [ -f "${init_file}" ]; then
+#	. "${init_file}"
+#fi
 
 
 
-# Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v'
-# to check whether rules are up-to-date.
+# Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
+# whether rules are up-to-date.
+#
+# One may also use: 'journalctl -kf' to monitor live the corresponding kernel
+# logs.
 #
 # 'c' is for client (log prefix must be shorter than 29 characters):
 #
-version="c-11"
-
-# Full path of the programs we need, change them to your needs:
-iptables=/sbin/iptables
-modprobe=/sbin/modprobe
-echo=/bin/echo
-lsmod=/sbin/lsmod
-rmmod=/sbin/rmmod
-
-log_file=/root/.lastly-LAN-firewalled.touched
+version="c-13"
 
 
-detected_if=$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')
+# Now the settings are not embedded anymore in this script, but in the next
+# file, meant to be sourced:
+#
+setting_file="/etc/iptables.settings-LANBox.sh"
 
-if [ -z "$detected_if" ] ; then
 
-   echo "  No LAN interface found!" 1>&2
-   exit 25
+if [ ! -f "${setting_file}" ]; then
+
+	${echo} " Error, setting file ('${setting_file}') not found." 1>&2
+
+	exit 15
 
 fi
 
-printf "* detected network interfaces: \n$detected_if"
-
-# By default we select the first interface found:
-lan_if=$(echo $detected_if | sed 's| .*$||1')
-
-echo
-echo
-echo "* selected LAN interface: $lan_if"
-
-if [ -z "$lan_if" ] ; then
-
-   echo "  No LAN interface selected!" 1>&2
-   exit 30
-
-fi
+. "${setting_file}"
 
 
 # Logic of toggle variables: they are to be compared to "true" or "false"
@@ -150,7 +151,7 @@ fi
 
 # UPnp/DLNA section.
 #
-# Set to true iff this LAN computer is to host a DLNA server (ex: minidlna):
+# Set to true iff this LAN computer is to host a DLNA server (e.g. minidlna):
 #
 #allow_dlna="true"
 allow_dlna="false"
@@ -165,31 +166,31 @@ ssdp_udp_port=1900
 
 
 
-# EPMD (Erlang) section.
+if [ -z "${log_file}" ]; then
+
+	${echo} " Error, log_file not defined." 1>&2
+
+	exit 16
+
+fi
 
 
-# By default, we do *not* filter out EPMD traffic (i.e. we accept it):
+# By default, we now filter out EPMD traffic (i.e. we do not accept it):
 #allow_epmd="true"
 allow_epmd="false"
 
-# Over TCP:
-epmd_default_port=4369
+if [ -f "${log_file}" ]; then
 
-#epmd_port=$epmd_default_port
+	/bin/rm -f "${log_file}"
 
-# Our default:
-epmd_port=4506
+fi
 
 
-# By default, we enable a range of unfiltered TCP ports:
-enable_unfiltered_tcp_range=0
-
-# TCP unfiltered window (ex: for passive FTP and BEAM port ranges):
-tcp_unfiltered_low_port=50000
-tcp_unfiltered_high_port=55000
+# From now on, log-related echos can be done in the log file:
+${echo} > "${log_file}"
 
 
-# By default, we allow RTSP traffic (ex: to receive streams from CCTVs):
+# By default, we allow RTSP traffic (e.g. to receive streams from CCTVs):
 #
 # (RTSP is only a stream *control* protocol, not a stream *delivery* protocol -
 # RTP often plays that role; RTP and RTCP typically use unprivileged UDP ports).
@@ -202,28 +203,74 @@ tcp_unfiltered_high_port=55000
 #allow_rtsp="true"
 allow_rtsp="false"
 
+if [ -z "${lan_if}" ]; then
 
-# Connections to be initiated by this (trusted) LAN box, so not needed:
-#rtsp_tcp_port=554
+	${echo} "No LAN interface set, trying to auto-detect it." >> "${log_file}"
 
-# Faulty, hacky liblive555 used by VLC:
-live555_udp_port=15947
+	detected_if="$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')"
 
-#rtsp_server="10.0.77.103"
-#rtp_server_udp_port_range="1024:65535"
+	if [ -z "${detected_if}" ]; then
+
+		${echo} "  No LAN interface found!" 1>&2
+		exit 25
+
+	fi
+
+	printf "* detected network interfaces: \n${detected_if}" >> "${log_file}"
+	${echo}
+
+	# By default we select the first interface found:
+	lan_if="$(${echo} ${detected_if} | sed 's| .*$||1')"
+
+	${echo} >> "${log_file}"
+	${echo} >> "${log_file}"
+	${echo} "* selected LAN interface: ${lan_if}" >> "${log_file}"
+
+	if [ -z "${lan_if}" ]; then
+
+		${echo} "  No LAN interface selected!" 1>&2
+		exit 30
+
+	fi
+
+else
+
+	${echo} "Using specified LAN interface ${lan_if}." >> "${log_file}"
+
+fi
+
+
+if [ -z "${ssh_port}" ]; then
+
+	${echo} " Error, ssh_port not defined." 1>&2
+
+	exit 22
+
+fi
+
+
+# Not all settings tested.
+
 
 
 
 start_it_up()
 {
 
-	$echo "Setting LAN box firewall rules, version $version."
-	$echo "# ---- Setting LAN firewall rules, version $version, on $(date)." > $log_file
+	${echo} "Setting LAN box firewall rules, version $version."
+
+	${echo} >> "${log_file}"
+	${echo} "# ---- Setting LAN firewall rules, version $version, on $(date)." >> "${log_file}"
+	${echo} >> "${log_file}"
+
+
+	${echo} "Interface: LAN is ${lan_if}." >> "${log_file}"
+	${echo} "Services: EPMD is '${allow_epmd}' (port: ${epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
-	#if $lsmod  2>/dev/null | grep -q ipchains ; then
+	#if $lsmod  2>/dev/null | grep -q ipchains; then
 	#	$rmmod ipchains
 	#fi
 
@@ -232,16 +279,19 @@ start_it_up()
 	# (was commented-out: this (correct) call returned an error and used to
 	# cause the script to silently abort)
 	#
-	${modprobe} ip_tables
+	${modprobe} ip_tables 2>/dev/null
 
 	# So that filtering rules can be commented:
-	${modprobe} xt_comment
+	${modprobe} xt_comment 2>/dev/null
+
+	# Not necessary to be able to use continuous port range:
+	#${modprobe} xt_multiport 2>/dev/null
 
 	# These lines are here in case rules are already in place and the script is
 	# ever rerun on the fly.
 	#
-	# We want to remove all rules and pre-exisiting user defined chains and zero
-	# the counters before we implement new rules:
+	# We want to remove all rules and pre-existing user defined chains, and to
+	# zero the counters before we implement new rules:
 	#
 	${iptables} -F
 	${iptables} -X
@@ -273,11 +323,11 @@ start_it_up()
 
 	# Enable response to ping in the kernel, but we will only answer if the rule
 	# at the bottom of the file let us:
-	$echo "0" > /proc/sys/net/ipv4/icmp_echo_ignore_all
+	${echo} "0" > /proc/sys/net/ipv4/icmp_echo_ignore_all
 
 	# Disable response to broadcasts.
 	# You do not want yourself becoming a Smurf amplifier:
-	$echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+	${echo} "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 
 	# Do not accept source routed packets.
 	#
@@ -285,14 +335,14 @@ start_it_up()
 	# inside your network, but which is routed back along the path from which it
 	# came, namely outside, so attackers can compromise your network. Source
 	# routing is rarely used for legitimate purposes:
-	$echo "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
+	${echo} "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
 
 	# Disable ICMP redirect acceptance. ICMP redirects can be used to alter your
 	# routing tables, possibly to a bad end:
-	$echo "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
+	${echo} "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
 
 	# Enable bad error message protection:
-	$echo "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+	${echo} "1" > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
 
 	# Turn on reverse path filtering. This helps make sure that packets use
 	# legitimate source addresses, by automatically rejecting incoming packets
@@ -307,17 +357,17 @@ start_it_up()
 	#
 	# Note: if you turn on IP forwarding, you will also get this:
 	for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do
-		$echo "1" > ${interface}
+		${echo} "1" > ${interface}
 	done
 
 	# Log spoofed packets, source routed packets, redirect packets:
-	$echo "1" > /proc/sys/net/ipv4/conf/all/log_martians
+	${echo} "1" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Make sure that IP forwarding is turned off.
 	#
 	# We only want this for a multi-homed host.
 	# Remember: this is for a LAN box (mere client)
-	$echo "0" > /proc/sys/net/ipv4/ip_forward
+	${echo} "0" > /proc/sys/net/ipv4/ip_forward
 
 
 	## ============================================================
@@ -328,25 +378,20 @@ start_it_up()
 	# This is an exception section, having mixed INPUT and OUTPUT rules.
 	# It shall come first!
 
-	use_ban_rules="true"
-	#use_ban_rules="false"
+	if [ "$use_ban_rules" = "true" ]; then
 
-	ban_file="/etc/ban-rules.iptables"
+		if [ -f "${ban_file}" ]; then
 
-	if [ "$use_ban_rules" = "true" ] ; then
-
-		if [ -f "${ban_file}" ] ; then
-
-			$echo "Adding ban rules from '${ban_file}'."
+			${echo} " - adding ban rules from '${ban_file}'" >> "${log_file}"
 
 			# May add useless FORWARD rules as well (expected to be harmless):
 			. "${ban_file}"
 
 			res=$?
 
-			if [ ! $res -eq 0 ] ; then
+			if [ ! $res -eq 0 ]; then
 
-				echo "  Error, the addition of ban rules failed." 1>&2
+				${echo} "  Error, the addition of ban rules failed." 1>&2
 
 				exit 60
 
@@ -354,13 +399,15 @@ start_it_up()
 
 		else
 
-			echo "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
+			${echo} "  Error, ban rules enabled, yet ban file (${ban_file}) not found." 1>&2
 
 			exit 61
 
 		fi
 
 	fi
+
+	# ----------------  No FORWARD rules here ------
 
 
 	# ----------------  OUTPUT ---------------------
@@ -379,9 +426,9 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
 
-	if [ "$allow_dlna" = "true" ] ; then
+	if [ "$allow_dlna" = "true" ]; then
 
-		$echo " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}"
+		${echo} " - enabling UPnP/DLNA service at TCP port ${trivnet1_tcp_port} and UDP port ${ssdp_udp_port}" >> "${log_file}"
 
 		# No restriction onto source IP except local network:
 		${iptables} -A INPUT -p tcp -m tcp -s 10.0.0.0/16 --dport ${trivnet1_tcp_port} -j ACCEPT
@@ -395,9 +442,9 @@ start_it_up()
 	fi
 
 
-	if [ "$allow_rtsp" = "true" ] ; then
+	if [ "$allow_rtsp" = "true" ]; then
 
-		$echo " - enabling RTSP/RTP service at UDP port ${live555_udp_port}"
+		${echo} " - enabling RTSP/RTP service at UDP port ${live555_udp_port}" >> "${log_file}"
 
 		# Thought that was needed, but apparently not:
 		#${iptables} -A INPUT -p udp -m udp -s ${rtsp_server} -j ACCEPT
@@ -422,17 +469,17 @@ start_it_up()
 
 	${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
-	if [ ${allow_epmd} = "true" ] ; then
+	if [ "${allow_epmd}" = "true" ]; then
 
-		$echo " - enabling EPMD at TCP port ${epmd_port}"
+		${echo} " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
 
 
-	if [ $enable_unfiltered_tcp_range -eq 0 ] ; then
+	if [ "$enable_unfiltered_tcp_range" = "true" ]; then
 
-		$echo " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}"
+		${echo} " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
@@ -452,15 +499,20 @@ start_it_up()
 	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: iptables fragments] "
 	${iptables} -A INPUT -f -j DROP
 
+
 	## HTTP (web server):
 	#${iptables} -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
+
 
 	# HTTPS:
 	#${iptables} -A INPUT -p tcp --dport 443 -m state --state NEW -j ACCEPT
 
+
 	## ident, if we drop these packets we may need to wait for the timeouts
-	# e.g. on ftp servers
+	# e.g. on ftp servers:
+	#
 	${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
+
 
 	## FTP:
 	# (not used anymore - prefer SFTP, hence on the same port as SSH, instead)
@@ -471,17 +523,17 @@ start_it_up()
 
 	## SSH:
 
-	# One may use a non-standard port:
-	#ssh_port=22
-	ssh_port=44324
-
 	# This rules allow to prevent brute-force SSH attacks by limiting the
 	# frequency of attempts coming from the LAN if compromised:
 
-	# Logs too frequent attempts tagged with 'SSH' and drops them:
+	# Logs too frequent attempts tagged with 'SSH' and drops them if requested:
 	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
 
-	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+	if [ "${limit_ssh_connection_rate}" = "true" ]; then
+
+		${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j DROP
+
+	fi
 
 	# Tags too frequent SSH attempts with the name 'SSH':
 	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --set --name SSH
@@ -521,9 +573,9 @@ start_it_up()
 	#
 	${iptables} -A INPUT -m limit --limit 2/minute -j LOG
 
-	$echo "Set rules are:" >> $log_file
-	${iptables} -nvL --line-numbers >> $log_file
-	$echo "# ---- End of LAN rules, on $(date)." >> $log_file
+	${echo} "Set rules are:" >> "${log_file}"
+	${iptables} -nvL --line-numbers >> "${log_file}"
+	${echo} "# ---- End of LAN rules, on $(date)." >> "${log_file}"
 
 }
 
@@ -536,10 +588,10 @@ shut_it_down()
 	# whose connection will be lost after this call, preventing from restarting
 	# the service again...
 
-	$echo "Disabling LAN box firewall rules, version $version."
+	${echo} "Disabling LAN box firewall rules, version ${version}."
 
 	# Load appropriate modules:
-	${modprobe} ip_tables
+	${modprobe} ip_tables 2>/dev/null
 
 	# We remove all rules and pre-exisiting user defined chains and zero the
 	# counters:
@@ -560,29 +612,34 @@ script_name=$(basename $0)
 case "$1" in
   start)
 	start_it_up
-  ;;
+	;;
+
   stop)
 	shut_it_down
-  ;;
+	;;
+
   reload|force-reload)
-	echo "(reloading)"
+	${echo} "(reloading)"
 	shut_it_down
 	start_it_up
-  ;;
+	;;
+
   restart)
-	echo "(restarting)"
+	${echo} "(restarting)"
 	# Note: at least in general, using the 'restart' option will not break a
 	# remote SSH connection issuing that command.
 	#
 	shut_it_down
 	start_it_up
-  ;;
+	;;
+
   status)
-	echo "(status)"
+	${echo} "(status)"
 	${iptables} -L
-  ;;
+	;;
+
   disable)
-	echo "Disabling all rules (hence disabling the firewall)"
+	${echo} "Disabling all rules (hence disabling the firewall)"
 	${iptables} -F INPUT
 	${iptables} -P INPUT ACCEPT
 
@@ -591,18 +648,19 @@ case "$1" in
 
 	${iptables} -F OUTPUT
 	${iptables} -P OUTPUT ACCEPT
-  ;;
+	;;
+
   *)
+	${echo} >&2
+	${echo} " Error, no appropriate action specified." >&2
 
-	echo " Error, no appropriate action specified." >&2
-
-	if [ -z "$NAME" ] ; then
+	if [ -z "${NAME}" ]; then
 		# Launched from the command-line:
-		echo "Usage: $script_name {start|stop|reload|restart|force-reload|status}" >&2
+		${echo} "${usage}" >&2
 
 	else
 
-		echo "Usage: /etc/init.d/$NAME {start|stop|reload|restart|force-reload|status}" >&2
+		${echo} "${usage}" >&2
 
 	fi
 
@@ -611,5 +669,9 @@ case "$1" in
   ;;
 
 esac
+
+${echo}
+${echo} "The content of log file ('${log_file}') follows:"
+/bin/cat "${log_file}"
 
 exit 0

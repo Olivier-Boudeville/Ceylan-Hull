@@ -1,5 +1,7 @@
 #!/bin/sh
 
+usage="Usage: $(basename $0): displays a screen to a video projector (various examples thereof)."
+
 
 #xrandr --output VGA --pos 0x0 --mode 1024x768 --rate 75
 
