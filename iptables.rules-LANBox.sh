@@ -87,7 +87,7 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 # sh -x /path/to/this/file
 
 # Causes the script to exit on error as soon as a command failed.
-# Disabled, as some commands may fail (ex: modprobe)
+# Disabled, as some commands may fail (e.g. modprobe)
 #set -e
 
 
@@ -142,11 +142,28 @@ if [ ! -f "${setting_file}" ]; then
 
 fi
 
+. "${setting_file}"
+
 
 # Logic of toggle variables: they are to be compared to "true" or "false"
 # (clearer than, respectively, 0 or 1).
 
-. "${setting_file}"
+
+# UPnp/DLNA section.
+#
+# Set to true iff this LAN computer is to host a DLNA server (e.g. minidlna):
+#
+#allow_dlna="true"
+allow_dlna="false"
+
+# For trivnet1 (TCP):
+trivnet1_tcp_port=8200
+
+# For SSDP (UDP):
+ssdp_udp_port=1900
+
+# More information: https://help.ubuntu.com/community/MiniDLNA
+
 
 
 if [ -z "${log_file}" ]; then
@@ -158,6 +175,10 @@ if [ -z "${log_file}" ]; then
 fi
 
 
+# By default, we now filter out EPMD traffic (i.e. we do not accept it):
+#allow_epmd="true"
+allow_epmd="false"
+
 if [ -f "${log_file}" ]; then
 
 	/bin/rm -f "${log_file}"
@@ -168,6 +189,19 @@ fi
 # From now on, log-related echos can be done in the log file:
 ${echo} > "${log_file}"
 
+
+# By default, we allow RTSP traffic (e.g. to receive streams from CCTVs):
+#
+# (RTSP is only a stream *control* protocol, not a stream *delivery* protocol -
+# RTP often plays that role; RTP and RTCP typically use unprivileged UDP ports).
+#
+# So, in general, the LAN box is to send a (TCP) RTSP connection to a camera,
+# they will exchange over this control channel, and the camera will send its
+# video stream through RTP, on UDP unprivileged ports that cannot be anticipated
+# (short of listening to the RTSP exchanges).
+#
+#allow_rtsp="true"
+allow_rtsp="false"
 
 if [ -z "${lan_if}" ]; then
 
@@ -475,7 +509,8 @@ start_it_up()
 
 
 	## ident, if we drop these packets we may need to wait for the timeouts
-	# e.g. on ftp servers
+	# e.g. on ftp servers:
+	#
 	${iptables} -A INPUT -p tcp --dport 113 -m state --state NEW -j REJECT
 
 
