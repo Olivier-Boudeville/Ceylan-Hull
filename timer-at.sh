@@ -1,14 +1,26 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES or HOURS:MINUTES:SECONDS.
-Will issue such a notification when specified time is reached; useful typically to respect fixed schedules.
-Ex: '$(basename $0) 12:05' will notify noisily once this time is reached.
-See also: timer-in.sh for a timer based on a duration from current time rather than on an absolute timestamp."
+usage="Usage: $(basename $0) [-h|--help] [-s|--silent] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES or HOURS:MINUTES:SECONDS.
+Will issue such a notification when the specified time is reached; useful typically to respect fixed schedules.
+The silent mode enables only the graphical notifications (useful in a train for example).
+For example: '$(basename $0) 12:05' will notify noisily once this time is reached.
+See also: timer-in.sh for a timer based on a duration from current time, rather than on an absolute timestamp."
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	echo "$usage"
+	echo "${usage}"
 	exit
+fi
+
+
+be_silent=1
+silent_opt=""
+
+if [ "$1" = "-s" ] || [ "$1" = "--silent" ]; then
+	shift
+	# Will be displayed by the called script: echo "(silent mode activated)"
+	be_silent=0
+	silent_opt="--silent"
 fi
 
 
@@ -96,7 +108,7 @@ diff_secs="$(expr ${finish_secs} - ${start_secs} 2>/dev/null)"
 if [ -z "${diff_secs}" ]; then
 	echo "  Error when subtracting seconds.
 ${usage}" 1>&2
-	exit 50
+	exit 55
 fi
 
 # For example if requesting a notification at 8:00 whereas current time is 17:00
@@ -112,7 +124,7 @@ fi
 if [ $diff_secs -lt 0 ]; then
 	echo "  Error when determining duration (got ${diff_secs} seconds despite offset).
 ${usage}" 1>&2
-	exit 50
+	exit 60
 fi
 
 # Integer division:
@@ -124,4 +136,4 @@ diff_min_as_secs="$(expr ${diff_min} \* 60 2>/dev/null)"
 extra_secs="$(expr ${diff_secs} - ${diff_min_as_secs} 2>/dev/null)"
 
 #echo ${timer_in_script} ${diff_min}:${extra_secs}
-${timer_in_script} "${diff_min}:${extra_secs}" "$2" "$3"
+${timer_in_script} ${silent_opt} "${diff_min}:${extra_secs}" "$2" "$3"
