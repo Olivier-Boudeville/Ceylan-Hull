@@ -13,8 +13,10 @@ auto_play=0
 viewer_name="mplayer"
 viewer_opts="-speed 25"
 
-suffix=", Commander"
-#suffix=""
+# Cool but longer:
+#suffix=", Commander"
+
+suffix=""
 
 token_eaten=0
 
