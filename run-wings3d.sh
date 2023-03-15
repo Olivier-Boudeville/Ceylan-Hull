@@ -45,7 +45,8 @@ else
 	echo "(no wings3d found in PATH)"
 
 	# According to our conventions, and expected to be up to date and built:
-	wings_path="${HOME}/Software/wings"
+	#wings_path="${HOME}/Software/wings"
+	wings_path="${HOME}/Software/Wings3D/vanilla/wings"
 
 	if [ ! -d "${wings_path}" ]; then
 
