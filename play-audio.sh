@@ -65,17 +65,15 @@ if [ -x "${notify_cmd}" ]; then
 	do_display=0
 fi
 
+# Default:
 player_name="mplayer"
+
+# VLC also relevant:
+#player_name="cvlc"
 
 player="$(which "${player_name}" 2>/dev/null)"
 
-# For mplayer:
-player_opt="-vc null -vo null -quiet"
-
-
-# VLC also relevant:
 #player=$(which cvlc 2>/dev/null)
-#player_opt="--quiet --novideo --play-and-exit"
 
 
 if [ ! -x "${player}" ]; then
@@ -84,6 +82,18 @@ if [ ! -x "${player}" ]; then
 	exit 5
 
 fi
+
+if [ "${player_name}" = "mplayer" ]; then
+
+	# For mplayer:
+	player_opt="-vc null -vo null -quiet"
+
+elif [ "${player_name}" = "cvlc" ]; then
+
+	player_opt="--quiet --novideo --play-and-exit"
+
+fi
+
 
 # Could be used with mplayer:
 #mplayer_cmd="${player} -msglevel identify=6 $f | grep -e '^ID_' | grep -v ID_AUDIO_ID | grep -v ID_DEMUXER | grep -v ID_FILENAME | grep -v ALSA"
