@@ -9,7 +9,7 @@ pager="$(which more 2>/dev/null)"
 
 # Otherwise mostly blank screen to dismiss:
 #
-# (yet unsupported on older versions of 'more')
+# ('more' option, yet unsupported on its older versions)
 #
 # Then hit 'q' to exit:
 pager_opt="--exit-on-eof"
