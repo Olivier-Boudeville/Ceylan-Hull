@@ -26,15 +26,20 @@ laptop_screen="DP-3"
 # When my Scibian 9 is connected to my larger, fixed, LCD desktop screen, it is
 # referenced by:
 #
-desktop_screen="DP-6.2"
+desktop_screen="DP-6.1"
+#desktop_screen="DP-6.2"
 
 
 # Alternate reference, typically if having plugged-in the computer to another
 # screen:
 #
+# If on the left port:
+#alternate_desktop_screen="DP-3"
+
+# Right port:
 alternate_desktop_screen="DP-6"
 
-xrandr=$(which xrandr 2>/dev/null)
+xrandr="$(which xrandr 2>/dev/null)"
 
 if [ ! -x "${xrandr}" ]; then
 
