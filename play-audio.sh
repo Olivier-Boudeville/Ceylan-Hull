@@ -56,6 +56,24 @@ display_notification()
 
 	fi
 
+	# Apparently no solution to do the same with VLC!
+	#if [ "${player_name}" = "cvlc" ]; then
+	#
+	#   # Duplicated in listen-to-radio.sh:
+	#   echo " Using cvlc (VLC), hence one may hit:"
+	#   echo
+	#
+	#fi
+
+	if [ "${player_name}" = "ogg123" ]; then
+
+	   echo " Using ogg123, hence one may hit CTRL-C once to go to the next playback, twice to stop all playbacks; use CTRL-Z to pause and fg to resume."
+	   echo
+
+	fi
+
+
+
 }
 
 # To display playback notifications:
@@ -65,15 +83,28 @@ if [ -x "${notify_cmd}" ]; then
 	do_display=0
 fi
 
-# Default:
+# Default, preferred for command-line control:
 player_name="mplayer"
 
 # VLC also relevant:
 #player_name="cvlc"
 
-player="$(which "${player_name}" 2>/dev/null)"
 
-#player=$(which cvlc 2>/dev/null)
+# ogg123 useful too for Ogg-Vorbis files:
+
+# Note that, to overcome the "ERROR: Cannot open device alsa." error,
+# /etc/libao.conf might have to be updated, possibly to:
+#
+# """
+# default_driver=pulse
+# quiet
+# """
+#
+
+ogg_player_name="ogg123"
+
+
+player="$(which "${player_name}" 2>/dev/null)"
 
 
 if [ ! -x "${player}" ]; then
@@ -91,6 +122,10 @@ if [ "${player_name}" = "mplayer" ]; then
 elif [ "${player_name}" = "cvlc" ]; then
 
 	player_opt="--quiet --novideo --play-and-exit"
+
+elif [ "${player_name}" = "${ogg_player_name}" ]; then
+
+	player_opt="--quiet"
 
 fi
 
@@ -205,7 +240,35 @@ if [ "${set_volume}" -eq 1 ]; then
 else
 
 	# Assuming PulseAudio:
+	pacmd="$(which pacmd 2>/dev/null)"
+
+	if [ ! -x "${pacmd}" ]; then
+
+		echo " Error, no 'pacmd' tool found. Is PulseAudio used by this system?" 1>&2
+
+		exit 50
+
+	fi
+
 	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+
+	if [ -z "${target_sink}" ]; then
+
+		target_sink="$(pacmd list-sinks | grep -B 4 IDLE | grep index | awk ' { print $NF } ')"
+
+		if [ -z "${target_sink}" ]; then
+
+			echo "  Error: no running or even idle audio sink found." 1>&2
+
+			exit 55
+
+		else
+
+			echo "  Warning: no running audio sink found, using idle one #${target_sink}." 1>&2
+
+		fi
+
+	fi
 
 	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
 
@@ -311,6 +374,17 @@ for f in ${ordered_files}; do
 				song_name="$(basename ${f} | sed 's|\..*$||1' | sed 's|\.| |g' | sed 's|-| |g')"
 
 				${notify_cmd} "Playing now, from ${album_name}:" "${song_name}"  --icon=audio-x-generic
+
+			fi
+
+			# Will remain as long as my mplayer is unable to play Ogg-Vorbis
+			# files:
+			#
+			if echo "${f}" | grep -q ".*\.ogg" ; then
+
+				echo "(activating Ogg workaround)"
+				player="${ogg_player_name}"
+				player_opt="--quiet"
 
 			fi
 
