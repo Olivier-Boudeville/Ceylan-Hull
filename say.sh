@@ -1,8 +1,9 @@
 #!/bin/sh
 
-usage="Usage: ${basename} TEXT: says specified text, based on text to speech."
+usage="Usage: ${basename} [-d|--display] TEXT: says specified text, based on text to speech.
+ -d or --display: echoes TXT on the console as well"
 
-espeak_tool=$(which espeak)
+espeak_tool="$(which espeak 2>/dev/null)"
 
 if [ ! -x "${espeak_tool}" ]; then
 
@@ -12,11 +13,17 @@ if [ ! -x "${espeak_tool}" ]; then
 
 fi
 
-${espeak_tool} "$*" 1>/dev/null 2>&1
+if [ "$1" = "-d" ] || [ "$1" = "--display" ]; then
 
-# As a last-resort option, tries to make a sound:
-if [ ! $? -eq 0 ]; then
+	shift
+	echo "$*"
 
+fi
+
+# As a last-resort option, tries to make a sound (any):
+if ! ${espeak_tool} "$*" 1>/dev/null 2>&1; then
+
+	echo "(TTS error detected)" 1>&2
 	bong.sh
 
 fi
