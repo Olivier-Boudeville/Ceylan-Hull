@@ -183,7 +183,7 @@ fi
 
 message="${count} recordings found${suffix}."
 echo "${message}"
-say.sh "${message}"
+#say.sh "${message}"
 
 for f in ${recordings}; do
 
