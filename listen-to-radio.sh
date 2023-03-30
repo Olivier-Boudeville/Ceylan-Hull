@@ -176,7 +176,7 @@ player_opt="-nolirc -quiet -msglevel all=0:demuxer=4"
 
 
 # VLC also relevant:
-#player=$(which cvlc 2>/dev/null)
+#player="$(which cvlc 2>/dev/null)"
 #player_opt="--quiet --novideo --play-and-exit"
 
 
