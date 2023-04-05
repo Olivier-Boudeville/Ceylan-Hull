@@ -369,11 +369,48 @@ if [ "${set_volume}" -eq 1 ]; then
 else
 
 	# Assuming PulseAudio:
+	pacmd="$(which pacmd 2>/dev/null)"
+
+	if [ ! -x "${pacmd}" ]; then
+
+		echo " Error, no 'pacmd' tool found. Is PulseAudio used by this system?" 1>&2
+
+		exit 50
+
+	fi
+
 	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+
+	if [ -z "${target_sink}" ]; then
+
+		target_sink="$(pacmd list-sinks | grep -B 4 IDLE | grep index | awk ' { print $NF } ')"
+
+		if [ -z "${target_sink}" ]; then
+
+			echo "  Error: no running or even idle audio sink found." 1>&2
+
+			exit 55
+
+		else
+
+			echo "  Warning: no running audio sink found, using idle one #${target_sink}." 1>&2
+
+		fi
+
+	fi
 
 	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
 
-	if ! pactl -- set-sink-volume ${target_sink} "${target_volume}%"; then
+	pactl="$(which pactl 2>/dev/null)"
+	if [ ! -x "${pactl}" ]; then
+
+		echo " Error, no 'pactl' tool found. Is PulseAudio used by this system?" 1>&2
+
+		exit 60
+
+	fi
+
+	if ! "${pactl}" -- set-sink-volume ${target_sink} "${target_volume}%"; then
 
 		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
 
