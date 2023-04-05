@@ -272,7 +272,16 @@ else
 
 	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
 
-	if ! pactl -- set-sink-volume ${target_sink} "${target_volume}%"; then
+	pactl="$(which pactl 2>/dev/null)"
+	if [ ! -x "${pactl}" ]; then
+
+		echo " Error, no 'pactl' tool found. Is PulseAudio used by this system?" 1>&2
+
+		exit 60
+
+	fi
+
+	if ! "${pactl}" -- set-sink-volume ${target_sink} "${target_volume}%"; then
 
 		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
 
@@ -382,7 +391,7 @@ for f in ${ordered_files}; do
 			#
 			if echo "${f}" | grep -q ".*\.ogg" ; then
 
-				echo "(activating Ogg workaround)"
+				#echo "(activating Ogg workaround)"
 				player="${ogg_player_name}"
 				player_opt="--quiet"
 
