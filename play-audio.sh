@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 keep_vol_opt="--keep-volume"
 
 # Percentage of maximum volume:
@@ -226,6 +227,12 @@ while [ ! $# -eq 0 ]; do
 done
 
 
+# To test filenames with spaces:
+#for f in ${files} | while read f ; do
+#   echo "Listed '${f}'"
+#done
+#exit
+
 #echo "do_announce=${do_announce}"
 #echo "be_quiet=${be_quiet}"
 #echo "be_recursive=${be_recursive}"
@@ -298,6 +305,7 @@ fi
 
 #echo "files=${files}"
 
+
 # Not recursive yet, but may become:
 if [ ${be_recursive} -eq 1 ]; then
 	for e in ${files}; do
@@ -312,6 +320,7 @@ if [ ${be_recursive} -eq 1 ]; then
 
 	done
 fi
+
 
 
 if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
@@ -343,7 +352,16 @@ else
 fi
 
 
+base_player="${player}"
+base_player_opt="${player_opt}"
+
+# Records whether a player switch occurred:
+player_switch=1
+
+
 for f in ${ordered_files}; do
+
+	#echo "Processing '${f}'"
 
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ]; then
@@ -361,7 +379,7 @@ for f in ${ordered_files}; do
 
 		if [ ! -f "${f}" ]; then
 
-			echo "  (file ${f} not found, thus skipped)" 1>&2
+			echo "  (file '${f}' not found, thus skipped)" 1>&2
 
 		else
 
@@ -392,6 +410,7 @@ for f in ${ordered_files}; do
 			if echo "${f}" | grep -q ".*\.ogg" ; then
 
 				#echo "(activating Ogg workaround)"
+				player_switch=0
 				player="${ogg_player_name}"
 				player_opt="--quiet"
 
@@ -405,11 +424,22 @@ for f in ${ordered_files}; do
 
 			fi
 
+			# Restore defaults for next readings:
+			if [ $player_switch -eq 0 ]; then
+
+				player_switch=1
+
+				player="${base_player}"
+				player_opt="${base_player_opt}"
+
+			fi
+
 		fi
 
 	fi
 
 done
+
 
 
 # Allows to avoid having several of these lines accumulate:
