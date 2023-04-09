@@ -1,12 +1,19 @@
 #!/bin/sh
 
-usage="$(basename $0): $(basename $0) [fr|us|...]: sets the X keyboard layout."
+usage="Usage: $(basename $0) [-h|--help] [fr|us|...]: sets the keyboard layout for the current X session (hence for all applications, including the running ones, like terminals)."
 
-# Just to remember the command:
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit
+
+fi
+
 
 if [ -z "$1" ]; then
 
-	echo "No layout specified.
+	echo "  Error, no layout specified.
 ${usage}" 1>&2
 
 	exit 5
@@ -25,4 +32,4 @@ if [ ! -x "${setter_tool}" ]; then
 
 fi
 
-${setter_tool} ${layout}
+${setter_tool} "${layout}"
