@@ -107,7 +107,12 @@ else
 			# For example version 1.7.2.5 does not support minimal:
 			#GIT_PAGER='' git diff --staged "${target}" | ${pager} ${pager_opt}
 
-			GIT_PAGER='' git diff --staged --minimal --color=always "${target}" | ${pager} ${pager_opt}
+			#GIT_PAGER='' git diff --staged --minimal --color=always "${target}" | ${pager} ${pager_opt}
+
+			# If scrolling back anyway at the next commit operation, no paging
+			# is of use:
+			#
+			GIT_PAGER='' git diff --staged --minimal --color=always "${target}"
 
 			#git diff --staged --minimal "${target}"
 
