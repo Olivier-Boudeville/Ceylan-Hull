@@ -84,12 +84,13 @@ if [ -x "${notify_cmd}" ]; then
 	do_display=0
 fi
 
-# Default, preferred for command-line control:
-player_name="mplayer"
+mplayer_player_name="mplayer"
+mplayer_player_opt="-vc null -vo null -quiet"
 
 # VLC also relevant:
-#player_name="cvlc"
+vlc_player_name="cvlc"
 
+vlc_player_opt="--quiet --novideo --play-and-exit"
 
 # ogg123 useful too for Ogg-Vorbis files:
 
@@ -103,7 +104,11 @@ player_name="mplayer"
 #
 
 ogg_player_name="ogg123"
+ogg_player_opt="--quiet"
 
+
+# Default, preferred for command-line control:
+player_name="mplayer"
 
 player="$(which "${player_name}" 2>/dev/null)"
 
@@ -118,15 +123,15 @@ fi
 if [ "${player_name}" = "mplayer" ]; then
 
 	# For mplayer:
-	player_opt="-vc null -vo null -quiet"
+	player_opt="${mplayer_player_opt}"
 
-elif [ "${player_name}" = "cvlc" ]; then
+elif [ "${player_name}" = "${vlc_player_name}" ]; then
 
-	player_opt="--quiet --novideo --play-and-exit"
+	player_opt="${vlc_player_opt}"
 
 elif [ "${player_name}" = "${ogg_player_name}" ]; then
 
-	player_opt="--quiet"
+	player_opt="${ogg_player_opt}"
 
 fi
 
@@ -407,12 +412,24 @@ for f in ${ordered_files}; do
 			# Will remain as long as my mplayer is unable to play Ogg-Vorbis
 			# files:
 			#
-			if echo "${f}" | grep -q ".*\.ogg" ; then
+			if echo "${f}" | grep -q ".*\.ogg"; then
 
 				#echo "(activating Ogg workaround)"
 				player_switch=0
 				player="${ogg_player_name}"
-				player_opt="--quiet"
+				player_opt="${ogg_player_opt}"
+
+			fi
+
+			# Will remain as long as my mplayer is unable to play at least some
+			# IFF (little-endian) data, WAVE audio, Microsoft ADPCM WAV files:
+			#
+			if echo "${f}" | grep -q ".*\.wav"; then
+
+				#echo "(activating VLC workaround)"
+				player_switch=0
+				player="${vlc_player_name}"
+				player_opt="${vlc_player_opt}"
 
 			fi
 
