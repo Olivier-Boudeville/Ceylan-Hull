@@ -133,9 +133,15 @@ fallback_label="${france_culture_label}"
 
 keep_vol_opt="--keep-volume"
 
-# Percentage of maximum volume:
+# Default percentage of maximum volume:
 target_volume=30
+#target_volume=70
 
+# To set a custom target volume:
+settings_file="${HOME}/.ceylan-settings.etf"
+
+# In the settings:
+volume_key="audio_volume"
 
 usage="Usage: $(basename $0) [${keep_vol_opt}] [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be, for:
   - Radio France:
@@ -154,7 +160,7 @@ usage="Usage: $(basename $0) [${keep_vol_opt}] [RADIO_OPT|STREAM_URL]: plays the
   - ${blp_label}: ${blp_short_opt} | ${blp_long_opt}
 
 Outputs the audio streams of specified (online) radio, either preset or based on its specified stream URL.
-By default, unless the '${keep_vol_opt}' option is specified, sets also the detected audio output to ${target_volume}% of the maximum volume.
+By default, unless the '${keep_vol_opt}' option is specified, sets also the detected audio output: the host-specific default volume can be defined in the '${settings_file}' file, thanks to its '${volume_key}' key; for example: a '{ ${volume_key}, 35 }.' line there will set the volume to 35% of its maximum value; otherwise the default volume (${target_volume}%) will apply
 
   Note:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
@@ -191,9 +197,10 @@ fi
 # Setting the volume automatically allows to avoid accidentally-loud playbacks:
 set_volume=0
 
+
 if [ "$1" = "${keep_vol_opt}" ]; then
-	set_volume=1
 	shift
+	set_volume=1
 fi
 
 
@@ -368,6 +375,20 @@ if [ "${set_volume}" -eq 1 ]; then
 
 else
 
+	# Possibly a symlink:
+	if [ -e "${settings_file}" ]; then
+
+		#echo "Reading the '${settings_file}' configuration file."
+
+		config_volume="$(/bin/cat "${settings_file}" | grep -v '^[[:space:]]*%' | grep ${volume_key} | sed 's|.*, ||1' | sed 's| }.$||1')"
+
+		if [ -n "${config_volume}" ]; then
+			#echo "Read volume configured from '${settings_file}': ${config_volume}%".
+			target_volume="${config_volume}"
+		fi
+
+	fi
+
 	# Assuming PulseAudio:
 	pacmd="$(which pacmd 2>/dev/null)"
 
@@ -379,17 +400,33 @@ else
 
 	fi
 
-	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+	# Number of context lines to return before the current state:
+	line_context_count=4
+
+
+	target_sink="$(pacmd list-sinks | grep -B ${line_context_count} RUNNING | grep index | awk ' { print $NF } ')"
 
 	if [ -z "${target_sink}" ]; then
 
-		target_sink="$(pacmd list-sinks | grep -B 4 IDLE | grep index | awk ' { print $NF } ')"
+		target_sink="$(pacmd list-sinks | grep -B ${line_context_count} IDLE | grep index | awk ' { print $NF } ')"
 
 		if [ -z "${target_sink}" ]; then
 
-			echo "  Error: no running or even idle audio sink found." 1>&2
+			target_sink="$(pacmd list-sinks | grep -B ${line_context_count} SUSPENDED | grep index | awk ' { print $NF } ')"
 
-			exit 55
+			if [ -z "${target_sink}" ]; then
+
+				# We also could go for sink #0.
+
+				echo "  Error: no running, idle or even suspended audio sink found." 1>&2
+
+				exit 55
+
+			else
+
+				echo "  Warning: no running or idle audio sink found, using suspended one #${target_sink}." 1>&2
+
+			fi
 
 		else
 
@@ -398,6 +435,7 @@ else
 		fi
 
 	fi
+
 
 	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
 
