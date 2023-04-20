@@ -30,17 +30,17 @@ fi
 #client_tool_name="cvlc"
 client_tool_name="mplayer"
 
-client_tool=$(which $client_tool_name 2>/dev/null)
+client_tool="$(which ${client_tool_name} 2>/dev/null)"
 
-if [ ! -x "$client_tool" ]; then
+if [ ! -x "${client_tool}" ]; then
 
-	echo "  Error, no stream client tool found (no $client_tool_name)." 1>&2
+	echo "  Error, no stream client tool found (no ${client_tool_name})." 1>&2
 	exit 10
 
 fi
 
 
-env_file="$HOME/.ceylan-settings.etf"
+env_file="${HOME}/.ceylan-settings.etf"
 
 if [ ! -f "${env_file}" ]; then
 
@@ -53,7 +53,7 @@ fi
 # Used to rely on a shell-compliant syntax, now Erlang one:
 #source "${env_file}"
 
-camera_hostname=$(/bin/cat ${env_file} | grep -v % | grep camera_1_hostname | sed 's|.*, "||1' | sed 's|" }.$||1')
+camera_hostname=$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_hostname | sed 's|.*, "||1' | sed 's|" }.$||1')
 
 if [ -z "${camera_hostname}" ]; then
 
@@ -65,7 +65,7 @@ fi
 #echo "  - camera hostname: ${camera_hostname}"
 
 
-camera_description=$(/bin/cat ${env_file} | grep -v % | grep camera_1_description | sed 's|.*, "||1' | sed 's|" }.$||1')
+camera_description=$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_description | sed 's|.*, "||1' | sed 's|" }.$||1')
 
 if [ -z "${camera_description}" ]; then
 
@@ -78,7 +78,7 @@ fi
 
 
 
-camera_login=$(/bin/cat ${env_file} | grep -v % | grep camera_1_login | sed 's|.*, "||1' | sed 's|" }.$||1')
+camera_login=$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_login | sed 's|.*, "||1' | sed 's|" }.$||1')
 
 if [ -z "${camera_login}" ]; then
 
@@ -90,7 +90,7 @@ fi
 #echo "  - camera login: ${camera_login}"
 
 
-camera_password="$(/bin/cat ${env_file} | grep -v % | grep camera_1_password | sed 's|.*, "||1' | sed 's|" }.$||1')"
+camera_password="$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_password | sed 's|.*, "||1' | sed 's|" }.$||1')"
 
 if [ -z "${camera_password}" ]; then
 
@@ -103,7 +103,7 @@ fi
 
 
 
-camera_channel="$(/bin/cat ${env_file} | grep -v % | grep camera_1_channel | sed 's|.*, ||1' | sed 's| }.$||1')"
+camera_channel="$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_channel | sed 's|.*, ||1' | sed 's| }.$||1')"
 
 if [ -z "${camera_channel}" ]; then
 
@@ -120,7 +120,7 @@ if [ $full_requested -eq 0 ]; then
 
 	#echo "Full quality mode requested."
 
-	camera_subtype_high_quality="$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_high_quality | sed 's|.*, ||1' | sed 's| }.$||1')"
+	camera_subtype_high_quality="$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_subtype_high_quality | sed 's|.*, ||1' | sed 's| }.$||1')"
 
 	if [ -z "${camera_subtype_high_quality}" ]; then
 
@@ -137,7 +137,7 @@ else
 
 	#echo "Normal quality mode requested."
 
-	camera_subtype_normal_quality="$(/bin/cat ${env_file} | grep -v % | grep camera_1_subtype_normal_quality | sed 's|.*, ||1' | sed 's| }.$||1')"
+	camera_subtype_normal_quality="$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep camera_1_subtype_normal_quality | sed 's|.*, ||1' | sed 's| }.$||1')"
 
 	if [ -z "${camera_subtype_normal_quality}" ]; then
 
