@@ -3,8 +3,15 @@
 
 keep_vol_opt="--keep-volume"
 
-# Percentage of maximum volume:
+# Default percentage of maximum volume:
 target_volume=30
+#target_volume=70
+
+# To set a custom target volume:
+settings_file="${HOME}/.ceylan-settings.etf"
+
+# In the settings:
+volume_key="audio_volume"
 
 usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recursive|-r] [${keep_vol_opt}] [file_or_directory1 file_or_directory2 ...]
 
@@ -14,11 +21,12 @@ usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recu
   --shuffle or -s: plays the specified elements in a random order
   --recursive or -r: selects content files automatically and recursively, from the current directory
   ${keep_vol_opt}: does not set a default volume
-(default: no announce, not quiet, no shuffle, not recursive, detected audio output to ${target_volume}% of the maximum volume - unless no files nor directories are specified)
+(default: no announce, not quiet, no shuffle, not recursive, detected audio output to, unless specified in a '${settings_file}', ${target_volume}% of the maximum volume - unless no files nor directories are specified)
 
   Notes:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
    - for smaller size and processing effort, video content may be replaced by pure audio one, thanks to our extract-audio-from-video.sh script
+   - the host-specific default volume can be defined in the '${settings_file}' file, thanks to its '${volume_key}' key; for example: a '{ ${volume_key}, 35 }.' line ther will set the volume to 35% of its maximum value; otherwise the default volume (${target_volume}%) will apply
 "
 
 # Hidden options:
@@ -251,6 +259,20 @@ if [ "${set_volume}" -eq 1 ]; then
 
 else
 
+	# Possibly a symlink:
+	if [ -e "${settings_file}" ]; then
+
+		#echo "Reading the '${settings_file}' configuration file."
+
+		config_volume="$(/bin/cat "${settings_file}" | grep -v '^[[:space:]]*%' | grep ${volume_key} | sed 's|.*, ||1' | sed 's| }.$||1')"
+
+		if [ -n "${config_volume}" ]; then
+			#echo "Read volume configured from '${settings_file}': ${config_volume}%".
+			target_volume="${config_volume}"
+		fi
+
+	fi
+
 	# Assuming PulseAudio:
 	pacmd="$(which pacmd 2>/dev/null)"
 
@@ -262,17 +284,32 @@ else
 
 	fi
 
-	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+	# Number of context lines to return before the current state:
+	line_context_count=4
+
+	target_sink="$(pacmd list-sinks | grep -B ${line_context_count} RUNNING | grep index | awk ' { print $NF } ')"
 
 	if [ -z "${target_sink}" ]; then
 
-		target_sink="$(pacmd list-sinks | grep -B 4 IDLE | grep index | awk ' { print $NF } ')"
+		target_sink="$(pacmd list-sinks | grep -B ${line_context_count} IDLE | grep index | awk ' { print $NF } ')"
 
 		if [ -z "${target_sink}" ]; then
 
-			echo "  Error: no running or even idle audio sink found." 1>&2
+			target_sink="$(pacmd list-sinks | grep -B ${line_context_count} SUSPENDED | grep index | awk ' { print $NF } ')"
 
-			exit 55
+			if [ -z "${target_sink}" ]; then
+
+				# We also could go for sink #0.
+
+				echo "  Error: no running, idle or even suspended audio sink found." 1>&2
+
+				exit 55
+
+			else
+
+				echo "  Warning: no running or idle audio sink found, using suspended one #${target_sink}." 1>&2
+
+			fi
 
 		else
 
@@ -412,19 +449,21 @@ for f in ${ordered_files}; do
 			# Will remain as long as my mplayer is unable to play Ogg-Vorbis
 			# files:
 			#
-			if echo "${f}" | grep -q ".*\.ogg"; then
+			#if echo "${f}" | grep -q ".*\.ogg"; then
 
 				#echo "(activating Ogg workaround)"
-				player_switch=0
-				player="${ogg_player_name}"
-				player_opt="${ogg_player_opt}"
+				#player_switch=0
+				#player="${ogg_player_name}"
+				#player_opt="${ogg_player_opt}"
 
-			fi
+			#fi
 
 			# Will remain as long as my mplayer is unable to play at least some
 			# IFF (little-endian) data, WAVE audio, Microsoft ADPCM WAV files:
 			#
-			if echo "${f}" | grep -q ".*\.wav"; then
+			#if echo "${f}" | grep -q ".*\.wav"; then
+			# Should ogg123 bz faulty as well:
+			if echo "${f}" | grep -q ".*\.wav\|.*\.ogg"; then
 
 				#echo "(activating VLC workaround)"
 				player_switch=0
