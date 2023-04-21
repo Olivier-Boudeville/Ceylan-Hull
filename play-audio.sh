@@ -51,10 +51,14 @@ say()
 display_notification()
 {
 
+	# Note that this relates to the *base* player, that may be overridden
+	# depending on the audio formats being played.
+
+	# Duplicated in listen-to-radio.sh:
+
 	if [ "${player_name}" = "mplayer" ]; then
 
-		# Duplicated in listen-to-radio.sh:
-		echo " Using mplayer, hence one may hit:"
+		echo " Using mplayer for player now, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
 		echo "  - '/' to decrease the volume, '*' to increase it"
 		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
@@ -65,23 +69,25 @@ display_notification()
 
 	fi
 
-	# Apparently no solution to do the same with VLC!
-	#if [ "${player_name}" = "cvlc" ]; then
-	#
-	#   # Duplicated in listen-to-radio.sh:
-	#   echo " Using cvlc (VLC), hence one may hit:"
-	#   echo
-	#
-	#fi
 
-	if [ "${player_name}" = "ogg123" ]; then
+	# Apparently no solution to do the same with VLC:
+	if [ "${player_name}" = "cvlc" ]; then
 
-	   echo " Using ogg123, hence one may hit CTRL-C once to go to the next playback, twice to stop all playbacks; use CTRL-Z to pause and fg to resume."
-	   echo
+		echo " Using cvlc (VLC) for player now, hence one may hit:"
+		echo "  - <CTRL-C> to stop the current playback"
+		#echo "  - <CTRL-C> twice quickly to stop all playbacks"
+		echo "  - <CTRL-Z> to stop all playbacks (and possibly 'kill %1' / 'jobs' afterwards)"
+		echo
 
 	fi
 
 
+	if [ "${player_name}" = "ogg123" ]; then
+
+	   echo " Using ogg123 for player now, hence one may hit CTRL-C once to go to the next playback, twice to stop all playbacks; use CTRL-Z to pause and fg to resume."
+	   echo
+
+	fi
 
 }
 
@@ -123,7 +129,7 @@ player="$(which "${player_name}" 2>/dev/null)"
 
 if [ ! -x "${player}" ]; then
 
-	echo "Error, no executable player found (${player})." 1>&2
+	echo "Error, no executable player found ('${player}')." 1>&2
 	exit 5
 
 fi
@@ -284,53 +290,19 @@ else
 
 	fi
 
-	# Number of context lines to return before the current state:
-	line_context_count=4
+	set_volume_script_name="set-audio-volume.sh"
 
-	target_sink="$(pacmd list-sinks | grep -B ${line_context_count} RUNNING | grep index | awk ' { print $NF } ')"
+	set_volume_script="$(which ${set_volume_script_name} 2>/dev/null)"
 
-	if [ -z "${target_sink}" ]; then
+	if [ ! -x "${set_volume_script}" ]; then
 
-		target_sink="$(pacmd list-sinks | grep -B ${line_context_count} IDLE | grep index | awk ' { print $NF } ')"
+		echo "  Error, our '${set_volume_script_name}' script could not be found." 1>&2
 
-		if [ -z "${target_sink}" ]; then
-
-			target_sink="$(pacmd list-sinks | grep -B ${line_context_count} SUSPENDED | grep index | awk ' { print $NF } ')"
-
-			if [ -z "${target_sink}" ]; then
-
-				# We also could go for sink #0.
-
-				echo "  Error: no running, idle or even suspended audio sink found." 1>&2
-
-				exit 55
-
-			else
-
-				echo "  Warning: no running or idle audio sink found, using suspended one #${target_sink}." 1>&2
-
-			fi
-
-		else
-
-			echo "  Warning: no running audio sink found, using idle one #${target_sink}." 1>&2
-
-		fi
+		exit 17
 
 	fi
 
-	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
-
-	pactl="$(which pactl 2>/dev/null)"
-	if [ ! -x "${pactl}" ]; then
-
-		echo " Error, no 'pactl' tool found. Is PulseAudio used by this system?" 1>&2
-
-		exit 60
-
-	fi
-
-	if ! "${pactl}" -- set-sink-volume ${target_sink} "${target_volume}%"; then
+	if ! ${set_volume_script} ${target_sink} "${target_volume}"; then
 
 		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
 
@@ -398,7 +370,10 @@ base_player="${player}"
 base_player_opt="${player_opt}"
 
 # Records whether a player switch occurred:
-player_switch=1
+#player_switch=1
+
+# Never matching initially:
+last_player=""
 
 
 for f in ${ordered_files}; do
@@ -453,6 +428,7 @@ for f in ${ordered_files}; do
 
 				#echo "(activating Ogg workaround)"
 				#player_switch=0
+				#player_name="${ogg_player_name}"
 				#player="${ogg_player_name}"
 				#player_opt="${ogg_player_opt}"
 
@@ -466,11 +442,18 @@ for f in ${ordered_files}; do
 			if echo "${f}" | grep -q ".*\.wav\|.*\.ogg"; then
 
 				#echo "(activating VLC workaround)"
-				player_switch=0
+				#player_switch=0
+				player_name="${vlc_player_name}"
 				player="${vlc_player_name}"
 				player_opt="${vlc_player_opt}"
 
 			fi
+
+			if [ ! "${last_player}" = "${player}" ]; then
+				display_notification
+			fi
+
+			last_player="${player}"
 
 			# Useful to stop the overall reading as a whole:
 			if ! ${player} ${player_opt} "${f}" 1>/dev/null 2>&1; then
@@ -481,14 +464,14 @@ for f in ${ordered_files}; do
 			fi
 
 			# Restore defaults for next readings:
-			if [ $player_switch -eq 0 ]; then
-
-				player_switch=1
-
-				player="${base_player}"
-				player_opt="${base_player_opt}"
-
-			fi
+			#if [ $player_switch -eq 0 ]; then
+			#
+			#   player_switch=1
+			#
+			#   player="${base_player}"
+			#   player_opt="${base_player_opt}"
+			#
+			#fi
 
 		fi
 

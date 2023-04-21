@@ -389,66 +389,19 @@ else
 
 	fi
 
-	# Assuming PulseAudio:
-	pacmd="$(which pacmd 2>/dev/null)"
+	set_volume_script_name="set-audio-volume.sh"
 
-	if [ ! -x "${pacmd}" ]; then
+	set_volume_script="$(which ${set_volume_script_name} 2>/dev/null)"
 
-		echo " Error, no 'pacmd' tool found. Is PulseAudio used by this system?" 1>&2
+	if [ ! -x "${set_volume_script}" ]; then
 
-		exit 50
+		echo "  Error, our '${set_volume_script_name}' script could not be found." 1>&2
 
-	fi
-
-	# Number of context lines to return before the current state:
-	line_context_count=4
-
-
-	target_sink="$(pacmd list-sinks | grep -B ${line_context_count} RUNNING | grep index | awk ' { print $NF } ')"
-
-	if [ -z "${target_sink}" ]; then
-
-		target_sink="$(pacmd list-sinks | grep -B ${line_context_count} IDLE | grep index | awk ' { print $NF } ')"
-
-		if [ -z "${target_sink}" ]; then
-
-			target_sink="$(pacmd list-sinks | grep -B ${line_context_count} SUSPENDED | grep index | awk ' { print $NF } ')"
-
-			if [ -z "${target_sink}" ]; then
-
-				# We also could go for sink #0.
-
-				echo "  Error: no running, idle or even suspended audio sink found." 1>&2
-
-				exit 55
-
-			else
-
-				echo "  Warning: no running or idle audio sink found, using suspended one #${target_sink}." 1>&2
-
-			fi
-
-		else
-
-			echo "  Warning: no running audio sink found, using idle one #${target_sink}." 1>&2
-
-		fi
+		exit 17
 
 	fi
 
-
-	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
-
-	pactl="$(which pactl 2>/dev/null)"
-	if [ ! -x "${pactl}" ]; then
-
-		echo " Error, no 'pactl' tool found. Is PulseAudio used by this system?" 1>&2
-
-		exit 60
-
-	fi
-
-	if ! "${pactl}" -- set-sink-volume ${target_sink} "${target_volume}%"; then
+	if ! ${set_volume_script} ${target_sink} "${target_volume}"; then
 
 		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
 
@@ -474,6 +427,24 @@ if [ $display_notification -eq 0 ]; then
 		echo "  - <Enter> or <Escape> to toggle between this stream ('${stream_label}') and the fallback one ('${fallback_label}')"
 		echo "  - <CTRL-C> to stop all playbacks"
 		echo
+
+	fi
+
+	# Apparently no solution to do the same with VLC:
+	if [ "${player_name}" = "cvlc" ]; then
+
+		echo " Using cvlc (VLC), hence one may hit:"
+		echo "  - <CTRL-C> to stop the current playback"
+		echo "  - <CTRL-C> twice quickly to stop all playbacks"
+		echo
+
+	fi
+
+
+	if [ "${player_name}" = "ogg123" ]; then
+
+	   echo " Using ogg123, hence one may hit CTRL-C once to go to the next playback, twice to stop all playbacks; use CTRL-Z to pause and fg to resume."
+	   echo
 
 	fi
 
