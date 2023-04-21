@@ -2,7 +2,7 @@
 
 usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host.
 
-Note: ensures that no Internet connection is already available (ex: unplug any Ethernet connector) to avoid possibly confusing this script."
+Should multiple relevant network interfaces be found, the last one will be selected."
 
 
 if [ ! $(id -u) -eq 0 ]; then
@@ -60,6 +60,12 @@ notify()
 #
 if_name="$(${ip} addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's|\: .*$||1')"
 
+# If there are multiple interfaces, one may force the right one directly, for
+# example:
+#
+#if_name="enp0s20f0u2"
+
+
 if [ -z "${if_name}" ]; then
 
 	echo " Error, no relevant network interface found (is USB tethering activated on the phone, typically, for Android ones, in: Settings -> Networks and Internet -> Acces Point and Connection Sharing -> Via USB)?" 1>&2
@@ -72,9 +78,18 @@ fi
 
 if [ ! "$(echo ${if_name} | wc -w)" = "1" ]; then
 
-	echo " Error, multiple network interfaces found: '${if_name}'." 1>&2
+	#echo " Error, multiple network interfaces found: '${if_name}'." 1>&2
+	#exit 20
 
-	exit 20
+	if_names="${if_name}"
+
+	# Not separated with newlines:
+	#if_name="$(echo ${if_name} | tail -1)"
+
+	# Thanks to globbing:
+	if_name="$(echo ${if_name} | sed 's|.* ||1')"
+
+	echo "Warning: multiple network interfaces found: '${if_names}', selecting the last one, '${if_name}'." 1>&2
 
 fi
 
@@ -128,12 +143,17 @@ connect()
 
 			if [ ${retries} -eq 0 ]; then
 
+				# It happened at least once, whereas the connection was
+				# available (since then, switched from DNS to IP, and time-outs
+				# extended):
+				#
 				echo " Error, connection established yet does not seem functional, all retries failed, giving up." 1>&2
 				exit 20
 
 			else
 
 				echo " Connection established yet does not seem functional, retrying..."
+				echo
 				retries=$((${retries}-1))
 				connect
 
@@ -167,10 +187,13 @@ test_link()
 {
 
 	# Otherwise could be too early for a ping to succeed:
-	sleep 2
+	sleep 3
 
 	# Both IP and DNS tested (otherwise: just ping 8.8.8.8)
-	ping -c 1 google.com 1>/dev/null 2>&1
+	#ping -c 1 google.com 1>/dev/null 2>&1
+
+	# We actually only care for IP (DNS obtained easily afterwards):
+	ping -c 2 8.8.8.8 1>/dev/null 2>&1
 	return $?
 
 }
