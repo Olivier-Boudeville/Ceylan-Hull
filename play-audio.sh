@@ -109,7 +109,7 @@ vlc_player_opt="--quiet --novideo --play-and-exit"
 # default_driver=pulse
 # quiet
 # """
-#
+
 
 ogg_player_name="ogg123"
 ogg_player_opt="--quiet"
