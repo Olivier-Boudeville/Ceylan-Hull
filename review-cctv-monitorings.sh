@@ -10,8 +10,21 @@ do_fetch=0
 # Enabled by default:
 auto_play=0
 
-viewer_name="mplayer"
-viewer_opts="-speed 25"
+
+mplayer_player_name="mplayer"
+mplayer_player_opt="-vc null -vo null -quiet -speed 25"
+
+vlc_player_name="cvlc"
+vlc_player_opt="--quiet --play-and-exit"
+
+
+#viewer_name="${mplayer_player_name}"
+#viewer_opts="${mplayer_player_opt}"
+
+viewer_name="${vlc_player_name}"
+viewer_opts="${vlc_player_opt}"
+
+
 
 # Cool but longer:
 #suffix=", Commander"
