@@ -1,8 +1,10 @@
 #!/bin/sh
 
 
-usage="Usage: $(basename $0) [TARGET_AUDIO_SINK] NEW_PERCENTAGE_VOLUME
+usage="Usage: $(basename $0) [[TARGET_AUDIO_SINK] NEW_PERCENTAGE_VOLUME]
   Sets the volume (as a percentage of the base maximum one - possibly going over 100%) either for the specified audio sink or for any automatically detected one (currently running sink, otherwise idle, otherwise suspended).
+
+  If executed with no argument, returns the current volume.
 
   For example: $(basename $0) 30
 
@@ -12,36 +14,15 @@ usage="Usage: $(basename $0) [TARGET_AUDIO_SINK] NEW_PERCENTAGE_VOLUME
 "
 
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-
-	echo "${usage}"
-
-	exit
-
-fi
-
-if [ -n "$3" ]; then
-
-	echo "  Error, extra argument specified.
-${usage}" 1>&2
-
-	exit 5
-
-fi
+# Otherwise just get the current volume:
+do_set=0
 
 
-if [ -n "$2" ]; then
 
-	target_volume="$2"
 
-	sink_type="specified"
-	target_sink="$1"
-
-elif [ -n "$1" ]; then
-
-	target_volume="$1"
-
-	# Having here to determine the relevant sink:
+# Returned in the target_sink variable:
+detect_audio_sink()
+{
 
 	# Assuming PulseAudio:
 	pacmd="$(which pacmd 2>/dev/null)"
@@ -98,17 +79,56 @@ elif [ -n "$1" ]; then
 
 	#echo "  Auto-detected sink: ${target_sink}."
 
-else
+}
 
-	echo "  Error, no target volume specified.
+
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit
+
+fi
+
+if [ -n "$3" ]; then
+
+	echo "  Error, extra argument specified.
 ${usage}" 1>&2
 
-	exit 55
+	exit 5
 
 fi
 
 
-echo "  Setting volume to ${target_volume}% for ${sink_type} audio sink ${target_sink}."
+if [ -n "$2" ]; then
+
+	target_volume="$2"
+
+	sink_type="specified"
+	target_sink="$1"
+
+elif [ -n "$1" ]; then
+
+	target_volume="$1"
+
+	# Having here to determine the relevant sink:
+	detect_audio_sink
+
+else
+
+	#echo "  Error, no target volume specified.
+	#${usage}" 1>&2
+
+	#exit 55
+
+	do_set=1
+
+	detect_audio_sink
+
+fi
+
 
 pactl="$(which pactl 2>/dev/null)"
 if [ ! -x "${pactl}" ]; then
@@ -120,10 +140,28 @@ if [ ! -x "${pactl}" ]; then
 fi
 
 
-if ! "${pactl}" -- set-sink-volume ${target_sink} "${target_volume}%"; then
+if [ $do_set -eq 0 ]; then
 
-	echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
+	echo "  Setting volume to ${target_volume}% for ${sink_type} audio sink #${target_sink}."
 
-	exit 35
+	if ! "${pactl}" -- set-sink-volume ${target_sink} "${target_volume}%"; then
+
+		echo "  Error, failed to modify the volume for sink #${target_sink}." 1>&2
+
+		exit 35
+
+	fi
+
+else
+
+	echo "  The current volume of the ${sink_type} audio sink #${target_sink} is:"
+
+	if ! "${pactl}" -- get-sink-volume ${target_sink} | grep Volume; then
+
+		echo "  Error, failed to read the volume for sink #${target_sink}." 1>&2
+
+		exit 45
+
+	fi
 
 fi
