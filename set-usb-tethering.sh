@@ -141,6 +141,15 @@ connect()
 
 		else
 
+			# Another chance:
+			if test_link; then
+
+				notify "Connection up and running. Enjoy!"
+
+				exit 0
+
+			fi
+
 			if [ ${retries} -eq 0 ]; then
 
 				# It happened at least once, whereas the connection was
@@ -186,8 +195,14 @@ connect()
 test_link()
 {
 
-	# Otherwise could be too early for a ping to succeed:
-	sleep 3
+	seconds=2
+
+	echo "- testing connection in ${seconds} seconds..."
+
+	# Otherwise could be too early for a ping to succeed, apparently often the
+	# scripts thinks it failed whereas not:
+	#
+	sleep ${seconds}
 
 	# Both IP and DNS tested (otherwise: just ping 8.8.8.8)
 	#ping -c 1 google.com 1>/dev/null 2>&1
