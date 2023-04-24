@@ -45,6 +45,10 @@ check_ip()
 
 		fi
 
+	else
+
+		echo "Reliable internet server IP (${reliable_internet_server_ip}) not responding, no Internet connectivity?" 1>&2
+
 	fi
 
 }
@@ -159,8 +163,6 @@ while [ $is_good -eq 1 ]; do
 
 			#exit 1
 
-			sleep 2
-
 		fi
 
 	else
@@ -168,5 +170,7 @@ while [ $is_good -eq 1 ]; do
 		check_ip
 
 	fi
+
+	sleep 2
 
 done
