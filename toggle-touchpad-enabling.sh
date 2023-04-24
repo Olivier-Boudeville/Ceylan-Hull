@@ -24,7 +24,7 @@ client="$(which synclient 2>/dev/null)"
 if [ ! -x "${client}" ]; then
 
 	echo "  Error, no 'synclient' executable found." 1>&2
-	exit 5
+	exit 15
 
 fi
 
