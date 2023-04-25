@@ -1,9 +1,17 @@
 #!/bin/sh
 
+
 keep_vol_opt="--keep-volume"
 
-# Percentage of maximum volume:
+# Default percentage of maximum volume:
 target_volume=30
+#target_volume=70
+
+# To set a custom target volume:
+settings_file="${HOME}/.ceylan-settings.etf"
+
+# In the settings:
+volume_key="audio_volume"
 
 usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recursive|-r] [${keep_vol_opt}] [file_or_directory1 file_or_directory2 ...]
 
@@ -13,11 +21,12 @@ usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recu
   --shuffle or -s: plays the specified elements in a random order
   --recursive or -r: selects content files automatically and recursively, from the current directory
   ${keep_vol_opt}: does not set a default volume
-(default: no announce, not quiet, no shuffle, not recursive, detected audio output to ${target_volume}% of the maximum volume - unless no files nor directories are specified)
+(default: no announce, not quiet, no shuffle, not recursive, detected audio output to, unless specified in a '${settings_file}', ${target_volume}% of the maximum volume - unless no files nor directories are specified)
 
   Notes:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
    - for smaller size and processing effort, video content may be replaced by pure audio one, thanks to our extract-audio-from-video.sh script
+   - the host-specific default volume can be defined in the '${settings_file}' file, thanks to its '${volume_key}' key; for example: a '{ ${volume_key}, 35 }.' line ther will set the volume to 35% of its maximum value; otherwise the default volume (${target_volume}%) will apply
 "
 
 # Hidden options:
@@ -42,10 +51,14 @@ say()
 display_notification()
 {
 
+	# Note that this relates to the *base* player, that may be overridden
+	# depending on the audio formats being played.
+
+	# Duplicated in listen-to-radio.sh:
+
 	if [ "${player_name}" = "mplayer" ]; then
 
-		# Duplicated in listen-to-radio.sh:
-		echo " Using mplayer, hence one may hit:"
+		echo " Using mplayer for player now, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
 		echo "  - '/' to decrease the volume, '*' to increase it"
 		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
@@ -53,6 +66,26 @@ display_notification()
 		echo "  - <Enter> or <Escape> to jump to next playback"
 		echo "  - <CTRL-C> to stop all playbacks"
 		echo
+
+	fi
+
+
+	# Apparently no solution to do the same with VLC:
+	if [ "${player_name}" = "cvlc" ]; then
+
+		echo " Using cvlc (VLC) for player now, hence one may hit:"
+		echo "  - <CTRL-C> to stop the current playback"
+		#echo "  - <CTRL-C> twice quickly to stop all playbacks"
+		echo "  - <CTRL-Z> to stop all playbacks (and possibly 'kill %1' / 'jobs' afterwards)"
+		echo
+
+	fi
+
+
+	if [ "${player_name}" = "ogg123" ]; then
+
+	   echo " Using ogg123 for player now, hence one may hit CTRL-C once to go to the next playback, twice to stop all playbacks; use CTRL-Z to pause and fg to resume."
+	   echo
 
 	fi
 
@@ -65,20 +98,38 @@ if [ -x "${notify_cmd}" ]; then
 	do_display=0
 fi
 
-# Default:
-player_name="mplayer"
+mplayer_player_name="mplayer"
+mplayer_player_opt="-vc null -vo null -quiet"
 
 # VLC also relevant:
-#player_name="cvlc"
+vlc_player_name="cvlc"
+
+vlc_player_opt="--quiet --novideo --play-and-exit"
+
+# ogg123 useful too for Ogg-Vorbis files:
+
+# Note that, to overcome the "ERROR: Cannot open device alsa." error,
+# /etc/libao.conf might have to be updated, possibly to:
+#
+# """
+# default_driver=pulse
+# quiet
+# """
+
+
+ogg_player_name="ogg123"
+ogg_player_opt="--quiet"
+
+
+# Default, preferred for command-line control:
+player_name="mplayer"
 
 player="$(which "${player_name}" 2>/dev/null)"
-
-#player=$(which cvlc 2>/dev/null)
 
 
 if [ ! -x "${player}" ]; then
 
-	echo "Error, no executable player found (${player})." 1>&2
+	echo "Error, no executable player found ('${player}')." 1>&2
 	exit 5
 
 fi
@@ -86,11 +137,15 @@ fi
 if [ "${player_name}" = "mplayer" ]; then
 
 	# For mplayer:
-	player_opt="-vc null -vo null -quiet"
+	player_opt="${mplayer_player_opt}"
 
-elif [ "${player_name}" = "cvlc" ]; then
+elif [ "${player_name}" = "${vlc_player_name}" ]; then
 
-	player_opt="--quiet --novideo --play-and-exit"
+	player_opt="${vlc_player_opt}"
+
+elif [ "${player_name}" = "${ogg_player_name}" ]; then
+
+	player_opt="${ogg_player_opt}"
 
 fi
 
@@ -191,6 +246,12 @@ while [ ! $# -eq 0 ]; do
 done
 
 
+# To test filenames with spaces:
+#for f in ${files} | while read f ; do
+#   echo "Listed '${f}'"
+#done
+#exit
+
 #echo "do_announce=${do_announce}"
 #echo "be_quiet=${be_quiet}"
 #echo "be_recursive=${be_recursive}"
@@ -204,12 +265,44 @@ if [ "${set_volume}" -eq 1 ]; then
 
 else
 
+	# Possibly a symlink:
+	if [ -e "${settings_file}" ]; then
+
+		#echo "Reading the '${settings_file}' configuration file."
+
+		config_volume="$(/bin/cat "${settings_file}" | grep -v '^[[:space:]]*%' | grep ${volume_key} | sed 's|.*, ||1' | sed 's| }.$||1')"
+
+		if [ -n "${config_volume}" ]; then
+			#echo "Read volume configured from '${settings_file}': ${config_volume}%".
+			target_volume="${config_volume}"
+		fi
+
+	fi
+
 	# Assuming PulseAudio:
-	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+	pacmd="$(which pacmd 2>/dev/null)"
 
-	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
+	if [ ! -x "${pacmd}" ]; then
 
-	if ! pactl -- set-sink-volume ${target_sink} "${target_volume}%"; then
+		echo " Error, no 'pacmd' tool found. Is PulseAudio used by this system?" 1>&2
+
+		exit 50
+
+	fi
+
+	set_volume_script_name="set-audio-volume.sh"
+
+	set_volume_script="$(which ${set_volume_script_name} 2>/dev/null)"
+
+	if [ ! -x "${set_volume_script}" ]; then
+
+		echo "  Error, our '${set_volume_script_name}' script could not be found." 1>&2
+
+		exit 17
+
+	fi
+
+	if ! ${set_volume_script} ${target_sink} "${target_volume}"; then
 
 		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
 
@@ -226,6 +319,7 @@ fi
 
 #echo "files=${files}"
 
+
 # Not recursive yet, but may become:
 if [ ${be_recursive} -eq 1 ]; then
 	for e in ${files}; do
@@ -240,6 +334,7 @@ if [ ${be_recursive} -eq 1 ]; then
 
 	done
 fi
+
 
 
 if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
@@ -271,7 +366,19 @@ else
 fi
 
 
+base_player="${player}"
+base_player_opt="${player_opt}"
+
+# Records whether a player switch occurred:
+#player_switch=1
+
+# Never matching initially:
+last_player=""
+
+
 for f in ${ordered_files}; do
+
+	#echo "Processing '${f}'"
 
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ]; then
@@ -289,7 +396,7 @@ for f in ${ordered_files}; do
 
 		if [ ! -f "${f}" ]; then
 
-			echo "  (file ${f} not found, thus skipped)" 1>&2
+			echo "  (file '${f}' not found, thus skipped)" 1>&2
 
 		else
 
@@ -314,6 +421,40 @@ for f in ${ordered_files}; do
 
 			fi
 
+			# Will remain as long as my mplayer is unable to play Ogg-Vorbis
+			# files:
+			#
+			#if echo "${f}" | grep -q ".*\.ogg"; then
+
+				#echo "(activating Ogg workaround)"
+				#player_switch=0
+				#player_name="${ogg_player_name}"
+				#player="${ogg_player_name}"
+				#player_opt="${ogg_player_opt}"
+
+			#fi
+
+			# Will remain as long as my mplayer is unable to play at least some
+			# IFF (little-endian) data, WAVE audio, Microsoft ADPCM WAV files:
+			#
+			#if echo "${f}" | grep -q ".*\.wav"; then
+			# Should ogg123 bz faulty as well:
+			if echo "${f}" | grep -q ".*\.wav\|.*\.ogg"; then
+
+				#echo "(activating VLC workaround)"
+				#player_switch=0
+				player_name="${vlc_player_name}"
+				player="${vlc_player_name}"
+				player_opt="${vlc_player_opt}"
+
+			fi
+
+			if [ ! "${last_player}" = "${player}" ]; then
+				display_notification
+			fi
+
+			last_player="${player}"
+
 			# Useful to stop the overall reading as a whole:
 			if ! ${player} ${player_opt} "${f}" 1>/dev/null 2>&1; then
 
@@ -322,11 +463,22 @@ for f in ${ordered_files}; do
 
 			fi
 
+			# Restore defaults for next readings:
+			#if [ $player_switch -eq 0 ]; then
+			#
+			#   player_switch=1
+			#
+			#   player="${base_player}"
+			#   player_opt="${base_player_opt}"
+			#
+			#fi
+
 		fi
 
 	fi
 
 done
+
 
 
 # Allows to avoid having several of these lines accumulate:

@@ -133,9 +133,15 @@ fallback_label="${france_culture_label}"
 
 keep_vol_opt="--keep-volume"
 
-# Percentage of maximum volume:
+# Default percentage of maximum volume:
 target_volume=30
+#target_volume=70
 
+# To set a custom target volume:
+settings_file="${HOME}/.ceylan-settings.etf"
+
+# In the settings:
+volume_key="audio_volume"
 
 usage="Usage: $(basename $0) [${keep_vol_opt}] [RADIO_OPT|STREAM_URL]: plays the specified Internet radio, where RADIO_OPT = SHORT_RADIO_OPT | LONG_RADIO_OPT may be, for:
   - Radio France:
@@ -154,7 +160,7 @@ usage="Usage: $(basename $0) [${keep_vol_opt}] [RADIO_OPT|STREAM_URL]: plays the
   - ${blp_label}: ${blp_short_opt} | ${blp_long_opt}
 
 Outputs the audio streams of specified (online) radio, either preset or based on its specified stream URL.
-By default, unless the '${keep_vol_opt}' option is specified, sets also the detected audio output to ${target_volume}% of the maximum volume.
+By default, unless the '${keep_vol_opt}' option is specified, sets also the detected audio output: the host-specific default volume can be defined in the '${settings_file}' file, thanks to its '${volume_key}' key; for example: a '{ ${volume_key}, 35 }.' line there will set the volume to 35% of its maximum value; otherwise the default volume (${target_volume}%) will apply
 
   Note:
    - the underlying audio player remains responsive (to console-level interaction, for example to pause it)
@@ -176,7 +182,7 @@ player_opt="-nolirc -quiet -msglevel all=0:demuxer=4"
 
 
 # VLC also relevant:
-#player=$(which cvlc 2>/dev/null)
+#player="$(which cvlc 2>/dev/null)"
 #player_opt="--quiet --novideo --play-and-exit"
 
 
@@ -191,9 +197,10 @@ fi
 # Setting the volume automatically allows to avoid accidentally-loud playbacks:
 set_volume=0
 
+
 if [ "$1" = "${keep_vol_opt}" ]; then
-	set_volume=1
 	shift
+	set_volume=1
 fi
 
 
@@ -368,12 +375,33 @@ if [ "${set_volume}" -eq 1 ]; then
 
 else
 
-	# Assuming PulseAudio:
-	target_sink="$(pacmd list-sinks | grep -B 4 RUNNING | grep index | awk ' { print $NF } ')"
+	# Possibly a symlink:
+	if [ -e "${settings_file}" ]; then
 
-	echo "  Setting volume to ${target_volume}% (for auto-detected sink ${target_sink})."
+		#echo "Reading the '${settings_file}' configuration file."
 
-	if ! pactl -- set-sink-volume ${target_sink} "${target_volume}%"; then
+		config_volume="$(/bin/cat "${settings_file}" | grep -v '^[[:space:]]*%' | grep ${volume_key} | sed 's|.*, ||1' | sed 's| }.$||1')"
+
+		if [ -n "${config_volume}" ]; then
+			#echo "Read volume configured from '${settings_file}': ${config_volume}%".
+			target_volume="${config_volume}"
+		fi
+
+	fi
+
+	set_volume_script_name="set-audio-volume.sh"
+
+	set_volume_script="$(which ${set_volume_script_name} 2>/dev/null)"
+
+	if [ ! -x "${set_volume_script}" ]; then
+
+		echo "  Error, our '${set_volume_script_name}' script could not be found." 1>&2
+
+		exit 17
+
+	fi
+
+	if ! ${set_volume_script} ${target_sink} "${target_volume}"; then
 
 		echo "  Error, failed to modify the volume for sink ${target_sink}." 1>&2
 
@@ -399,6 +427,24 @@ if [ $display_notification -eq 0 ]; then
 		echo "  - <Enter> or <Escape> to toggle between this stream ('${stream_label}') and the fallback one ('${fallback_label}')"
 		echo "  - <CTRL-C> to stop all playbacks"
 		echo
+
+	fi
+
+	# Apparently no solution to do the same with VLC:
+	if [ "${player_name}" = "cvlc" ]; then
+
+		echo " Using cvlc (VLC), hence one may hit:"
+		echo "  - <CTRL-C> to stop the current playback"
+		echo "  - <CTRL-C> twice quickly to stop all playbacks"
+		echo
+
+	fi
+
+
+	if [ "${player_name}" = "ogg123" ]; then
+
+	   echo " Using ogg123, hence one may hit CTRL-C once to go to the next playback, twice to stop all playbacks; use CTRL-Z to pause and fg to resume."
+	   echo
 
 	fi
 

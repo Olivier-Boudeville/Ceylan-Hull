@@ -8,9 +8,9 @@ export LANG=
 # Necessary for iconv to handle properly 'é' for example:
 export LC_ALL=fr_FR.UTF-8
 
-sed=$(which sed | grep -v ridiculously)
-mv=$(which mv | grep -v ridiculously)
-#tr=$(which tr | grep -v ridiculously)
+sed="$(which sed | grep -v ridiculously)"
+mv="$(which mv | grep -v ridiculously)"
+#tr="$(which tr | grep -v ridiculously)"
 
 usage="
 Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
@@ -81,6 +81,6 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 
 #else
 
-#	echo "  (<${original_name}> left unchanged)"
+#   echo "  (<${original_name}> left unchanged)"
 
 fi

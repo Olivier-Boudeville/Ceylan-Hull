@@ -1,32 +1,50 @@
 #!/bin/sh
 
-# Ensures that the touchpad (if any) is enabled iff there is no mouse connected.
-#
-# Useful if at boot time there is already a mouse connected, as apparently no
-# udev event is triggered, thus our toggle-touchpad-enabling.sh script is not
-# executed.
-#
-# So the current script shall be typically run when the X session is started; so
-# typically one may add, before the final exec of one's ~/.xinitrc:
-#
-# $CEYLAN_HULL/disable-touchpad-if-mouse-available.sh
 
-# Two different methods may/have to be used to manage the touchpad.
+usage="Usage: $(basename $0) [-h|--help]: ensures that the touchpad (if any) is enabled iff there is no mouse connected.
 
+ Useful if at boot time there is already a mouse connected, as apparently no
+ udev event is triggered, thus our toggle-touchpad-enabling.sh script is not
+ executed.
 
-xinput=$(which xinput 2>/dev/null)
+ So the current script shall be typically run when the X session is started; so
+ typically one may add, before the final exec of one's ~/.xinitrc:
 
-if [ ! -x "${xinput}" ]; then
+ $CEYLAN_HULL/disable-touchpad-if-mouse-available.sh
 
-	echo "  Error, no 'xinput' executable found." 1>&2
+ Two different methods may/have to be used to manage the touchpad.
+"
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit
+
+fi
+
+if [ "$1" ]; then
+
+	echo "  Error, extra parameter specified.
+${usage}" 1>&2
+
 	exit 5
 
 fi
 
 
-client=$(which synclient 2>/dev/null)
+xinput="$(which xinput 2>/dev/null)"
 
-if [ ! -x "${synclient}" ]; then
+if [ ! -x "${xinput}" ]; then
+
+	echo "  Error, no 'xinput' executable found." 1>&2
+	exit 15
+
+fi
+
+
+client="$(which synclient 2>/dev/null)"
+
+if [ ! -x "${client}" ]; then
 
 	echo "  Error, no 'synclient' executable found." 1>&2
 	exit 10
@@ -51,7 +69,7 @@ if ${xinput} | grep -i mouse 1>/dev/null; then
 		notify-send "Mouse found, yet disabling of touchpad ($touchpad_id) failed."
 		${client} TouchpadOff=1
 
-		exit 5
+		exit 25
 
 	fi
 

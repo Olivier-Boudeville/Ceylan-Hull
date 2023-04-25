@@ -323,6 +323,8 @@ For Audio
 
 - `listen-to-radio.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/listen-to-radio.sh>`_: plays the stream of various Internet radios
 
+-`set-audio-volume.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-audio-volume.sh>`_: sets the volume (as a percentage of the maximum one) of the target audio sink
+
 - `extract-audio-from-video.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/extract-audio-from-video.sh>`_: strips the video information from specified MP4 file to generate a pure audio file (.ogg) out of it (original MP4 file not modified); useful, as the resulting file is smaller and less resource-demanding to playback
 
 - `resample.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/resample.sh>`_: resamples the target audio file to the specified frequency, keeping the same bitdepth

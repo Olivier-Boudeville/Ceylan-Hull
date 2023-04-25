@@ -288,9 +288,9 @@ chooseNedit()
 
 
 
-# For the *emacs, we use a window width of 83 instead of 80 to compensate
-# for the line numbers. However the length of that number depends on the
-# number of lines (ex: more than 1000 lines implies 4 digits on the left).
+# For the *emacs, we use a window width of 83 instead of 80 to compensate for
+# the line numbers. However the length of that number depends on the number of
+# lines (e.g. more than 1000 lines implies 4 digits on the left).
 
 chooseXemacs()
 {
@@ -668,7 +668,7 @@ view_selected_element()
 
 	if [ ! -f "${file_elem}" ]; then
 
-		# Sometimes a filename followed by some garbage is specified (ex: a
+		# Sometimes a filename followed by some garbage is specified (e.g. a
 		# regrep might return "class_X.erl:construct"); here we try to fix the
 		# filename by removing all characters after the first semicolon; we also
 		# remove any 'file://' prefix:
@@ -691,7 +691,7 @@ view_selected_element()
 		target_file="$(echo "${file_elem}" | sed 's|^ ||1' | sed 's|:.*$||1')"
 		#echo "target_file = ${target_file}"
 
-		target_path="$(find . -name '${target_file}')"
+		target_path="$(find . -name "${target_file}")"
 
 		if [ -z "${target_path}" ]; then
 
@@ -716,7 +716,7 @@ view_selected_element()
 		target_file="$(echo ${file_elem} | sed 's|^ ||1' | sed 's|:.*$||1')"
 		#echo "target_file = ${target_file}"
 
-		target_path="$(/bin/locate --limit 1 --existing ${target_file})"
+		target_path="$(/bin/locate --limit 1 --existing "${target_file}")"
 		#echo "target_path = ${target_path}"
 
 		if [ -z "${target_path}" ]; then
@@ -1082,9 +1082,10 @@ if [ $standalone -eq 0 ]; then
 
 fi
 
-# A problem is that if a specified file includes spaces (ex: 'hello world.txt'),
-# then apparently there is no easy way in sh to preserve that space (the script
-# will understand that two files are listed, 'hello' and 'world.txt').
+# A problem is that if a specified file includes spaces (e.g. 'hello
+# world.txt'), then apparently there is no easy way in sh to preserve that space
+# (the script will understand that two files are listed, 'hello' and
+# 'world.txt').
 #
 # See
 # https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters for more details.
