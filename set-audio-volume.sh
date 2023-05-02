@@ -140,6 +140,18 @@ if [ ! -x "${pactl}" ]; then
 fi
 
 
+# Always useful to report:
+echo "  The current volume of the ${sink_type} audio sink #${target_sink} is:"
+
+if ! "${pactl}" -- get-sink-volume ${target_sink} | grep Volume; then
+
+	echo "  Error, failed to read the volume for sink #${target_sink}." 1>&2
+
+	exit 45
+
+fi
+
+
 if [ $do_set -eq 0 ]; then
 
 	echo "  Setting volume to ${target_volume}% for ${sink_type} audio sink #${target_sink}."
@@ -149,18 +161,6 @@ if [ $do_set -eq 0 ]; then
 		echo "  Error, failed to modify the volume for sink #${target_sink}." 1>&2
 
 		exit 35
-
-	fi
-
-else
-
-	echo "  The current volume of the ${sink_type} audio sink #${target_sink} is:"
-
-	if ! "${pactl}" -- get-sink-volume ${target_sink} | grep Volume; then
-
-		echo "  Error, failed to read the volume for sink #${target_sink}." 1>&2
-
-		exit 45
 
 	fi
 
