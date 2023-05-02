@@ -10,19 +10,20 @@ do_fetch=0
 # Enabled by default:
 auto_play=0
 
+speed_factor=25
 
 mplayer_player_name="mplayer"
-mplayer_player_opt="-vc null -vo null -quiet -speed 25"
+mplayer_player_opt="-quiet -speed ${speed_factor}"
 
 vlc_player_name="cvlc"
-vlc_player_opt="--quiet --play-and-exit"
+vlc_player_opt="--rate ${speed_factor} --quiet --play-and-exit"
 
 
-#viewer_name="${mplayer_player_name}"
-#viewer_opts="${mplayer_player_opt}"
+viewer_name="${mplayer_player_name}"
+viewer_opts="${mplayer_player_opt}"
 
-viewer_name="${vlc_player_name}"
-viewer_opts="${vlc_player_opt}"
+#viewer_name="${vlc_player_name}"
+#viewer_opts="${vlc_player_opt}"
 
 
 
@@ -83,6 +84,9 @@ if [ ! -x "${viewer}" ]; then
 	exit 30
 
 fi
+
+#echo "viewer_name=${viewer_name}"
+#echo "viewer=${viewer}"
 
 
 if [ $do_fetch -eq 0 ]; then
@@ -174,10 +178,15 @@ fi
 
 
 # VLC:
-#echo "Use '+' to fast forward."
+if [ "${viewer_name}" = "${mplayer_player_name}" ]; then
 
-# Mplayer:
-echo "Use '}' to fast forward."
+	echo "Using mplayer, thus press '}' to fast forward."
+
+elif [ "${viewer_name}" = "${vlc_player_name}" ]; then
+
+	echo "Using VLC, thus press '+' to fast forward."
+
+fi
 
 
 recordings="$(/bin/ls *.mkv 2>/dev/null)"
@@ -212,6 +221,9 @@ for f in ${recordings}; do
 			echo " - viewing $f"
 
 			${viewer} ${viewer_opts} "$f" 1>/dev/null 2>&1
+
+			# For error messages and all:
+			#${viewer} ${viewer_opts} "$f"
 
 			#cvlc "$f" 1>/dev/null
 
