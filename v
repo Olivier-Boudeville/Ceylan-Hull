@@ -22,9 +22,7 @@ show_opt="--display"
 
 
 usage="
-Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] FILE_ELEMENT_1 FILE_ELEMENT_2...:
-
-  Opens for reading the set of specified files (or directories) with the 'best' available viewer.
+Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|--nedit] [-f|--find] [-s|--standalone] FILE_ELEMENT_1 FILE_ELEMENT_2...: opens for reading the set of specified files (or directories) with the 'best' available viewer for each of them.
 
   Options are:
 	  '${no_x_opt}' to prevent selecting a graphical viewer, notably if there is no available X display
@@ -88,7 +86,7 @@ chooseEvince()
 
 	#echo "Evince selected."
 
-	viewer="$(which evince)"
+	viewer="$(which evince 2>/dev/null)"
 	viewer_short_name="Evince"
 
 }
@@ -99,7 +97,7 @@ chooseLibreOffice()
 
 	#echo "LibreOffice selected."
 
-	viewer="$(which libreoffice)"
+	viewer="$(which libreoffice 2>/dev/null)"
 	viewer_short_name="LibreOffice"
 
 }
@@ -109,7 +107,7 @@ chooseMultimediaViewer()
 {
 
 	# Geeqie and Gthumb may have issues with clutter, so:
-	viewer="$(which gwenview)"
+	viewer="$(which gwenview 2>/dev/null)"
 	viewer_short_name="GwenView"
 
 }
@@ -120,7 +118,7 @@ chooseEog()
 
 	#echo "Eog selected."
 
-	viewer="$(which eog)"
+	viewer="$(which eog 2>/dev/null)"
 	viewer_short_name="Eog"
 
 }
@@ -130,7 +128,7 @@ chooseF3d()
 
 	#echo "F3D selected."
 
-	viewer="$(which f3d)"
+	viewer="$(which f3d 2>/dev/null)"
 	viewer_short_name="F3D"
 	viewer_opt="--verbose"
 
@@ -159,26 +157,49 @@ chooseBlenderImporter()
 }
 
 
-chooseFirefox()
+chooseBrowser()
 {
 
 	#echo "Firefox selected."
 
-	viewer="$(which firefox)"
+	viewer="$(which firefox 2>/dev/null)"
 	viewer_short_name="Firefox"
 
 }
 
 
-chooseMplayer()
+chooseVideoPlayer()
 {
 
-	#echo "Mplayer selected."
+	viewer="$(which mplayer 2>/dev/null)"
 
-	viewer="$(which mplayer)"
-	viewer_short_name="Mplayer"
+	if [ -x "${viewer}" ]; then
 
-	viewer_opt="-nolirc -quiet -msglevel all=0"
+		#echo "Mplayer selected."
+
+		viewer_short_name="Mplayer"
+
+		viewer_opt="-nolirc -quiet -msglevel all=0"
+
+	else
+
+		viewer="$(which cvlc 2>/dev/null)"
+
+		if [ -x "${viewer}" ]; then
+
+			#echo "cvlc selected."
+
+			viewer_short_name="VLC"
+
+			viewer_opt="--quiet --play-and-exit"
+
+		else
+
+			chooseBrowser
+
+		fi
+
+	fi
 
 }
 
@@ -187,7 +208,7 @@ chooseMplayer()
 # through this script) shall be preferred though, as this offers more
 # flexibility/options.
 #
-choosePlayAudio()
+chooseAudioPlayer()
 {
 
 	#echo "PlayAudio selected."
@@ -200,7 +221,7 @@ choosePlayAudio()
 
 		echo "Warning: Ceylan-Hull's '${play_script_name}' not found, defaulting to Mplayer." 1>&2
 
-		chooseMplayer
+		chooseVideoPlayer
 
 	else
 
@@ -437,6 +458,8 @@ autoSelectViewer()
 
 	[ $verbose -eq 1 ] || echo "Auto-selecting viewer"
 
+	#echo "Warning: auto-selecting viewer." 1>&2
+
 	# Take the best one (watch out the order!):
 
 	viewer=""
@@ -529,12 +552,13 @@ autoSelectViewer()
 applyViewer()
 {
 
+	#echo "Applying viewer on ${file_elem}..."
+
 	[ $verbose -eq 1 ] || (
 		echo "multi_win = ${multi_win}";
 		echo "viewer_short_name = ${viewer_short_name}";
 		echo "viewer = ${viewer}";
 		echo "viewer_opt = ${viewer_opt}" )
-
 
 	# Empty in a function:
 	#echo "\$@ = $@"
@@ -551,10 +575,12 @@ applyViewer()
 
 	fi
 
+	#echo "(viewer '${viewer_short_name}' found as '${viewer}')"
+
 	# Let's hope any display needed is OK.
 
 	# To separate each file managed in turn:
-	echo
+	#echo
 
 	if [ -z "${DISPLAY}" ]; then
 
@@ -595,30 +621,32 @@ applyViewer()
 
 		fi
 
-			if [ "${viewer_short_name}" = "Nedit" ]; then
-				sleep 1
-			fi
+		if [ "${viewer_short_name}" = "Nedit" ]; then
+			sleep 1
+		fi
+
+	else
+
+		# As not all tools can/shall be run in background:
+
+		if [ $run_in_background -eq 0 ]; then
+
+			#echo "Running ${viewer} in background..."
+			[ $verbose -eq 1 ] || echo "case C: ${viewer} ${viewer_opt} ${file_elem}"
+			${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
 
 		else
 
-			# As not all tools can/shall be run in background:
+			#echo "Running ${viewer} ${viewer_opt} in foreground..."
+			[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
+			${viewer} ${viewer_opt} "${file_elem}"
 
-			if [ $run_in_background -eq 0 ]; then
-
-				#echo "Running ${viewer} in background..."
-				[ $verbose -eq 1 ] || echo "case C: ${viewer} ${viewer_opt} ${file_elem}"
-				${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
-
-			else
-
-				#echo "Running ${viewer} ${viewer_opt} in foreground..."
-				[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
-				${viewer} ${viewer_opt} "${file_elem}"
-
-			fi
+		fi
 
 	fi
 
+	# So that a given file element is viewed only once, not twice:
+	is_applied=0
 
 }
 
@@ -660,6 +688,8 @@ displayViewers()
 # Manages the (single) file element specified in $1.
 view_selected_element()
 {
+
+	is_applied=1
 
 	file_elem="$1"
 
@@ -748,7 +778,7 @@ view_selected_element()
 		#echo ${viewer} ${viewer_opt} "${dir}"
 		${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
 
-		exit 0
+		is_applied=0
 
 	fi
 
@@ -760,7 +790,7 @@ view_selected_element()
 	fi
 
 	# Normalising all extensions to lowercase first:
-	extension="$(echo ${file_elem}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
+	extension="$(echo ${file_elem} | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
 	#extension="$(echo $@ | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 	#extension="$(echo $1| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
@@ -799,42 +829,27 @@ view_selected_element()
 		file_elem="${renamed_elem}"
 		extension="webp"
 
-	fi
-
-
-	if [ "${extension}" = "pdf" ]; then
+	elif [ "${extension}" = "pdf" ]; then
 
 		chooseEvince
 		applyViewer
-		exit 0
 
-	fi
-
-	if [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+	elif [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 		chooseLibreOffice
 		applyViewer
-		exit 0
 
-	fi
-
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ]  || [ "${extension}" = "tga" ]; then
+	elif [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ]  || [ "${extension}" = "tga" ]; then
 
 		chooseEog
 		applyViewer
-		exit 0
 
-	fi
+	elif [ "${extension}" = "webp" ]; then
 
-	if [ "${extension}" = "webp" ]; then
-
-		chooseFirefox
+		chooseBrowser
 		applyViewer
-		exit 0
 
-	fi
-
-	if [ "${extension}" = "xml" ]; then
+	elif [ "${extension}" = "xml" ]; then
 
 		viewer="$(which xmllint 2>/dev/null)"
 
@@ -844,20 +859,16 @@ view_selected_element()
 			run_in_background=1
 
 			applyViewer
-			exit 0
 
 		else
 
 			echo "Warning: no 'xmllint' tool available, defaulting to Emacs." 1>&2
 			chooseEmacs
 			applyViewer
-			exit 0
 
 		fi
 
-	fi
-
-	if [ "${extension}" = "json" ]; then
+	elif [ "${extension}" = "json" ]; then
 
 		viewer="$(which jq 2>/dev/null)"
 
@@ -866,86 +877,57 @@ view_selected_element()
 			viewer_opt="."
 			viewer_short_name="jq"
 			applyViewer
-			exit 0
 
 		else
 
 			echo "Warning: no 'jq' tool available, defaulting to Emacs." 1>&2
 			chooseEmacs
 			applyViewer
-			exit 0
 
 		fi
 
-	fi
+	elif [ "${extension}" = "html" ]; then
 
-
-	if [ "${extension}" = "html" ]; then
-
-		chooseFirefox
+		chooseBrowser
 		applyViewer
-		exit 0
-
-	fi
-
 
 	# Audio file:
-	if [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ]; then
+	elif [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ]; then
 
-		choosePlayAudio
+		chooseAudioPlayer
 
 		# Otherwise difficult to control/stop:
 		run_in_background=1
 
-	fi
-
-
 	# Video file:
-	if [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
+	elif [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
 
-		# Another option is: vlc.
-		chooseMplayer
+		chooseVideoPlayer
 
-	fi
-
-
-	if [ "${extension}" = "dia" ]; then
+	elif [ "${extension}" = "dia" ]; then
 
 		viewer="$(which dia)"
 		viewer_short_name="dia"
 		applyViewer
-		exit 0
 
-	fi
-
-
-	if [ "${extension}" = "blend" ]; then
+	elif [ "${extension}" = "blend" ]; then
 
 		chooseBlender
 		applyViewer
-		exit 0
-
-	fi
 
 	# Blender will not open them, they must be imported instead:
-	if [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ]; then
+	elif [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ]; then
 
 		chooseF3d
 		applyViewer
-		exit 0
-
-	fi
 
 	# Blender will not open them, they must be imported instead:
-	if [ "${extension}" = "ifc" ]; then
+	elif [ "${extension}" = "ifc" ]; then
 
 		chooseBlenderImporter
 		applyViewer
-		exit 0
 
-	fi
-
-	if [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
+	elif [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then
 
 		# Is it a compressed trace file?
 		if echo "${file_elem}" | grep '.traces' 1>/dev/null; then
@@ -953,10 +935,7 @@ view_selected_element()
 			extension="traces"
 		fi
 
-	fi
-
-
-	if [ "${extension}" = "traces" ]; then
+	elif [ "${extension}" = "traces" ]; then
 
 		LOGMX="$(which logmx.sh)"
 
@@ -973,7 +952,6 @@ view_selected_element()
 		fi
 
 		applyViewer
-		exit 0
 
 	fi
 
@@ -996,7 +974,11 @@ view_selected_element()
 
 	#echo "Applying finally the viewer"
 
-	applyViewer
+	if [ $is_applied -eq 1 ]; then
+		applyViewer
+	fi
+
+	#echo "Is applied? $is_applied."
 
 }
 
@@ -1109,9 +1091,9 @@ for file_elem in "$@"; do
 
 done
 
-# So we do not seem able to keep in a variable the information obtained after
-# having iterated on $@. So we still use 'parameters', but set it exactly to
-# "$@", and manage afterwards the fact that options (like "-s") may linger in
+# So we do not seem to be able to keep in a variable the information obtained
+# after having iterated on $@. So we still use 'parameters', but set it exactly
+# to "$@", and manage afterwards the fact that options (like "-s") may linger in
 # it:
 
 #echo "\$@ = $@"
