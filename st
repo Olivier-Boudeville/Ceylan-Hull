@@ -12,9 +12,13 @@ pager="$(which more 2>/dev/null)"
 # ('more' option, yet unsupported on its older versions)
 #
 # Then hit 'q' to exit:
-pager_opt="--exit-on-eof"
+#pager_opt="--exit-on-eof"
+
+# Supported even when --exit-on-eof is not:
+pager_opt="-e"
 #pager_opt=""
 
+# 'less' option: --quit-at-eof
 
 # With 'less', the -r option is useful to preserve colors.
 
