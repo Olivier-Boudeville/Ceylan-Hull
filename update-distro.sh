@@ -31,7 +31,7 @@ if [ -f "${distro_id_file}" ]; then
 
 	. "${distro_id_file}"
 
-	if [ "$NAME" = "Arch Linux" ]; then
+	if [ "${NAME}" = "Arch Linux" ]; then
 
 		distro_type="Arch"
 
@@ -192,6 +192,20 @@ if [ "$(id -u)" = "0" ]; then
 
 			fi
 
+			# Keeps the last cache and the currently installed one; clears the
+			# cache for unused packages:
+
+			paccache="$(which paccache 2>/dev/null)"
+
+			if [ -x "${paccache}" ]; then
+
+				"${paccache}" -rvuk0 && "${paccache}" -rvk3
+
+			else
+
+				echo "Warning: no 'paccache' executable found, consider installing the 'pacman-contrib' package." 1>&2
+
+			fi
 			;;
 
 		*)

@@ -935,7 +935,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	fi
 
 
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "tga" ] || [ "${extension}" = "xcf" ]; then
+	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "tga" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "xcf" ]; then
 
 		chooseGimp
 		applyEditor

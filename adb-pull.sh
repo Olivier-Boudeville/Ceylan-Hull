@@ -1,10 +1,10 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorizing ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that 'adb pull' does not support that.
-Ex: $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg"
+For example: $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg"
 
 
-# To find content (ex: snapshots) in mobile phone:
+# To find content (e.g. snapshots) in one's mobile phone:
 # $ adb shell
 # $ find "/sdcard/" -iname "*.jpg"
 #
