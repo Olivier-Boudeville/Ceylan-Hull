@@ -3,9 +3,9 @@
 # Preferring not a blind transformation on any binary file (ex: .beam, .o, .so,
 # executables, etc.).
 
-target_extensions="txt markdown md asciidoc spec erl hrl escript app edoc rst src config js json mk"
+target_extensions="txt markdown md asciidoc spec erl hrl java escript app edoc rst src config js json mk"
 
-target_filenames="Makefile rebar.config .gitignore LICENSE"
+target_filenames="Makefile pom.xml rebar.config .gitignore LICENSE"
 
 
 usage="Usage: $(basename $0) [-h|--help] ROOT_DIRECTORY: fixes whitespace problems in all eligible files found from the specified root directory tree.
