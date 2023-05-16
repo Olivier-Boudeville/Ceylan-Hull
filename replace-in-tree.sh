@@ -1,12 +1,22 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) FILE_PATTERN SOURCE_EXPR TARGET_EXPR: replaces, in files whose name matches the specified pattern found from the current directory, the specified source pattern with the target one."
+usage="Usage: $(basename $0) [-h|--help] FILE_PATTERN SOURCE_EXPR TARGET_EXPR: replaces, in files whose name matches the specified pattern found from the current directory, the specified source pattern with the target one."
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit 5
+
+fi
+
 
 if [ ! $# -eq 3 ]; then
 	echo "  Error, three parameters are expected.
 ${usage}" 1>&2
 	exit 5
 fi
+
 
 file_pattern="$1"
 source_pattern="$2"
