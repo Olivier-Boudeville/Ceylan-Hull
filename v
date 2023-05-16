@@ -839,12 +839,12 @@ view_selected_element()
 		chooseLibreOffice
 		applyViewer
 
-	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "tga" ]; then
+	elif [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "tga" ]; then
 
 		chooseEog
 		applyViewer
 
-	elif [ "${extension}" = "webp" ]; then
+	elif [ "${extension}" = "ico" ]; then
 
 		chooseBrowser
 		applyViewer
