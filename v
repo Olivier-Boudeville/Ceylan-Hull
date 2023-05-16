@@ -784,8 +784,18 @@ view_selected_element()
 
 	if [ ! -f "${file_elem}" ]; then
 
-		echo "  Error, the target file to view, '${file_elem}', does not exist." 1>&2
-		exit 15
+		if [ -d "${file_elem}" ]; then
+
+			# Supposedly we want to see the images in the specified directory:
+			chooseEog
+			applyViewer
+
+		else
+
+			echo "  Error, the target file to view, '${file_elem}', does not exist, or is neither a file nor a directory." 1>&2
+			exit 15
+
+		fi
 
 	fi
 
