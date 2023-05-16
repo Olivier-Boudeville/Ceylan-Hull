@@ -3,7 +3,7 @@
 # Preferring not a blind transformation on any binary file (ex: .beam, .o, .so,
 # executables, etc.).
 
-target_extensions="txt markdown md asciidoc spec erl hrl java escript app edoc rst src config js json mk"
+target_extensions="txt markdown md asciidoc spec erl hrl java escript app edoc rst src config js css json mk"
 
 target_filenames="Makefile pom.xml rebar.config .gitignore LICENSE"
 
