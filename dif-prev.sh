@@ -21,17 +21,6 @@ if [ "$1" = "${all_opt}" ]; then
 fi
 
 
-# Now false:
-#if [ $# -eq 0 ]; then
-#
-#	echo "  Error, at least one file shall be specified.
-#${usage}" 1>&2
-#
-#	exit 5
-#
-#fi
-
-
 log_opts="-p -m"
 
 if [ $# -eq 1 ]; then
