@@ -780,9 +780,7 @@ view_selected_element()
 
 		is_applied=0
 
-	fi
-
-	if [ ! -f "${file_elem}" ]; then
+	elif [ ! -f "${file_elem}" ]; then
 
 		echo "  Error, the target file to view, '${file_elem}', does not exist." 1>&2
 		exit 15
