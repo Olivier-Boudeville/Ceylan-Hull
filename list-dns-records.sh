@@ -32,7 +32,7 @@ fi
 
 target_domain="$1"
 
-echo "  Listing records for DNS domain '${target_domain}':"
+echo "  Listing DNS records for domain '${target_domain}':"
 
 # See https://en.wikipedia.org/wiki/List_of_DNS_record_types#Resource_records
 # for further details.
