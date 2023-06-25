@@ -13,7 +13,7 @@ mv="$(which mv | grep -v ridiculously)"
 #tr="$(which tr | grep -v ridiculously)"
 
 usage="
-Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e. without spaces or quotes, replaced by '-', nor accentuated characters in it."
+Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filename, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it."
 
 if [ $# -eq 0 ]; then
 	echo "
@@ -56,13 +56,15 @@ fi
 #
 # Useless then:
 #
-# | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g'  | ${sed} 's|ò|o|g'
+# | ${sed} 's|é|e|g' | ${sed} 's|è|e|g' | ${sed} 's|ê|e|g' | ${sed} 's|à|a|g' | ${sed} 's|â|a|g' | ${sed} 's|à|a|g' | ${sed} 's|î|i|g' | ${sed} 's|û|u|g' | ${sed} 's|ù|u|g' | ${sed} 's|ô|o|g' | ${sed} 's|ò|o|g'
 #
 # 's|-\.|-|1' replaced with 's|-\.|.|1' to better manage extensions (preferring
 # '*.pdf' to '*-pdf').
 #
 # ('--' filtered twice intentionally)
-corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|'|-|g " | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
+# (any leading '-' removed - at the root or below - otherwise seen as an option)
+#
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|'|-|g " | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | sed 's|^-||1' | sed 's|\-||1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
 
 
 #echo "Corrected name is: <${corrected_name}>"
@@ -78,7 +80,11 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 	fi
 
 	echo "  '${original_name}' renamed to '${corrected_name}'"
-	${mv} -f "${original_name}" "${corrected_name}"
+
+	# '--' to stop parsing options otherwise an entry starting with a dash would
+	# be interpreted as an option:
+	#
+	${mv} -f -- "${original_name}" "${corrected_name}"
 
 #else
 
