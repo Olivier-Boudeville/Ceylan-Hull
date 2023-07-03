@@ -780,9 +780,7 @@ view_selected_element()
 
 		is_applied=0
 
-	fi
-
-	if [ ! -f "${file_elem}" ]; then
+	elif [ ! -f "${file_elem}" ]; then
 
 		if [ -d "${file_elem}" ]; then
 

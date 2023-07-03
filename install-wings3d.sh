@@ -8,7 +8,7 @@ software_path="${HOME}/Software"
 #wings_dir="Wings3D"
 wings_dir="wings"
 
-wings_path="${software_path}/${wings_dir}"
+wings_path="${software_path}/${wings_dir}/vanilla/wings"
 
 # Reference repository:
 wings3d_git="https://github.com/dgud/wings.git"

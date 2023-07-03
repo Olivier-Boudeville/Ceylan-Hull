@@ -1,14 +1,18 @@
 #!/bin/sh
 
-usage="$(basename $0) [-i|--ignore-case] [FILENAME] PATTERNS: highlights, in the specified data (either the specified file or the standard input, when used through a pipe), the specified pattern(s), in a case-insensitive manner if requested.\n\n  Examples:\n    $(basename $0) my_file.txt dog wolf\n    echo \"aaaBBaaccc\" | $(basename $0) -i bb c\n
+usage="Usage: $(basename $0) [-i|--ignore-case] [FILENAME] PATTERNS: highlights, in the specified data (either the specified file or the standard input, when used through a pipe), the specified pattern(s), in a case-insensitive manner if requested.
+
+Examples:
+	$(basename $0) my_file.txt dog wolf
+	echo \"aaaBBaaccc\" | $(basename $0) -i bb c
 
 Note that such highlighting should preferably be done last in a series of pipes, as the color coding may interfere for example with the matching performed by any subsequent grep.
 "
 
 if [ $# -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ]; then
 
-	printf "\n  Usage: ${usage}"
-	exit 0
+	echo "${usage}"
+	exit
 
 fi
 

@@ -383,7 +383,7 @@ for f in ${ordered_files}; do
 	# If a directory is specified, just recurse and play everything found:
 	if [ -d "${f}" ]; then
 
-		cd "${f}" && $0 --no-notification
+		cd "${f}" && $0 --no-notification ; cd ..
 
 	elif echo "${f}" | grep -q ".*\.m3u" ; then
 
