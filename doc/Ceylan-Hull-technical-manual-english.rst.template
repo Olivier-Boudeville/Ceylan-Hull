@@ -362,9 +362,8 @@ For Video
 ---------
 
 - `convert-mov-to-x264-mp4.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mov-to-x264-mp4.sh>`_: converts specified MOV file to MP4
-
-- `set-single-screen.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-single-screen.sh>`_: adapts the displays so that, whether or not an external screen is connected, there is exactly one screen enabled (hence: either a laptop one or an external one; neither both nor none)
-
+- `set-single-screen.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-single-screen.sh>`_: adapts the displays so that, whether or not an external screen is connected, there is exactly one screen enabled (hence: either a native, internal one or an external one; neither both nor none)
+- `clone-screen-to-external.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/clone-screen-to-external.sh>`_: clones the current, primary screen (e.g. the one of a laptop) to any external one (e.g. a LCD one), so that exactly the same content is displayed on both (same size, with no truncation)"
 - `fix-video-mode.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-video-mode.sh>`_: forces a specified video resolution
 
 
