@@ -926,7 +926,7 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	fi
 
 
-	if [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+	if [ "${extension}" = "odt" ] || [ "${extension}" = "odg" ] || [ "${extension}" = "ods" ]|| [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 		chooseLibreOffice
 		applyEditor
