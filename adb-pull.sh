@@ -1,12 +1,14 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorizing ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that 'adb pull' does not support that.
-For example: $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg"
+usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorizing ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
+For example:
+  $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
+  $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf"
 
 
 # To find content (e.g. snapshots) in one's mobile phone:
 # $ adb shell
-# $ find "/sdcard/" -iname "*.jpg"
+# $ find "/sdcard/" -iname "*.jpg" 2>/dev/null
 #
 # Typically found as: /sdcard/DCIM/Camera/IMG_20200525_175458.jpg
 #
@@ -27,8 +29,10 @@ fi
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
 	echo "${usage}"
 	exit
+
 fi
 
 
@@ -42,4 +46,4 @@ ${usage}" 1>&2
 
 fi
 
-${adb_exec} shell ls $1 | tr -s "\r\n" "\0" | xargs -0 -n1 ${adb_exec} pull
+${adb_exec} shell ls ${args} | tr -s "\r\n" "\0" | xargs -0 -n1 ${adb_exec} pull
