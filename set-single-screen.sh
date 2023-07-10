@@ -94,7 +94,7 @@ if [ "${external_screen_status}" = "connected" ]; then
 
 else
 
-	echo "  Error, unable to detect the status of external screen (got '${external_screen_status}'). Is a dock powered?" 1>&2
+	echo "  Error, unable to detect the status of external screen (got '${external_screen_status}'). Is a dock powered and the cable correctly plugged-in?" 1>&2
 	exit 50
 
 fi
