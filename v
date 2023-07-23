@@ -908,7 +908,7 @@ view_selected_element()
 		run_in_background=1
 
 	# Video file:
-	elif [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ]; then
+	elif [ "${extension}" = "mp4" ] || [ "${extension}" = "flv" ] || [ "${extension}" = "m4v" ] || [ "${extension}" = "mkv" ] || [ "${extension}" = "avi" ] || [ "${extension}" = "webm" ]; then
 
 		chooseVideoPlayer
 
