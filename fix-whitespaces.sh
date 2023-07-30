@@ -61,6 +61,8 @@ if [ ! -x "${emacs}" ]; then
 
 fi
 
+#echo "Emacs version : $("${emacs}" -version)"
+
 
 # Nevertheless, using (fill-region (point-min) (point-max) instead of
 # (whitespace-cleanup) works, this is still a mystery....
@@ -83,6 +85,7 @@ fi
 
 #${emacs} "${target_file}" --batch --eval="(whitespace-cleanup)" -f save-buffer #1>/dev/null 2>&1
 
+# BASE_DIR to be defined:
 #${emacs} "${target_file}" --batch --eval="(add-to-list 'load-path "BASE_DIR/")" --eval="(require 'whitespace)" --eval='(whitespace-cleanup)' --eval='(save-buffer 0)' #1>/dev/null 2>&1
 
 #${emacs} "${target_file}" --batch --eval='(load "BASE_DIR/whitespace.el")' --eval='(whitespace-cleanup)' --eval='(save-buffer 0)' #1>/dev/null 2>&1
@@ -108,6 +111,7 @@ if [ ! -f "${init_el}" ]; then
 
 fi
 
+# Unfortunately does not seem to work anymore (at least not in all contexts):
 ${emacs} "${target_file}" --batch --eval="(load-file \"${init_el}\")" --eval='(whitespace-cleanup)' --eval='(save-buffer 0)' #1>/dev/null 2>&1
 
 if [ ! $? -eq 0 ]; then
