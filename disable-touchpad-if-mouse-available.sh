@@ -10,7 +10,7 @@ usage="Usage: $(basename $0) [-h|--help]: ensures that the touchpad (if any) is 
  So the current script shall be typically run when the X session is started; so
  typically one may add, before the final exec of one's ~/.xinitrc:
 
- $CEYLAN_HULL/disable-touchpad-if-mouse-available.sh
+ ${CEYLAN_HULL}/disable-touchpad-if-mouse-available.sh
 
  Two different methods may/have to be used to manage the touchpad.
 "
