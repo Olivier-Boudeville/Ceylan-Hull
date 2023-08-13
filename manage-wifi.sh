@@ -63,8 +63,9 @@ if [ -n "${if}" ]; then
 
 else
 
-	# Could be "wlp4s0", etc.:
-	if="wlo1"
+	# Could be various names like:
+	#if="wlo1"
+	if="wlp4s0"
 	echo "Unable to guess wifi interface, assuming ${if}."
 
 fi
@@ -153,13 +154,31 @@ fi
 # ip link set ${if} down
 # netctl start "wlo1-100_Fils_d'Ariane"
 
-# Otherwise:
-# 'wpa_supplicant -i ${if} -c < ( wpa_passphrase $ESSID $KEY )'
+# Otherwise, still as root (add -B to run as a daemon):
+# 'wpa_supplicant -i ${if} -c < (wpa_passphrase "${ESSID}" "${KEY}")'
 
 # Check with 'status'.
 
-# Then:
-# - either 'dhcpcd ${if}'
+# Another option is to use directly iw (see
+# https://wiki.archlinux.org/title/Network_configuration/Wireless), as root.
+#
+# Use 'iw dev' to list wireless interfaces.
+#
+# After the command prefix 'iw dev ${if}':
+#
+# - to get link status: link
+# - to get link statistics: station dump
+# - to scan for available access points: scan
+# - to set the operation mode to ad-hoc (peer to peer, no central controller):
+# set type ibss
+# - to connect to:
+#     * an open network: connect $ESSID
+#     * a WEP-encrypted network using an hexadecimal or ASCII key:
+#         connect $ESSID key 0:$KEY
+#     * for a WPA* network: use wpa_supplicant above
+
+# Then, in all cases, once connected:
+# - either with a DHCP client: 'dhcpcd ${if}'
 # - or, for example:
 # ip addr add 192.168.0.2/24 dev ${if}
 # ip route add default via 192.168.0.1
@@ -168,3 +187,5 @@ fi
 # - wifi-radar
 # - wifi-menu
 # - rfkill
+#
+# or, as a last resort, sacrifice three chickens.
