@@ -65,7 +65,11 @@ detect_audio_sink()
 
 			else
 
-				echo "  Warning: no running or idle audio sink found, using suspended one #${target_sink}." 1>&2
+				# Currently disabled, as apparently idle sinks may get
+				# suspended:
+				#
+				#echo "  Warning: no running or idle audio sink found, using suspended one #${target_sink}." 1>&2
+				:
 
 			fi
 
