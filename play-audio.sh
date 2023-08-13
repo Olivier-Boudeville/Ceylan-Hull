@@ -70,6 +70,20 @@ display_notification()
 	fi
 
 
+	if [ "${player_name}" = "mpv" ]; then
+
+		echo " Using mpv for player now, hence one may hit:"
+		echo "  - <space> to pause/unpause the current playback"
+		echo "  - '/' to decrease the volume, '*' to increase it"
+		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
+		echo "  - left and right arrow keys to go backward/forward in the current playback"
+		echo "  - <Enter> or <Escape> to jump to next playback"
+		echo "  - <CTRL-C> to stop all playbacks"
+		echo
+
+	fi
+
+
 	# Apparently no solution to do the same with VLC:
 	if [ "${player_name}" = "cvlc" ]; then
 
@@ -91,6 +105,7 @@ display_notification()
 
 }
 
+
 # To display playback notifications:
 do_display=1
 
@@ -98,8 +113,21 @@ if [ -x "${notify_cmd}" ]; then
 	do_display=0
 fi
 
+
+# Not used anymore, as not able to read properly Ogg/Vorbis files (e.g. Ogg
+# data, Vorbis audio, stereo, 44100 Hz, ~160000 bps):
+#
 mplayer_player_name="mplayer"
 mplayer_player_opt="-vc null -vo null -quiet"
+
+
+# Now preferred to mplayer:
+mpv_player_name="mpv"
+
+# As 'Option --vc was removed: use --vd=..., --hwdec=...':
+#mpv_player_opt="-vc null -vo null -quiet"
+mpv_player_opt="-vo null -quiet --msg-level=all=no"
+
 
 # VLC also relevant:
 vlc_player_name="cvlc"
@@ -122,7 +150,7 @@ ogg_player_opt="--quiet"
 
 
 # Default, preferred for command-line control:
-player_name="mplayer"
+player_name="mpv"
 
 player="$(which "${player_name}" 2>/dev/null)"
 
@@ -139,6 +167,10 @@ if [ "${player_name}" = "mplayer" ]; then
 	# For mplayer:
 	player_opt="${mplayer_player_opt}"
 
+elif [ "${player_name}" = "${mpv_player_name}" ]; then
+
+	player_opt="${mpv_player_opt}"
+
 elif [ "${player_name}" = "${vlc_player_name}" ]; then
 
 	player_opt="${vlc_player_opt}"
@@ -150,7 +182,7 @@ elif [ "${player_name}" = "${ogg_player_name}" ]; then
 fi
 
 
-# Could be used with mplayer:
+# Could be used with mplayer/mpv:
 #mplayer_cmd="${player} -msglevel identify=6 $f | grep -e '^ID_' | grep -v ID_AUDIO_ID | grep -v ID_DEMUXER | grep -v ID_FILENAME | grep -v ALSA"
 
 
@@ -373,7 +405,7 @@ base_player_opt="${player_opt}"
 #player_switch=1
 
 # Never matching initially:
-last_player=""
+last_player="${base_player}"
 
 
 for f in ${ordered_files}; do
@@ -435,19 +467,20 @@ for f in ${ordered_files}; do
 			#fi
 
 			# Will remain as long as my mplayer is unable to play at least some
-			# IFF (little-endian) data, WAVE audio, Microsoft ADPCM WAV files:
+			# IFF (little-endian) data, WAVE audio, Microsoft ADPCM WAV files
+			# and Ogg/Vorbis ones:
 			#
 			#if echo "${f}" | grep -q ".*\.wav"; then
-			# Should ogg123 bz faulty as well:
-			if echo "${f}" | grep -q ".*\.wav\|.*\.ogg"; then
+			# Should ogg123 be faulty as well:
+			#if echo "${f}" | grep -q ".*\.wav\|.*\.ogg"; then
 
 				#echo "(activating VLC workaround)"
 				#player_switch=0
-				player_name="${vlc_player_name}"
-				player="${vlc_player_name}"
-				player_opt="${vlc_player_opt}"
+				#player_name="${vlc_player_name}"
+				#player="${vlc_player_name}"
+				#player_opt="${vlc_player_opt}"
 
-			fi
+			#fi
 
 			if [ ! "${last_player}" = "${player}" ]; then
 				display_notification
@@ -455,11 +488,32 @@ for f in ${ordered_files}; do
 
 			last_player="${player}"
 
-			# Useful to stop the overall reading as a whole:
-			if ! ${player} ${player_opt} "${f}" 1>/dev/null 2>&1; then
+			if [ "${player_name}" = "mpv" ]; then
 
-				echo "Playback of ${f} failed, stopping." 1>&2
-				exit 20
+				#echo "Executing ${player} ${player_opt}"
+				if ! ${player} ${player_opt} "${f}"; then
+
+					exit 5
+
+				fi
+
+				# Finer control not needed:
+				#res=$?
+				#echo "res = ${res}"
+
+			else
+
+				# Useful to stop the overall reading as a whole:
+
+				# Uncomment to diagnose any issue:
+				#if ! ${player} ${player_opt} "${f}"; then
+
+				if ! ${player} ${player_opt} "${f}" 1>/dev/null 2>&1; then
+
+					echo "Playback of ${f} failed, stopping." 1>&2
+					exit 20
+
+				fi
 
 			fi
 
