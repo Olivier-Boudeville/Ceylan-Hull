@@ -18,7 +18,15 @@ ${usage}" 1>&2
 fi
 
 
+# May be useful/needed, for example to have proper date/time formats whereas the
+# system uses other settings:
+#
+export LC_ALL=fr_FR.UTF-8
+
+
 if [ "${target_client}" = "thunderbird" ]; then
+
+	# We recommend using the "DKIM Verifier" plugin.
 
 	thunderbird 1>/dev/null 2>&1 &
 
