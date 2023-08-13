@@ -15,16 +15,39 @@ play_stream()
 
 	echo "  Playing ${current_stream_label}..."
 
-	#echo ${player} ${player_opt} "${current_stream_url}"
+	#echo "Wanting to run ${player} ${player_opt} ${current_stream_url}"
 
 	# Allows to display the group and song name, typically as sent by Radio
 	# Paradise:
 	#
 	# (note that song names may contain single quotes, like in: "I'm All Right")
-	#
-	if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1; s|';||1"; then
+
+	# Use to debug:
+	#if ! ${player} ${player_opt} "${current_stream_url}"; then
+
+	# With mplayer:
+	#if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1; s|';||1"; then
 
 	#if ! ${player} ${player_opt} "${current_stream_url}" 2>/dev/null | grep --line-buffered 'ICY Info:' | grep --line-buffered  -v 'Commercial-free - Listener-supported' | sed "s|^ICY Info: StreamTitle='|    -> |1; s|';StreamUrl=.*||1"; then
+
+	# With mpv:
+
+	# (absolutely awful but needed to keep keyboard control in spite of keyboard
+	# display, to be able to toggle between streams with the Enter key while
+	# stopping for good with CTRL-C)
+
+	#set -e
+	set -o pipefail
+
+	#if ! script --return --quiet -c "${player} --quiet --msg-level=all=no,display-tags=info --display-tags=icy-title ${current_stream_url} /dev/null && e" | grep --line-buffered -v 'File tags:' | grep --line-buffered -v 'Commercial-free - Listener-supported' | sed 's|icy-title:|    -> |1'; then
+
+	script --return --quiet -c "${player} --quiet --msg-level=all=no,display-tags=info --display-tags=icy-title ${current_stream_url} /dev/null" | grep --line-buffered -v 'File tags:' | grep --line-buffered -v 'Commercial-free - Listener-supported' | sed 's|icy-title:|    -> |1'
+
+	res="$?"
+
+	#echo "res = ${res}"
+
+	if [ "${res}" = "4" ]; then
 
 		# We would like to simultaneously let the song name be echoed on the
 		# terminal and be used as the text of a desktop notification, but we did
@@ -40,6 +63,9 @@ play_stream()
 		exit 0
 
 	fi
+
+	set +o pipefail
+	#set +e
 
 }
 
@@ -172,14 +198,23 @@ By default, unless the '${keep_vol_opt}' option is specified, sets also the dete
 # Hidden option, useful for recursive uses: "--no-notification"
 
 
-player_name="mplayer"
+# This player choice and configuration shall be kept in line with the one of the
+# play-audio.sh script.
+
+#player_name="mplayer"
+player_name="mpv"
 
 player="$(which "${player_name}" 2>/dev/null)"
 
 # For mplayer:
 #player_opt="-vc null -vo null -quiet"
-player_opt="-nolirc -quiet -msglevel all=0:demuxer=4"
+#player_opt="-nolirc -quiet -msglevel all=0:demuxer=4"
 
+# For mpv:
+# ~/.config/mpv/input.conf is expected to contain a
+# 'ENTER playlist-next force' line.
+#
+player_opt="--quiet --msg-level=all=no,display-tags=info --display-tags=icy-title"
 
 # VLC also relevant:
 #player="$(which cvlc 2>/dev/null)"
@@ -428,10 +463,20 @@ if [ $display_notification -eq 0 ]; then
 		echo "  - <CTRL-C> to stop all playbacks"
 		echo
 
-	fi
+	elif [ "${player_name}" = "mpv" ]; then
+
+		echo " Using mpv for player now, hence one may hit:"
+		echo "  - <space> to pause/unpause the current playback"
+		echo "  - '/' to decrease the volume, '*' to increase it"
+		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
+		echo "  - left and right arrow keys to go backward/forward in the current playback"
+		echo "  - <Enter> or <Escape> to jump to next playback"
+		echo "  - <CTRL-C> to stop all playbacks"
+		echo "(refer to https://mpv.io/manual/stable/#keyboard-control for more information)"
+		echo
 
 	# Apparently no solution to do the same with VLC:
-	if [ "${player_name}" = "cvlc" ]; then
+	elif [ "${player_name}" = "cvlc" ]; then
 
 		echo " Using cvlc (VLC), hence one may hit:"
 		echo "  - <CTRL-C> to stop the current playback"
