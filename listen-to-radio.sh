@@ -16,6 +16,7 @@ play_stream()
 	echo "  Playing ${current_stream_label}..."
 
 	#echo "Wanting to run ${player} ${player_opt} ${current_stream_url}"
+	#echo "Playing ${current_stream_url}"
 
 	# Allows to display the group and song name, typically as sent by Radio
 	# Paradise:
