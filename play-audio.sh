@@ -490,7 +490,7 @@ for f in ${ordered_files}; do
 
 			if [ "${player_name}" = "mpv" ]; then
 
-				#echo "Executing ${player} ${player_opt}"
+				#echo "Executing ${player} ${player_opt} ${f}"
 				if ! ${player} ${player_opt} "${f}"; then
 
 					exit 5
