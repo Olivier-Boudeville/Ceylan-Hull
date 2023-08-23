@@ -1,6 +1,9 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help]: toggles the touchpad activation state."
+usage="Usage: $(basename $0) [-h|--help] [-f|--force-enabled]: toggles the touchpad activation state.
+
+Note that sometimes some touchpads may be stuck in disabled state. In this case one may try to force their enabling thanks to the -f / --force-enabled option. Other possibilities are to use instead any available trackpoint (generally never disabled) or to switch to a text console and come back to graphical mode, and hope for the best.
+"
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
@@ -8,6 +11,32 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit
 
 fi
+
+
+secure_synclient()
+{
+
+	client="$(which synclient 2>/dev/null)"
+
+	if [ ! -x "${client}" ]; then
+
+		echo "  Error, no 'synclient' executable found." 1>&2
+		exit 20
+
+	fi
+
+}
+
+
+
+if [ "$1" = "-f" ] || [ "$1" = "--force-enabled" ]; then
+
+	secure_synclient
+	${client} TouchpadOff=0
+	exit $?
+
+fi
+
 
 if [ "$1" ]; then
 
@@ -19,17 +48,11 @@ ${usage}" 1>&2
 fi
 
 
+
 use_synclient()
 {
 
-	client="$(which synclient 2>/dev/null)"
-
-	if [ ! -x "${client}" ]; then
-
-		echo "  Error, no 'synclient' executable found." 1>&2
-		exit 20
-
-	fi
+	secure_synclient
 
 	# Quick and dirty, yet working:
 	if ${client} -l | grep TouchpadOff | grep '= 1' 1>/dev/null; then
