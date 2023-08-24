@@ -77,7 +77,8 @@ display_notification()
 		echo "  - '/' to decrease the volume, '*' to increase it"
 		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
 		echo "  - left and right arrow keys to go backward/forward in the current playback"
-		echo "  - <Enter> or <Escape> to jump to next playback"
+		#echo "  - <Enter> or <Escape> to jump to next playback"
+		echo "  - 'q' to jump to next playback"
 		echo "  - <CTRL-C> to stop all playbacks"
 		echo
 
@@ -490,7 +491,7 @@ for f in ${ordered_files}; do
 
 			if [ "${player_name}" = "mpv" ]; then
 
-				#echo "Executing ${player} ${player_opt} ${f}"
+			    #echo "Executing ${player} ${player_opt} ${f}"
 				if ! ${player} ${player_opt} "${f}"; then
 
 					exit 5
