@@ -868,13 +868,25 @@ if [ $do_locate -eq 0 ]; then
 	target_file="$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')"
 	#echo "target_file = ${target_file}"
 
-	target_path="$(/bin/locate --limit 1 --existing ${target_file})"
+	target_path="$(/bin/locate --existing ${target_file} | grep -v .emacs.d/myriad-backups)"
+
+	#echo "target_path = ${target_path}"
 
 	if [ -z "${target_path}" ]; then
 
 		echo "  (file '${target_file}' not found, nothing done)"
 
 	else
+
+		path_count=$(echo ${target_path} | wc -w)
+		#echo "path_count = ${path_count}"
+
+		if [ ${path_count} -gt 1 ]; then
+
+			echo "  Error, multiple (${path_count}) paths found for '${target_file}': ${target_path}." 1 >&2
+			exit 105
+
+		fi
 
 		echo "  (file '${target_file}' found as '${target_path}')"
 
