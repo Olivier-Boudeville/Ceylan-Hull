@@ -40,9 +40,9 @@ play_stream()
 	#set -e
 	set -o pipefail
 
-	#if ! script --return --quiet -c "${player} --quiet --msg-level=all=no,display-tags=info --display-tags=icy-title ${current_stream_url} /dev/null && e" | grep --line-buffered -v 'File tags:' | grep --line-buffered -v 'Commercial-free - Listener-supported' | sed 's|icy-title:|    -> |1'; then
+	#if ! script --return --quiet -c "${player} --quiet --msg-level=all=no,display-tags=info --display-tags=icy-title ${current_stream_url}" /dev/null | grep --line-buffered -v 'File tags:' | grep --line-buffered -v 'Commercial-free - Listener-supported' | sed 's|icy-title:|    -> |1'; then
 
-	script --return --quiet -c "${player} --quiet --msg-level=all=no,display-tags=info --display-tags=icy-title ${current_stream_url} /dev/null" | grep --line-buffered -v 'File tags:' | grep --line-buffered -v 'Commercial-free - Listener-supported' | sed 's|icy-title:|    -> |1'
+	script --return --quiet -c "${player} --quiet --msg-level=all=no,display-tags=info --display-tags=icy-title ${current_stream_url}" /dev/null | grep --line-buffered -v 'File tags:' | grep --line-buffered -v 'Commercial-free - Listener-supported' | sed 's|icy-title:|    -> |1'
 
 	res="$?"
 
