@@ -224,7 +224,7 @@ player_opt="--quiet --msg-level=all=no,display-tags=info --display-tags=icy-titl
 
 if [ ! -x "${player}" ]; then
 
-	echo "Error, no executable player found (${player})." 1>&2
+	echo "Error, no executable player found (${player_name})." 1>&2
 	exit 5
 
 fi
