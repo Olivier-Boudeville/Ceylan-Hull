@@ -4,7 +4,7 @@ usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [--even-ignored]: updates 
 
  Options (order must be respected):
    - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
-   - '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.
+   - '-e' / '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.
 
  Supported distributions: Arch, previously Debian."
 
@@ -62,11 +62,11 @@ if [ "$1" = "-q" ]; then
 fi
 
 
-if [ "$1" = "--even-ignored" ]; then
+if [ "$1" = "-e" ] || [ "$1" = "--even-ignored" ]; then
 
 	even_ignored=0
 
-	forced_packages="$(cat /etc/pacman.conf | grep '^IgnorePkg' | sed 's|^IgnorePkg = ||1')"
+	forced_packages="$(cat /etc/pacman.conf | grep '^IgnorePkg' | sed 's|^IgnorePkg[[:space:]]*=[[:space:]]*||1')"
 
 	shift
 
