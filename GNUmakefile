@@ -19,14 +19,8 @@ HULL_RELEASES = $(HULL_RELEASE_ARCHIVE_BZ2) \
 # First target for default:
 help: help-intro help-hull
 
-
-help-intro:
-	@echo " Following main make targets are available for package $(PACKAGE_NAME):"
-
-
 help-hull:
 	@cd $(MYRIAD_TOP) && $(MAKE) -s help-myriad
-
 
 
 include $(HULL_TOP)/GNUmakesettings.inc
