@@ -469,9 +469,9 @@ if [ $display_notification -eq 0 ]; then
 		echo " Using mpv for player now, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
 		echo "  - '/' to decrease the volume, '*' to increase it"
-		# Useless: 'Enter' does it better: echo "  - 'U' at any moment to stop the current playback and jump to any next one"
 		echo "  - left and right arrow keys to go backward/forward in the current playback"
-		echo "  - <Enter> or <Escape> to jump to next playback"
+		#echo "  - <Enter> or <Escape> to jump to next playback"
+		echo "  - 'q' to jump to next playback"
 		echo "  - <CTRL-C> to stop all playbacks"
 		echo "(refer to https://mpv.io/manual/stable/#keyboard-control for more information)"
 		echo
