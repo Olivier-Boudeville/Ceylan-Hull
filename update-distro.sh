@@ -147,7 +147,8 @@ if [ "$(id -u)" = "0" ]; then
 
 				clean_script="clean-system-caches.sh"
 
-				clean_script_path="$(which ${clean_script})"
+				# To have Ceylan-Hull in the PATH:
+				clean_script_path="$(PATH=$(dirname $0):${PATH} which ${clean_script})"
 
 				if [ ! -x "${clean_script_path}" ]; then
 
