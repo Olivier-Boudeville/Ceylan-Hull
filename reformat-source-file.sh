@@ -3,6 +3,10 @@
 help_short_opt="-h"
 help_long_opt="--help"
 
+quiet_short_opt="-q"
+quiet_long_opt="--quiet"
+
+
 # Before: formatter="$(which astyle 2>/dev/null)"
 
 whitespace_formatter_name="fix-whitespaces.sh"
@@ -10,16 +14,20 @@ erlang_formatter_name="erlfmt"
 c_like_formatter_name="clang-format"
 java_formatter_name="google-java-format"
 
-usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] A_SOURCE_FILE: updates (in-place) the specified source file so that it complies with our conventions, namely:
+usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] [${quiet_short_opt}|${quiet_long_opt}] A_SOURCE_FILE: updates (in-place) the specified source file so that it complies with our conventions, namely:
  - Erlang source and header files (*.erl, *.hrl, *.escript, *.src) are updated according to https://howtos.esperide.org/Erlang.html#formatting-erlang-code (hence based on ${erlang_formatter_name})
  - C/C++ source and header files (*.c, *.cc, *.cpp, *.cxx, *.h, *.hxx) are updated according to https://seaplus.esperide.org/#c-c-code-formatting (hence based on ${c_like_formatter_name})
  - Java source files are updated according to https://github.com/google/google-java-format
  - configuration files (i.e. *.config files), documentation files (*.md, *.markdown), script files (*.sh), makefiles (GNUmake*, [Mm]akefile), CSS (*.css) are whitespace-cleaned up (with '${whitespace_formatter_name}')
 
+The ${quiet_short_opt} / ${quiet_long_opt} option decreases verbosity.
+
 Expected to be idempotent.
 The root of Ceylan-Hull is expected to be in the current PATH.
 "
 
+
+be_quiet=1
 
 
 check_erlang_formatter()
@@ -234,6 +242,13 @@ if [ "$1" = "${help_short_opt}" ] || [ "$1" = "${help_long_opt}" ]; then
 fi
 
 
+if [ "$1" = "$quiet_short_opt}" ] || [ "$1" = "${quiet_long_opt}" ]; then
+
+	be_quiet=0
+
+fi
+
+
 if [ ! $# -eq 1 ]; then
 
 	echo "  Error, this script expects exactly one argument.
@@ -338,7 +353,8 @@ case "${extension}" in
 
 		else
 
-			echo "Unsupported extension ('${extension}'), nothing done."
+			[ $be_quiet=0 ] || echo "Unsupported extension ('${extension}'), nothing done."
+
 			exit 0
 
 		fi
