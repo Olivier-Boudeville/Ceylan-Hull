@@ -1,6 +1,7 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] FILE_PATTERN SOURCE_EXPR TARGET_EXPR: replaces, in files whose name matches the specified pattern found from the current directory, the specified source pattern with the target one."
+usage="Usage: $(basename $0) [-h|--help] FILE_PATTERN SOURCE_EXPR TARGET_EXPR: replaces, in files whose name matches the specified pattern found from the current directory, the specified source pattern with the target one.
+For example: $(basename $0) '*.java' 'List<' 'Map<'"
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
