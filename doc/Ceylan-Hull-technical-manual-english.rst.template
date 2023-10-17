@@ -817,7 +817,7 @@ Detailed description of some frequently-used scripts
   Example: regrep -i 'little red rooster' '*.txt'
 
 
-  See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files), `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version) and `cgrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep>`_ (C version)
+  See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files), `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version), `jgrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/jgrep>`_ (Java version) and `cgrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep>`_ (C version)
 
 
 `srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_
