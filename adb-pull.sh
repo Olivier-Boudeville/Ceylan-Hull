@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorizing ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
+usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorising ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
 For example:
   $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
   $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf"
