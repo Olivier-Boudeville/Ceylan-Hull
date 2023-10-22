@@ -137,8 +137,8 @@ while [ $token_eaten -eq 0 ]; do
 		# As between exclude clauses, a (single) '-o' must exist:
 
 		# (note that we do *not* protect ${to_exclude} with single quotes,
-		# otherwise find will receiven, instead of './foobar',
-		# ''\''./foobar'\''' - use 'set -x' beforhand to check!)
+		# otherwise find will receive, instead of './foobar',
+		# ''\''./foobar'\'''; just use 'set -x' beforehand to check!)
 		#
 		excludes="${excludes} -path ${to_exclude} -prune -o"
 		token_eaten=0
@@ -171,7 +171,7 @@ fi
 
 
 # To focus on (regular) files:
-base_find_opt="-type d"
+base_find_opt="-type f"
 
 base_grep_opt="--color --with-filename"
 
@@ -185,7 +185,7 @@ filter_on_file="$1"
 if [ $verbose -eq 0 ]; then
 
 	echo "Will search in following files:"
-	"${find}" . -exec /bin/ls '{}'  ';' 2>/dev/null
+	"${find}" . ${base_find_opt} -exec /bin/ls '{}'  ';' 2>/dev/null
 
 fi
 
@@ -206,19 +206,16 @@ if [ -z "${filter_on_file}" ]; then
 
 			#echo "(most common case; patterns wanted)"
 
-			# NOTE: after **way** too much time spent on it, it appears that using
-			# ${excludes} instead of its value (e.g. "-path './translator'
-			# -prune -o -path './proxy' -prune") results in these prunings to be ignored.
-			# The reason is still unkown...
+			#echo "${find}" . ${excludes} ${base_find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';'
 
-			#echo "${find}" . ${excludes} ${base_find_opt} -o -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';'
+			"${find}" . ${excludes} ${base_find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';'
 
-			"${find}" . ${excludes} ${base_find_opt} -o -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';'
+			exit
 
 		else
 
 			# Found patterns not wanted here:
-			"${find}" . ${excludes} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			"${find}" . ${excludes} ${base_find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' | sed 's|:.*$||1' | uniq
 
 		fi
 
@@ -231,7 +228,7 @@ if [ -z "${filter_on_file}" ]; then
 	"
 
 		# No filter specified, using '*.rst' and '*.rst.template':
-		"${find}" . ${excludes} -name tmp-rst -prune -o \( ${name_opt} '*.rst' -o ${name_opt} '*.rst.template' \) -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
+		"${find}" . ${excludes} ${base_find_opt} -name tmp-rst -prune -o \( ${name_opt} '*.rst' -o ${name_opt} '*.rst.template' \) -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
 
 	fi
 
@@ -245,11 +242,11 @@ else
 
 		if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . ${excludes} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
+			"${find}" . ${excludes} ${base_find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
 
 		else
 
-			"${find}" . ${excludes} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			"${find}" . ${excludes} ${base_find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
@@ -261,11 +258,11 @@ else
 
 		if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . ${excludes} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
+			"${find}" . ${excludes} ${base_find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
 
 		else
 
-			"${find}" . ${excludes} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			"${find}" . ${excludes} ${base_find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
