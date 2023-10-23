@@ -103,15 +103,8 @@ chooseLibreOffice()
 }
 
 
-chooseMultimediaViewer()
-{
 
-	# Geeqie and Gthumb may have issues with clutter, so:
-	viewer="$(which gwenview 2>/dev/null)"
-	viewer_short_name="GwenView"
-
-}
-
+# Image viewers
 
 chooseEog()
 {
@@ -122,6 +115,27 @@ chooseEog()
 	viewer_short_name="Eog"
 
 }
+
+
+chooseGwenview()
+{
+
+	#echo "Gwenview selected."
+
+	viewer="$(which gwenview 2>/dev/null)"
+	viewer_short_name="Gwenview"
+
+}
+
+
+chooseMultimediaViewer()
+{
+
+	# Geeqie and Gthumb may have issues with clutter, so:
+	chooseGwenview
+
+}
+
 
 chooseF3d()
 {
