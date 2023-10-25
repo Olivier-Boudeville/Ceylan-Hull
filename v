@@ -715,6 +715,8 @@ view_selected_element()
 
 	fi
 
+	#echo "file_elem=${file_elem}"
+
 	if [ $do_find -eq 0 ]; then
 
 		# Any initial whitespace removed:
