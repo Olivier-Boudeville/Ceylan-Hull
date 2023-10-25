@@ -1,17 +1,18 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorising ('USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically mobile phone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
+usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorising ('Developer Options' -> 'USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
 
 This script will try to run adb on the smartphone as root.
 
 For example:
+  $(basename $0) /sdcard/DCIM/Camera/*.jpg
   $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
   $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf
   $(basename $0) /storage/emulated/0/Documents/*"
 
 # To find content (e.g. snapshots) in one's mobile phone:
 # $ adb shell
-# $ find "/sdcard/" -iname "*.jpg" 2>/dev/null
+# $ find "/sdcard/" -type f -a -iname "*.jpg" 2>/dev/null
 #
 # Typically found as: /sdcard/DCIM/Camera/IMG_20200525_175458.jpg
 #
@@ -49,6 +50,7 @@ ${usage}" 1>&2
 
 fi
 
+
 if ${adb_exec} root 2>/dev/null; then
 
 	echo "(adb run as root on the smartphone)"
@@ -60,4 +62,8 @@ else
 
 fi
 
-${adb_exec} shell ls ${args} | tr -s "\r\n" "\0" | xargs -0 -n1 ${adb_exec} pull
+
+#${adb_exec} shell ls ${args} | tr -s "\r\n" "\0 " | xargs -0 -n1 ${adb_exec} pull
+
+# Apparently will work now only one at a time:
+for f in $(${adb_exec} shell ls ${args} | tr -s "\r\n" "\0 "); do ${adb_exec} pull "$f"; done

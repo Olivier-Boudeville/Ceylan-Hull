@@ -154,6 +154,9 @@ use_xinput()
 }
 
 
+# At least with some Thinkpad laptops, neither synclient nor xinput will work,
+# but the trackpoint is likely to remain fully operation in all cases.
+
 #use_synclient
 
 # Synclient not working properly (enabling not actually done) at least with

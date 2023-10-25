@@ -138,8 +138,8 @@ fi
 # If hard blocked, toggle an hardware button (e.g. Ctrl-F8 on a Thinkpad whose
 # Fn/Ctrl have been swapped in the BIOS).
 #
-# If soft blocked, push once the wireless key (ex: F8 or F12, or 'rfkill unblock
-# 1', or use this script with its 'start' argument)
+# If soft blocked, push once the wireless key (e.g. F8 or F12, or 'rfkill
+# unblock 1', or use this script with its 'start' argument).
 #
 # Then re-check.
 

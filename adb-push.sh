@@ -4,8 +4,8 @@ remote_dir="/sdcard"
 #remote_dir="/storage/emulated/0/Transferts-Esperide"
 
 
-usage="Usage: $(basename $0) EXPR: uploads specified local files, possibly based on expressions (typically wildcards), to the already connected and authorizing Android device (typically a smartphone), in its '${remote_dir}' directory.
-Ex: $(basename $0) /tmp/foobar.pdf"
+usage="Usage: $(basename $0) EXPR: uploads the specified local files, possibly based on expressions (typically wildcards), to the already connected and authorising Android device (typically a smartphone), in its '${remote_dir}' directory (which will be created if needed).
+For example: $(basename $0) /tmp/foobar.pdf"
 
 
 
@@ -17,7 +17,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
-adb_exec=$(which adb 2>/dev/null)
+adb_exec="$(which adb 2>/dev/null)"
 
 if [ ! -x "${adb_exec}" ]; then
 
@@ -48,4 +48,4 @@ echo
 
 ${adb_exec} shell mkdir ${remote_dir} 2>/dev/null
 
-${adb_exec} push ${args} ${remote_dir} && echo "One may use 'Amaze' to browse these files on the device now, in ${remote_dir}. Check that, if needed, you have a proper viewer (ex: MuPDF) for that."
+${adb_exec} push ${args} ${remote_dir} && echo "One may use 'Amaze' to browse these files on the device now, in ${remote_dir}. Check that, if needed, you have a proper viewer (e.g. MuPDF) for that."
