@@ -19,7 +19,7 @@ usage="Usage: $(basename $0) [--announce|-a] [--quiet|-q] [--shuffle|-s] [--recu
   --announce or -a: announces the filename that will be played immediately (with vocal synthesis)
   --quiet or -q: does no perform console output
   --shuffle or -s: plays the specified elements in a random order
-  --recursive or -r: selects content files automatically and recursively, from the current directory
+  --recursive or -r: selects content files automatically and recursively, from the first specified directory, otherwise from the current directory
   ${keep_vol_opt}: does not set a default volume
 (default: no announce, not quiet, no shuffle, not recursive, detected audio output to, unless specified in a '${settings_file}', ${target_volume}% of the maximum volume - unless no files nor directories are specified)
 
@@ -270,8 +270,11 @@ while [ ! $# -eq 0 ]; do
 
 	if [ $token_eaten -eq 1 ]; then
 
-		#echo "Adding $1"
+		#echo "Adding '$1'"
+
+		# Wrong: files="${files} \"$1\""
 		files="${files} $1"
+
 		shift
 
 	fi
@@ -280,7 +283,8 @@ done
 
 
 # To test filenames with spaces:
-#for f in ${files} | while read f ; do
+# (answer: filenames containing spaces are still incorrectly managed)
+#for f in ${files}; do
 #   echo "Listed '${f}'"
 #done
 #exit
@@ -358,7 +362,14 @@ if [ ${be_recursive} -eq 1 ]; then
 	for e in ${files}; do
 
 		if [ -d "${e}" ]; then
-			echo " (as '${e}' is a directory, switching to recursive)"
+
+			echo " (as '${e}' is a directory, switching to recursive; only this directory is retained from the specified locations -${files})"
+
+			# As any other path that would be relative would become incorrect:
+			files=""
+
+			cd "${e}"
+
 			be_recursive=0
 			break
 			#else
@@ -375,11 +386,14 @@ if [ ${be_recursive} -eq 0 ] || [ -z "${files}" ]; then
 	echo " (playing recursively from $(pwd))"
 
 	# A sort is performed, as otherwise the 'find' order is pretty
-	# meaningless/arbitrary (ex: 'PREFIX-11.ogg' would be selected before
+	# meaningless/arbitrary (e.g. 'PREFIX-11.ogg' would be selected before
 	# 'PREFIX-7.ogg'), whereas quite often songs of an album have a common
-	# prefix then their number in the series than a suffix (ex:
+	# prefix then their number in the series than a suffix (e.g.
 	# My_GROUP-MY_ALBUM-07-Mantract.mp3)
 
+	# Filenames containing spaces are incorrectly managed; no way found with sh
+	# to store a list of files correctly.
+	#
 	files="${files} $(find . -iname '*.wav' -o -iname '*.ogg' -o -iname '*.mp3' -o -iname '*.mp4' -o -iname '*.avi' | sort 2>/dev/null)"
 
 fi
