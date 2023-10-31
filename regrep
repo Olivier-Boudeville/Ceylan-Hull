@@ -2,7 +2,7 @@
 
 usage="$(basename $0): recursive grep for the ones that lack it.
 
-  Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] [-r|--restructured] [--exclude ELEM]* <Expression to be found in files> [<Filter on files>]
+  Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] [-r|--restructured] [-e|--exclude ELEM]* <Expression to be found in files> [<Filter on files>]
 
   Options:
 	-v or --verbose: be specifically verbose
@@ -10,7 +10,7 @@ usage="$(basename $0): recursive grep for the ones that lack it.
 	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, displays its filename only once (implies quiet); typically useful in scripts
 	-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
 	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst and *.rst.template files)
-	--exclude ELEM: excludes the specified filesystem element (e.g. file or directory) from the search; as many --exclude options as wanted can be specified
+	-e or --exclude ELEM: excludes the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
 
   Example: $(basename $0) --exclude ./foo.dat --exclude ./backup-dir -i 'little red rooster' '*.txt'"
 
@@ -76,7 +76,7 @@ ${usage}" 1>&2
 fi
 
 
-# Not relevant anymore, as we can chain many --exclude options:
+# Not relevant anymore, as we can chain many -e/--exclude options:
 #if [ $# -ge 7 ]; then
 #   echo "Error, too many parameters ($*).
 #${usage}" 1>&2
@@ -136,7 +136,7 @@ while [ $token_eaten -eq 0 ]; do
 	fi
 
 
-	if [ "${read_parameter}" = "--exclude" ]; then
+	if [ "${read_parameter}" = "-e" ] || [ "${read_parameter}" = "--exclude" ]; then
 		shift
 		to_exclude="$1"
 
@@ -257,9 +257,15 @@ if [ -z "${filter_on_file}" ]; then
 
 		# Not RST-specific here:
 
-		[ $quiet -eq 0 ] || echo "
+		[ $quiet -eq 0 ] || if [ -z "${to_exclude}" ]; then
+			echo "
+	Recursive grep for expression <${searched_expression}> in all files:
+	"
+		else
+			echo "
 	Recursive grep for expression <${searched_expression}> in all (non-excluded) files:
 	"
+		fi
 
 		if [ $filenames_only -eq 1 ]; then
 
