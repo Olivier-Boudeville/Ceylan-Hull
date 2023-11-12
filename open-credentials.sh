@@ -94,10 +94,10 @@ fi
 # configuration was reliable enough (often an unencrypted version was left
 # behind, as various cases led to a closing/crashing thereof not being detected
 # by this script); now we recommend using another editor for credentials, it
-# proved a lot safer:
+# proved to be a lot safer:
 #
-#editor="emacs"
-editor="gedit"
+editor="emacs"
+#editor="gedit"
 
 
 has_autosave=0
