@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): diagnoses whether the various network basic facilities are functional. If not, check them continously, until all of them are back to normal."
+usage="Usage: $(basename $0): diagnoses whether the various network basic facilities are functional. If not, checks them continuously, until all of them are back to normal."
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
@@ -29,7 +29,7 @@ check_ip()
 
 	if ping -c 2 ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
 
-		echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivy ok"
+		echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivity ok"
 
 		if ping -c 2 ${reliable_internet_server_name} 1>/dev/null 2>&1; then
 
@@ -84,7 +84,7 @@ else
 
 	fi
 
-	gateway_ip="$(host ${gateway_name} 2>/dev/null | sed 's|.*address ||1' )"
+	gateway_ip="$(host ${gateway_name} 2>/dev/null | sed 's|.*address ||1')"
 
 	if [ -z "${gateway_ip}" ]; then
 
@@ -116,7 +116,7 @@ while [ $is_good -eq 1 ]; do
 		# Hence gateway_ip is set:
 		if ping -c 2 ${gateway_ip} 1>/dev/null 2>&1; then
 
-			echo " - gateway IP (${gateway_ip}) responding, internal network connectivy ok"
+			echo " - gateway IP (${gateway_ip}) responding, internal network connectivity ok"
 			if ping -c 2 ${gateway_name} 1>/dev/null 2>&1; then
 
 				echo " - gateway DNS name (${gateway_name}) responding, internal DNS ok"
@@ -138,7 +138,7 @@ while [ $is_good -eq 1 ]; do
 
 			if ping -c 2 ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
 
-				echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivy ok"
+				echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivity ok"
 
 				if ping -c 2 ${reliable_internet_server_name} 1>/dev/null 2>&1; then
 
@@ -156,7 +156,7 @@ while [ $is_good -eq 1 ]; do
 
 			else
 
-				echo "Reliable internet server IP (${reliable_internet_server_ip}) not responding, external network connectivy ko?" 1>&2
+				echo "Reliable internet server IP (${reliable_internet_server_ip}) not responding, external network connectivity ko?" 1>&2
 				#exit 3
 
 			fi
