@@ -1,10 +1,11 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [--help|-h] [status|start|scan|stop|isolate]: manages the wifi configuration
+usage="Usage: $(basename $0) [--help|-h] [status|start|scan|stop|isolate]: manages the local Wifi configuration
   - without argument or with 'status': returns status
   - with 'start': put the (guessed) wifi interface up
   - with 'scan': scan for wifi access points (once started)
-  - with 'stop': put the (guessed) wifi interface down"
+  - with 'stop': put the (guessed) wifi interface down (and blocks it)
+  - with 'isolate': ensures that no Wifi communication happens"
 
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
@@ -109,6 +110,8 @@ elif [ "${arg}" = "scan" ]; then
 	echo "Scanning for wifi networks with interface ${if}, found following SSIDs:"
 	${iw} dev "${if}" scan | grep 'SSID: ' | sort | uniq | sed 's|.*SSID: | - |1'
 
+	# See also: 'iwlist interface scan'.
+
 	# Expected by netctl:
 	echo "Setting wifi interface ${if} down."
 	${ip} link set "${if}" down
@@ -131,12 +134,12 @@ fi
 # First, ensure that rfkill is disabled:
 # We must have:
 # rfkill list wifi
-#0: phy0: Wireless LAN
+#0: YOUR_CARD: Wireless LAN
 #	Soft blocked: no
 #	Hard blocked: no
 #
 # If hard blocked, toggle an hardware button (e.g. Ctrl-F8 on a Thinkpad whose
-# Fn/Ctrl have been swapped in the BIOS).
+# Fn/Ctrl keys have been swapped in the BIOS).
 #
 # If soft blocked, push once the wireless key (e.g. F8 or F12, or 'rfkill
 # unblock 1', or use this script with its 'start' argument).
@@ -144,9 +147,17 @@ fi
 # Then re-check.
 
 
+# Simplest configuration: run 'wifi-menu' as root, to generate a proper netctl
+# configuration.
+#
+# Otherwise one may take inspiration from the profiles in /etc/netctl/examples
+#
 # - if no encryption: 'iw dev ${if} connect $ESSID'
 # - if WEP is used: 'iw dev ${if} connect $ESSID key 0:$KEY'
 # - if using WPA/WPA2:
+
+# Let's then suppose that your profile is defined in
+# "/etc/netctl/wlo1-100_Fils_d'Ariane":
 
 # netctl start "wlo1-100_Fils_d'Ariane"
 
@@ -158,6 +169,7 @@ fi
 # 'wpa_supplicant -i ${if} -c < (wpa_passphrase "${ESSID}" "${KEY}")'
 
 # Check with 'status'.
+# Maybe add it for good with 'enable'.
 
 # Another option is to use directly iw (see
 # https://wiki.archlinux.org/title/Network_configuration/Wireless), as root.
@@ -165,7 +177,6 @@ fi
 # Use 'iw dev' to list wireless interfaces.
 #
 # After the command prefix 'iw dev ${if}':
-#
 # - to get link status: link
 # - to get link statistics: station dump
 # - to scan for available access points: scan
@@ -184,8 +195,12 @@ fi
 # ip route add default via 192.168.0.1
 
 # One may also use:
-# - wifi-radar
-# - wifi-menu
+# - to check that the kernel loaded the driver for the wireless card: lspci -k
+# - netctl
+# - iwconfig (from extra/wireless_tools)
 # - rfkill
+# - iwd
 #
-# or, as a last resort, sacrifice three chickens.
+# Otherwise USB tethering could be considered.
+#
+# or, as a last resort, sacrifice three chickens to the Wifi gods.
