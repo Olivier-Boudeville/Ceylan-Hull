@@ -1,8 +1,8 @@
 #!/bin/sh
 
-
 usage="Usage: $(basename $0) [-h|--help] TITLE: sets the title of the current terminal tab.
-For example Gnome Terminal does not provide a graphical-based means of doing so."
+For example Gnome Terminal does not provide a graphical-based means of doing so.
+Does nothing with xfce4-terminal."
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
