@@ -863,9 +863,18 @@ view_selected_element()
 		chooseLibreOffice
 		applyViewer
 
-	elif [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "tga" ]; then
+	elif [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "tga" ]; then
 
-		chooseEog
+		# Currently frequent problems with Eog:
+		#chooseEog
+		chooseGwenview
+
+		applyViewer
+
+	elif [ "${extension}" = "svg" ]; then
+
+		# As at least sometimes eog fails to display them properly:
+		chooseGwenview
 		applyViewer
 
 	elif [ "${extension}" = "ico" ]; then
