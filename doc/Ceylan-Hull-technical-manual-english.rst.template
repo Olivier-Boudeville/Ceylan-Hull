@@ -78,7 +78,7 @@ Each script entry is a link pointing directly to the script itself. They may be 
 Most of them are certainly not rocket science.
 
 
-.. Note:: A few of these scripts may be a bit outdated, as not all of them are daily used; rely on them with (a bit of) caution! (and tell us if you would like some of them to be updated)
+.. Note:: A few of these scripts may be a bit outdated, as not all of them are daily used; rely on them with (a bit of) caution! (and tell us if you would like some of them to be updated).
 
 
 
@@ -151,9 +151,9 @@ To fix names, paths, permissions, content
 
 - `fix-null-width-spaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-null-width-spaces.sh>`_: removes any null-width (invisible Unicode) space into the specified text file
 
-- `fix-whitespaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh>`_: fixes whitespace problems (ex: series of spaces instead of tabulations, trailing whitespaces, etc.) into the specified text file; useful to properly format files that shall committed when not using Emacs as text editor
+- `fix-whitespaces.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh>`_: fixes whitespace problems (e.g. series of spaces instead of tabulations, trailing whitespaces, etc.) into the specified text file; useful to properly format files that shall committed when not using Emacs as text editor
 
-- `fix-whitespaces-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces-in-tree.sh>`_: fixes whitespace problems (ex: series of spaces instead of tabulations, trailing whitespaces, etc.) in all elligible files found from specified root directory tree; useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others (just create a branch first, and tag once done)
+- `fix-whitespaces-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces-in-tree.sh>`_: fixes whitespace problems (e.g. series of spaces instead of tabulations, trailing whitespaces, etc.) in all elligible files found from specified root directory tree; useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others (just create a branch first, and tag once done)
 
 - `rename-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh>`_ (just an example of pattern substitution in filenames)
 
@@ -254,7 +254,7 @@ For Development
 
 - `add-header-to-files.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/add-header-to-files.sh>`_: adds specified header to specified files
 
-- `remake.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remake.sh>`_: forces a remake of specified generated file (ex: ``.o`` or ``.beam``)
+- `remake.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/remake.sh>`_: forces a remake of specified generated file (e.g. ``.o`` or ``.beam``)
 
 - `list-core-dumps-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-core-dumps-in-tree.sh>`_: locates all core dump files in current tree
 
@@ -373,9 +373,9 @@ For 3D
 
 .. _blender:
 
-- `blender-import.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh>`_: allows to import directly in `Blender <https://www.blender.org/>`_ various file formats (ex: glTF 2.0 i.e. ``*.gltf/*.glb``, Collada i.e. ``*.dae``, FBX i.e. ``*.fbx``, IFC BIM files i.e. ``*.ifc``) from the command-line, rather than doing it interactively; takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint directly onto the loaded objects; depends on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
+- `blender-import.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-import.sh>`_: allows to import directly in `Blender <https://www.blender.org/>`_ various file formats (e.g. glTF 2.0 i.e. ``*.gltf/*.glb``, Collada i.e. ``*.dae``, FBX i.e. ``*.fbx``, IFC BIM files i.e. ``*.ifc``) from the command-line, rather than doing it interactively; takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint directly onto the loaded objects; depends on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
 
-- `blender-convert.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh>`_: allows to convert, directly from the command-line, a 3D file format into a preferred one (ex: gltF 2.0), thanks to a non-interactive Blender; depends also on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
+- `blender-convert.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/blender-convert.sh>`_: allows to convert, directly from the command-line, a 3D file format into a preferred one (e.g. gltF 2.0), thanks to a non-interactive Blender; depends also on the `Ceylan-Snake Blender support <https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support>`_
 
 .. _wings3D:
 
@@ -425,21 +425,25 @@ CCTV-related
 Document-related
 ================
 
-- `check-rst-includes.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh>`_: checks that all RST files found from current directory are included once and only once in the sources found
+- `check-rst-includes.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/check-rst-includes.sh>`_: checks that all RST files found from the current directory are included once and only once in the sources found
 
-- `convert-rst-to-mediawiki.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh>`_: converts specified RST source file in a mediawiki counterpart file
+- `convert-rst-to-mediawiki.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-rst-to-mediawiki.sh>`_: converts the specified RST source file into a Mediawiki counterpart file
 
-- `convert-mediawiki-to-gitlab-markdown.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mediawiki-to-gitlab-markdown.sh>`_: converts specified Mediawiki source file in a GitLab Markdown counterpart file
+- `convert-mediawiki-to-gitlab-markdown.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-mediawiki-to-gitlab-markdown.sh>`_: converts the specified Mediawiki source file into a GitLab Markdown counterpart file
+
+- `generate-plantuml-diagram.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-plantuml-diagram.sh>`_: generates a PNG file corresponding to the specified file describing a PlantUML (UML) diagram
 
 - `generate-mermaid-diagram.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh>`_: generates a PNG file corresponding to the specified file describing a Mermaid diagram
 
+- `latex-to-image.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/latex-to-image.sh>`_: generates an image (SVG or PNG) representing the specified LaTeX formula
+
 - `generate-pdf-from-latex.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh>`_: generates a PDF file from a LaTeX one, and displays it
 
-- `regenerate-rst-files.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh>`_: updates generated files from more recent docutils files
+- `regenerate-rst-files.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh>`_: updates generated files from more recent Docutils files
 
 - `track-rst-updates.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh>`_: tracks changes in the specified RST source file in order to regenerate the target file accordingly
 
-- `spell-check-rst-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh>`_: spellchecks all RST files found from current directory
+- `spell-check-rst-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh>`_: spellchecks all RST files found from the current directory
 
 - `switch-text-encoding.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh>`_: reencodes the specified text file according to the specified encoding (by default Unicode, precisely ``utf-8``)
 
@@ -478,7 +482,7 @@ Admin-related
 
 - `update-locate-database.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/update-locate-database.sh>`_: updates the 'locate' database, for faster look-ups in filesystems
 
-- `mount-encrypted-usb-device.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-encrypted-usb-device.sh>`_: mounts specified LUKS-encrypted device (ex: a USB key, or a disk), as root or (preferably) as a normal user
+- `mount-encrypted-usb-device.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-encrypted-usb-device.sh>`_: mounts specified LUKS-encrypted device (e.g. a USB key, or a disk), as root or (preferably) as a normal user
 
 
 
@@ -571,11 +575,11 @@ For security
 
 One may also rely on Myriad's `generate-password.sh <https://myriad.esperide.org/#script-based-apps>`_ script in order to generate safe, strong passwords (typically one per account listed based the ``*-credentials.sh`` scripts just above).
 
-On a side note, we also recommend registering a domain name of one's own (ex: ``myfoobar.org``) and settting up a catch-all regarding the recipient email addresses (so that all emails sent to ``*@myfoobar.org`` are routed to your own personal email address).
+On a side note, we also recommend registering a domain name of one's own (e.g. ``myfoobar.org``) and settting up a catch-all regarding the recipient email addresses (so that all emails sent to ``*@myfoobar.org`` are routed to your own personal email address).
 
-Then, to avoid messing with your wildcard naming in terms of email addresses, you may choose first any conventional, meaningless email address prefix (ex: ``deneb``) to be dedicated to per-service communications. Next step is, in order to register to any online service (let's say it is named ``http://someacme.com``), to declare to this service that your email address is ``deneb-someacme@myfoobar.org`` (or perhaps ``deneb-someacmedotcom@myfoobar.org`` if some ambiguity could remain). You would then generate a corresponding password with ``generate-password.sh`` and store the email/password pair among the credentials managed by the scripts above.
+Then, to avoid messing with your wildcard naming in terms of email addresses, you may choose first any conventional, meaningless email address prefix (e.g. ``deneb``) to be dedicated to per-service communications. Next step is, in order to register to any online service (let's say it is named ``http://someacme.com``), to declare to this service that your email address is ``deneb-someacme@myfoobar.org`` (or perhaps ``deneb-someacmedotcom@myfoobar.org`` if some ambiguity could remain). You would then generate a corresponding password with ``generate-password.sh`` and store the email/password pair among the credentials managed by the scripts above.
 
-The advantages of this procedure as a whole are: strong and unique password, stronger pair of credentials as the login is not constant (hence less predictable [#]_), and if ever you start receiving spam targeted to ``deneb-someacme@myfoobar.org`` then the corresponding website (ex: ``http://someacme.com``) may have some explanations to share...
+The advantages of this procedure as a whole are: strong and unique password, stronger pair of credentials as the login is not constant (hence less predictable [#]_), and if ever you start receiving spam targeted to ``deneb-someacme@myfoobar.org`` then the corresponding website (e.g. ``http://someacme.com``) may have some explanations to share...
 
 .. [#] Depending on the use, the suffix for a site may be different from the site name, provided of course a translation table is kept on your side (typically in said credentials file). For example, one just has to record that for ``http://someacme.com`` he chose ``deneb-bluetiger@myfoobar.org`` (stealthier/less obvious - but then harder to incriminate a rogue website).
 
@@ -699,7 +703,7 @@ To facilitate shell sessions:
 
 - `set-display.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-display.sh>`_: sets the X display to specified host; if none is specified, sets it to the local one
 
-- `get-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-date.sh>`_: returns the current date in our standard short format (ex: ``20210219``)
+- `get-date.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/get-date.sh>`_: returns the current date in our standard short format (e.g. ``20210219``)
 
 
 
@@ -795,7 +799,7 @@ Detailed description of some frequently-used scripts
 
   | Options:
 
-  | [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (ex: for f in $(wh -q 'foo*'); do...)
+  | [-q|--quiet]: only returns file entries (no extra display); suitable for scripts (e.g. for f in $(wh -q 'foo*'); do...)
   | --no-path: returns the filenames without any leading path
   | --exclude-path DIR: excludes specified directory DIR from search
 
@@ -804,28 +808,29 @@ Detailed description of some frequently-used scripts
 `regrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep>`_
   ``regrep``: recursive grep for the ones that lack it.
 
-  | Usage: regrep [-v|--verbose] [-q|--quiet] [-i|--insensitive] [-r|--restructured] <Expression to be found in files> [<Filter on files>]
+  | Usage: regrep [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] [-r|--restructured] [-e|--exclude ELEM]* <Expression to be found in files> [<Filter on files>]
 
   | Options:
 
-  | -v or --verbose: be specifically verbose
-  | -q or --quiet: be specifically quiet, just listing matches
-  | -f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, its filename will be output only once (implies quiet)
-  | -i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
-  | -r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst files)
+  |		-v or --verbose: be specifically verbose
+  |		-q or --quiet: be specifically quiet, just listing matches
+  |		-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, displays its filename only once (implies quiet); typically useful in scripts
+  |		-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
+  |		-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst and *.rst.template files)
+  |		-e or --exclude ELEM: excludes the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
 
-  Example: regrep -i 'little red rooster' '*.txt'
+  Example: ``regrep --exclude ./foo.dat --exclude ./backup-dir -i 'little red rooster' '*.txt'``.
 
 
   See also: `ergrep <https://myriad.esperide.org/#searching-for-erlang-elements>`_ (for searching specifically in Erlang files), `pygrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep>`_ (Python version), `jgrep <https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/jgrep>`_ (Java version) and `cgrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep>`_ (C version)
 
 
 `srm <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm>`_
-  ``srm`` (for "secure rm"): stores deleted files in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two filenames can collide in trash so that all contents are preserved.
+  ``srm`` (for "secure rm"): stores deleted files/directories in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two file elements can collide in trash so that all contents are preserved.
 
-  | Usage: srm <files to delete securely>
+  | Usage: ``srm <files/directories to delete securely>``
 
-  | See also: empty-trash.sh
+  | See also: ``empty-trash.sh``
 
 
 
@@ -850,7 +855,7 @@ Overview
 
 The idea here is to go another route than using the highly-integrated graphical tools available on Windows [#]_, by replicating there the Unix tools that we know and like (albeit in a somehow more limited, less efficient form). Then most of the Ceylan-Hull scripts get available on Windows as well.
 
-.. [#] Many prefer instead, when it comes to programming, to rely on `Visual Studio Code <https://en.wikipedia.org/wiki/Visual_Studio_Code>`_ with various SDK (ex: .Net ones) and many add-ons for scaffolding (like `Yeoman <https://code.visualstudio.com/docs/setup/setup-overview#_how-do-i-create-and-run-a-new-project>`_, Yo - that relies on ``npm``, a .Net package manager like `NuGet <https://www.nuget.org/>`_ , a `Omnisharp server <http://www.omnisharp.net>`_, VCS support, language support, etc, rather than creating a Unix-like environment. That's not our case!
+.. [#] Many prefer instead, when it comes to programming, to rely on `Visual Studio Code <https://en.wikipedia.org/wiki/Visual_Studio_Code>`_ with various SDK (e.g. .Net ones) and many add-ons for scaffolding (like `Yeoman <https://code.visualstudio.com/docs/setup/setup-overview#_how-do-i-create-and-run-a-new-project>`_, Yo - that relies on ``npm``, a .Net package manager like `NuGet <https://www.nuget.org/>`_ , a `Omnisharp server <http://www.omnisharp.net>`_, VCS support, language support, etc, rather than creating a Unix-like environment. That's not our case!
 
 
 .. Note:: We have far less experience on the Windows platform than on the GNU/Linux ones, so misconceptions may be exposed in these sections. Please tell us if it is so!
@@ -942,7 +947,7 @@ These punctual installations are not done through MSYS2.
 For Erlang :
 
 - download the `Windows 64 bit binary version <https://www.erlang.org/downloads>`_
-- then ``erl.exe`` is installed as ``C:\Program Files\erl-x.y\bin`` (ex: ``x=24``, ``y=1``), i.e., from the MSYS2's point of view, ``/c/Program\ Files/erl-x.y/bin/``
+- then ``erl.exe`` is installed as ``C:\Program Files\erl-x.y\bin`` (e.g. ``x=24``, ``y=1``), i.e., from the MSYS2's point of view, ``/c/Program\ Files/erl-x.y/bin/``
 
 
 
