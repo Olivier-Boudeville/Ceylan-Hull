@@ -2,12 +2,13 @@
 
 default_base_output_base_filename="latex-formula"
 
-usage="Usage: $(basename $0) [-f|--format FMT] [-d|--display] LATEX_FORMULA_STR [OUTPUT_IMG_FILE_PATH]
-Generates an image representing the specified LaTeX formula.
+usage="Usage: $(basename $0) [-f|--format FMT] [-b|--border] [-d|--display] LATEX_FORMULA_STR [OUTPUT_IMG_FILE_PATH]
+Generates an image representing the specified LaTeX formula, possibly with a suitable border.
 If no output image file path is specified, will default to a '${default_base_output_base_filename}' base file name, complemented with the extension of the selected image file format, written in the current directory.
 
 Options:
   -f or --format FMT: generates an image file according to the specified format, among 'svg' (the default) and 'png'
+  -b or --border: adds a border to the image (implies the PNG format, and a solid, white background, an extra white border itself bordered with black)
   -d or --display: displays the image once generated
 
 The SVG output format is the most recommended one: unlimited precision, transparency.
@@ -15,6 +16,7 @@ The PNG format is mostly a fallback one.
 
 Examples:
  $(basename $0) '(a+b)^2=a^2+b^2+2ab'
+ $(basename $0) '\gamma(v) = \frac{1}{\sqrt{1-\frac{v^2}{c^2}}}' lorentz-factor.svg
  $(basename $0) --display 'Tf(r) = \sqrt{1-2.\frac{G.M}{r.c^2}}'
  $(basename $0) -f png '\mathit{ws}_i\cap\mathit{ws}_j\neq\emptyset' my-formula.png
 "
@@ -29,6 +31,7 @@ Examples:
 # Defaults:
 format="svg"
 dpi=500
+border=1
 do_display=1
 
 
@@ -61,7 +64,6 @@ ${usage}" 1>&2
 
 		fi
 
-
 		case "${fmt}" in
 
 			"svg")
@@ -79,6 +81,12 @@ ${usage}" 1>&2
 		esac
 		shift
 
+	fi
+
+	if [ "$1" = "-b" ] || [ "$1" = "--border" ]; then
+		shift
+		border=0
+		token_eaten=0
 	fi
 
 	if [ "$1" = "-d" ] || [ "$1" = "--display" ]; then
@@ -117,9 +125,6 @@ formula=$(echo "${user_formula}")
 
 output_img_file_path="$1"
 
-if [ -z "${output_img_file_path}" ]; then
-	output_img_file_path="${default_base_output_base_filename}.${format}"
-fi
 
 #echo "Output image file path: '${output_img_file_path}'."
 
@@ -150,6 +155,36 @@ if [ ! -x "${latex}" ]; then
 
 fi
 
+
+
+if [ $border -eq 0 ]; then
+
+	if [ ! "${format}" = "png" ]; then
+
+		# As would not operate correctly onto SVG:
+		echo "Warning: border requested, switching from the ${format} format to the png one." 1>&2
+		format="png"
+
+	fi
+
+	magick="$(which magick 2>/dev/null)"
+
+	if [ ! -x "${magick}" ]; then
+
+		echo "  Error, no 'magick' tool available." 1>&2
+
+		exit 32
+
+	fi
+
+fi
+
+
+# Now 'format' is stable:
+
+if [ -z "${output_img_file_path}" ]; then
+	output_img_file_path="${default_base_output_base_filename}.${format}"
+fi
 
 
 case "${format}" in
@@ -184,6 +219,7 @@ case "${format}" in
 		;;
 
 esac
+
 
 
 # Creating the template LaTeX file:
@@ -268,6 +304,21 @@ case "${format}" in
 
 esac
 
+if [ $border -eq 0 ]; then
+
+	#echo "Adding border"
+
+	# First replacing translucency with a solid white background, then adding a
+	# white border (margin), then the expected black border:
+	#
+	"${magick}" "${output_img_file_path}" -background white -alpha remove -alpha off -bordercolor white -border 8 -bordercolor black -border 2 "${output_img_file_path}"
+
+fi
+
+svg_display="inkscape"
+
+# For some reason, eog display is awful:
+png_display="gwenview"
 
 
 if [ ! -f "${output_img_file_path}" ]; then
@@ -284,7 +335,19 @@ else
 
 	else
 
-		echo "File '${output_img_file_path}' is ready; one may use inkscape to inspect it."
+		case "${format}" in
+
+			"svg")
+				display="${svg_display}"
+			;;
+
+			"png")
+				display="${png_display}"
+			;;
+
+		esac
+
+		echo "File '${output_img_file_path}' is ready; one may use ${display} to inspect it."
 
 	fi
 
@@ -296,39 +359,23 @@ if [ $do_display -eq 0 ]; then
 	case "${format}" in
 
 		"svg")
-			inkscape="$(which inkscape 2>/dev/null)"
-			if [ ! -x "${inkscape}" ]; then
+			display_exec="$(which ${svg_display} 2>/dev/null)"
+			if [ ! -x "${display_exec}" ]; then
 
-				echo "  Error, unable to display the generated SVG file: no 'inkscape' executable found." 1>&2
+				echo "  Error, unable to display the generated SVG file: no '${svg_display}' executable found." 1>&2
 				exit 50
 
 			fi
-
-			"${inkscape}" "${output_img_file_path}"
-
 			;;
 
 		"png")
-			# For some reason, eog display is awful.
-			# eog="$(which eog 2>/dev/null)"
-			# if [ ! -x "${eog}" ]; then
+			display_exec="$(which ${png_display} 2>/dev/null)"
+			if [ ! -x "${display_exec}" ]; then
 
-			#	echo "  Error, unable to display the generated PNG file: no 'eog' executable found." 1>&2
-			#	exit 55
-
-			# fi
-
-			# "${eog}" "${output_img_file_path}"
-
-			viewer="$(which gwenview 2>/dev/null)"
-			if [ ! -x "${viewer}" ]; then
-
-				echo "  Error, unable to display the generated PNG file: no 'gwenview' executable found." 1>&2
-				exit 56
+				echo "  Error, unable to display the generated PNG file: no '${png_display}' executable found." 1>&2
+				exit 55
 
 			fi
-
-			"${viewer}" "${output_img_file_path}"
 			;;
 
 		*)
@@ -338,6 +385,9 @@ if [ $do_display -eq 0 ]; then
 
 	esac
 
+	"${display_exec}" "${output_img_file_path}" 2>/dev/null
+
 fi
 
+#cat "${tmp_file}"
 /bin/rm -f "${tmp_file}"
