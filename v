@@ -128,6 +128,17 @@ chooseGwenview()
 }
 
 
+chooseInkscape()
+{
+
+	#echo "Inkscape selected."
+
+	viewer="$(which inkscape 2>/dev/null)"
+	viewer_short_name="Inkscape"
+
+}
+
+
 chooseMultimediaViewer()
 {
 
@@ -874,7 +885,8 @@ view_selected_element()
 	elif [ "${extension}" = "svg" ]; then
 
 		# As at least sometimes eog fails to display them properly:
-		chooseGwenview
+		#chooseGwenview
+		chooseInkscape
 		applyViewer
 
 	elif [ "${extension}" = "ico" ]; then
