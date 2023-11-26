@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host.
+usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering (sometimes denoted as "USB modem") enabled shares its Internet connectivity with this local host.
 
 Should multiple relevant network interfaces be found, the last one will be selected."
 
@@ -68,7 +68,7 @@ if_name="$(${ip} addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's
 
 if [ -z "${if_name}" ]; then
 
-	echo " Error, no relevant network interface found (is USB tethering activated on the phone, typically, for Android ones, in: Settings -> Networks and Internet -> Acces Point and Connection Sharing -> Via USB)?" 1>&2
+	echo " Error, no relevant network interface found (is USB tethering activated on the smartphone, typically, for Android ones, in: Settings -> Networks and Internet -> Access Point and Connection Sharing -> Via USB)?" 1>&2
 	#ip addr 1>&2
 	exit 18
 
@@ -99,6 +99,8 @@ if [ "$1" = "--stop" ]; then
 	echo "Disabling connection on auto-detected interface ${if_name}..."
 
 	${ip} link set dev "${if_name}" down && echo "...done"
+
+	${dhcpcd} --dumplease "${if_name}" && echo "(lease dumped)"
 
 	exit 0
 
@@ -200,11 +202,11 @@ test_link()
 	echo "- testing connection in ${seconds} seconds..."
 
 	# Otherwise could be too early for a ping to succeed, apparently often the
-	# scripts thinks it failed whereas not:
+	# scripts thinks it failed, whereas not:
 	#
 	sleep ${seconds}
 
-	# Both IP and DNS tested (otherwise: just ping 8.8.8.8)
+	# Both IP and DNS tested here:
 	#ping -c 1 google.com 1>/dev/null 2>&1
 
 	# We actually only care for IP (DNS obtained easily afterwards):
