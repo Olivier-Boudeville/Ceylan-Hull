@@ -5,7 +5,9 @@ use_prebuilt=1
 
 prebuilt_opt="--prebuilt"
 
-usage="Usage: $(basename $0) [-h|--help] [-p|${prebuilt_opt}]: installs properly a recent version of rebar3, by default from its sources.
+software_dir="${HOME}/Software"
+
+usage="Usage: $(basename $0) [-h|--help] [-p|${prebuilt_opt}]: installs properly a recent version of rebar3, by default from its sources, according to our conventions (notably the installation is to be done in ${software_dir}/rebar3/ - a directory that can be added to the PATH).
 If the '-p' or '${prebuilt_opt}' option is specified, downloads and installs a prebuilt version of rebar3 instead."
 
 # See https://www.rebar3.org/docs/getting-started
@@ -41,8 +43,6 @@ ${usage}" 1>&2
 	exit 5
 
 fi
-
-software_dir="${HOME}/Software"
 
 
 if [ $use_prebuilt -eq 0 ]; then
