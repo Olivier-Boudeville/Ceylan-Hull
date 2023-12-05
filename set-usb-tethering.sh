@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering (sometimes denoted as "USB modem") enabled shares its Internet connectivity with this local host.
+usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering (sometimes denoted as a 'USB modem') enabled shares its Internet connectivity with this local host.
 
 Should multiple relevant network interfaces be found, the last one will be selected."
 
@@ -100,7 +100,7 @@ if [ "$1" = "--stop" ]; then
 
 	${ip} link set dev "${if_name}" down && echo "...done"
 
-	${dhcpcd} --dumplease "${if_name}" && echo "(lease dumped)"
+	${dhcpcd} --dumplease "${if_name}" 1>/dev/null && echo "(lease dumped)"
 
 	exit 0
 
