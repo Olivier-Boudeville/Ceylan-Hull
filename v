@@ -125,6 +125,10 @@ chooseGwenview()
 	viewer="$(which gwenview 2>/dev/null)"
 	viewer_short_name="Gwenview"
 
+	if [ -z "${viewer}" ]; then
+		chooseEog
+	fi
+
 }
 
 
