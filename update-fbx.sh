@@ -7,7 +7,7 @@ Relies on the Autodesk FBX Converter.
 See https://howtos.esperide.org/ThreeDimensional.html#autodesk-converter for more information.
 "
 
-# Another option (ex: to select various options) may be to launch the
+# Another option (e.g. to select various options) may be to launch the
 # corresponding UI, with:
 #
 # ~/.wine/drive_c/Program\ Files/Autodesk/FBX/FBX\ Converter/2013.3/FBXConverterUI.exe &
@@ -49,7 +49,7 @@ source_fbx="$1"
 
 if [ ! -f "${source_fbx}" ]; then
 
-	echo "  Error, specified FBX '${source_fbx}' does not exist." 1>&2
+	echo "  Error, the specified FBX '${source_fbx}' does not exist." 1>&2
 
 	exit 20
 

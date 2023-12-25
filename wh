@@ -2,10 +2,10 @@
 
 usage="Usage: $(basename $0) [-h|--help] [-v|--verbose] [-q|--quiet] [-i|--case-insensitive] [--no-path] [--exclude-path SOME_DIR] FILE_PATTERN [STARTING_DIR]
 
-This '$(basename $0)' (for \"where\") script searches (as a more user-friendly 'find') all files and directories matching FILE_PATTERN (ex: '*hello*.?rl'), from STARTING_DIR if specified, otherwise from the current directory.
+This '$(basename $0)' (for \"where\") script searches (as a more user-friendly 'find') all files and directories matching FILE_PATTERN (e.g. '*hello*.?rl'), from STARTING_DIR if specified, otherwise from the current directory.
 
 Options:
-	-q or --quiet: returns only file entries (no extra user-oriented information); suitable for scripts (ex: for f in \$($(basename $0) -q 'foo*'); do...)
+	-q or --quiet: returns only file entries (no extra user-oriented information); suitable for scripts (e.g. for f in \$($(basename $0) -q 'foo*'); do...)
 	-i or --case-insensitive: performs a case-insensitive search (excludes are still case-sensitive)
 	--no-path: returns the filenames without any leading path
 	--exclude-path SOME_DIR: excludes specified the directory SOME_DIR from search

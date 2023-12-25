@@ -5,7 +5,7 @@ usage="Usage: $(basename $0): locks (encrypts) the credential file whose path is
 # See also the open-credentials.sh integrated script.
 #
 # The present script is mostly useful whenever the previous one fails for any
-# reason (ex: a text editor messing with the open/close detection of that
+# reason (e.g. a text editor messing with the open/close detection of that
 # credential file).
 
 
@@ -111,7 +111,6 @@ if ${crypt_tool} -c --cipher-algo=AES256 --output "${locked_file}" "${unlocked_f
 else
 
 	echo "  Error, locking failed, stopping, unlocked file '${unlocked_file}' left as it is." 1>&2
-
 	exit 11
 
 fi

@@ -9,7 +9,7 @@ Two argument may be specified, typically if using systemd-suspend.service (refer
 "
 
 
-# Otherwise no overwriting (ex: of pwm1_enable) may be allowed:
+# Otherwise no overwriting (e.g. of pwm1_enable) may be allowed:
 set +o noclobber
 
 log_file="${HOME}/.last-fan-control"
@@ -128,6 +128,7 @@ if [ -n "$1" ]; then
 		echo "Applying fan setting for post-${next_action}..." | tee --append "${log_file}"
 
 	else
+
 		echo "  Error, invalid parameter specified ('$1')." | tee --append "${log_file}" 1>&2
 		exit 25
 
@@ -148,7 +149,6 @@ sensors_cmd="$(which sensors 2>/dev/null)"
 if [ ! -x "${sensors_cmd}" ]; then
 
 	echo "  Error, no 'sensors' tool available." | tee --append "${log_file}" 1>&2
-
 	exit 10
 
 fi
@@ -157,7 +157,6 @@ fi
 if [ ! $(id -u) = 0 ]; then
 
 	echo "  Error, you must be root to do that." | tee --append "${log_file}" 1>&2
-
 	exit 15
 
 fi

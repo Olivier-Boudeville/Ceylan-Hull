@@ -1,11 +1,15 @@
 #!/bin/sh
 
-usage="  $(basename $0) (for \"secure rm\"): stores deleted files and directories in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two element names can collide in trash so that all contents are preserved.
-
-  Usage: $(basename $0) <file elements to delete securely>
-
+usage="Usage: $(basename $0) [-h|--help] <file elements to delete securely>: \"secure rm\", stores the deleted files and directories in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two element names can collide in the trash, so that all contents are preserved.
   See also: empty-trash.sh"
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "  ${usage}"
+
+	exit
+
+fi
 
 trash_default="${HOME}/tmp/Trash"
 
@@ -91,7 +95,7 @@ if [ -n "$*" ]; then
 
 	done
 
-	# Better management of exotic filenames (ex: with spaces):
+	# Better management of exotic filenames (e.g. with spaces):
 	#/bin/mv -f "$*" "${TRASH}"
 
 	# Better displayed in all cases:

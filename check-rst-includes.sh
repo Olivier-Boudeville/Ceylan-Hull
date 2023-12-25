@@ -4,7 +4,7 @@ usage="Usage: $(basename $0): checks that all RST files found from current direc
 
 
 echo "Checking that all RST files are included once and only once."
-echo "(to be executed from the root of document sources, ex: trunk/src/doc)"
+echo "(to be executed from the root of document sources, e.g. trunk/src/doc)"
 
 WH=$(which wh)
 

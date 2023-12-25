@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Preferring not a blind transformation on any binary file (ex: .beam, .o, .so,
+# Preferring not a blind transformation on any binary file (e.g. .beam, .o, .so,
 # executables, etc.).
 
 target_extensions="txt markdown md asciidoc spec erl hrl java escript app edoc rst src config js css json mk"

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage="Usage: $(basename $0) A_GENERATED_FILE\n \
- Forces a remake of specified generated file (ex: .o or .beam)."
+ Forces a remake of specified generated file (e.g. '.o' or '.beam')."
 
 
 if [ ! $# -eq 1 ]; then

@@ -58,7 +58,7 @@ else
 
 	echo "(running Wings3D from '${wings_path}')"
 
-	# Would mask potentially interesting messages (ex: w.r.t. OpenCL):
+	# Would mask potentially interesting messages (e.g. w.r.t. OpenCL):
 	#exec_opts="-detached"
 	exec_opts="-noshell"
 

@@ -9,7 +9,7 @@ CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
   - 'Erlang', for *.hrl, *.erl files
 
-Ex: $(basename $0) Erlang $HOME/My-program-tree 2001 2013 \"Foobar Ltd\"
+For example: $(basename $0) Erlang $HOME/My-program-tree 2001 2013 \"Foobar Ltd\"
 This will replace '% Copyright (C) x-y Foobar Ltd' by '% Copyright (C) x-2013 Foobar Ltd' for all x in [2001;2012] in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 
 Note that if NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
@@ -24,9 +24,9 @@ Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 2010
 # meld changed.txt all.txt
 
 
-# If having forgotten, some years ago, to update the notices (ex: we are in 2013
-# but you forgot to update the sources in 2012, so you still have 20XX-2011,
-# that you want to transform into 20XX-2013), then you may run:
+# If having forgotten, some years ago, to update the notices (e.g. we are in
+# 2013 but you forgot to update the sources in 2012, so you still have
+# 20XX-2011, that you want to transform into 20XX-2013), then you may run:
 #
 # for y in 2009 2010 2011 2012; do update-all-copyright-notices.sh C++ . 2000
 # $y "James Bond" ; done
@@ -110,7 +110,7 @@ notice="$5"
 #echo "notice = ${notice}"
 #echo "max_year = ${max_year}"
 
-years=$(seq --equal-width ${starting_year} ${max_year})
+years="$(seq --equal-width ${starting_year} ${max_year})"
 
 #echo "years = ${years}"
 

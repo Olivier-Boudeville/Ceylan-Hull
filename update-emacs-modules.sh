@@ -5,7 +5,7 @@ usage="$(basename $0): updates the basic Emacs modules that we use."
 # See also: Ceylan-Heavy/src/conf/environment/*.el
 
 echo
-echo " Updating emacs modules (*.el files)"
+echo " Updating the Emacs modules (*.el files)"
 echo
 
 # We define a subdirectory, otherwise the '(setq load-path...' will be reported
@@ -13,8 +13,8 @@ echo
 #
 emacs_conf_dir="${HOME}/.emacs.d/my-modules"
 
-mkdir -p ${emacs_conf_dir}
-cd ${emacs_conf_dir}
+mkdir -p "${emacs_conf_dir}"
+cd "${emacs_conf_dir}"
 
 /bin/rm -f *.elc 2>/dev/null
 
@@ -36,7 +36,7 @@ update()
 
 # Not useful anymore as our install-erlang.sh script takes care of it:
 #
-#echo "Note that init.el must be modified so that it references the Erlang version you are using (ex: .../lib/tools-x.y.z/emacs)."
+#echo "Note that init.el must be modified so that it references the Erlang version you are using (e.g. .../lib/tools-x.y.z/emacs)."
 # Fetch from the Erlang install, not from the net anymore:
 #update erlang.el http://www.erlang.org/download/contrib/erlang.el
 #ln -s ~/Software/Erlang/Erlang-current-install/lib/erlang/lib/tools-*/emacs/erlang.el

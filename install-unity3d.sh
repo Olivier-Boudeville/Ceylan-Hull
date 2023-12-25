@@ -11,7 +11,7 @@ exit 5
 
 
 # This does *not* correspond to the (Linux) "Unity Accelerator" that can be
-# downloaded from there (ex: unity-accelerator-app-v1.0.941+g6b39b61.AppImage).
+# downloaded from there (e.g. unity-accelerator-app-v1.0.941+g6b39b61.AppImage).
 
 
 
@@ -163,7 +163,7 @@ echo "Got ${file}!"
 
 chmod +x "${file}"
 
-${file}
+"${file}"
 
 # No need to go further, it is better done interactively.
 # Note: a Python symlink fix may be added.

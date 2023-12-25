@@ -17,7 +17,7 @@ fi
 
 iptables=/sbin/iptables
 
-# Line numbers are useful to designate a rule afterwards (ex: to delete it).
+# Line numbers are useful to designate a rule afterwards (e.g. to delete it).
 # -L: list all rules of selected chain or all chains
 # -v: verbose
 # -n: numeric only, no (slower) resolution
@@ -34,20 +34,20 @@ opts="--line-numbers -L -v -n"
 	# -v: verbose
 	# -n: numeric only, no (slower) resolution
 	#
-	${iptables} ${opts}
+	"${iptables}" ${opts}
 
 	echo
 	echo " - printing all 'filter' rules:"
 	echo
-	${iptables} --list-rules
+	"${iptables}" --list-rules
 
 
 	echo
 	echo " - listing all 'nat' rules:"
 	echo
-	${iptables} -t nat ${opts}
+	"${iptables}" -t nat ${opts}
 
 	echo
 	echo " - printing all 'nat' rules:"
 	echo
-	${iptables} -t nat --list-rules ) | more
+	"${iptables}" -t nat --list-rules ) | more

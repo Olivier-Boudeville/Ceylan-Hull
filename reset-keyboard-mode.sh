@@ -21,7 +21,7 @@ fi
 
 
 
-# Useful whenever for example VMWare (vmplayer) messes with your keyboard (ex:
+# Useful whenever for example VMWare (vmplayer) messes with your keyboard (e.g.
 # w.r.t. control key).
 
 # See also: xmodmap and the System-Preferences-Keyboard-Layouts tab.
@@ -30,7 +30,7 @@ setxkbmap
 
 
 # Useful when the Erlang VM crashed and your terminal (console) does not recover
-# well (ex: no more echoing of the typed characters):
+# well (e.g. no more echoing of the typed characters):
 #
 # (obtained thanks to a diff of 'stty --all' before and after the issue)
 

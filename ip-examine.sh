@@ -3,9 +3,9 @@
 usage="Usage: $(basename $0) [-h|--help] IP
 Returns locally-determined information regarding the specified IP.
 
-May run as a normal user, or as root - in which case more information (ex: OS fingerprinting) may be reported.
+May run as a normal user, or as root - in which case more information (e.g. OS fingerprinting) may be reported.
 
-Ex: '$(basename $0) 10.0.7.14'.
+For example: '$(basename $0) 10.0.7.14'.
 "
 
 

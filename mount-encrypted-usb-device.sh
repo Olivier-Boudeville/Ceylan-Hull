@@ -4,7 +4,7 @@
 device_name=my-encrypted-device
 
 usage="Usage: $(basename $0) PARTITION_NAME [DEVICE_NAME]
-  Mounts specified LUKS-encrypted device (ex: a USB key, or disk), as root (then with specified device name, otherwise with the default one, '${device_name}') or (preferably) as a normal user.
+  Mounts specified LUKS-encrypted device (e.g. a USB key, or disk), as root (then with specified device name, otherwise with the default one, '${device_name}') or (preferably) as a normal user.
   Example: $(basename $0) /dev/sdb2"
 
 
@@ -100,12 +100,12 @@ else
 
 	if [ ! -x "${disk_tool}" ]; then
 
-		echo "  Error, the 'udisksctl' tool is not available (ex: use 'pacman -Sy udisks2')." 1>&2
+		echo "  Error, the 'udisksctl' tool is not available (e.g. use 'pacman -Sy udisks2')." 1>&2
 		exit 50
 
 	fi
 
-	# Ex: 'Unlocked /dev/sdb2 as /dev/dm-1.' transformed to '/dev/dm-1':
+	# For example 'Unlocked /dev/sdb2 as /dev/dm-1.' transformed to '/dev/dm-1':
 	unencrypted_device=$( ${disk_tool} unlock -b ${actual_partition} | grep Unlocked | sed 's|.*as ||1' | sed 's|\.$||1')
 
 

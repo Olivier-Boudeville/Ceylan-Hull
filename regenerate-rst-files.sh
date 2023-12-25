@@ -2,7 +2,7 @@
 
 # Note: docutils has been finally preferred to txt2tags.
 
-usage="Usage: $(basename $0) [ --pdf | --all | <path to CSS file to be used, ex: common/css/XXX.css> ]
+usage="Usage: $(basename $0) [ --pdf | --all | <path to CSS file to be used, e.g. common/css/XXX.css> ]
 
 Updates generated files from more recent docutils files (*.rst).
 If '--pdf' is specified, a PDF will be created, if '--all' is specified, all output formats (i.e. HTML and PDF) will be created, otherwise HTML files only will be generated, using any specified CSS file.
@@ -199,8 +199,9 @@ for f in ${RST_FILES}; do
 		# If target does not exist or if source is newer, rebuilds:
 		if [ ! -f "${TARGET_PDF_FILE}" -o "$f" -nt "${TARGET_PDF_FILE}" ]; then
 
-			# PDF generator will not find includes (ex: images) if not already
+			# PDF generator will not find includes (e.g. images) if not already
 			# in target dir:
+			#
 			CURRENT_DIR=`pwd`
 			TARGET_DIR=`dirname ${TARGET_PDF_FILE}`
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename "$0") SOURCE_TREE_LOCATION TARGET_TREE_LOCATION: copies (possibly through the network) a tree existing in one location to another one, in a manner that is friendly to the merged trees (ex: not going through out-of-tree links, not duplicating the content of in-tree symlinks). Using scp instead would typically lead to have at the end non-uniquified trees out of uniquified ones."
+usage="Usage: $(basename "$0") SOURCE_TREE_LOCATION TARGET_TREE_LOCATION: copies (possibly through the network) a tree existing in one location to another one, in a manner that is friendly to the merged trees (e.g. not going through out-of-tree links, not duplicating the content of in-tree symlinks). Using scp instead would typically lead to have at the end non-uniquified trees out of uniquified ones."
 
 source_tree_location="$1"
 
@@ -46,7 +46,7 @@ if [ "${source_tree_location}" = "${target_tree_location}" ]; then
 
 fi
 
-rsync=$(which rsync 2>/dev/null)
+rsync="$(which rsync 2>/dev/null)"
 
 if [ ! -x "${rsync}" ]; then
 

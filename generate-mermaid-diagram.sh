@@ -11,7 +11,7 @@ mermaid_cli_root="${HOME}/Software/mermaid/"
 
 # Use '~/Software/mermaid/node_modules/.bin/mmdc --version' to obtain version.
 
-# If your local mmdc is stuck at a given, older version (ex: 0.5.1), you may
+# If your local mmdc is stuck at a given, older version (e.g. 0.5.1), you may
 # rely on 'https://mermaid-js.github.io/mermaid-live-editor/#/edit' (then click
 # 'Download PNG').
 
@@ -51,7 +51,7 @@ base_size=2000
 mermaid_opts="--width ${base_size} --height ${base_size}"
 
 
-# Ex: foobar.mmd
+# For example foobar.mmd:
 source_file="$1"
 
 target_file=$(echo "${source_file}" | sed 's|\.mmd$|.png|1')
@@ -79,7 +79,6 @@ if [ $? -eq 0 ]; then
 else
 
 	echo "  Error, generation of '${target_file}' from '${source_file}' failed." 1>&2
-
 	exit 25
 
 fi

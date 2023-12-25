@@ -2,7 +2,7 @@
 
 usage="Usage: $(basename $0) FIRST_JSON_FILE SECOND_JSON_FILE [-h|--help]: compares the two specified JSON files, once their content has been put in a canonical, sorted form (knowing notably that their keys are allowed to be in arbitrary order).
 
-Note that due to this on-the-fly transformation made for comparison purpose (of course the original files are not modified), their conten used for comparison may be slightly alterered (ex: a "1.0" value in an original file may be compared as if it was "1", i.e. an integer value).
+Note that due to this on-the-fly transformation made for comparison purpose (of course the original files are not modified), their conten used for comparison may be slightly alterered (e.g. a "1.0" value in an original file may be compared as if it was "1", i.e. an integer value).
 
 Options:
    -h or --help: this help"
@@ -10,24 +10,30 @@ Options:
 
 # Needed early to be able to shift:
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
 	echo "${usage}"
 	exit 0
+
 fi
 
 
 jq="$(which jq 2>/dev/null)"
 
 if [ ! -x "${jq}" ]; then
+
 	echo "  Error, no 'jq' tool found." 1>&2
 	exit 10
+
 fi
 
 
 meld="$(which meld 2>/dev/null)"
 
 if [ ! -x "${meld}" ]; then
+
 	echo "  Error, no 'meld' tool found." 1>&2
 	exit 15
+
 fi
 
 

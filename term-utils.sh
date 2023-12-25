@@ -1,4 +1,4 @@
-# There is not need for the following two lines since this script is expected
+# There is no need for the following two lines since this script is expected
 # only to be sourced (not executed):
 
 #!/bin/sh
@@ -9,14 +9,14 @@
 # ". term-utils.sh" should define all text facilities.
 
 # This term helper script contains:
-#	- text style handling functions
-#	- all-purpose terminal functions
+#   - text style handling functions
+#   - all-purpose terminal functions
 
 # This is ISO-6429 color code.
 
 # Use this script as a state-machine:
 # change current_text and/or current_back and/or current_att
-# (ex: current_back=${green_back})
+# (e.g. current_back=${green_back})
 # then call:
 # updateTermState
 #

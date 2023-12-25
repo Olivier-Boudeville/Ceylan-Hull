@@ -56,8 +56,8 @@ HULL_RELEASE_ARCHIVE_XZ  := $(HULL_RELEASE_BASE).tar.xz
 # them and if all the packages mentioned here are themselves dependencies (in
 # which case they are all sitting together in the _checkouts child directory).
 #
-# Note also we rely on the names of build roots (ex: myriad) as opposed to
-# project/repository names (ex: Ceylan-Myriad):
+# Note also we rely on the names of build roots (e.g. myriad) as opposed to
+# project/repository names (e.g. Ceylan-Myriad):
 #
 # First priority is an existing checkout directory:
 ifneq ($(wildcard $(HULL_TOP)/_checkouts/myriad/.),)

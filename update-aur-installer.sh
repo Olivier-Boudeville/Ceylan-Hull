@@ -2,10 +2,10 @@
 
 usage="Usage: $(basename $0): updates the local AUR (Arch User Repository) installer; to be run as a non-priviledged user (i.e. not as root)."
 
-# Such installers may break after a pacman update (ex: 'yay: error while loading
-# shared libraries: libalpm.so.12: cannot open shared object file: No such file
-# or directory'), in which case they should be rebuilt - preferably thanks to
-# this script.
+# Such installers may break after a pacman update (e.g. 'yay: error while
+# loading shared libraries: libalpm.so.12: cannot open shared object file: No
+# such file or directory'), in which case they should be rebuilt - preferably
+# thanks to this script.
 
 
 # 'yaourt' is no longer recommended (deprecated now), using 'yay' instead.

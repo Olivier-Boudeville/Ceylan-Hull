@@ -1,7 +1,6 @@
 #!/bin/sh
 
-
-usage="Usage: $(basename $0) MEDIAWIKI_SOURCE_FILE: converts specified Mediawiki source file (ex: 'foobar.mediawiki') in a GitLab Markdown counterpart file (ex: 'foobar.gitlabmd')."
+usage="Usage: $(basename $0) MEDIAWIKI_SOURCE_FILE: converts specified Mediawiki source file (e.g. 'foobar.mediawiki') in a GitLab Markdown counterpart file (e.g. 'foobar.gitlabmd')."
 
 
 pandoc="$(which pandoc)"
