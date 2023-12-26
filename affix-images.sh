@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-d|--display] IMG_TO_BE_PASTED IMG_TO_ENRICH IMG_TO_GENERATE X_OFFSET Y_OFFSET [PASTE_DIRECTION] [SCALE_PASTED]: pastes the first specified image (IMG_TO_BE_PASTED) onto the second one (IMG_TO_ENRICH), at the specified (signed) location according to the selected direction, in order to generate the third image (IMG_TO_GENERATE).
+usage="Usage: $(basename $0) [-d|--display] IMG_TO_BE_PASTED IMG_TO_ENRICH IMG_TO_GENERATE X_OFFSET Y_OFFSET [PASTE_DIRECTION [SCALE_PASTED]]: pastes the first specified image (IMG_TO_BE_PASTED) onto the second one (IMG_TO_ENRICH), at the specified (signed) location according to the selected direction, in order to generate the third image (IMG_TO_GENERATE).
    Options are:
 	-d or --display: displays the resulting generated image
 	PASTE_DIRECTION is in: 'NorthWest' (the default), 'North', 'NorthEast', 'West', 'Center', 'East', 'SouthWest', 'South' and 'SouthEast'; it allows to select the direction according which the first image will be positioned within the second one; the abscissa (X) and ordinate (Y) offsets are then relative to the selected \"direction point\" (either a corner or the midpoint of a border, corresponding to the aforementioned direction); increasing (positive or negative) offsets correspond to getting closer to the center of the second image (by default directions increase from left to right, and from top to bottom)
@@ -132,7 +132,7 @@ fi
 
 
 
-echo "Affixing '${img_to_be_pasted}' on '${img_to_enrich}' in direction '${direction}' at (${x},${y}), to result in '${img_to_enrich}'."
+echo "Affixing '${img_to_be_pasted}' on '${img_to_enrich}' in direction '${direction}' at (${x},${y}), to result in '${img_result}'."
 
 if ! "${magick}" "${img_to_enrich}" \( "${img_to_be_pasted}" -resize ${pasted_scaling} \) -gravity ${direction} -geometry ${x}${y} -composite "${img_result}"; then
 
