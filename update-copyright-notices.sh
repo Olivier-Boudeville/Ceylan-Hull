@@ -4,9 +4,8 @@ do_debug=1
 
 #new_year=$(date '+%Y')
 
-usage="
-Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
-Updates the copyright notices of code of specified type found from specified root directory.
+usage="Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
+Updates the copyright notices of the code of the specified type found from the specified root directory.
 
 CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
@@ -24,7 +23,9 @@ See also update-all-copyright-notices.sh for more global (multi-year) updates.
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-	echo "${usage}"
+	echo "
+
+${usage}"
 
 	exit 0
 
@@ -44,6 +45,7 @@ if [ $# -eq 5 ]; then
 	else
 
 		echo "  Error, unknown '$1' option.
+
 ${usage}" 1>&2
 		exit 2
 
@@ -55,6 +57,7 @@ fi
 if [ ! $# -eq 4 ]; then
 
 		echo "  Error, exactly four parameters are required.
+
 ${usage}" 1>&2
 		exit 5
 
@@ -75,6 +78,7 @@ case "${code_type}" in
 
    *)
 		echo "  Error, unknown code type (${code_type}).
+
 ${usage}" 1>&2
 		exit 10
 		;;
@@ -88,6 +92,7 @@ root_dir="$2"
 if [ -z "${root_dir}" ]; then
 
 	echo "  Error, no root directory specified.
+
 ${usage}" 1>&2
 	exit 15
 
@@ -96,7 +101,8 @@ fi
 
 if [ ! -d "${root_dir}" ]; then
 
-	echo "  Error, specified root directory (${root_dir}) does not exist.
+	echo "  Error, the specified root directory (${root_dir}) does not exist.
+
 ${usage}" 1>&2
 	exit 20
 
