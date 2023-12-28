@@ -1,9 +1,8 @@
 #!/bin/sh
 
-usage="
-Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
+usage="Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
-Updates the copyright notices of code of specified type found from specified root directory, based on the specified year range.
+Updates the copyright notices of the code of the specified type found from the specified root directory, based on the specified year range.
 
 CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
@@ -43,6 +42,7 @@ fi
 if [ ! $# -eq 5 ]; then
 
 	echo "  Error, exactly five parameters are required.
+
 ${usage}" 1>&2
 	exit 5
 
@@ -61,6 +61,7 @@ case "${code_type}" in
 
    *)
 		echo "  Error, unknown code type (${code_type}).
+
 ${usage}" 1>&2
 		exit 10
 		;;
@@ -73,6 +74,7 @@ root_dir="$2"
 if [ -z "${root_dir}" ]; then
 
 	echo "  Error, no root directory specified.
+
 ${usage}" 1>&2
 	exit 15
 
@@ -81,7 +83,8 @@ fi
 
 if [ ! -d "${root_dir}" ]; then
 
-	echo "  Error, specified root directory (${root_dir}) does not exist.
+	echo "  Error, the specified root directory (${root_dir}) does not exist.
+
 ${usage}" 1>&2
 	exit 20
 
