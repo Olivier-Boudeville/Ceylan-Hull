@@ -1,6 +1,9 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help]: cleans all system caches, typically to try to save some space from /var/cache."
+usage="Usage: $(basename $0) [-h|--help] [-e|--even-sync]: cleans all system caches, typically to try to save some space from /var/cache.
+ Options:
+   -e or --even-sync: removes also the existing Pacman sync files (useful if having mirror-related problems, like 'error: GPGME error: No data' or 'error: database 'xxx' is not valid')
+"
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
@@ -9,6 +12,15 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 
 fi
+
+
+even_sync=1
+
+if [ "$1" = "-e" ] || [ "$1" = "--even-sync" ]; then
+	even_sync=0
+	shift
+fi
+
 
 if [ -n "$1" ]; then
 
@@ -34,6 +46,10 @@ if [ $(id -u) -eq 0 ]; then
 	# So:
 	#
 	( yes | pacman -Scc 1>/dev/null ) && echo "  ... success!"
+
+	if [ ${even_sync} -eq 0 ]; then
+		/bin/rm -rf /var/lib/pacman/sync/
+	fi
 
 else
 
