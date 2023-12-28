@@ -437,6 +437,8 @@ Document-related
 
 - `latex-to-image.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/latex-to-image.sh>`_: generates an image (SVG or PNG) representing the specified LaTeX formula
 
+- `affix-images.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/affix-images.sh>`_:  pastes the first specified image onto the second one, at the specified (signed) location according to the selected direction, in order to generate the third image
+
 - `generate-pdf-from-latex.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh>`_: generates a PDF file from a LaTeX one, and displays it
 
 - `regenerate-rst-files.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh>`_: updates generated files from more recent Docutils files
