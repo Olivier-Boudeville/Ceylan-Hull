@@ -2,7 +2,7 @@
 
 full_opt="--full"
 
-usage="Usage: $(basename $0) [${full_opt}]: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio.
+usage="Usage: $(basename $0) [${full_opt}]: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and audio.
 	Use the ${full_opt} option to access to the higher-resolution stream with audio.
 	Hit:
 	 - Shift-S to take a snapshot
@@ -28,7 +28,8 @@ fi
 
 
 #client_tool_name="cvlc"
-client_tool_name="mplayer"
+#client_tool_name="mplayer"
+client_tool_name="mpv"
 
 client_tool="$(which ${client_tool_name} 2>/dev/null)"
 
@@ -155,8 +156,11 @@ fi
 
 #echo "  - camera subtype: ${camera_subtype}"
 
+# For former Dahua:
+#rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/cam/realmonitor?channel=${camera_channel}&subtype=${camera_subtype}"
 
-rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/cam/realmonitor?channel=${camera_channel}&subtype=${camera_subtype}"
+# For TP-Link TAPO-C320WS:
+rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/stream${camera_channel}"
 
 #echo "rstp_url = ${rstp_url}"
 
@@ -168,5 +172,7 @@ camera_short_name="$(echo "${camera_hostname}" | sed 's|\..*$||')"
 #snapshot_prefix_opt="--snapshot-prefix=camera-${camera_short_name}-"
 
 echo "  Monitoring now camera '${camera_description}'..."
+
+#echo ${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
 
 ${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
