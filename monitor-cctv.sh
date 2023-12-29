@@ -175,4 +175,4 @@ echo "  Monitoring now camera '${camera_description}'..."
 
 #echo ${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
 
-${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
+${client_tool} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} 1>/dev/null 2>&1 &
