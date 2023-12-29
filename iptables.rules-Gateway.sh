@@ -162,7 +162,7 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-24"
+version="s-25"
 
 
 # Now the settings are not embedded anymore in this script, but in the next
@@ -673,8 +673,12 @@ start_it_up()
 	#
 	for host in ${filtered_local_hosts}; do
 
-		${iptables} -A INPUT -i ${lan_if} -p all --source "${host}" -j DROP
-		${iptables} -A FORWARD -i ${lan_if} -p all --source "${host}" -j DROP
+		# We must use -I (insert, at first position), not -A (append, at last
+		# position), as otherwise previous rules may (are likely to) accept
+		# these packets:
+		#
+		${iptables} -I INPUT   -i ${lan_if} -p all --source "${host}" -j DROP
+		${iptables} -I FORWARD -i ${lan_if} -p all --source "${host}" -j DROP
 
 	done
 
