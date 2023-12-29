@@ -11,9 +11,8 @@ ExecReload=/usr/local/bin/iptables.rules-Gateway.sh reload
 # (locked-out from server if accessed from SSH)
 #ExecStop=/usr/local/bin/iptables.rules-Gateway.sh stop
 
-# Otherwise any start will trigger just afterwards a stop! 
+# Otherwise any start will trigger just afterwards a stop!
 RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
-
