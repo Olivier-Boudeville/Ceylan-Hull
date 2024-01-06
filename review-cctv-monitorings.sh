@@ -10,7 +10,8 @@ do_fetch=0
 # Enabled by default:
 auto_play=0
 
-speed_factor=25
+#speed_factor=25
+speed_factor=8
 
 mplayer_player_name="mplayer"
 mplayer_player_opt="-quiet -speed ${speed_factor}"
@@ -18,13 +19,22 @@ mplayer_player_opt="-quiet -speed ${speed_factor}"
 vlc_player_name="cvlc"
 vlc_player_opt="--rate ${speed_factor} --quiet --play-and-exit"
 
+mpv_player_name="mpv"
 
-viewer_name="${mplayer_player_name}"
-viewer_opts="${mplayer_player_opt}"
+# As 'Option --vc was removed: use --vd=..., --hwdec=...':
+#mpv_player_opt="-vc null -vo null -quiet"
+mpv_player_opt="-quiet --msg-level=all=no --speed=${speed_factor}"
+
+
+#viewer_name="${mplayer_player_name}"
+#viewer_opts="${mplayer_player_opt}"
 
 #viewer_name="${vlc_player_name}"
 #viewer_opts="${vlc_player_opt}"
 
+# Now preferred to mplayer:
+viewer_name="${mpv_player_name}"
+viewer_opts="${mpv_player_opt}"
 
 
 # Cool but longer:
@@ -75,7 +85,7 @@ fi
 
 review_dir="${HOME}/cctv-recordings-to-review"
 
-viewer=$(which "${viewer_name}" 2>/dev/null)
+viewer="$(which "${viewer_name}" 2>/dev/null)"
 
 if [ ! -x "${viewer}" ]; then
 
@@ -176,11 +186,13 @@ if [ $do_fetch -eq 0 ]; then
 fi
 
 
-
-# VLC:
 if [ "${viewer_name}" = "${mplayer_player_name}" ]; then
 
 	echo "Using mplayer, thus press '}' to fast forward."
+
+elif [ "${viewer_name}" = "${mpv_player_name}" ]; then
+
+	echo "Using mpv, thus press '}' to fast forward."
 
 elif [ "${viewer_name}" = "${vlc_player_name}" ]; then
 
@@ -220,6 +232,7 @@ for f in ${recordings}; do
 
 			echo " - viewing $f"
 
+			#echo ${viewer} ${viewer_opts} "$f"
 			${viewer} ${viewer_opts} "$f" 1>/dev/null 2>&1
 
 			# For error messages and all:
