@@ -1,7 +1,6 @@
 #!/bin/sh
 
-
-# Copyright (C) 2010-2023 Olivier Boudeville
+# Copyright (C) 2010-2024 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -986,7 +985,7 @@ view_selected_element()
 
 	elif [ "${extension}" = "traces" ]; then
 
-		LOGMX="$(which logmx.sh)"
+		LOGMX="$(which logmx.sh 2>/dev/null)"
 
 		if [ ! -x "${LOGMX}" ]; then
 
@@ -1001,6 +1000,25 @@ view_selected_element()
 		fi
 
 		applyViewer
+
+	elif [ "${file_elem}" = "erl_crash.dump" ]; then
+
+		# For example in
+		# ~/Software/Erlang/Erlang-current-install/lib/erlang/cdv:
+		#
+		cdv="$(which cdv 2>/dev/null)"
+
+		if [ ! -x "${cdv}" ]; then
+
+			echo "  (no cdv tool found, using more for crash dumps)"
+			chooseMore
+
+		else
+
+			viewer="${cdv}"
+			viewer_short_name="Erlang's cdv"
+
+		fi
 
 	fi
 
