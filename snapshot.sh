@@ -58,7 +58,25 @@ fi
 archive_name="${date_prefix}-$(basename ${target_dir})-snapshot.tar.xz"
 #echo "archive_name = ${archive_name}"
 
-if ! tar cvJf "${archive_name}" "${target_dir}"; then
+
+# A bit of black magic about exclusions despite shell variables; only the third form works:
+
+#extra_opts="--exclude={*.jpg,*.jpeg,*.JPG}"
+
+#extra_opts="--exclude='*.jpg' --exclude='*.jpeg' --exclude='*.JPG'"
+
+# The only right one:
+#extra_opts="--exclude=*.jpg --exclude=*.jpeg --exclude=*.JPG --exclude=*.png --exclude=*.bmp --exclude=*.gif --exclude=*.bz2 --exclude=*.gz --exclude=*.zip --exclude=*.xz --exclude=*.rar --exclude=*.iso --exclude=*.gpg --exclude=*.pack --exclude=*.mp4 --exclude=*.ogg --exclude=*.backup --exclude=*.apk --exclude=*.img"
+
+
+if [ -n "${extra_opts}" ]; then
+
+	echo "Using the following extra options: ${extra_opts}"
+
+fi
+
+
+if ! tar ${extra_opts} -cvJf "${archive_name}" "${target_dir}"; then
 
 	echo "    Error, archive creation failed." 1>&2
 	exit 7
