@@ -28,24 +28,79 @@ ${usage}" 1>&2
 fi
 
 
-locker_name="xscreensaver"
+## If using xscreensaver:
 
-locker_exec="$(which ${locker_name})"
+# Non-blocking locking (script not stopped):
+#locker_activate_name="xscreensaver"
+#locker_activate_opts="-no-splash"
 
-if [ ! -x "${locker_exec}" ]; then
+# Locking is done asynchronously, the command returns immediately.
+#
+# To detect the unlocking, the following approaches did not work for us:
+# - gdbus monitor -y -d org.freedesktop.login1 | grep LockedHint
+#
+# - dbus-monitor --session "type='signal',interface='org.gnome.ScreenSaver'"
+# (of course, as not using Gnome)
+#
+#locker_cmd_name="xscreensaver-command"
+#locker_cmd_lock_opts="-lock"
 
-	echo "  Error, no locker tool found ('${locker_name}')." 1>&2
-	exit 5
+
+# Never did anything on our Arch (no daemon launched?):
+#locker_cmd_name="gnome-screensaver-command"
+
+
+## If using xlock (install the 'xlockmore' Arch package):
+
+# Nothing needed:
+locker_activate_name=""
+locker_activate_opts=""
+
+locker_cmd_name="xlock"
+
+locker_cmd_lock_opts="-mode blank"
+#locker_cmd_lock_opts="-mode marquee"
+#locker_cmd_lock_opts="-mode flag"
+#locker_cmd_lock_opts="-mode nose"
+
+
+# First launching the screensaver daemon, if needed (possibly optional step):
+if [ -n "${locker_activate_name}" ]; then
+
+	locker_activate_exec="$(which ${locker_activate_name})"
+
+	if [ ! -x "${locker_activate_exec}" ]; then
+
+		echo "  Error, no locker daemon found ('${locker_activate_name}')." 1>&2
+		exit 5
+
+	fi
+
+	echo "Activating first the screensaver"
+
+	${locker_activate_exec} ${locker_activate_opts} 1>/dev/null &
 
 fi
 
 
-echo "Activating the screensaver on $(date), and locking the screen immediately..."
+locker_cmd_exec="$(which ${locker_cmd_name})"
 
-${locker_name} -no-splash 1>/dev/null &
+if [ ! -x "${locker_cmd_exec}" ]; then
 
-locker_cmd="xscreensaver-command"
+	echo "  Error, no locker command found ('${locker_activate_name}')." 1>&2
+	exit 15
 
-${locker_cmd} -lock 1>/dev/null
+fi
+
+
+# Then activate the locker itself:
+
+echo "Locking the screen immediately on $(date)..."
+
+# Not run in the background anymore (no trailing '&)', so that any wrapping
+# script (e.g. leaving-home.sh) can itself be synchronised on locking/unlocking;
+# however with xscreensaver it is never blocking actually...
+#
+${locker_cmd_exec} ${locker_cmd_lock_opts} 1>/dev/null 2>/dev/null
 
 echo "... unlocked on $(date)"
