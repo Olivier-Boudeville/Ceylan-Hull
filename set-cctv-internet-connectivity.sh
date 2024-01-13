@@ -105,8 +105,10 @@ elif [ "${action}" = "enable" ]; then
 
 	echo "  Enabling the Internet connectivity of the CCTV host '${cctv_host}' (as determined from '${settings_file}')."
 
-	# May not be defined:
-	${iptables} -D FORWARD -s "${cctv_host}" -j DROP 2>/dev/null
+	# May not be defined, or be defined more than once:
+	while ${iptables} -D FORWARD -s "${cctv_host}" -j DROP 2>/dev/null; do
+		echo "(removed forwarding drop rule)"
+	done
 
 	echo "Result: "
 
@@ -114,9 +116,24 @@ elif [ "${action}" = "disable" ]; then
 
 	echo "  Disabling the Internet connectivity of the CCTV host '${cctv_host}' (as determined from '${settings_file}')."
 
-	#A bit more precise: iptables -I FORWARD -s 10.0.18.103/32 -i my_lan_interface -j DROP
 
-	${iptables} -I FORWARD -s "${cctv_host}" -j DROP
+	# Should there be multiple instances of this rule set, they will be removed
+	# at the next 'enable' run, yet we prefer avoiding edge cases:
+	#
+	if ${iptables} --list | grep "^DROP.*${cctv_host}.*"; then
+
+		echo "(forwarding drop rule apparently already set)"
+
+	else
+
+		# A bit more precise would be:
+		# iptables -I FORWARD -s 10.0.18.103/32 -i my_lan_interface -j DROP
+		#
+		${iptables} -I FORWARD -s "${cctv_host}" -j DROP
+
+		echo "(forwarding drop rule set)"
+
+	fi
 
 	echo "Result: "
 
