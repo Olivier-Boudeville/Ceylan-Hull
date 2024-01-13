@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): [-nf|--no-fetch] [-na|--no-autoplay]: allows to (possibly) fetch from server and review conveniently any set of CCTV recordings dating back from yesterday and the three days before.
+usage="Usage: $(basename $0): [-nf|--no-fetch] [-na|--no-autoplay]: allows to (possibly) fetch from server and review conveniently any set of CCTV recordings dating back from yesterday and the three days before, from the current directory.
   Without fetching, CCTV recordings are expected to be already available in the current directory (see the fetch-cctv-monitorings.sh script for that, possibly installed in a crontab).
   With autoplay, recordings are displayed in a row, and offered to be deleted as a whole afterwards (locally and/or on the server). Without autoplay, they are displayed one by one, the user being asked what to do with each of them in turn."
 
@@ -208,7 +208,7 @@ count="$(echo ${recordings} | wc -w)"
 # Clearer:
 if [ "${count}" = "0" ]; then
 
-	message="No recording was found${suffix}."
+	message="No recording was found in the current directory${suffix}."
 	echo "${message}"
 	say.sh "${message}"
 	exit 0
