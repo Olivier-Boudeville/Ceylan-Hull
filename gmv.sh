@@ -57,6 +57,11 @@ fi
 
 if ! git mv "${src_file}" "${target_file}" 2>/dev/null; then
 
+	echo "  (basic move of '${src_file}' to '${target_file}')"
 	/bin/mv "${src_file}" "${target_file}"
+
+else
+
+	echo "  (Git move of '${src_file}' to '${target_file}')"
 
 fi
