@@ -21,6 +21,7 @@ ${usage}" 1>&2
 fi
 
 
+already_failed=1
 
 
 # Checks network connectivity based on IP here:
@@ -35,8 +36,21 @@ check_ip()
 
 			echo " - reliable internet server DNS name (${reliable_internet_server_name}) responding, external DNS ok"
 
-			echo "Everything seems to be fine!"
 			is_good=0
+
+			if [ $already_failed -eq 0 ]; then
+
+				# Notify a bit loudly whenever the connectivity is restored:
+				bong.sh
+				echo "Internet connectivity restored!"
+				bong.sh
+				bong.sh
+
+			else
+
+				echo "Everything seems to be fine!"
+
+			fi
 
 		else
 
@@ -172,5 +186,6 @@ while [ $is_good -eq 1 ]; do
 	fi
 
 	sleep 2
+	already_failed=0
 
 done
