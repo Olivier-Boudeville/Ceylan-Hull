@@ -2,17 +2,18 @@
 
 usage="$(basename $0): recursive grep for the ones that lack it.
 
-  Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] [-r|--restructured] [-e|--exclude ELEM]* <Expression to be found in files> [<Filter on files>]
+  Usage: $(basename $0) [-h|--help] [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--case-insensitive] [-r|--restructured] [-e|--exclude ELEM]* <Expression to be found in files> [<Filter on files>]
 
   Options:
 	-v or --verbose: be specifically verbose
 	-q or --quiet: be specifically quiet, just listing matches
 	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, displays its filename only once (implies quiet); typically useful in scripts
-	-i or --insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
+	-i or --case-insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
 	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst and *.rst.template files)
-	-e or --exclude ELEM: excludes the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
+	-e or --exclude ELEM: exclude the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
+	-h or --help: display this help
 
-  Example: $(basename $0) --exclude ./foo.dat --exclude ./backup-dir -i 'little red rooster' '*.txt'"
+  Example: $(basename $0) --exclude ./foo.dat --exclude backup-dir -i 'little red rooster' '*.txt'"
 
 
 # Now automatically fixed: "note that, to exclude a local 'foobar' directory,
@@ -121,7 +122,7 @@ while [ $token_eaten -eq 0 ]; do
 	fi
 
 
-	if [ "${read_parameter}" = "--insensitive" ] || [ "${read_parameter}" = "-i" ]; then
+	if [ "${read_parameter}" = "--case-insensitive" ] || [ "${read_parameter}" = "-i" ]; then
 		insensitive_opt="-i"
 		name_opt="-iname"
 		[ $quiet -eq 0 ] || echo "Case-insensitive mode activated."
