@@ -1,16 +1,19 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-v|--verbose] [-q|--quiet] [-i|--case-insensitive] [--no-path] [--exclude-path SOME_DIR] FILE_PATTERN [STARTING_DIR]
+usage="Usage: $(basename $0) [-h|--help] [-v|--verbose] [-q|--quiet] [-i|--case-insensitive] [--no-path] [-e|--exclude ELEM]* FILE_ELEM_PATTERN [STARTING_DIR]
 
-This '$(basename $0)' (for \"where\") script searches (as a more user-friendly 'find') all files and directories matching FILE_PATTERN (e.g. '*hello*.?rl'), from STARTING_DIR if specified, otherwise from the current directory.
+This '$(basename $0)' (for \"where\") script searches (as a more user-friendly 'find') all files and directories matching FILE_ELEM_PATTERN (e.g. '*hello*.?rl'), from STARTING_DIR if specified, otherwise from the current directory.
 
 Options:
-	-q or --quiet: returns only file entries (no extra user-oriented information); suitable for scripts (e.g. for f in \$($(basename $0) -q 'foo*'); do...)
-	-i or --case-insensitive: performs a case-insensitive search (excludes are still case-sensitive)
-	--no-path: returns the filenames without any leading path
-	--exclude-path SOME_DIR: excludes specified the directory SOME_DIR from search
-	-v or --verbose: outputs more information
-	-h or --help: displays this help"
+	-v or --verbose: be specifically verbose
+	-q or --quiet: return only file entries (no extra user-oriented information); suitable for scripts (for example: 'for f in \$($(basename $0) -q 'foo*'); do...')
+	-i or --case-insensitive: perform a case-insensitive search (excludes are still case-sensitive)
+	-e or --exclude ELEM: exclude the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
+	--no-path: return the filenames without any leading path
+	-h or --help: display this help
+
+  Example: $(basename $0) --exclude ./foo.dat --exclude backup-dir -i '*.backup.?'"
+
 
 find_gnu="/usr/bin/find"
 
@@ -23,10 +26,12 @@ no_path=1
 
 case_insensitive=1
 
-exclude_command=""
+excludes=""
 
 #prefix="-->"
 prefix=" "
+
+multi_excludes=1
 
 token_eaten=0
 
@@ -62,14 +67,58 @@ while [ $token_eaten -eq 0 ]; do
 		[ $quiet -eq 0 ] || echo "Only filenames without paths will be output."
 		shift
 
-	elif [ "$1" = "--exclude-path" ]; then
-
-		to_exclude="$2"
-		exclude_command="${exclude_command} (-name ${to_exclude} -prune -o -type f) -a "
-		[ $quiet -eq 0 ] || echo "  Directory '${to_exclude}' to be excluded."
-		#echo "exclude_command = ${exclude_command}"
+	elif [ "$1" = "-e" ] || [ "$1" = "--exclude" ]; then
 
 		shift
+		to_exclude="$1"
+
+		case "${to_exclude}" in
+
+			./*)
+				;;
+
+			*)
+				to_exclude_fixed="./${to_exclude}"
+				#echo "Warning: beginning of excluded path '${to_exclude}' auto-fixed to '${to_exclude_fixed}'."
+				to_exclude="${to_exclude_fixed}"
+				;;
+
+		esac
+
+		# To avoid "warning: -path ./foobar/ will not match anything because it
+		# ends with /.":
+
+		# Or: last_char="$(echo "${to_exclude}" | sed -E 's|.*(.)|\1|')"
+
+		last_char="$(echo -n ${to_exclude} | tail -c 1)"
+
+		if [ ${last_char} = "/" ]; then
+			# Chop that last character:
+			to_exclude_fixed="$(echo ${to_exclude} | sed 's|.$||')"
+			#echo "Warning: ending of excluded path '${to_exclude}' auto-fixed to '${to_exclude_fixed}'."
+			to_exclude="${to_exclude_fixed}"
+		fi
+
+		[ $quiet -eq 0 ] || echo "Excluding '${to_exclude}'."
+
+		# Improper ways:
+		#  excludes="${excludes} --and ! -name '${to_exclude}'"
+		#  excludes="${excludes} (-name ${to_exclude} -prune -o -type f) -a "
+
+		# As between exclude clauses, a (single) '-o' must exist:
+
+		# (note that we do *not* protect ${to_exclude} with single quotes,
+		# otherwise find will receive, instead of './foobar',
+		# ''\''./foobar'\'''; just use 'set -x' beforehand to check!)
+		#
+		# Intersped with -o:
+		if [ -z "${excludes}" ]; then
+			excludes="-path ${to_exclude}"
+		else
+			multi_excludes=0
+			excludes="${excludes} -o -path ${to_exclude}"
+		fi
+
 		shift
 
 	else
@@ -104,6 +153,19 @@ else
 	echo "  Error, too many parameters specified: $*.
 ${usage}" 1>&2
 	exit 15
+
+fi
+
+
+#echo "excludes=${excludes}"
+
+if [ -n "${excludes}" ]; then
+
+	if [ $multi_excludes -eq 0 ]; then
+		excludes="( ${excludes} ) -prune -o "
+	else
+		excludes="${excludes} -prune -o "
+	fi
 
 fi
 
@@ -155,15 +217,15 @@ fi
 
 if [ $no_path -eq 0 ]; then
 
-	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: ${find} ${find_opt} . ${exclude_command} ${name_opt} \"${target_pattern}\" -exec basename '{}' ';' #2>/dev/null"
+	[ $verbose -eq 1 ] || echo "No path case, run from $(pwd): command is: ${find} ${find_opt} . ${excludes} ${name_opt} \"${target_pattern}\" -exec basename '{}' ';' #2>/dev/null"
 
-	${find} ${find_opt} . ${exclude_command} ${name_opt} "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
+	${find} ${find_opt} . ${excludes} ${name_opt} "${target_pattern}" -exec basename '{}' ';' 2>/dev/null
 
 else
 
-	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: ${find} . ${exclude_command} ${name_opt} \"${target_pattern}\" -print #2>/dev/null | more"
+	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: ${find} . ${excludes} ${name_opt} \"${target_pattern}\" -print #2>/dev/null | more"
 
-	${find} ${find_opt} . ${exclude_command} ${name_opt} "${target_pattern}" -print 2>/dev/null # | more
+	${find} ${find_opt} . ${excludes} ${name_opt} "${target_pattern}" -print 2>/dev/null # | more
 
 fi
 
