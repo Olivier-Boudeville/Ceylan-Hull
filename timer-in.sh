@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: '$(basename $0) [-h|--help] [-s|--silent] DURATION [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) in DURATION, which is expressed as:
+usage="Usage: '$(basename $0) [-h|--help] [-s|--silent] DURATION [MESSAGE | [TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) in DURATION, which is expressed as:
  MINUTES or MINUTES:SECONDS or HOURS:MINUTES:SECONDS
 Will issue such a notification when the specified duration is elapsed; useful for example for cooking.
 The silent mode enables only the graphical notifications (useful in a train for example).
