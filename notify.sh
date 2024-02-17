@@ -28,7 +28,7 @@ fi
 
 # Defaults:
 
-# Ex: a light bulb.
+# For example displayed as a light bulb:
 default_category="dialog-information"
 
 #echo "1: '${1}', 2: '${2}', 3: '${3}'"
@@ -50,12 +50,12 @@ elif [ $# -eq 3 ]; then
 	case "$3" in
 
 		"process")
-			# Ex: a kind of gear in a blue background:
+			# For example a kind of gear in a blue background:
 			icon="emblem-system"
 			;;
 
 		"time")
-			# Ex: a clock
+			# For example a clock:
 			icon="appointment-soon"
 			;;
 
@@ -72,7 +72,7 @@ fi
 #echo "title='${title}', message='${message}', icon='${icon}'"
 
 
-notify_tool=$(which notify-send 2>/dev/null)
+notify_tool="$(which notify-send 2>/dev/null)"
 
 if [ ! -x "${notify_tool}" ]; then
 
@@ -81,7 +81,7 @@ if [ ! -x "${notify_tool}" ]; then
 
 fi
 
-tts_tool=$(which say.sh 2>/dev/null)
+tts_tool="$(which say.sh 2>/dev/null)"
 
 if [ ! -x "${tts_tool}" ]; then
 
@@ -100,12 +100,20 @@ else
 fi
 
 
+# To try making a sound (any), as a last-resort option:
+last_resort_notify_script="$(which bong.sh 2>/dev/null)"
+
+
 if [ -z "${icon}" ]; then
 	echo "[notification] ${message}"
-	${tts_tool} "${full_message}"
-	${notify_tool} "${message}"
+	if ! "${tts_tool}" "${full_message}"; then
+		"${last_resort_notify_script}"
+	fi
+	"${notify_tool}" "${message}"
 else
 	echo "[${category}] ${full_message}"
-	${tts_tool} "${full_message}"
-	${notify_tool} "${title}" "${message}" "--icon=${icon}"
+	if ! "${tts_tool}" "${full_message}"; then
+		"${last_resort_notify_script}"
+	fi
+	"${notify_tool}" "${title}" "${message}" "--icon=${icon}"
 fi
