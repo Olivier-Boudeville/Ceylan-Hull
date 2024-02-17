@@ -199,31 +199,46 @@ chooseBrowser()
 chooseVideoPlayer()
 {
 
-	viewer="$(which mplayer 2>/dev/null)"
+	viewer="$(which mpv 2>/dev/null)"
 
 	if [ -x "${viewer}" ]; then
 
-		#echo "Mplayer selected."
+		#echo "mpv selected."
 
-		viewer_short_name="Mplayer"
+		viewer_short_name="mpv"
 
-		viewer_opt="-nolirc -quiet -msglevel all=0"
+		viewer_opt="-quiet --msg-level=all=no"
+
+		viewer_comment="press 'o' for OSD, 'f' to toggle fullscreen, left / right arrows for fast-backward / forward by steps of 5 seconds, down / up arrows for steps of 1 minute, '{' / '}' to double / halve the playback speed (backspace to reset it), 'p' and space to pause, 'm' to mute, 's' to take a screenshot, 'q' to quit"
 
 	else
 
-		viewer="$(which cvlc 2>/dev/null)"
+		viewer="$(which mplayer 2>/dev/null)"
 
 		if [ -x "${viewer}" ]; then
 
-			#echo "cvlc selected."
+			#echo "mplayer selected."
+			viewer_short_name="mplayer"
 
-			viewer_short_name="VLC"
-
-			viewer_opt="--quiet --play-and-exit"
+			viewer_opt="-nolirc -quiet -msglevel all=0"
 
 		else
 
-			chooseBrowser
+			viewer="$(which cvlc 2>/dev/null)"
+
+			if [ -x "${viewer}" ]; then
+
+				#echo "cvlc selected."
+
+				viewer_short_name="VLC"
+
+				viewer_opt="--quiet --play-and-exit"
+
+			else
+
+				chooseBrowser
+
+			fi
 
 		fi
 
@@ -634,7 +649,7 @@ applyViewer()
 			# multiple times"
 			#
 			[ $verbose -eq 1 ] || echo "case A: ${viewer} ${viewer_opt} ${file_elem}"
-			${viewer} ${viewer_opt} "${file_elem}" 1>/dev/null 2>&1 &
+			"${viewer}" ${viewer_opt} "${file_elem}" 1>/dev/null 2>&1 &
 
 			# Small delay added, otherwise specifying multiple files apparently
 			# may freeze emacs to death, loosing all pending changes...
@@ -644,8 +659,8 @@ applyViewer()
 		else
 
 			[ $verbose -eq 1 ] || echo "case B: ${viewer} ${viewer_opt} ${file_elem}"
-			#${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
-			${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null
+			#"${viewer}" ${viewer_opt} "${file_elem}" 2>/dev/null &
+			"${viewer}" ${viewer_opt} "${file_elem}" 2>/dev/null
 
 		fi
 
@@ -661,16 +676,20 @@ applyViewer()
 
 			#echo "Running ${viewer} in background..."
 			[ $verbose -eq 1 ] || echo "case C: ${viewer} ${viewer_opt} ${file_elem}"
-			${viewer} ${viewer_opt} "${file_elem}" 2>/dev/null &
+			"${viewer}" ${viewer_opt} "${file_elem}" 2>/dev/null &
 
 		else
 
 			#echo "Running ${viewer} ${viewer_opt} in foreground..."
 			[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
-			${viewer} ${viewer_opt} "${file_elem}"
+			"{viewer}" ${viewer_opt} "${file_elem}"
 
 		fi
 
+	fi
+
+	if [ -n "${viewer_comment}" ]; then
+		echo "(${viewer_comment})"
 	fi
 
 	# So that a given file element is viewed only once, not twice:
