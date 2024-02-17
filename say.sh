@@ -21,9 +21,9 @@ if [ "$1" = "-d" ] || [ "$1" = "--display" ]; then
 fi
 
 # As a last-resort option, tries to make a sound (any):
-if ! ${espeak_tool} "$*" 1>/dev/null 2>&1; then
+if ! "${espeak_tool}" "$*" 1>/dev/null 2>&1; then
 
 	echo "(TTS error detected)" 1>&2
-	bong.sh
+	exit 10
 
 fi
