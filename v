@@ -209,7 +209,18 @@ chooseVideoPlayer()
 
 		viewer_opt="-quiet --msg-level=all=no"
 
-		viewer_comment="press 'o' for OSD, 'f' to toggle fullscreen, left / right arrows for fast-backward / forward by steps of 5 seconds, down / up arrows for steps of 1 minute, '{' / '}' to double / halve the playback speed (backspace to reset it), 'p' and space to pause, 'm' to mute, 's' to take a screenshot, 'q' to quit"
+		viewer_comment="Main keyboard shortcuts, to:
+ - pause / unpause the current playback: <Space>
+ - decrease the volume: /; increase it: *; mute: m
+ - go backward / forward in the current playback, by steps of:
+   * 5 seconds: left and right arrow keys
+   * 1 minute: down and up arrow keys
+ - jump to next playback: <Enter> or <Escape>
+ - stop all playbacks: <Ctrl-C>
+ - display temporarily durations (On-Screen Display): o
+ - toggle fullscreen: f
+ - double / halve the playback speed: { and } (<Backspace> to reset it)
+ - take a screenshot: s"
 
 	else
 
@@ -689,7 +700,7 @@ applyViewer()
 	fi
 
 	if [ -n "${viewer_comment}" ]; then
-		echo "(${viewer_comment})"
+		echo "${viewer_comment}"
 	fi
 
 	# So that a given file element is viewed only once, not twice:
