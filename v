@@ -693,7 +693,7 @@ applyViewer()
 
 			#echo "Running ${viewer} ${viewer_opt} in foreground..."
 			[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
-			"{viewer}" ${viewer_opt} "${file_elem}"
+			"${viewer}" ${viewer_opt} "${file_elem}"
 
 		fi
 
