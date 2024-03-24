@@ -105,6 +105,8 @@ chooseLibreOffice()
 
 # Image viewers
 
+
+# Currently frequent problems with Eog.
 chooseEog()
 {
 
@@ -113,9 +115,31 @@ chooseEog()
 	viewer="$(which eog 2>/dev/null)"
 	viewer_short_name="Eog"
 
+	if [ -z "${viewer}" ]; then
+		# Last resort:
+		chooseBrowser
+	fi
+
 }
 
 
+# A bit old now:
+chooseGeeqie()
+{
+
+	#echo "Geeqie selected."
+
+	viewer="$(which geeqie 2>/dev/null)"
+	viewer_short_name="Geeqie"
+
+	if [ -z "${viewer}" ]; then
+		chooseEog
+	fi
+
+}
+
+
+# One of the best, but not always available:
 chooseGwenview()
 {
 
@@ -125,7 +149,7 @@ chooseGwenview()
 	viewer_short_name="Gwenview"
 
 	if [ -z "${viewer}" ]; then
-		chooseEog
+		chooseGeeqie
 	fi
 
 }
@@ -842,18 +866,8 @@ view_selected_element()
 
 	elif [ ! -f "${file_elem}" ]; then
 
-		if [ -d "${file_elem}" ]; then
-
-			# Supposedly we want to see the images in the specified directory:
-			chooseEog
-			applyViewer
-
-		else
-
-			echo "  Error, the target file to view, '${file_elem}', does not exist, or is neither a file nor a directory." 1>&2
-			exit 15
-
-		fi
+		echo "  Error, the target file to view, '${file_elem}', does not exist, or is neither a file nor a directory." 1>&2
+		exit 15
 
 	fi
 
@@ -909,9 +923,9 @@ view_selected_element()
 
 	elif [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "tga" ]; then
 
-		# Currently frequent problems with Eog:
-		#chooseEog
 		chooseGwenview
+		#chooseGeeqie
+		#chooseEog
 
 		applyViewer
 
