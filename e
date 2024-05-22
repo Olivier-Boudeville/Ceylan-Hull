@@ -111,6 +111,19 @@ chooseGimp()
 }
 
 
+chooseJupyter()
+{
+
+	#echo "Jupyter-notebook selected."
+
+	# A Mamba environment may be activated first.
+
+	editor="$(which jupyter-notebook 2>/dev/null)"
+	editor_short_name="Jupyter notebook"
+
+}
+
+
 chooseBlender()
 {
 
@@ -950,6 +963,14 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	if [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "tga" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "xcf" ]; then
 
 		chooseGimp
+		applyEditor
+		exit 0
+
+	fi
+
+	if [ "${extension}" = "ipynb" ]; then
+
+		chooseJupyter
 		applyEditor
 		exit 0
 
