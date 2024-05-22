@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2022 Olivier Boudeville
+# Copyright (C) 2010-2024 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -968,13 +968,16 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 	fi
 
-	if [ "${extension}" = "ipynb" ]; then
 
-		chooseJupyter
-		applyEditor
-		exit 0
+	# Only done as below in 'v'; here we just want to edit the Jupyter file:
+	#if [ "${extension}" = "ipynb" ]; then
+	#
+	#	chooseJupyter
+	#	applyEditor
+	#	exit 0
+	#
+	#fi
 
-	fi
 
 	if [ "${extension}" = "blend" ]; then
 

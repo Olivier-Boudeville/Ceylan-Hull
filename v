@@ -102,6 +102,18 @@ chooseLibreOffice()
 }
 
 
+chooseJupyter()
+{
+
+	#echo "Jupyter-notebook selected."
+
+	# A Mamba environment may be activated first.
+
+	viewer="$(which jupyter-notebook 2>/dev/null)"
+	viewer_short_name="Jupyter notebook"
+
+}
+
 
 # Image viewers
 
@@ -928,6 +940,13 @@ view_selected_element()
 		#chooseEog
 
 		applyViewer
+
+	# 'v': viewing a Jupyter notebook is using it:
+	elif [ "${extension}" = "ipynb" ]; then
+
+		chooseJupyter
+		applyViewer
+		exit 0
 
 	elif [ "${extension}" = "svg" ]; then
 
