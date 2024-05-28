@@ -294,6 +294,7 @@ For Version Control System (VCS)
 
 - `list-largest-vcs-blobs.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-largest-vcs-blobs.sh>`_: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size
 
+- `list-lastly-updated-vcs-branches.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-lastly-updated-vcs-branches.sh>`_: lists, assuming to be in a clone, the VCS local or remote branches from the most recently modified one to the ones that were modified a longer time ago
 
 
 
