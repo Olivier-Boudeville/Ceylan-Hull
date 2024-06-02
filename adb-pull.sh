@@ -8,7 +8,8 @@ For example:
   $(basename $0) /sdcard/DCIM/Camera/*.jpg
   $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
   $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf
-  $(basename $0) /storage/emulated/0/Documents/*"
+  $(basename $0) /storage/emulated/0/Documents/*
+"
 
 # To find content (e.g. snapshots) in one's mobile phone:
 # $ adb shell
@@ -49,6 +50,15 @@ ${usage}" 1>&2
 	exit 15
 
 fi
+
+
+echo " Requested to transfer locally '${args}' from device..."
+echo "   - if needed, activate first, in the device settings ('Developer Options'), the USB debugging"
+echo "   - connect the device to this computer thanks to a proper USB cable (note that most of them are not durably reliable...) "
+echo "   - switch, in the notification showing up on the device, from 'USB charging' to 'File transfer' (if no notification opos up, then maybe this cable has only the wiring for charging, not for data?)"
+echo
+#echo " < Hit enter when ready to transfer, CTRL-C to abort >"
+#read
 
 
 if ${adb_exec} root 2>/dev/null; then

@@ -3,8 +3,8 @@
 remote_dir="/sdcard"
 #remote_dir="/storage/emulated/0/Transferts-Esperide"
 
+usage="Usage: $(basename $0) EXPR: uploads the specified local files, possibly based on expressions (typically wildcards), to the already connected and authorising ('Developer Options' -> 'USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), in its '${remote_dir}' directory (which will be created if needed).
 
-usage="Usage: $(basename $0) EXPR: uploads the specified local files, possibly based on expressions (typically wildcards), to the already connected and authorising Android device (typically a smartphone), in its '${remote_dir}' directory (which will be created if needed).
 For example: $(basename $0) /tmp/foobar.pdf"
 
 
@@ -38,10 +38,10 @@ ${usage}" 1>&2
 fi
 
 
-echo " Requested to transfer ${args} to device (in ${remote_dir})..."
-echo "   - if needed, activate first, in the device settings, the USB debugging"
-echo "   - connect the device to this computer thanks to a proper USB cable"
-echo "   - switch, in the notification showing up on the device, from 'USB charging' to 'File transfer'"
+echo " Requested to transfer '${args}' to device (in ${remote_dir})..."
+echo "   - if needed, activate first, in the device settings ('Developer Options'), the USB debugging"
+echo "   - connect the device to this computer thanks to a proper USB cable (note that most of them are not durably reliable...) "
+echo "   - switch, in the notification showing up on the device, from 'USB charging' to 'File transfer' (if no notification opos up, then maybe this cable has only the wiring for charging, not for data?)"
 echo
 #echo " < Hit enter when ready to transfer, CTRL-C to abort >"
 #read
