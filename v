@@ -928,7 +928,7 @@ view_selected_element()
 		chooseEvince
 		applyViewer
 
-	elif [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+	elif [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "csv" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 		chooseLibreOffice
 		applyViewer
