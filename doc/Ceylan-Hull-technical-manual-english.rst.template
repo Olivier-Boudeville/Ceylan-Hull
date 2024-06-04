@@ -296,6 +296,9 @@ For Version Control System (VCS)
 
 - `list-lastly-updated-vcs-branches.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-lastly-updated-vcs-branches.sh>`_: lists, assuming to be in a clone, the VCS local or remote branches from the most recently modified one to the ones that were modified a longer time ago
 
+- `co-main.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/co-main.sh>`_: performs a checkout of the main branch, regardless of its actual name (``main`` or ``master``)
+
+
 
 
 Replacement-related
