@@ -1,6 +1,9 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [ARGS]: runs VS Code (Microsoft Visual Studio Code) or VSCodium (a version of it without branding/telemetry/licensing), a free software (MIT licence) source-code multi-platform editor."
+usage="Usage: $(basename $0) [-h|--help] [ARGS]: runs VS Code (Microsoft Visual Studio Code) or VSCodium (a version of it without branding/telemetry/licensing), a free software (MIT licence) source-code multi-platform editor.
+
+Applies any proxy being currently set in the current shell.
+"
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
