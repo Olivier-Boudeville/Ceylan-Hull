@@ -5,6 +5,9 @@ usage="Usage: $(basename $0) [-h|--help] [ARGS]: runs VS Code (Microsoft Visual 
 Applies any proxy being currently set in the current shell.
 "
 
+# Possibly installed on Arch thanks to: 'pacman -Sy code'.
+
+
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
