@@ -1,12 +1,20 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [pre|post]: applies relevant settings for the local host.
+usage="Usage: $(basename $0) [-h|--help] [pre|post]: applies relevant settings for the local host.
 This script should be run typically after booting and resuming from suspend, as root.
 
 Two argument may be specified, typically if using systemd-suspend.service (refer to 'man systemd-suspend.service'):
  - 'pre': then nothing special is done
  - 'post': then these fan settings are re-applied (otherwise the system would just return to its defaults)
 "
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit
+
+fi
 
 
 # Otherwise no overwriting (e.g. of pwm1_enable) may be allowed:
