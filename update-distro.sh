@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-c|--clean-system-caches] [--even-ignored]: updates the current distribution, and traces it.
+usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-c|--clean-system-caches] [-e|--even-ignored]: updates the current distribution, and traces it.
 
  Options (order must be respected):
    - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
@@ -79,7 +79,17 @@ if [ "$1" = "-e" ] || [ "$1" = "--even-ignored" ]; then
 
 	forced_packages="$(cat /etc/pacman.conf | grep '^IgnorePkg' | sed 's|^IgnorePkg[[:space:]]*=[[:space:]]*||1')"
 
+	#echo "forced_packages = ${forced_packages}"
 	shift
+
+fi
+
+
+if [ -n "$*" ]; then
+
+	echo "  Error, unexpected arguments specified ('$*')." 1>&2
+
+	exit 50
 
 fi
 
