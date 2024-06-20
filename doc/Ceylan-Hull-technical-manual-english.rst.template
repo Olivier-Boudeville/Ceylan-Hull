@@ -455,6 +455,8 @@ Document-related
 
 - `switch-text-encoding.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh>`_: reencodes the specified text file according to the specified encoding (by default Unicode, precisely ``utf-8``)
 
+- `convert-from-ISO-8859-to-utf8.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-from-ISO-8859-to-utf8.sh>`_: converts (in-place) the specified (text) file from a ASCII format to a utf-8 one
+
 
 One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
 
