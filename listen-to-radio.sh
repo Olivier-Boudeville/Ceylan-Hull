@@ -134,6 +134,13 @@ radio_paradise_world_url="http://stream.radioparadise.com/world-etc-128"
 radio_paradise_world_label="Radio Paradise World Mix"
 
 
+# JB Radio-2: https://jb-radio.net/Home
+jb_radio2_short_opt="-jb"
+jb_radio2_long_opt="--jb-radio2"
+jb_radio2_url="https://maggie.torontocast.com:8076/aac"
+jb_radio2_label="JB Radio-2"
+
+
 oui_fm_short_opt="-of"
 oui_fm_long_opt="--oui-fm"
 oui_fm_url="http://ouifm.ice.infomaniak.ch/ouifm-high.aac"
@@ -182,6 +189,7 @@ usage="Usage: $(basename $0) [${keep_vol_opt}] [RADIO_OPT|STREAM_URL]: plays the
 	* ${radio_paradise_mellow_label}: ${radio_paradise_mellow_short_opt} | ${radio_paradise_mellow_long_opt}
 	* ${radio_paradise_rock_label}: ${radio_paradise_rock_short_opt} | ${radio_paradise_rock_long_opt}
 	* ${radio_paradise_world_label}: ${radio_paradise_world_short_opt} | ${radio_paradise_world_long_opt}
+  - ${jb_radio2_label}: ${jb_radio2_short_opt} | ${jb_radio2_long_opt}
   - ${oui_fm_label}: ${oui_fm_short_opt} | ${oui_fm_long_opt}
   - ${le_mouv_label}: ${le_mouv_short_opt} | ${le_mouv_long_opt}
   - ${blp_label}: ${blp_short_opt} | ${blp_long_opt}
@@ -329,6 +337,15 @@ while [ ! $# -eq 0 ]; do
 
 		stream_url="${radio_paradise_world_url}"
 		stream_label="${radio_paradise_world_label}"
+
+	fi
+
+	if [ "$1" = "${jb_radio2_short_opt}" ] || [ "$1" = "${jb_radio2_long_opt}" ]; then
+
+		token_eaten=0
+
+		stream_url="${jb_radio2_url}"
+		stream_label="${jb_radio2_label}"
 
 	fi
 
