@@ -10,6 +10,10 @@ target_format="utf-8"
 
 usage="Usage: $(basename $0) [-h|--help] TEXT_FILE: converts (in-place) the specified (text) file from a ${source_format} format to a ${target_format} one."
 
+# Emacs can be used as well to convert text files to UTF-8: use mouse-3 on the
+# bottom, leftmost clickable area, or select ‘C-x C-m f’.
+
+
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
