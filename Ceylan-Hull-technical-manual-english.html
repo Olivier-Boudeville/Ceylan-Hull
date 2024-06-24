@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.20.1: https://docutils.sourceforge.io/" />
+<meta name="generator" content="Docutils 0.21.2: https://docutils.sourceforge.io/" />
 <meta content="Hull, shell, scripts, sh, bash" name="keywords" />
 <title>Welcome to the Ceylan-Hull documentation</title>
 <link rel="stylesheet" href="pygments-default.css" type="text/css" />
@@ -23,13 +23,13 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Organisation:</th><td class="field-body">Copyright (C) 2008-2023 Olivier Boudeville</td>
+<tr class="field"><th class="field-name">Organisation:</th><td class="field-body">Copyright (C) 2008-2024 Olivier Boudeville</td>
 </tr>
 <tr class="field"><th class="field-name">Contact:</th><td class="field-body">about (dash) hull (at) esperide (dot) com</td>
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Wednesday, November 22, 2023</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Monday, June 24, 2024</td>
 </tr>
 <tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
@@ -61,7 +61,7 @@
 <p></p>
 <p><span class="raw-html"><a name="hull_toc"></a></span></p>
 <div class="contents topic" id="topic-1">
-<span id="table-of-contents"></span><p class="topic-title"><strong>Table of Contents</strong></p>
+<span id="table-of-contents"></span><p class="topic-title"><a class="reference internal" href="#top"><strong>Table of Contents</strong></a></p>
 <ul class="simple">
 <li><a class="reference internal" href="#overview" id="toc-entry-1">Overview</a></li>
 <li><a class="reference internal" href="#listing-of-the-recommended-shell-scripts-per-usage" id="toc-entry-2">Listing of the recommended shell scripts per usage</a><ul>
@@ -274,6 +274,8 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/show-branch-hierarchy.sh">show-branch-hierarchy.sh</a>: shows the hierarchy of the branches in the current VCS repository</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-tags-by-date.sh">list-tags-by-date.sh</a>: lists, for the current VCS repository, all (annotated) tags, from the oldest one to the latest one</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-largest-vcs-blobs.sh">list-largest-vcs-blobs.sh</a>: lists the largest blob objects stored in the current VCS repository, sorted by decreasing size</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/list-lastly-updated-vcs-branches.sh">list-lastly-updated-vcs-branches.sh</a>: lists, assuming to be in a clone, the VCS local or remote branches from the most recently modified one to the ones that were modified a longer time ago</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/co-main.sh">co-main.sh</a>: performs a checkout of the main branch, regardless of its actual name (<tt class="docutils literal">main</tt> or <tt class="docutils literal">master</tt>)</li>
 </ul>
 </div>
 <div class="section" id="replacement-related">
@@ -360,6 +362,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh">monitor-cctv.sh</a>: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh">fetch-cctv-monitorings.sh</a>: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh">review-cctv-monitorings.sh</a>: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before</li>
+<li><a href="#system-message-3"><span class="problematic" id="problematic-3">`set-cctv-internet-connectivity.sh &lt;https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-cctv-internet-connectivity.sh`_</span></a>: enables, disables or displays the current status of the Internet connectivity of any registered CCTV camera</li>
 </ul>
 </div>
 <div class="section" id="document-related">
@@ -371,11 +374,13 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-plantuml-diagram.sh">generate-plantuml-diagram.sh</a>: generates a PNG file corresponding to the specified file describing a PlantUML (UML) diagram</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-mermaid-diagram.sh">generate-mermaid-diagram.sh</a>: generates a PNG file corresponding to the specified file describing a Mermaid diagram</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/latex-to-image.sh">latex-to-image.sh</a>: generates an image (SVG or PNG) representing the specified LaTeX formula</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/affix-images.sh">affix-images.sh</a>:  pastes the first specified image onto the second one, at the specified (signed) location according to the selected direction, in order to generate the third image</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/generate-pdf-from-latex.sh">generate-pdf-from-latex.sh</a>: generates a PDF file from a LaTeX one, and displays it</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regenerate-rst-files.sh">regenerate-rst-files.sh</a>: updates generated files from more recent Docutils files</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/track-rst-updates.sh">track-rst-updates.sh</a>: tracks changes in the specified RST source file in order to regenerate the target file accordingly</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh">spell-check-rst-tree.sh</a>: spellchecks all RST files found from the current directory</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh">switch-text-encoding.sh</a>: reencodes the specified text file according to the specified encoding (by default Unicode, precisely <tt class="docutils literal"><span class="pre">utf-8</span></tt>)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-from-ISO-8859-to-utf8.sh">convert-from-ISO-8859-to-utf8.sh</a>: converts (in-place) the specified (text) file from a ASCII format to a utf-8 one</li>
 </ul>
 <p>One may also rely on the <a class="reference external" href="http://myriad.esperide.org/#to-generate-documentation">Ceylan-Myriad's scripts for documentation</a>, notably <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh">generate-docutils.sh</a> and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh">generate-pdf-from-rst.sh</a>.</p>
 </div>
@@ -852,6 +857,12 @@ $<span class="w"> </span>/usr/bin/mandb<span class="w"> </span>--quiet<span clas
 <p><span class="raw-html"><center><img src="hull-title.png" width="15%"></img></center></span>
 </p>
 <p><span class="raw-html"><a name="hull_bottom"></a></span></p>
+</div>
+<div class="system-messages section">
+<h1>Docutils System Messages</h1>
+<div class="system-message" id="system-message-3">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">Ceylan-Hull-technical-manual-english.rst</tt>, line 427); <em><a href="#problematic-3">backlink</a></em></p>
+Unknown target name: &quot;set-cctv-internet-connectivity.sh &lt;https://github.com/olivier-boudeville/ceylan-hull/blob/master/set-cctv-internet-connectivity.sh&quot;.</div>
 </div>
 </div>
 </body>
