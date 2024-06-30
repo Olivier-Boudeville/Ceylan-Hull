@@ -38,7 +38,7 @@ if [ "$1" = "-f" ] || [ "$1" = "--force-enabled" ]; then
 fi
 
 
-if [ "$1" ]; then
+if [ -n "$1" ]; then
 
 	echo "  Error, extra parameter specified.
 ${usage}" 1>&2
@@ -156,8 +156,9 @@ use_xinput()
 
 # At least with some Thinkpad laptops, neither synclient nor xinput will work,
 # but the trackpoint is likely to remain fully operation in all cases.
-
+#
 #use_synclient
+
 
 # Synclient not working properly (enabling not actually done) at least with
 # Gnome, so:
