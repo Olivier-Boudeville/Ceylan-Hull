@@ -173,10 +173,12 @@ ${usage}" 1>&2
 fi
 
 
-base_grep_opt="--color"
+# '--color' not sufficient in all cases:
+base_grep_opt="--color=always"
 
 # NEVER surround these single quotes by double ones:
 # (here insensitive search)
+#
 filter_c='*.c'
 
 # Unable to properly define a correctly-protected variable:

@@ -230,10 +230,11 @@ base_find_opt="-type f"
 if [ -z "${filter_on_file}" ]; then
 	find_opt="${base_find_opt}"
 else
-	find_opt="( ${base_find_opt} -a -name ${filter_on_file} )"
+	find_opt="(${base_find_opt} -a -name ${filter_on_file})"
 fi
 
-base_grep_opt="--color --with-filename"
+# '--color' not sufficient in all cases:
+base_grep_opt="--color=always --with-filename"
 
 searched_expression="${read_parameter}"
 #echo "searched_expression = ${searched_expression}"

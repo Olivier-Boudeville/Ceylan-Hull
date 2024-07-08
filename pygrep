@@ -176,7 +176,8 @@ ${usage}" 1>&2
 fi
 
 
-base_grep_opt="--color"
+# '--color' not sufficient in all cases:
+base_grep_opt="--color=always"
 
 filter_py='*.py'
 filter_msg="Python files"
