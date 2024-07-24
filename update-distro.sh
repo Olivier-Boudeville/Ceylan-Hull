@@ -57,7 +57,7 @@ clean_caches=1
 even_ignored=1
 
 
-if [ "$1" = "-q" ]; then
+if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
 
 	quiet=0
 	shift
