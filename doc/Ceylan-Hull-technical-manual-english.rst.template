@@ -157,6 +157,8 @@ To fix names, paths, permissions, content
 
 - `rename-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh>`_ (just an example of pattern substitution in filenames)
 
+- `validate-yaml.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/validate-yaml.sh>`_, to validate YAML/YML files
+
 
 
 To inspect file and directory content
@@ -424,7 +426,7 @@ CCTV-related
 
 - `review-cctv-monitorings.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh>`_: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before
 
-- `set-cctv-internet-connectivity.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-cctv-internet-connectivity.sh`_: enables, disables or displays the current status of the Internet connectivity of any registered CCTV camera
+- `set-cctv-internet-connectivity.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-cctv-internet-connectivity.sh>`_: enables, disables or displays the current status of the Internet connectivity of any registered CCTV camera
 
 
 
