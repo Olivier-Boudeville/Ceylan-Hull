@@ -29,7 +29,7 @@
 </tr>
 <tr class="field"><th class="field-name">Creation date:</th><td class="field-body">Sunday, August 17, 2008</td>
 </tr>
-<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Monday, June 24, 2024</td>
+<tr class="field"><th class="field-name">Lastly updated:</th><td class="field-body">Sunday, July 28, 2024</td>
 </tr>
 <tr class="field"><th class="field-name">Version:</th><td class="field-body">1.0.10</td>
 </tr>
@@ -189,6 +189,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces.sh">fix-whitespaces.sh</a>: fixes whitespace problems (e.g. series of spaces instead of tabulations, trailing whitespaces, etc.) into the specified text file; useful to properly format files that shall committed when not using Emacs as text editor</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fix-whitespaces-in-tree.sh">fix-whitespaces-in-tree.sh</a>: fixes whitespace problems (e.g. series of spaces instead of tabulations, trailing whitespaces, etc.) in all elligible files found from specified root directory tree; useful, when operating on a fork, to properly format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the others (just create a branch first, and tag once done)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/rename-files-in-tree.sh">rename-files-in-tree.sh</a> (just an example of pattern substitution in filenames)</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/validate-yaml.sh">validate-yaml.sh</a>, to validate YAML/YML files</li>
 </ul>
 </div>
 <div class="section" id="to-inspect-file-and-directory-content">
@@ -362,7 +363,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/monitor-cctv.sh">monitor-cctv.sh</a>: performs online, direct monitoring from a networked security camera (CCTV), with an average quality and no audio</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/fetch-cctv-monitorings.sh">fetch-cctv-monitorings.sh</a>: fetches locally (and leaves on remote host) the set of CCTV recordings dating back from yesterday and the three days before; designed to be called typically from the crontab of your usual reviewing user</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/review-cctv-monitorings.sh">review-cctv-monitorings.sh</a>: allows to (possibly) fetch from server, and review conveniently / efficiently any set of CCTV recordings dating back from yesterday and the three days before</li>
-<li><a href="#system-message-3"><span class="problematic" id="problematic-3">`set-cctv-internet-connectivity.sh &lt;https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-cctv-internet-connectivity.sh`_</span></a>: enables, disables or displays the current status of the Internet connectivity of any registered CCTV camera</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-cctv-internet-connectivity.sh">set-cctv-internet-connectivity.sh</a>: enables, disables or displays the current status of the Internet connectivity of any registered CCTV camera</li>
 </ul>
 </div>
 <div class="section" id="document-related">
@@ -381,6 +382,7 @@
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/spell-check-rst-tree.sh">spell-check-rst-tree.sh</a>: spellchecks all RST files found from the current directory</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/switch-text-encoding.sh">switch-text-encoding.sh</a>: reencodes the specified text file according to the specified encoding (by default Unicode, precisely <tt class="docutils literal"><span class="pre">utf-8</span></tt>)</li>
 <li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-from-ISO-8859-to-utf8.sh">convert-from-ISO-8859-to-utf8.sh</a>: converts (in-place) the specified (text) file from a ASCII format to a utf-8 one</li>
+<li><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/djvu-to-pdf.sh">djvu-to-pdf.sh</a>: converts files in the DjVU format into PDF ones</li>
 </ul>
 <p>One may also rely on the <a class="reference external" href="http://myriad.esperide.org/#to-generate-documentation">Ceylan-Myriad's scripts for documentation</a>, notably <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh">generate-docutils.sh</a> and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh">generate-pdf-from-rst.sh</a>.</p>
 </div>
@@ -635,7 +637,7 @@
 <div class="line">-e or --exclude ELEM: excludes the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified</div>
 </div>
 <p>Example: <tt class="docutils literal">regrep <span class="pre">--exclude</span> ./foo.dat <span class="pre">--exclude</span> <span class="pre">./backup-dir</span> <span class="pre">-i</span> 'little red rooster' <span class="pre">'*.txt'</span></tt>.</p>
-<p class="last">See also: <a class="reference external" href="https://myriad.esperide.org/#searching-for-erlang-elements">ergrep</a> (for searching specifically in Erlang files), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep">pygrep</a> (Python version), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/jgrep">jgrep</a> (Java version) and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep">cgrep</a> (C version)</p>
+<p class="last">See also: <a class="reference external" href="https://myriad.esperide.org/#searching-for-erlang-elements">ergrep</a> (for searching specifically in Erlang files), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/pygrep">pygrep</a> (Python version), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/jgrep">jgrep</a> (Java version), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/jsgrep">jsgrep</a> (Javascript version), <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Snake/blob/master/jsxgrep">jsxgrep</a> (React JSX version) and <a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/cgrep">cgrep</a> (C version).</p>
 </dd>
 <dt><a class="reference external" href="https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/srm">srm</a></dt>
 <dd><p class="first"><tt class="docutils literal">srm</tt> (for &quot;secure rm&quot;): stores deleted files/directories in a trash instead of deleting them directly, in order to give one more chance of retrieving them if necessary. Ensures that no two file elements can collide in trash so that all contents are preserved.</p>
@@ -857,12 +859,6 @@ $<span class="w"> </span>/usr/bin/mandb<span class="w"> </span>--quiet<span clas
 <p><span class="raw-html"><center><img src="hull-title.png" width="15%"></img></center></span>
 </p>
 <p><span class="raw-html"><a name="hull_bottom"></a></span></p>
-</div>
-<div class="system-messages section">
-<h1>Docutils System Messages</h1>
-<div class="system-message" id="system-message-3">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">Ceylan-Hull-technical-manual-english.rst</tt>, line 427); <em><a href="#problematic-3">backlink</a></em></p>
-Unknown target name: &quot;set-cctv-internet-connectivity.sh &lt;https://github.com/olivier-boudeville/ceylan-hull/blob/master/set-cctv-internet-connectivity.sh&quot;.</div>
 </div>
 </div>
 </body>
