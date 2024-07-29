@@ -1,8 +1,10 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [ARGS]: runs VS Code (Microsoft Visual Studio Code) or VSCodium (a version of it without branding/telemetry/licensing), a free software (MIT licence) source-code multi-platform editor.
+proxy_opt="--enable-proxy"
 
-Applies any proxy being currently set in the current shell.
+usage="Usage: $(basename $0) [-h|--help] [${proxy_opt}] [VS_CODE_ARGS]: runs VS Code (Microsoft Visual Studio Code) or VSCodium (a version of it without branding/telemetry/licensing), a free software (MIT licence) source-code multi-platform editor.
+
+Specify the ${proxy_opt} option in order to enable and activate a proxy for this editor instance (by default its proxy access is disabled).
 "
 
 # Possibly installed on Arch thanks to: 'pacman -Sy code'.
@@ -31,12 +33,52 @@ if [ ! -x "${vscode_exec}" ]; then
 fi
 
 
-# Our conventions:
-if [ -n "${PROXY}" ]; then
-	echo "(using proxy '${PROXY}')"
-	proxy_args="--proxy-server=\"${PROXY}\""
+
+use_proxy=1
+
+if [ "$1" = "${proxy_opt}" ]; then
+
+	use_proxy=0
+	shift
+
+fi
+
+
+if [ $use_proxy -eq 0 ]; then
+
+	# Our conventions:
+
+	if [ -n "${PROXY}" ]; then
+
+		# Corresponds to our 'set-proxy' alias:
+
+		export http_proxy=${PROXY}
+		export https_proxy=${PROXY}
+
+		export HTTP_PROXY=${PROXY}
+		export HTTPS_PROXY=${PROXY}
+
+		curl --silent --proxy-negotiate --user : http://google.fr 1>/dev/null
+
+		echo "(using '${http_proxy}' for proxy)"
+
+		proxy_args="--proxy-server=\"${PROXY}\""
+
+	else
+
+		echo "(no proxy used)"
+
+	fi
+
 else
-	echo "(no proxy used)"
+
+	unset http_proxy
+	unset https_proxy
+	unset HTTP_PROXY
+	unset HTTPS_PROXY
+
+	echo "(no proxy enabled)"
+
 fi
 
 
