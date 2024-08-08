@@ -48,4 +48,4 @@ echo
 
 ${adb_exec} shell mkdir ${remote_dir} 2>/dev/null
 
-${adb_exec} push ${args} ${remote_dir} && echo "One may use 'Amaze' to browse these files on the device now, in ${remote_dir}. Check that, if needed, you have a proper viewer (e.g. MuPDF) for that."
+${adb_exec} push ${args} ${remote_dir} && echo "One may use 'Ghost Commander' to browse these files on the device now, in ${remote_dir}. Check that, if needed, you have a proper viewer (e.g. MuPDF) for that."
