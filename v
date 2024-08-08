@@ -923,7 +923,7 @@ view_selected_element()
 		file_elem="${renamed_elem}"
 		extension="webp"
 
-	elif [ "${extension}" = "pdf" ]; then
+	elif [ "${extension}" = "pdf" ] || [ "${extension}" = "djvu" ]; then
 
 		chooseEvince
 		applyViewer
