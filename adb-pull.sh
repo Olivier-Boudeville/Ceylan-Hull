@@ -61,7 +61,7 @@ echo
 #read
 
 
-if ${adb_exec} root 2>/dev/null; then
+if "${adb_exec}" root 2>/dev/null; then
 
 	echo "(adb run as root on the smartphone)"
 
@@ -76,4 +76,10 @@ fi
 #${adb_exec} shell ls ${args} | tr -s "\r\n" "\0 " | xargs -0 -n1 ${adb_exec} pull
 
 # Apparently will work now only one at a time:
-for f in $(${adb_exec} shell ls ${args} | tr -s "\r\n" "\0 "); do ${adb_exec} pull "$f"; done
+for f in $("${adb_exec}" shell ls ${args} | tr -s "\r\n" "\0 "); do
+
+	#echo " - pulling '$f'"
+	${adb_exec} pull "$f"
+	#sleep 1
+
+done
