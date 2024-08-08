@@ -930,7 +930,7 @@ extension="$(echo ${parameters}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
 if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
-	if [ "${extension}" = "pdf" ]; then
+	if [ "${extension}" = "pdf" ] || [ "${extension}" = "djvu" ]; then
 
 		echo "  Warning: do you really want to *edit* this PDF file (not just display it)? (y/n) [n]"
 		read answer
