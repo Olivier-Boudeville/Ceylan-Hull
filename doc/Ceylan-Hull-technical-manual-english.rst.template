@@ -459,6 +459,7 @@ Document-related
 
 - `convert-from-ISO-8859-to-utf8.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/convert-from-ISO-8859-to-utf8.sh>`_: converts (in-place) the specified (text) file from a ASCII format to a utf-8 one
 
+- `djvu-to-pdf.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/djvu-to-pdf.sh>`_: converts files in the DjVU format into PDF ones
 
 One may also rely on the `Ceylan-Myriad's scripts for documentation <http://myriad.esperide.org/#to-generate-documentation>`_, notably `generate-docutils.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-docutils.sh>`_ and `generate-pdf-from-rst.sh <https://github.com/Olivier-Boudeville/Ceylan-Myriad/blob/master/src/scripts/generate-pdf-from-rst.sh>`_.
 
