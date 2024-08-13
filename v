@@ -91,6 +91,17 @@ chooseEvince()
 }
 
 
+chooseCalibre()
+{
+
+	#echo "Calibre selected."
+
+	viewer="$(which calibre 2>/dev/null)"
+	viewer_short_name="Calibre"
+
+}
+
+
 chooseLibreOffice()
 {
 
@@ -926,6 +937,11 @@ view_selected_element()
 	elif [ "${extension}" = "pdf" ] || [ "${extension}" = "djvu" ]; then
 
 		chooseEvince
+		applyViewer
+
+	elif [ "${extension}" = "epub" ]; then
+
+		chooseCalibre
 		applyViewer
 
 	elif [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "csv" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
