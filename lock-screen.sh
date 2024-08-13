@@ -52,11 +52,13 @@ fi
 
 ## If using xlock (install the 'xlockmore' Arch package):
 
-# Nothing needed:
-locker_activate_name=""
+# No activation needed for xlock:
+
+locker_activate_needed=1
+locker_activate_name="xlock"
 locker_activate_opts=""
 
-locker_cmd_name="xlock"
+locker_cmd_name="${locker_activate_name}"
 
 locker_cmd_lock_opts="-mode blank"
 #locker_cmd_lock_opts="-mode marquee"
@@ -64,21 +66,25 @@ locker_cmd_lock_opts="-mode blank"
 #locker_cmd_lock_opts="-mode nose"
 
 
-# First launching the screensaver daemon, if needed (possibly optional step):
-if [ -n "${locker_activate_name}" ]; then
+if [ $locker_activate_needed -eq 0 ]; then
 
-	locker_activate_exec="$(which ${locker_activate_name})"
+	# First launching the screensaver daemon, if needed (possibly optional step):
+	if [ -n "${locker_activate_name}" ]; then
 
-	if [ ! -x "${locker_activate_exec}" ]; then
+		locker_activate_exec="$(which ${locker_activate_name})"
 
-		echo "  Error, no locker daemon found ('${locker_activate_name}')." 1>&2
-		exit 5
+		if [ ! -x "${locker_activate_exec}" ]; then
+
+			echo "  Error, no locker daemon found ('${locker_activate_name}')." 1>&2
+			exit 5
+
+		fi
+
+		echo "Activating first the screensaver"
+
+	"${locker_activate_exec}" ${locker_activate_opts} 1>/dev/null &
 
 	fi
-
-	echo "Activating first the screensaver"
-
-	${locker_activate_exec} ${locker_activate_opts} 1>/dev/null &
 
 fi
 
@@ -101,6 +107,8 @@ echo "Locking the screen immediately on $(date)..."
 # script (e.g. leaving-home.sh) can itself be synchronised on locking/unlocking;
 # however with xscreensaver it is never blocking actually...
 #
-${locker_cmd_exec} ${locker_cmd_lock_opts} 1>/dev/null 2>/dev/null
+# xlock is blocking:
+${locker_cmd_exec} ${locker_cmd_lock_opts} 2>/dev/null
+# 1>/dev/null 2>&1
 
 echo "... unlocked on $(date)"
