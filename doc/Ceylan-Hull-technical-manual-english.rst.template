@@ -417,6 +417,13 @@ For Snapshots (Camera Pictures)
 
 
 
+For MTP Devices
+---------------
+
+- `mount-mtp-device.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/mount-mtp-device.sh>`_: mounts any plugged, non-locked MTP device (e.g. a smartphone, an Android e-reader) to any specified mount point, otherwise to a uniquely-generated one
+
+
+
 CCTV-related
 ============
 
@@ -635,6 +642,9 @@ For smartphones
 .. - `transfer-to-mobile.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/transfer-to-mobile.sh>`_
 
 - `set-usb-tethering.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/set-usb-tethering.sh>`_: sets (or stops) USB tethering on local host, typically so that a smartphone connected through USB and with such tethering enabled shares its Internet connectivity with this host
+
+
+See also the `For MTP Devices`_ section.
 
 
 
