@@ -10,7 +10,13 @@ mounter_name="aft-mtp-mount"
 
 usage="Usage: $(basename $0) [MOUNT_POINT]: mount any plugged, non-locked MTP device (e.g. a smartphone, an Android e-reader) to any specified mount point, otherwise to a uniquely-generated one (recommended, as more stable).
 
-If encountering errors like 'Transport endpoint is not connected', then a new mount shall be performed.
+Executing this script is likely to trigger an authorization request on the device.
+
+If encountering errors like 'Transport endpoint is not connected', 'no MTP device found' or 'Device is already used by another process', then a new mount shall be performed (first by unplugging/plugging again the USB cable).
+
+Note that:
+- device content may appear on the local filesystem only after a few seconds after this script was executed
+- a file generated on the device after the mounting is likely not to be visible from the mount point
 
 Using '${mounter_name}' for that (the approach that we recommend); alternatively one may rely on 'aft-mtp-cli' to have a shell of the MTP device's pseudo-filesystem, or 'android-file-transfer' to have a very simple GUI.
 "
@@ -37,7 +43,6 @@ if [ -n "$1" ]; then
 	fi
 
 	shift
-
 
 fi
 
@@ -83,11 +88,31 @@ if ! "${mounter}" "${mount_point}"; then
 
 else
 
+	# Quite often there is a single directory at the root, which could thus be
+	# jumped to:
+
 	# For a Bookean Notéa, one could jump to:
 	# "Internal shared storage"
 	# "Espace de stockage interne partagé"
+	#
+	# For some (Android, French) smartphones: 'Stockage interne', etc.
 
-	echo "MTP device mounted on '${mount_point}'. Enjoy!"
+	# Any content does not seem to appear immediately:
+	sleep 1
+
+	dir_count="$(/bin/ls -1 ${mount_point} | wc -l)"
+
+	if [ "${dir_count}" = "1" ]; then
+
+		target_dir="$(ls -1 ${mount_point})"
+
+	else
+
+		target_dir="${mount_point}"
+
+	fi
+
+	echo "MTP device mounted on '${target_dir}'. Enjoy!"
 
 	# No real unmounting seems available...
 
