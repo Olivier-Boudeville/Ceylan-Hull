@@ -162,7 +162,7 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-25"
+version="s-26"
 
 
 # Now the settings are not embedded anymore in this script, but in the next
@@ -771,6 +771,16 @@ start_it_up()
 
 		# For the main UDP Orge server socket:
 		${iptables} -A INPUT -p udp --dport 9512 -m state --state NEW -j ACCEPT
+
+	fi
+
+
+	# Any specific (e.g. webDAV) webserver:
+	if [ -n "${calcont_port}" ]; then
+
+		$echo "Enabled calcont webserver, on port ${calcont_port}."
+
+		${iptables} -A INPUT -p tcp --dport "${calcont_port}" -m state --state NEW,ESTABLISHED -j ACCEPT
 
 	fi
 
