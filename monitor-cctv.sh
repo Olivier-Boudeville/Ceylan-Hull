@@ -8,6 +8,8 @@ usage="Usage: $(basename $0) [${full_opt}]: performs online, direct monitoring f
 	 - Shift-S to take a snapshot
 	 - Shift-R to start/stop recording
 	 - Ctrl-Q to quit
+
+Of course the firewall of a gateway may block outbound (RTSP) streams.
 "
 
 full_requested=1
