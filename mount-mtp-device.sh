@@ -8,7 +8,12 @@
 
 mounter_name="aft-mtp-mount"
 
-usage="Usage: $(basename $0) [MOUNT_POINT]: mount any plugged, non-locked MTP device (e.g. a smartphone, an Android e-reader) to any specified mount point, otherwise to a uniquely-generated one (recommended, as more stable).
+mount_prefix="/tmp/ceylan-hull-mount-mtp-device-"
+
+
+usage="Usage: $(basename $0) [-h|--help] [-uma|--umount-all] [MOUNT_POINT]: mount any USB-plugged, active, non-locked MTP device (e.g. a smartphone, an Android e-reader) to any specified mount point, otherwise to a uniquely-generated one (in the form of'${mount_prefix}*') - which is recommended, as more stable.
+
+The -uma/--umount-all option stands for \"umount all\":then the script will attempt to umount all points (based on the default naming) it may have mounted previously.
 
 Executing this script is likely to trigger an authorization request on the device.
 
@@ -29,6 +34,28 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit
 
 fi
+
+
+if [ "$1" = "-uma" ] || [ "$1" = "--umount-all" ]; then
+
+	points="$(/bin/ls -1 -d ${mount_prefix}* 2>/dev/null)"
+
+	echo "Unmounting (lazily) all previous points:"
+
+	for p in ${points}; do
+
+		# Lazily found more efficient than regular or even forced:
+		echo " - umounting '$p'"
+		umount -l $p 2>/dev/null && rmdir $p 2>/dev/null
+
+	done
+
+	echo "Unmounting done."
+
+	exit
+
+fi
+
 
 
 if [ -n "$1" ]; then
@@ -97,23 +124,27 @@ else
 	#
 	# For some (Android, French) smartphones: 'Stockage interne', etc.
 
+	# Not a good idea, ridden with spaces, hence not useful:
+
 	# Any content does not seem to appear immediately:
-	sleep 1
+	#sleep 1
 
-	dir_count="$(/bin/ls -1 ${mount_point} | wc -l)"
+	#dir_count="$(/bin/ls -1 ${mount_point} | wc -l)"
 
-	if [ "${dir_count}" = "1" ]; then
+	#if [ "${dir_count}" = "1" ]; then
 
-		target_dir="$(ls -1 ${mount_point})"
+	#   target_dir="$(ls -1 ${mount_point})"
 
-	else
+	#else
 
-		target_dir="${mount_point}"
+	#   target_dir="${mount_point}"
 
-	fi
+	#fi
 
-	echo "MTP device mounted on '${target_dir}'. Enjoy!"
+	#echo "MTP device mounted on '$(realpath ${target_dir})'. Enjoy!"
 
-	# No real unmounting seems available...
+	echo "MTP device mounted on '${mount_point}'. Enjoy!"
+
+	echo "(use the -uma/--umount-all option to unmount easily afterwards)"
 
 fi
