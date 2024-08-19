@@ -17,11 +17,13 @@ The -uma/--umount-all option stands for \"umount all\":then the script will atte
 
 Executing this script is likely to trigger an authorization request on the device.
 
-If encountering errors like 'Transport endpoint is not connected', 'no MTP device found' or 'Device is already used by another process', then a new mount shall be performed (first by unplugging/plugging again the USB cable).
 
 Note that:
+- if the mount point is found empty, probably that the device is waiting for the sharing to be acknowledged by the user; when authorised, the mount point will be populated
 - device content may appear on the local filesystem only after a few seconds after this script was executed
 - a file generated on the device after the mounting is likely not to be visible from the mount point
+
+If encountering errors like 'Transport endpoint is not connected', 'no MTP device found' or 'Device is already used by another process', then a new mount shall be performed (first by unplugging/plugging again the USB cable).
 
 Using '${mounter_name}' for that (the approach that we recommend); alternatively one may rely on 'aft-mtp-cli' to have a shell of the MTP device's pseudo-filesystem, or 'android-file-transfer' to have a very simple GUI.
 "
