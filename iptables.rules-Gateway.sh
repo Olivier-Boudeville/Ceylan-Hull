@@ -775,12 +775,12 @@ start_it_up()
 	fi
 
 
-	# Any specific (e.g. webDAV) webserver:
-	if [ -n "${calcont_port}" ]; then
+	# For any specific (e.g. {web,cal,card}DAV) webserver:
+	if [ -n "${synergy_port}" ]; then
 
-		$echo "Enabled calcont webserver, on port ${calcont_port}."
+		$echo "Enabled synergy DAV webserver, on port ${synergy_port}."
 
-		${iptables} -A INPUT -p tcp --dport "${calcont_port}" -m state --state NEW,ESTABLISHED -j ACCEPT
+		${iptables} -A INPUT -p tcp --dport "${synergy_port}" -m state --state NEW,ESTABLISHED -j ACCEPT
 
 	fi
 
