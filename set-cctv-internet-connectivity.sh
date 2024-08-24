@@ -55,6 +55,16 @@ ${usage}" 1>&2
 fi
 
 
+if [ ! $(id -u) -eq 0 ]; then
+
+	echo "  Error, you must be root.
+${usage}" 1>&2
+
+	exit 4
+
+fi
+
+
 
 iptables="$(which iptables 2>/dev/null)"
 
@@ -147,7 +157,7 @@ if [ -e "${fw_settings_file}" ]; then
 
 	if [ -z "${lan_if_name}" ]; then
 
-		echo "  Error, unable to determine LAN interface name from the '{fw_settings_file}' firewall settings file." 1>&2
+		echo "  Error, unable to determine LAN interface name from the '${fw_settings_file}' firewall settings file." 1>&2
 
 		exit 60
 
