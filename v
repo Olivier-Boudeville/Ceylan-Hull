@@ -957,6 +957,13 @@ view_selected_element()
 
 		applyViewer
 
+	# As not managed by Gwenview:
+	elif [ "${extension}" = "avif" ]; then
+
+		chooseEog
+		applyViewer
+		exit 0
+
 	# 'v': viewing a Jupyter notebook is using it:
 	elif [ "${extension}" = "ipynb" ]; then
 
