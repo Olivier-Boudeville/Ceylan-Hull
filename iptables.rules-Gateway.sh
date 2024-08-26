@@ -173,7 +173,7 @@ setting_file="/etc/iptables.settings-Gateway.sh"
 
 if [ ! -f "${setting_file}" ]; then
 
-	$echo " Error, setting file ('${setting_file}) not found." 1>&2
+	$echo " Error, setting file ('${setting_file}') not found." 1>&2
 
 	exit 15
 
@@ -289,6 +289,7 @@ start_it_up()
 	$echo " - IPTV enabled? ${enable_iptv}" >> "${log_file}"
 	$echo " - SMTP enabled? ${enable_smtp}" >> "${log_file}"
 	$echo " - SSH port: ${ssh_port}" >> "${log_file}"
+	$echo " - Synergy port: ${synergy_port}" >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
@@ -392,7 +393,7 @@ start_it_up()
 	# Note: if you turn on IP forwarding, you will also get this.
 	#
 	for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do
-		$echo "1" > ${interface}
+		$echo "1" > "${interface}"
 	done
 
 
@@ -785,7 +786,7 @@ start_it_up()
 	# For any specific (e.g. {web,cal,card}DAV) webserver:
 	if [ -n "${synergy_port}" ]; then
 
-		$echo "Enabled synergy DAV webserver, on port ${synergy_port}."
+		$echo "Enabling Synergy DAV webserver, on port ${synergy_port}." >> "${log_file}"
 
 		${iptables} -A INPUT -p tcp --dport "${synergy_port}" -m state --state NEW,ESTABLISHED -j ACCEPT
 
