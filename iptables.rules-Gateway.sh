@@ -675,9 +675,16 @@ start_it_up()
 
 		# We must use -I (insert, at first position), not -A (append, at last
 		# position), as otherwise previous rules may (are likely to) accept
-		# these packets:
+		# these packets.
 		#
-		${iptables} -I INPUT   -i ${lan_if} -p all --source "${host}" -j DROP
+		# We now block only forwarded packets (FORWARD), not gateway-received
+		# ones (INPUT), as at least some gateway-level services (e.g. CCTV
+		# monitoring, for presence detection) will need to request information
+		# from such local hosts (anyway the gateway is not supposed to be
+		# compromised with components associated to a filtered host). So:
+
+		# ${iptables} -I INPUT -i ${lan_if} -p all --source "${host}" -j DROP
+
 		${iptables} -I FORWARD -i ${lan_if} -p all --source "${host}" -j DROP
 
 	done
