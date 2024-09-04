@@ -12,7 +12,7 @@ usage="Usage: $(basename $0): archives properly and reliably (compressed, cypher
 
 if [ ! $# -eq 0 ]; then
 
-	echo "   Error, no parameter is to be specified to this script.
+	echo "  Error, no parameter is to be specified to this script.
 ${usage}" 1>&2
 	exit 4
 
@@ -30,9 +30,17 @@ if [ "${target_client}" = "thunderbird" ]; then
 
 	email_root="${HOME}/.thunderbird"
 
+	# For Thunderbird, various filesystem entries could be skipped, notably
+	# global-messages-db.sqlite that is an index that is large and that can be
+	# recomputed from the non-skipped data.
+	#
+	exclude_opt="--exclude **/global-messages-db.sqlite --exclude **/places.sqlite --exclude Crash*Reports/ --exclude **/Cache/ --exclude **/startupCache/ --exclude **/OfflineCache/"
+
 elif [ "${target_client}" = "evolution" ]; then
 
 	email_root="${HOME}/.local/share/evolution"
+
+	exclude_opt=""
 
 fi
 
@@ -42,7 +50,7 @@ if [ ! "${target_client}" = "evolution" ]; then
 
 	if ps -edf | grep "${target_client}" | grep -v grep 1>/dev/null 2>&1; then
 
-		echo "   Error, your email client (${target_client}) seems to be still running, please shut it down first." 1>&2
+		echo "  Error, your email client ('${target_client}') seems to be still running, please shut it down first." 1>&2
 		exit 5
 
 	fi
@@ -52,7 +60,7 @@ fi
 
 if [ ! -d "${email_root}" ]; then
 
-	echo "   Error, no root directory of email client found (${email_root})." 1>&2
+	echo "  Error, no root directory of email client found ('${email_root}')." 1>&2
 	exit 10
 
 fi
@@ -67,7 +75,7 @@ archive_tool="$(which ${snapshot_script} 2>/dev/null)"
 
 if [ ! -x "${archive_tool}" ]; then
 
-	echo "   Error, no executable archive tool found (${snapshot_script})." 1>&2
+	echo "  Error, no executable archive tool found ('${snapshot_script}')." 1>&2
 	exit 15
 
 fi
@@ -75,9 +83,10 @@ fi
 email_base_dir="$(basename "${email_root}")"
 
 echo "   Archiving now the current email base...."
-if ! ${archive_tool} "${email_base_dir}"; then
 
-	echo "   Error, archive creation failed." 1>&2
+if ! "${archive_tool}" ${exclude_opt} "${email_base_dir}"; then
+
+	echo "  Error, archive creation failed." 1>&2
 	exit 20
 
 fi
@@ -87,7 +96,7 @@ generated_file="$(date "+%Y%m%d")-${email_base_dir}-snapshot.tar.xz.gpg"
 
 if [ ! -f "${generated_file}" ]; then
 
-	echo "   Error, no generated file (${generated_file}) found." 1>&2
+	echo "  Error, no generated file ('${generated_file}') found." 1>&2
 	exit 25
 
 fi
