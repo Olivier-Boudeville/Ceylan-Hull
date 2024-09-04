@@ -113,7 +113,9 @@ Related to Filesystems
 To search for files and content
 -------------------------------
 
-- `wh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh>`_ ("where") : a more convenient "find"; see the `wh full usage`_
+- `wh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/wh>`_ ("where"): a more convenient ``find``; see the `wh full usage`_
+
+- `locate.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/locate.sh>`_: locates the files whose name corresponds to the specified pattern, among the filesystem elements that are routinely scanned
 
 - `regrep <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/regrep>`_: recursive grep for the ones that lack it; see the `regrep full usage`_
 
