@@ -238,17 +238,22 @@ if [ $no_path -eq 0 ]; then
 
 else
 
-	[ $verbose -eq 1 ] || echo "With path case, run from $(pwd): command is: "
 
 	if [ $quiet -eq 0 ]; then
+
+		[ $verbose -eq 1 ] || echo "With path and quiet case, run from $(pwd):"
 
 		# No fancy color wanted if quiet, as typically integrated in scripts:
 		${find} ${find_opt} . ${excludes} ${name_opt} "${target_pattern}" -print 2>/dev/null # | more
 
 	else
 
-		# Allows to see symlinks and whether they are dead:
-		${find} ${find_opt} . ${excludes} ${name_opt} "${target_pattern}" -exec /bin/ls ${detail_opt} --color '{}' 2>/dev/null ';' # | more
+		[ $verbose -eq 1 ] || echo "With path and non-quiet case, run from $(pwd):"
+
+		# Allows to see symlinks and whether they are dead (not wanting to list
+		# the content of directories):
+		#
+		${find} ${find_opt} . ${excludes} ${name_opt} "${target_pattern}" -exec /bin/ls --directory ${detail_opt} --color '{}' 2>/dev/null ';' # | more
 
 	fi
 
