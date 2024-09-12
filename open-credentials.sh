@@ -3,17 +3,26 @@
 # (not sh, as we prefer 'read' to support a "no echo" option)
 
 
-usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also: {lock|unlock}-credentials.sh.
+usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also our {lock|unlock}-credentials.sh scripts.
 
 Note that we recommend that such sensitive files follow the conventions in
 https://anirudhsasikumar.net/blog/2005.01.21.html; notably, for such a use case,
 backup files shall be disabled for this content (as they are obvious
 security risks).
 
-For Emacs, besides relying on a corresponding init.el, have for first line:
-
+For Emacs, besides relying on a corresponding init.el, the first line of one's credential file should be like:
 // -*-mode:asciidoc; mode:sensitive-minor; fill-column:132-*-
 "
+
+
+if [ ! $# -eq 0 ]; then
+
+	echo "  Error, no argument expected.
+${usage}" 1>&2
+
+	exit 4
+
+fi
 
 
 crypt_tool_name="gpg"
