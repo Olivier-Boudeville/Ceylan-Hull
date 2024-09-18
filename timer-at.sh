@@ -1,9 +1,13 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-s|--silent] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES or HOURS:MINUTES:SECONDS.
+usage="Usage: $(basename $0) [-h|--help] [-s|--silent] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES (e.g. 17:02) or HOURS:MINUTES:SECONDS (e.g. 17:02:31); note that timestamps of the form HOURShMINUTES (e.g. 17h02) and HOURShMINUTESmSECONDS (e.g. 17h02m31) are supported as well.
+
 Will issue such a notification when the specified time is reached; useful typically to respect fixed schedules.
+
 The silent mode enables only the graphical notifications (useful in a train for example).
+
 For example: '$(basename $0) 12:05' will notify noisily once this time is reached.
+
 See also: timer-in.sh for a timer based on a duration from current time, rather than on an absolute timestamp."
 
 
@@ -39,14 +43,27 @@ ${usage}"
 	exit 1
 fi
 
+
 target_timestamp="$1"
 #echo target_timestamp="$target_timestamp"
 
+shift
+
+if [ ! $# -eq 0 ]; then
+
+	echo "  Error, extra parameter(s) specified: '$*'.
+${usage}" 1>&2
+	exit 10
+
+fi
 
 # Current time, since the Epoch:
 start_secs="$(date +%s)"
 #echo "start_secs = ${start_secs}"
 
+
+# In addition to 15:07:32, 15h07m32 is supported:
+target_timestamp=$(echo ${target_timestamp} | tr 'h' ':' | tr 'm' ':')
 
 # Let's count the colons to discriminate between MINUTES (0) / MINUTES:SECONDS
 # (1) / HOURS:MINUTES:SECONDS (2):

@@ -1,22 +1,23 @@
 #!/bin/sh
 
 usage="Usage: '$(basename $0) [-h|--help] [-s|--silent] DURATION [MESSAGE | [TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) in DURATION, which is expressed as:
- MINUTES or MINUTES:SECONDS or HOURS:MINUTES:SECONDS
+ MINUTES (e.g. 17) or MINUTES:SECONDS (e.g. 17:11) or HOURS:MINUTES:SECONDS (e.g. 1:15:45); note that timestamps of the form HOURShMINUTES (e.g. 17h02) and HOURShMINUTESmSECONDS (e.g. 17h02m31) are supported as well.
+
 Will issue such a notification when the specified duration is elapsed; useful for example for cooking.
+
 The silent mode enables only the graphical notifications (useful in a train for example).
+
 For example: '$(basename $0) 15' will notify noisily once 15 minutes have elapsed.
+
 See also:
-   timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)
-   timer-every.sh for a periodical timer
+   - timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)
+   - timer-every.sh for a periodical timer
    "
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-
 	echo "${usage}"
-
 	exit
-
 fi
 
 
@@ -50,6 +51,14 @@ else
 
 	title="$2"
 	message="$3"
+
+fi
+
+if [ -n "$4" ]; then
+
+	echo "  Error, extra parameter specified: '$4'.
+${usage}" 1>&2
+	exit 10
 
 fi
 
@@ -163,6 +172,9 @@ ${usage}" 1>&2
 	exit 10
 
 fi
+
+# In addition to 15:07:32, 15h07m32 is supported:
+duration_str=$(echo ${duration_str} | tr 'h' ':' | tr 'm' ':')
 
 
 # Let's count the colons to discriminate between MINUTES (0) / MINUTES:SECONDS
