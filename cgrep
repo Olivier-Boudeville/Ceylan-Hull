@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] EXPR [TARGET_BASE_DIR]: recursive grep in C source files (whose extension is supposedly 'c', like in 'foobar.c') in order to search for the specified expression in the target sources, either from the TARGET_BASE_DIR directory, if specified, otherwise from the current directory.
+usage="Usage: $(basename $0) [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--insensitive] EXPR [TARGET_BASE_DIR]: recursive grep in C source files (whose extension is supposedly 'c', like in 'foobar.c', or 'h') in order to search for the specified expression in the target sources, either from the TARGET_BASE_DIR directory, if specified, otherwise from the current directory.
 
   Options:
    -v or --verbose: be specifically verbose
@@ -27,13 +27,13 @@ grep="$(which grep 2>/dev/null)"
 
 
 if [ ! -x "${grep}" ]; then
-	echo "Error, no executable grep found." 1>&2
+	echo "  Error, no executable grep found." 1>&2
 	exit 5
 fi
 
 
 if [ ! -x "${find}" ]; then
-	echo "Error, no executable find found." 1>&2
+	echo "  Error, no executable find found." 1>&2
 	exit 6
 fi
 
@@ -179,33 +179,35 @@ base_grep_opt="--color=always"
 # NEVER surround these single quotes by double ones:
 # (here insensitive search)
 #
-filter_c='*.c'
+filter_sources='*.c'
+
+#filter_headers='*.hpp'
+filter_headers='*.h'
+
 
 # Unable to properly define a correctly-protected variable:
-#filter_expr="${name_opt} ${filter_c}"
+#filter_expr="${name_opt} ${filter_sources}"
 
 if [ ${verbose} -eq 0 ]; then
 
 	#echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${filter_expr}:"
-	echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${name_opt} ${filter_c}:"
-	${find} "${target_base_dir}" ${name_opt} "${filter_c}"
+	echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${name_opt} ${filter_sources} -o ${name_opt} ${filter_headers}:"
 
 fi
 
 
 
 [ ${quiet} -eq 0 ] || echo "
-  Recursive grep for expression <${searched_expr}> in all Python files from '${full_base_dir}' (i.e. '${target_base_dir}'):
-	"
+Recursive grep for expression <${searched_expr}> in all C files from '${full_base_dir}' (i.e. '${target_base_dir}'):"
 
 if [ ${filenames_only} -eq 1 ]; then
 
 	# Most usual case:
-	${find} "${target_base_dir}" ${name_opt} "${filter_c}" -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
+	${find} "${target_base_dir}" \( ${name_opt} "${filter_sources}" -o ${name_opt} "${filter_headers}" \) -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
 
 else
 
-	${find} "${target_base_dir}" ${name_opt} "${filter_c}" -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+	${find} "${target_base_dir}" \( ${name_opt} "${filter_sources}" -o ${name_opt} "${filter_headers}" \) -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 fi
 
