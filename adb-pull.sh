@@ -9,6 +9,8 @@ For example:
   $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
   $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf
   $(basename $0) /storage/emulated/0/Documents/*
+
+Note that some Android devices (e.g. at least some e-readers) will offer a MTP interface instead; then use our mount-mtp-device.sh script.
 "
 
 # To find content (e.g. snapshots) in one's mobile phone:

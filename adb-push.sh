@@ -5,7 +5,10 @@ remote_dir="/sdcard"
 
 usage="Usage: $(basename $0) EXPR: uploads the specified local files, possibly based on expressions (typically wildcards), to the already connected and authorising ('Developer Options' -> 'USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), in its '${remote_dir}' directory (which will be created if needed).
 
-For example: $(basename $0) /tmp/foobar.pdf"
+For example: $(basename $0) /tmp/foobar.pdf
+
+Note that some Android devices (e.g. at least some e-readers) will offer a MTP interface instead; then use our mount-mtp-device.sh script.
+"
 
 
 
