@@ -81,7 +81,8 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 #      - iptables -L with DNS resolution of listed IPs
 #      - iptables -nL with no DNS resolution of listed IPs (faster, stealthier)
 #      - iptables -nvL with no DNS resolution of listed IPs and more information
-#      (best)
+#      (best; this notably includes the interface names, which otherwise are not
+#      displayed at all)
 #
 #  - to perform manual changes in rules:
 #      - list: iptables -L --line-numbers
@@ -793,7 +794,8 @@ start_it_up()
 	fi
 
 
-	## SSH:
+	## SSH (use 'iptables -nvL' to include the name of interfaces when
+	## checking):
 
 	# Unlimited input from LAN (trying to resist any loss of connection/firewall
 	# reload):
