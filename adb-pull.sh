@@ -6,6 +6,7 @@ This script will try to run adb on the smartphone as root.
 
 For example:
   $(basename $0) /sdcard/DCIM/Camera/*.jpg
+  $(basename $0) /sdcard/DCIM/Camera/$(date '+%Y-%m-%d')*.jpg
   $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
   $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf
   $(basename $0) /storage/emulated/0/Documents/*
