@@ -3,7 +3,12 @@
 # (not sh, as we prefer 'read' to support a "no echo" option)
 
 
-usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user environment, and opens it. Once closed, re-locks it (with the same passphrase). See also our {lock|unlock}-credentials.sh scripts.
+env_file="${HOME}/.ceylan-settings.etf"
+
+cred_entry_name="main_credentials_path"
+
+
+usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user account (in any '${cred_entry_name}' entry in any '${env_file}' file), and opens it. Once closed, re-locks it (with the same passphrase). See also our {lock|unlock}-credentials.sh scripts.
 
 Note that we recommend that such sensitive files follow the conventions in
 https://anirudhsasikumar.net/blog/2005.01.21.html; notably, for such a use case,
@@ -50,7 +55,6 @@ if [ ! -x "${shred_tool}" ]; then
 fi
 
 
-env_file="${HOME}/.ceylan-settings.etf"
 
 if [ ! -f "${env_file}" ]; then
 
@@ -63,19 +67,19 @@ fi
 # Used to rely on a shell-compliant syntax, now Erlang one:
 #source "${env_file}"
 
-main_credentials_path="$(/bin/cat ${env_file} | grep -v % | grep main_credentials_path | sed 's|.*, "||1' | sed 's|" }.$||1')"
+base_cred_path="$(/bin/cat ${env_file} | grep -v % | grep ${cred_entry_name} | sed 's|.*, "||1' | sed 's|" }.$||1')"
 
 
-if [ -z "${main_credentials_path}" ]; then
+if [ -z "${base_cred_path}" ]; then
 
-	echo "  Error, no usable main_credentials_path key entry found in environment file (${env_file})." 1>&2
+	echo "  Error, no usable '${cred_entry_name}' key entry found in environment file (${env_file})." 1>&2
 	exit 20
 
 fi
 
 
-unlocked_file="${main_credentials_path}.dat"
-locked_file="${main_credentials_path}"
+unlocked_file="${base_cred_path}.dat"
+locked_file="${base_cred_path}"
 
 credential_dir="$(dirname ${unlocked_file})"
 
@@ -144,7 +148,7 @@ if [ ! -f "${locked_file}" ]; then
 
 	if [ -f "${unlocked_file}" ]; then
 
-		echo "  Warning: the credentials file (as defined in the main_credentials_path variable of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist). As a result, a password (to be chosen identical to the usual one) will be requested (twice) when closing this file." 1>&2
+		echo "  Warning: the credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist). As a result, a password (to be chosen identical to the usual one) will be requested (twice) when closing this file." 1>&2
 
 		# This happens whenever left in a terminal, being forgotten, or closing
 		# the terminal while still opened:
@@ -153,7 +157,7 @@ if [ ! -f "${locked_file}" ]; then
 
 	else
 
-		echo "  Error, no credentials file (as defined in the main_credentials_path variable of the environment file '${env_file}') can be found (neither in a locked version, i.e. as '${locked_file}', nor in an unlocked version, i.e. as '${unlocked_file}')." 1>&2
+		echo "  Error, no credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') can be found (neither in a locked version, i.e. as '${locked_file}', nor in an unlocked version, i.e. as '${unlocked_file}')." 1>&2
 
 		exit 25
 
@@ -165,7 +169,7 @@ else
 
 	if [ -f "${unlocked_file}" ]; then
 
-		echo "  Error, the credentials file (as defined in the main_credentials_path variable of the environment file '${env_file}') exists both in its locked version ('${locked_file}') and in its unlocked version ('${unlocked_file}'), this is abnormal." 1>&2
+		echo "  Error, the credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') exists both in its locked version ('${locked_file}') and in its unlocked version ('${unlocked_file}'), this is abnormal." 1>&2
 
 		exit 30
 
