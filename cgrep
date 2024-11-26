@@ -47,12 +47,12 @@ filenames_only=1
 
 
 # A useless file to ensure grep always has multiple files to scan.
-# Done to force grep to display the filename (otherwise it will not)
+# Done to force grep to display the filename (otherwise it will not).
 # No need to create it, however.
 #
-force_multi_files="$HOME/.$(basename $0).to-delete.tmp"
+force_multi_files="${HOME}/.$(basename $0).to-delete.tmp"
 
-name_opt="-iname"
+name_opt="-name"
 
 if [ $# -eq 0 ]; then
 	echo "  Error, too few parameters.
@@ -80,7 +80,7 @@ while [ ${token_eaten} -eq 0 ]; do
 
 	token_eaten=1
 
-	if [ "${read_parameter}" = "--verbose" -o "${read_parameter}" = "-v" ]; then
+	if [ "${read_parameter}" = "--verbose" ] || [ "${read_parameter}" = "-v" ]; then
 		verbose=0
 		quiet=1
 		echo "Verbose mode activated."
@@ -88,14 +88,15 @@ while [ ${token_eaten} -eq 0 ]; do
 	fi
 
 
-	if [ "${read_parameter}" = "--quiet" -o "${read_parameter}" = "-q" ]; then
+	if [ "${read_parameter}" = "--quiet" ] || [ "${read_parameter}" = "-q" ]; then
 		verbose=1
 		quiet=0
 		#echo "Quiet mode activated."
 		token_eaten=0
 	fi
 
-	if [ "${read_parameter}" = "--filenames-only" -o "${read_parameter}" = "-f" ]; then
+
+	if [ "${read_parameter}" = "--filenames-only" ] || [ "${read_parameter}" = "-f" ]; then
 
 		verbose=1
 		quiet=0
@@ -106,7 +107,7 @@ while [ ${token_eaten} -eq 0 ]; do
 	fi
 
 
-	if [ "${read_parameter}" = "--insensitive" -o "${read_parameter}" = "-i" ];	then
+	if [ "${read_parameter}" = "--insensitive" ] || [ "${read_parameter}" = "-i" ];	then
 
 		insensitive_opt="-i"
 		name_opt="-iname"
@@ -139,10 +140,10 @@ if [ -z "${target_base_dir}" ]; then
 
 	target_base_dir="."
 	full_base_dir="$(realpath .)"
-	#[ ${verbose} -eq 0 ] || echo "Proceeding from current directory ('${full_base_dir}')."
+	#[ ${verbose} -eq 0 ] || echo "Proceeding from the current directory ('${full_base_dir}')."
 else
 	full_base_dir=$(realpath "${target_base_dir}")
-	#[ ${verbose} -eq 0 ] || echo "Proceeding from specified directory ('${full_base_dir}')."
+	#[ ${verbose} -eq 0 ] || echo "Proceeding from the specified directory ('${full_base_dir}')."
 	shift
 
 fi
@@ -162,7 +163,7 @@ searched_expr="${read_parameter}"
 #echo "searched_expr = ${searched_expr}"
 
 
-# Then check no parameter remains:
+# Then check that no parameter remains:
 
 if [ $# -ge 1 ]; then
 
@@ -173,8 +174,13 @@ ${usage}" 1>&2
 fi
 
 
+# -L to follow symlinks:
+base_find_opts="-L"
+
+
 # '--color' not sufficient in all cases:
-base_grep_opt="--color=always"
+base_grep_opts="--color=always"
+
 
 # NEVER surround these single quotes by double ones:
 # (here insensitive search)
@@ -190,7 +196,6 @@ filter_headers='*.h'
 
 if [ ${verbose} -eq 0 ]; then
 
-	#echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${filter_expr}:"
 	echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${name_opt} ${filter_sources} -o ${name_opt} ${filter_headers}:"
 
 fi
@@ -198,16 +203,16 @@ fi
 
 
 [ ${quiet} -eq 0 ] || echo "
-Recursive grep for expression <${searched_expr}> in all C files from '${full_base_dir}' (i.e. '${target_base_dir}'):"
+ Recursive grep for expression <${searched_expr}> in all C files from '${full_base_dir}' (i.e. '${target_base_dir}'):"
 
 if [ ${filenames_only} -eq 1 ]; then
 
-	# Most usual case:
-	${find} "${target_base_dir}" \( ${name_opt} "${filter_sources}" -o ${name_opt} "${filter_headers}" \) -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
+	# echo "Most usual case:"
+	${find} ${base_find_opts} "${target_base_dir}" \( ${name_opt} "${filter_sources}" -o ${name_opt} "${filter_headers}" \) -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
 
 else
 
-	${find} "${target_base_dir}" \( ${name_opt} "${filter_sources}" -o ${name_opt} "${filter_headers}" \) -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+	${find} ${base_find_opts} "${target_base_dir}" \( ${name_opt} "${filter_sources}" -o ${name_opt} "${filter_headers}" \) -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 fi
 

@@ -44,8 +44,6 @@ verbose=1
 quiet=1
 
 insensitive_opt=""
-
-headers_only=1
 filenames_only=1
 
 
@@ -98,6 +96,7 @@ while [ ${token_eaten} -eq 0 ]; do
 		token_eaten=0
 	fi
 
+
 	if [ "${read_parameter}" = "--filenames-only" ] || [ "${read_parameter}" = "-f" ]; then
 
 		verbose=1
@@ -142,7 +141,7 @@ if [ -z "${target_base_dir}" ]; then
 
 	target_base_dir="."
 	full_base_dir="$(realpath .)"
-	#[ ${verbose} -eq 0 ] || echo "Proceeding from current directory ('${full_base_dir}')."
+	#[ ${verbose} -eq 0 ] || echo "Proceeding from the current directory ('${full_base_dir}')."
 else
 	full_base_dir=$(realpath "${target_base_dir}")
 	#[ ${verbose} -eq 0 ] || echo "Proceeding from the specified directory ('${full_base_dir}')."
@@ -176,10 +175,19 @@ ${usage}" 1>&2
 fi
 
 
-# '--color' not sufficient in all cases:
-base_grep_opt="--color=always"
+# -L to follow symlinks:
+base_find_opts="-L"
 
+
+# '--color' not sufficient in all cases:
+base_grep_opts="--color=always"
+
+
+# NEVER surround these single quotes by double ones:
+# (here insensitive search)
+#
 filter_java='*.java'
+
 filter_msg="Java files"
 
 # Unable to properly define a correctly-protected variable:
@@ -187,11 +195,11 @@ filter_msg="Java files"
 
 if [ ${verbose} -eq 0 ]; then
 
-	#echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${filter_expr}:"
 	echo "Will search in following files from '${target_base_dir}' based on: ${find} . ${name_opt} ${filter_java}:"
 	${find} "${target_base_dir}" ${name_opt} "${filter_java}"
 
 fi
+
 
 
 [ ${quiet} -eq 0 ] || echo "
@@ -200,12 +208,12 @@ fi
 
 if [ ${filenames_only} -eq 1 ]; then
 
-	# Most usual case:
-	${find} "${target_base_dir}" } -name '_build' -prune -o -name '_checkouts' -o ${name_opt} "${filter_java}" -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
+	# echo "Most usual case:"
+	${find} ${base_find_opts} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -o ${name_opt} "${filter_java}" -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
 
 else
 
-	${find} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -o ${name_opt} "${filter_java}" -exec ${grep} ${base_grep_opt} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+	${find} ${base_find_opts} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -o ${name_opt} "${filter_java}" -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 fi
 
