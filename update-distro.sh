@@ -4,7 +4,7 @@ usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-c|--clean-system-caches]
 
  Options (order must be respected):
    - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
-   - '-c' / '--clean-system-caches': cleans all system caches, typically to try to save some space from /var/cache or to provide a workaround to some errors
+   - '-c' / '--clean-system-caches': cleans all system caches systematically, typically to try to save some space from /var/cache or to provide a workaround to some errors
    - '-e' / '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.
 
  Supported distributions: Arch, previously Debian."
@@ -16,6 +16,48 @@ usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-c|--clean-system-caches]
 #pacman -Syu pandoc
 #pacman -Su --ignore=ghc
 #pacman -Rsdd haskell-fail
+
+
+
+clean_caches()
+{
+
+	clean_script="clean-system-caches.sh"
+
+	# To have Ceylan-Hull in the PATH:
+	clean_script_path="$(PATH=$(dirname $0):${PATH} which ${clean_script})"
+
+	if [ ! -x "${clean_script_path}" ]; then
+
+		echo "  Error, the script to clean system caches ('${clean_script}') could not be found." 1>&2
+		exit 55
+
+	fi
+
+	"${clean_script_path}"
+
+}
+
+
+pacman_update()
+{
+
+	if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+
+		echo "Warning: update failed, trying to clean caches first." > "${log_file}"
+		clean_caches
+
+		if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+
+			echo "  Error, pacman-based update failed." 1>&2
+			exit 7
+
+		fi
+
+	fi
+
+}
+
 
 
 # Tired of typing it:
@@ -155,19 +197,7 @@ if [ "$(id -u)" = "0" ]; then
 
 			if [ $clean_caches -eq 0 ]; then
 
-				clean_script="clean-system-caches.sh"
-
-				# To have Ceylan-Hull in the PATH:
-				clean_script_path="$(PATH=$(dirname $0):${PATH} which ${clean_script})"
-
-				if [ ! -x "${clean_script_path}" ]; then
-
-					echo "  Error, the script to clean system caches ('${clean_script}') could not be found." 1>&2
-					exit 55
-
-				fi
-
-				"${clean_script_path}"
+				clean_caches
 
 			fi
 
@@ -178,6 +208,11 @@ if [ "$(id -u)" = "0" ]; then
 
 			# We start by updating the Arch keyring, as otherwise, updates made
 			# after a longer duration are bound to fail due to expired keys:
+
+			# Prevents the next 'tee' to hide errors; probably works because the
+			# sh interpreter is actually a bash one:
+			#
+			set -o pipefail
 
 			if [ $quiet -eq 1 ]; then
 
@@ -191,12 +226,7 @@ if [ "$(id -u)" = "0" ]; then
 
 				fi
 
-				if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
-
-					echo "  Error, pacman-based update failed." 1>&2
-					exit 7
-
-				fi
+				pacman_update
 
 				if [ -n "${forced_packages}" ]; then
 
@@ -218,12 +248,7 @@ if [ "$(id -u)" = "0" ]; then
 
 				fi
 
-				if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
-
-					echo "  Error, pacman-based update failed." 1>&2
-					exit 27
-
-				fi
+				pacman_update
 
 				if [ -n "${forced_packages}" ]; then
 
