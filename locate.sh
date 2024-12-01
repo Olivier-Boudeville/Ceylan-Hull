@@ -85,6 +85,6 @@ if [ $select_only_rst -eq 0 ]; then
 
 else
 
-	(echo "  Trying to locate '$1' (excluding the '${excluded_patterns}' pattern, selecting only RST files, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep -v ${excluded_patterns} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
+	(echo "  Trying to locate '$1' (excluding the '${excluded_patterns}' pattern, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep -v ${excluded_patterns} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
 
 fi
