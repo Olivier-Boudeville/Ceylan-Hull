@@ -1,7 +1,10 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [enable|disable|display]: enables, disables or displays (the default action) the current status of the Internet connectivity of any registered CCTV camera.
-Disabling it means adding a firewall rule filtering out all outgoing packets sent by the IP address of the CCTV (itself probably determined from its MAC address), thereby avoiding any leak of information to third parties. Conversely, its streams will not be available anymore from one's smartphone, software updates will not be done, etc.
+# Default:
+camera_id=1
+
+usage="Usage: $(basename $0) [-h|--help] [enable|disable|display] [CAMERA_ID]: enables, disables or displays (the default action) the current status of the Internet connectivity of the networked security camera (CCTV) designated by any CAMERA_ID specified, otherwise by the default camera identifier,'${camera_id}'.
+Disabling it means adding a firewall rule filtering out all outgoing packets sent by the IP address of the corresponding CCTVs (themselves probably determined from their MAC address), thereby avoiding any leak of information to third parties. Conversely, their streams will not be available anymore from one's smartphone, software updates will not be done, they cannot be configured anymore, etc.
 This script must be run with root permissions.
 "
 
@@ -15,12 +18,22 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
+if [ ! $(id -u) -eq 0 ]; then
+
+	echo "  Error, you must be root.
+${usage}" 1>&2
+
+	exit 4
+
+fi
+
+
 # Default:
 action="display"
 
-if [ $# -ge 2 ]; then
+if [ $# -ge 3 ]; then
 
-	echo "  Error, up to one argument expected.
+	echo "  Error, up to two arguments expected.
 ${usage}" 1>&2
 
 	exit 5
@@ -43,28 +56,21 @@ if [ -n "$1" ]; then
 		# Even if default:
 		action="display"
 
-	else
-
-		echo "  Error, unexpected argument ('$1').
-${usage}" 1>&2
-
-		exit 10
-
 	fi
 
-fi
-
-
-if [ ! $(id -u) -eq 0 ]; then
-
-	echo "  Error, you must be root.
-${usage}" 1>&2
-
-	exit 4
+	shift
 
 fi
 
 
+if [ -n "$1" ]; then
+
+	camera_id="$1"
+	shift
+
+fi
+
+echo "Will set the network connectivity of the camera of identifier '${camera_id}'."
 
 iptables="$(which iptables 2>/dev/null)"
 
@@ -91,7 +97,7 @@ fi
 
 #echo "Reading the '${settings_file}' configuration file."
 
-cam_host_key="camera_1_hostname"
+cam_host_key="camera_${camera_id}_hostname"
 
 cctv_host="$(grep -v '^[[:space:]]*%' "${settings_file}" | grep "${cam_host_key}" | sed 's|.*,[[:space:]]*"||1' | sed 's|[[:space:]]*"[[:space:]]*}.$||1')"
 
@@ -99,7 +105,7 @@ if [ -z "${cctv_host}" ]; then
 
 	echo "  Error, no CCTV host registered in '${settings_file}' (no '${cam_host_key}' entry)." 1>&2
 
-	exit 20
+	exit 25
 
 fi
 
