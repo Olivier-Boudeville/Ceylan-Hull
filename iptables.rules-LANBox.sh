@@ -165,6 +165,12 @@ ssdp_udp_port=1900
 # More information: https://help.ubuntu.com/community/MiniDLNA
 
 
+allow_epmd="true"
+
+# EPMD traffic could be filtered out instead:
+#allow_epmd="false"
+
+
 
 if [ -z "${log_file}" ]; then
 
@@ -175,9 +181,6 @@ if [ -z "${log_file}" ]; then
 fi
 
 
-# By default, we now filter out EPMD traffic (i.e. we do not accept it):
-#allow_epmd="true"
-allow_epmd="false"
 
 if [ -f "${log_file}" ]; then
 
