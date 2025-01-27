@@ -164,10 +164,10 @@ ssdp_udp_port=1900
 
 # More information: https://help.ubuntu.com/community/MiniDLNA
 
-
+# In general (for our base one and any US-* ones):
 allow_epmd="true"
 
-# EPMD traffic could be filtered out instead:
+# All EPMD traffic could be filtered out instead:
 #allow_epmd="false"
 
 
@@ -268,13 +268,13 @@ start_it_up()
 
 
 	${echo} "Interface: LAN is ${lan_if}." >> "${log_file}"
-	${echo} "Services: EPMD is '${allow_epmd}' (port: ${epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
+	${echo} "Services: EPMD is '${allow_epmd}' (base port: ${epmd_port}; US-Main port: ${us_main_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
 	#if $lsmod  2>/dev/null | grep -q ipchains; then
-	#	$rmmod ipchains
+	#   $rmmod ipchains
 	#fi
 
 	# Load appropriate modules:
@@ -474,13 +474,33 @@ start_it_up()
 
 	if [ "${allow_epmd}" = "true" ]; then
 
-		${echo} " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
-		${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+		if [ -n "${epmd_port}" ]; then
+
+			${echo} " - enabling EPMD at our TCP port ${epmd_port}" >> "${log_file}"
+			${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+		fi
+
+
+		if [ -n "${us_main_epmd_port}" ]; then
+
+			${echo} " - enabling US-Main EPMD at TCP port ${us_main_epmd_port}" >> "${log_file}"
+			${iptables} -A INPUT -p tcp --dport ${us_main_epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+		fi
+
+
+		if [ -n "${us_web_epmd_port}" ]; then
+
+			${echo} " - enabling US-Web EPMD at TCP port ${us_web_epmd_port}" >> "${log_file}"
+			${iptables} -A INPUT -p tcp --dport ${us_web_epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+
+		fi
 
 	fi
 
 
-	if [ "$enable_unfiltered_tcp_range" = "true" ]; then
+	if [ "${enable_unfiltered_tcp_range}" = "true" ]; then
 
 		${echo} " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
 		${iptables} -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
