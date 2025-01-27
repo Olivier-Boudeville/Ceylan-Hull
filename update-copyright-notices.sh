@@ -2,7 +2,7 @@
 
 do_debug=1
 
-#new_year=$(date '+%Y')
+new_year=$(date '+%Y')
 
 usage="Usage: $(basename $0) [--quiet] CODE_TYPE ROOT_DIRECTORY PREVIOUS_NOTICE NEWER_NOTICE
 Updates the copyright notices of the code of the specified type found from the specified root directory.
@@ -11,21 +11,19 @@ CODE_TYPE is among:
   - 'C++' (includes C), for *.h, *.h.in, *.cc, *.cpp, *.c files
   - 'Erlang', for *.hrl, *.erl files
 
-For example $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-2011 Foobar Ltd\"
-This will replace '% Copyright (C) 2008-2010 Foobar Ltd' by '% Copyright (C) 2008-2011 Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
+For example $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar Ltd\" \"2008-${new_year} Foobar Ltd\"
+This will replace '% Copyright (C) 2008-2010 Foobar Ltd' with '% Copyright (C) 2008-${new_year} Foobar Ltd' in all Erlang files (*.hrl and *.erl) found from $HOME/My-program-tree.
 
 Note that if PREVIOUS_NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-2011 Foobar R\&D Ltd\"
+Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree \"2008-2010 Foobar R\&D Ltd\" \"2008-${new_year} Foobar R\&D Ltd\"
 
 See also update-all-copyright-notices.sh for more global (multi-year) updates.
 "
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-	echo "
-
-${usage}"
+	echo "${usage}"
 
 	exit 0
 
