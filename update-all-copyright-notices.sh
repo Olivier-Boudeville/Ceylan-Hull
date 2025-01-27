@@ -1,5 +1,7 @@
 #!/bin/sh
 
+new_year=$(date '+%Y')
+
 usage="Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
 Updates the copyright notices of the code of the specified type found from the specified root directory, based on the specified year range.
@@ -13,7 +15,7 @@ This will replace '% Copyright (C) x-y Foobar Ltd' by '% Copyright (C) x-2013 Fo
 
 Note that if NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 2010 \"Foobar R\&D Ltd\"
+Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 ${new_year} \"Foobar R\&D Ltd\"
 "
 
 # To check whether all (Erlang, here) files have been updated:
