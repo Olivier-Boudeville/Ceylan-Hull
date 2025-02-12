@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-# Copyright (C) 2010-2024 Olivier Boudeville
+# Copyright (C) 2010-2025 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -661,7 +661,6 @@ displayEditors()
 
 do_X=0
 do_show=1
-do_force_nedit=1
 do_find=1
 do_locate=1
 
@@ -896,7 +895,7 @@ if [ $do_locate -eq 0 ]; then
 
 		if [ ${path_count} -gt 1 ]; then
 
-			echo "  Error, multiple (${path_count}) paths found for '${target_file}': ${target_path}." 1 >&2
+			echo "  Error, multiple (${path_count}) paths found for '${target_file}': ${target_path}." 1>&2
 			exit 105
 
 		fi
@@ -1069,12 +1068,12 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 		# if [ ! -x "${LOGMX}" ]; then
 
-		#	echo "  (no LogMX found, using default editor for traces)"
+		#   echo "  (no LogMX found, using default editor for traces)"
 
 		# else
 
-		#	editor="${LOGMX}"
-		#	editor_short_name="LogMX"
+		#   editor="${LOGMX}"
+		#   editor_short_name="LogMX"
 
 		# fi
 
