@@ -895,7 +895,7 @@ if [ $do_locate -eq 0 ]; then
 
 		if [ ${path_count} -gt 1 ]; then
 
-			echo "  Error, multiple (${path_count}) paths found for '${target_file}': ${target_path}." 1>&2
+			echo "  Error, multiple (${path_count}) paths found for '${target_file}': ${target_path}" 1>&2
 			exit 105
 
 		fi
