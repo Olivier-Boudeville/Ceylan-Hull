@@ -374,7 +374,7 @@ if [ ! ${res} -eq 0 ]; then
 fi
 
 
-# Re-enabled read operations (more discrete, and needed by Git to commit newer
+# Re-enable read operations (more discrete, and needed by Git to commit newer
 # versions):
 #
 #chmod 000 "${locked_file}"
@@ -412,7 +412,7 @@ if [ -e "${backup_file}" ]; then
 
 	if [ "${editor}" = "emacs" ]; then
 
-		emacs_conf="~/.emacs/init.el"
+		emacs_conf="${HOME}/.emacs/init.el"
 
 		sensitive_hint="; does your ${emacs_conf} file include the expected definition of the 'sensitive-mode' minor mode?"
 
