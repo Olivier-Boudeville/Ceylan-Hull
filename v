@@ -110,6 +110,9 @@ chooseLibreOffice()
 	viewer="$(which libreoffice 2>/dev/null)"
 	viewer_short_name="LibreOffice"
 
+	# Read-only:
+	viewer_opt="--view"
+
 }
 
 
