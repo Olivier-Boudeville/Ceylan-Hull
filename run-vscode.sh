@@ -19,8 +19,10 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
-
-export PATH="${HOME}/Software/VS-Code/VSCode-linux-x64/bin:${PATH}"
+# Ad hoc install as a last resort (typically if obtained via
+# https://code.visualstudio.com/docs/?dv=linux64, rather than from a package):
+#
+export PATH="${PATH}:${HOME}/Software/VS-Code/VSCode-linux-x64/bin:"
 
 vscode_exec="$(which code 2>/dev/null)"
 
@@ -84,6 +86,6 @@ fi
 
 args="$* ${proxy_args}"
 
-#echo "Running '${vscode_exec} ${args}'."
+echo "(running '${vscode_exec} ${args}')"
 
 "${vscode_exec}" ${args}
