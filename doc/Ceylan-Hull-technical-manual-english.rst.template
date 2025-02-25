@@ -268,6 +268,10 @@ For Development
 
 - `reformat-source-files-in-tree.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/reformat-source-files-in-tree.sh>`_: reformats all supported files of various types recursively found; notably useful when forking a repository, in order to canonicalise it as a whole
 
+- `test-with-valgrind.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/test-with-valgrind.sh>`_: uses Valgrind to perform quality test on the specified executable
+
+- `make-code-stats.sh <https://github.com/Olivier-Boudeville/Ceylan-Hull/blob/master/make-code-stats.sh>`_: evaluates very simple/basic metrics regarding source code (Erlang, Python or Java)
+
 
 See also the Ceylan-HOWTOs section about `build tools <http://howtos.esperide.org/Build.html>`_ and the Erlang-related `Ceylan-Myriad scripts <http://myriad.esperide.org/#erlang-dedicated-scripts>`_.
 
