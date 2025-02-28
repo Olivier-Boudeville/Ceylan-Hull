@@ -61,7 +61,15 @@ if [ ! -x "${locate}" ]; then
 
 fi
 
-excluded_patterns="myriad-backups"
+
+excluded_pattern="myriad-backups"
+
+if [ -n "${TRASH}" ]; then
+
+	excluded_pattern="${excluded_pattern}\|${TRASH}"
+
+fi
+
 
 if [ -z "${PAGER_NAME}" ]; then
 
@@ -70,9 +78,9 @@ if [ -z "${PAGER_NAME}" ]; then
 
 fi
 
-#"${locate}" "$1" | grep -v "${excluded_patterns}" | /bin/ls -l --color | ${PAGER_NAME} ${PAGER_PRESERVE_COLORS}
+#"${locate}" "$1" | grep -v "${excluded_pattern}" | /bin/ls -l --color | ${PAGER_NAME} ${PAGER_PRESERVE_COLORS}
 
-#(for e in $(locate --existing "$1" | grep -v "${excluded_patterns}"); do /bin/ls -1 -s --human-readable --color "$e" 2>&1; done) | ${PAGER_NAME} ${PAGER_PRESERVE_COLORS}
+#(for e in $(locate --existing "$1" | grep -v "${excluded_pattern}"); do /bin/ls -1 -s --human-readable --color "$e" 2>&1; done) | ${PAGER_NAME} ${PAGER_PRESERVE_COLORS}
 
 # Prompt included in pager; '--null' for proper xargs interpretation; not using
 # directly locate --null as we want to use (line-based) grep beforehand, so
@@ -81,10 +89,10 @@ fi
 #
 if [ $select_only_rst -eq 0 ]; then
 
-	(echo "  Trying to locate '$1' (excluding the '${excluded_patterns}' pattern, selecting only RST files, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep '.rst$' | grep -v ${excluded_patterns} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
+	(echo "  Trying to locate '$1' (excluding the '${excluded_pattern}' pattern, selecting only RST files, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep '.rst$' | grep -v ${excluded_pattern} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
 
 else
 
-	(echo "  Trying to locate '$1' (excluding the '${excluded_patterns}' pattern, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep -v ${excluded_patterns} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
+	(echo "  Trying to locate '$1' (excluding the '${excluded_pattern}' pattern, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep -v ${excluded_pattern} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
 
 fi
