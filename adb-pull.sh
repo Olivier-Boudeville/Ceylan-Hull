@@ -1,6 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorising ('Developer Options' -> 'USB Debugging' being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
+option_desc="'Settings' -> 'System' -> 'Developer Options' -> 'USB Debugging'"
+
+usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorising (${option_desc} being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
 
 This script will try to run adb on the smartphone as root.
 
@@ -56,22 +58,24 @@ fi
 
 
 echo " Requested to transfer locally '${args}' from device..."
-echo "   - if needed, activate first, in the device settings ('Developer Options'), the USB debugging"
+echo "   - if needed, activate first, in the device settings, the USB debugging (${option_desc})"
 echo "   - connect the device to this computer thanks to a proper USB cable (note that most of them are not durably reliable...) "
-echo "   - switch, in the notification showing up on the device, from 'USB charging' to 'File transfer' (if no notification opos up, then maybe this cable has only the wiring for charging, not for data?)"
+echo "   - switch, in the notification showing up on the device, from 'USB charging' to 'File transfer' (if no notification pops up, then maybe this cable has only the wiring for charging, not for data?)"
 echo
 #echo " < Hit enter when ready to transfer, CTRL-C to abort >"
 #read
 
+hint="apply any procedure displayed just above, notably to enable ADB Root Access / debugging as root"
+
 
 if "${adb_exec}" root 2>/dev/null; then
 
-	echo "(adb run as root on the smartphone)"
+	echo "(adb run as root on the smartphone; ${hint})"
 
 else
 
 	# Maybe is already good?
-	echo "(not able to switch adb as root on the smartphone)"
+	echo "(not able to switch adb as root on the smartphone; ${hint})"
 
 fi
 
