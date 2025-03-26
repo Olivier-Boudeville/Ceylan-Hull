@@ -286,14 +286,17 @@ chooseEmacs()
 			editor="${EMACS_CLIENT}"
 			multi_win=0
 
+			#extra_emacs_opt="--debug-init"
+			extra_emacs_opt=""
+
 			if [ $standalone -eq 0 ]; then
 
 				# Tried with no luck: -a '' or --daemon:
-				editor_opt="--create-frame --alternate-editor=emacs"
+				editor_opt="--create-frame ${extra_emacs_opt} --alternate-editor=emacs"
 
 			else
 
-				editor_opt="--alternate-editor=emacs"
+				editor_opt="${extra_emacs_opt} --alternate-editor=emacs"
 
 			fi
 
