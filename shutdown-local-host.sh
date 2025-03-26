@@ -70,6 +70,19 @@ if ! pacman --noconfirm -Syu; then
 
 fi
 
+
+# Temporary provision:
+fixed_kernel_host="mini"
+
+if [ "$(hostname -s)" = "${fixed_kernel_host}" ]; then
+
+	echo "Warning: this host ('${fixed_kernel_host}') is registered as having a fixed kernel (presumably because newer kernels fail with its motherboards). So stopping here, before updating the kernel (and its headers, and the driver of its related graphic card). You may shutdown/reboot manuall now." 1>&2
+
+	exit 0
+
+fi
+
+
 # As we shutdown, updating the kernel is not a problem regarding modules that
 # are yet loaded:
 #
@@ -87,8 +100,9 @@ fi
 
 # Note:
 #
-# - no linux-lts upgraded here intentionally, to avoid having both kernels
-# too close and potentially suffering from the same problems
+# - no linux-lts upgraded here intentionally, to avoid having both kernels too
+# close and potentially suffering from the same problems; as a result, when
+# having a functional lts, consider updating it very infrequently, if ever
 #
 # - on computer having a graphical card, after the kernel update the graphic
 # drivers should better be reinstalled; either this is done automatically -
