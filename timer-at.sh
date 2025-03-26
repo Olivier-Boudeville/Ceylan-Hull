@@ -47,15 +47,6 @@ fi
 target_timestamp="$1"
 #echo target_timestamp="$target_timestamp"
 
-shift
-
-if [ ! $# -eq 0 ]; then
-
-	echo "  Error, extra parameter(s) specified: '$*'.
-${usage}" 1>&2
-	exit 10
-
-fi
 
 # Current time, since the Epoch:
 start_secs="$(date +%s)"
