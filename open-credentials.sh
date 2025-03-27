@@ -286,7 +286,7 @@ if [ "${editor}" = "emacs" ]; then
 	#
 	# (returning zero to test availability)
 	#
-	if ! "${emacsclient}" -s "${server_name}" -e 0 1>/dev/null 2>&1; then
+	if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
 
 		#echo "No Emacs daemon '${server_name}' found existing, launching it."
 		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
