@@ -1,7 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-e|--even-sync]: cleans all system caches, typically to try to save some space from /var/cache.
+usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-e|--even-sync]: cleans all system caches, typically to try to save some space from /var/cache.
  Options:
+   -q or --quiet: quiet mode, outputs information iff an error occurred
    -e or --even-sync: removes also the existing Pacman sync files (useful if having mirror-related problems, like 'error: GPGME error: No data' or 'error: database 'xxx' is not valid')
 "
 
@@ -11,6 +12,14 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	exit 0
 
+fi
+
+
+quiet=1
+
+if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
+	quiet=0
+	shift
 fi
 
 
@@ -34,7 +43,7 @@ fi
 
 if [ $(id -u) -eq 0 ]; then
 
-	echo " Cleaning system caches: full removal of the content of pacman cache..."
+	[ $quiet -eq 0 ] || echo " Cleaning system caches: full removal of the content of pacman cache..."
 
 	# Note that the --noconfirm option would just apply the default answer,
 	# which is "no" in some cases:
@@ -45,7 +54,7 @@ if [ $(id -u) -eq 0 ]; then
 	#
 	# So:
 	#
-	( yes | pacman -Scc 1>/dev/null ) && echo "  ... success!"
+	(yes | pacman -Scc 1>/dev/null 2>&1) && ([ $quiet -eq 0 ] || echo "  ... success!")
 
 	if [ ${even_sync} -eq 0 ]; then
 		/bin/rm -rf /var/lib/pacman/sync/

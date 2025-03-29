@@ -34,7 +34,13 @@ clean_caches()
 
 	fi
 
-	"${clean_script_path}"
+	clean_opt=""
+
+	if [ $quiet -eq 0 ]; then
+		clean_opt="-q"
+	fi
+
+	"${clean_script_path}" ${clean_opt}
 
 }
 
@@ -42,15 +48,35 @@ clean_caches()
 pacman_update()
 {
 
-	if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+	if [ $quiet -eq 0 ]; then
 
-		echo "Warning: update failed, trying to clean caches first." > "${log_file}"
-		clean_caches
+		if ! pacman ${base_update_opt} 1>>"${log_file}" 2>&1; then
+
+			echo "Warning: update failed, trying to clean caches first." >> "${log_file}"
+			clean_caches
+
+			if ! pacman ${base_update_opt} 1>>"${log_file}"; then #2>&1
+
+				echo "  Error, pacman-based update failed." 1>&2
+				exit 7
+
+			fi
+
+		fi
+
+	else
 
 		if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
 
-			echo "  Error, pacman-based update failed." 1>&2
-			exit 7
+			echo "Warning: update failed, trying to clean caches first." >> "${log_file}"
+			clean_caches
+
+			if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+
+				echo "  Error, pacman-based update failed." 1>&2
+				exit 7
+
+			fi
 
 		fi
 
@@ -136,7 +162,7 @@ if [ -n "$*" ]; then
 fi
 
 
-# Only standard output will be intercepted there, not the error one:
+# Only the standard output will be intercepted there, not the error one:
 log_file="/root/.last-distro-update"
 
 if [ "$(id -u)" = "0" ]; then
@@ -145,7 +171,6 @@ if [ "$(id -u)" = "0" ]; then
 	lock_file="/var/lib/pacman/db.lck"
 
 	if [ -e "${lock_file}" ]; then
-
 
 		if [ $quiet -eq 1 ]; then
 
@@ -174,7 +199,7 @@ if [ "$(id -u)" = "0" ]; then
 
 
 	# Erases the previous log as well, to avoid accumulation:
-	echo "Updating the distribution now, at $(date)..." 1>"${log_file}"
+	echo "Updating the distribution now, at $(date)..." 1>>"${log_file}"
 
 	case "${distro_type}" in
 
@@ -182,11 +207,11 @@ if [ "$(id -u)" = "0" ]; then
 		"Debian")
 			if [ $quiet -eq 1 ]; then
 
-				( apt-get update && apt-get -y upgrade ) 2>&1 | tee -a "${log_file}"
+				(apt-get update && apt-get -y upgrade) 2>&1 | tee -a "${log_file}"
 
 			else
 
-				( apt-get update && apt-get -y upgrade ) 1>>"${log_file}" #2>&1
+				(apt-get update && apt-get -y upgrade) 1>>"${log_file}" #2>&1
 
 			fi
 			;;
@@ -239,9 +264,10 @@ if [ "$(id -u)" = "0" ]; then
 				# To be run from crontab for example, raising an error iff
 				# appropriate:
 				#
-				# (currently the same commands as if in quiet mode)
-
-				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
+				# (avoiding: 'warning: archlinux-keyring-xxx is up to date --
+				# skipping')
+				#
+				if ! pacman ${keyring_opt} 1>>"${log_file}" 2>&1; then
 
 					echo "  Error, pacman-based Arch key update failed." 1>&2
 					exit 25
@@ -266,7 +292,15 @@ if [ "$(id -u)" = "0" ]; then
 
 			if [ -x "${paccache}" ]; then
 
-				"${paccache}" -rvuk0 && "${paccache}" -rvk3
+				if [ $quiet -eq 1 ]; then
+
+					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 2>&1 | tee -a "${log_file}"
+
+				else
+
+					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 1>>"${log_file}" #2>&1
+
+				fi
 
 			else
 
@@ -286,7 +320,10 @@ if [ "$(id -u)" = "0" ]; then
 
 	if [ ${res} -eq 0 ]; then
 
-		echo "... update done successfully"
+		if [ $quiet -eq 1 ]; then
+			echo "... update done successfully"
+		fi
+
 		echo "... update done successfully" 1>>"${log_file}"
 
 	else
