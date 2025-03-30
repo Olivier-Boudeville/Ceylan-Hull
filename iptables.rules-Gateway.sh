@@ -856,8 +856,12 @@ start_it_up()
 
 
 	# NUT, for UPS monitoring:
-	${iptables} -A INPUT -i ${lan_if} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
-	${iptables} -A INPUT -i ${lan_if} -p udp --dport 3493 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${lan_if} -p tcp --dport 3493 -m state --state NEW -j ACCEPT
+	#${iptables} -A INPUT -i ${lan_if} -p udp --dport 3493 -m state --state NEW -j ACCEPT
+
+	# apcupsd, for UPS monitoring:
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport 3551 -m state -j ACCEPT
+	${iptables} -A INPUT -i ${lan_if} -p udp --dport 3551 -m state -j ACCEPT
 
 
 	# Squid (only local)
