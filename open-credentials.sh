@@ -260,9 +260,25 @@ if [ "${editor}" = "emacs" ]; then
 	# Not working, the server-name is not known yet:
 	#emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
 
-	# We now rely on the sensitive-mode defined in our init.el:
+	# We now rely on the secure settings in our init-myriad-security.el, if
+	# available:
+	#
+	sec_init_dir="${HOME}/.emacs.d/myriad-sensitive"
+	sec_init_file="${sec_init_dir}/init.el"
+
 	#emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
-	emacs_server_opts="--no-site-file --no-splash --daemon=${server_name}"
+	emacs_server_opts="--no-site-file --no-splash --daemon=${server_name} --debug-init"
+
+	if [ -f "${sec_init_file}" ]; then
+
+		#echo "(relying on secure setting file '${sec_init_file}')"
+		emacs_server_opts="${emacs_server_opts} --init-directory=${sec_init_dir}"
+
+	else
+
+		echo "Warning: no secure setting file ('${sec_init_file}') available, so none used." 1>&2
+
+	fi
 
 	emacsclient="$(which emacsclient 2>/dev/null)"
 
@@ -289,6 +305,7 @@ if [ "${editor}" = "emacs" ]; then
 	if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
 
 		#echo "No Emacs daemon '${server_name}' found existing, launching it."
+		#echo "Launching: ${emacs} ${emacs_server_opts}"
 		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
 
 	else
@@ -298,19 +315,21 @@ if [ "${editor}" = "emacs" ]; then
 
 	fi
 
-	echo "Connecting Emacs client to '${server_name}'."
+	#sleep 1
+
+	#echo "Connecting Emacs client to '${server_name}'."
 
 	# -nw not used anymore; possibly that '--alternate-editor=emacs' is useless
 	# in this context:
 	#
 	emacs_client_opts="--create-frame -s ${server_name}"
 
-	#echo emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs
+	#echo "Running: emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs"
 
 	# 'emacsclient -s ceylan-hull-credentials-server' may return '*ERROR*: Args
 	# out of range: [], 0', good luck for finding the cause...
 	#
-	if ! ${emacsclient} ${emacs_server_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
+	if ! ${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
 
 		echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
 
@@ -323,6 +342,7 @@ if [ "${editor}" = "emacs" ]; then
 		sleep 1
 
 		# Retry:
+		#echo "Retrying: ${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs"
 		${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
 
 	fi
