@@ -9,15 +9,28 @@ cred_entry_name="main_credentials_path"
 
 
 usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path is read from the user account (in any '${cred_entry_name}' entry in any '${env_file}' file), and opens it. Once closed, re-locks it (with the same passphrase). See also our {lock|unlock}-credentials.sh scripts.
-
-Note that we recommend that such sensitive files follow the conventions in
-https://anirudhsasikumar.net/blog/2005.01.21.html; notably, for such a use case,
-backup files shall be disabled for this content (as they are obvious
-security risks).
-
-For Emacs, besides relying on a corresponding init.el, the first line of one's credential file should be like:
-// -*-mode:asciidoc; mode:sensitive-minor; fill-column:132-*-
 "
+
+# Note that we recommend that such sensitive files follow the conventions in
+# https://anirudhsasikumar.net/blog/2005.01.21.html; notably, for such a use
+# case, backup files shall be disabled for this content (as they are obvious
+# security risks).
+
+
+# Not relevant anymore, these modes are not found and block the launch:
+#
+# For Emacs, besides relying on a corresponding init.el, the first line of one's
+# credential file should be like:
+#
+# // -*-modeo:asciidoc; mode:sensitive-minor; fill-column:132-*-
+
+
+if [ ! "$1" = "-h" ] || [ ! "$1" = "--help" ]; then
+
+	echo "${usage}"
+	exit
+
+fi
 
 
 if [ ! $# -eq 0 ]; then
