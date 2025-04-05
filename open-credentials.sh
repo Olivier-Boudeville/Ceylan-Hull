@@ -18,14 +18,15 @@ usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path 
 
 
 # Not relevant anymore, these modes are not found and block the launch:
-#
+# """
 # For Emacs, besides relying on a corresponding init.el, the first line of one's
 # credential file should be like:
 #
 # // -*-modeo:asciidoc; mode:sensitive-minor; fill-column:132-*-
+# """
 
 
-if [ ! "$1" = "-h" ] || [ ! "$1" = "--help" ]; then
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
 	exit
