@@ -5,7 +5,7 @@ usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-c|--clean-system-caches]
  Options (order must be respected):
    - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
    - '-c' / '--clean-system-caches': cleans all system caches systematically, typically to try to save some space from /var/cache or to provide a workaround to some errors
-   - '-e' / '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.
+   - '-e' / '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.; note however that using this option is not recommended, as this could synchronise for the worst the stable and LTS versions of the kernel (then they may suffer from any ongoing issue)
 
  Supported distributions: Arch, previously Debian."
 
