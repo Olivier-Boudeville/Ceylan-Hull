@@ -146,6 +146,30 @@ chooseBlenderImporter()
 }
 
 
+
+chooseFontforge()
+{
+
+	#echo "Fontforge selected."
+
+	editor="$(which fontforge 2>/dev/null)"
+	editor_short_name="Fontforge"
+
+}
+
+
+chooseBirdFont()
+{
+
+	#echo "BirdFont selected."
+
+	editor="$(which birdfont 2>/dev/null)"
+	editor_short_name="BirdFonte"
+
+}
+
+
+
 chooseInkscape()
 {
 
@@ -1011,6 +1035,26 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 	if [ "${extension}" = "rst" ]; then
 
 		chooseEmacs
+		applyEditor
+		exit 0
+
+	fi
+
+
+	# Spline Font Database:
+	if [ "${extension}" = "ttf" ] || [ "${extension}" = "otf" ] || [ "${extension}" = "sfd" ]; then
+
+		# Preferred to birdfont:
+		chooseFontforge
+		applyEditor
+		exit 0
+
+	fi
+
+
+	if [ "${extension}" = "birdfont" ]; then
+
+		chooseBirdFont
 		applyEditor
 		exit 0
 
