@@ -529,20 +529,12 @@ applyEditor()
 	# Open the files in parallel or sequentially:
 	for f in ${parameters}; do
 
-		# The user may specify 'some_file.ext' whereas a
-		# 'some_file.ext.template' file exists. In this case, we consider that
-		# the former is generated from the latter, and thus the latter (the
-		# template) shall be edited instead, so:
+		# This may be a pre-existing file.
 		#
-		template_file="$f.template"
+		# Order matters: first, before trying to retarget any file originating
+		# from a template, if not found we try to strip it from garbage.
 
-		if [ -f "${template_file}" ]; then
-
-			echo "## Warning: '$f' was requested to be edited, whereas '${template_file}' exists; editing the latter one instead." 1>&2
-
-			f="${template_file}"
-
-		elif [ ! -f "$f" ]; then
+		if [ ! -f "$f" ]; then
 
 			# Sometimes a filename followed by some garbage is specified
 			# (e.g. a regrep might return "class_X.erl:construct");
@@ -583,6 +575,21 @@ applyEditor()
 				fi
 
 			fi
+
+		fi
+
+		# Second, the user may specify 'some_file.ext' whereas a
+		# 'some_file.ext.template' file exists. In this case, we consider that
+		# the former is generated from the latter, and thus the latter (the
+		# template) shall be edited instead, so:
+		#
+		template_file="$f.template"
+
+		if [ -f "${template_file}" ]; then
+
+			echo "## Warning: '$f' was requested to be edited, whereas '${template_file}' exists; editing the latter one instead." 1>&2
+
+			f="${template_file}"
 
 		fi
 
