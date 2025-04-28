@@ -112,7 +112,7 @@ fi
 #init_file="/lib/lsb/init-functions"
 
 #if [ -f "${init_file}" ]; then
-#	. "${init_file}"
+#   . "${init_file}"
 #fi
 
 
@@ -268,7 +268,7 @@ start_it_up()
 
 
 	${echo} "Interface: LAN is ${lan_if}." >> "${log_file}"
-	${echo} "Services: EPMD is '${allow_epmd}' (base port: ${epmd_port}; US-Main port: ${us_main_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
+	${echo} "Services: EPMD is '${allow_epmd}' (base port: ${epmd_port}; US-Main port: ${us_main_epmd_port}; US-Web port: ${us_web_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
@@ -476,7 +476,7 @@ start_it_up()
 
 		if [ -n "${epmd_port}" ]; then
 
-			${echo} " - enabling EPMD at our TCP port ${epmd_port}" >> "${log_file}"
+			${echo} " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
 			${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 		fi
