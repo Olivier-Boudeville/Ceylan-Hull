@@ -4,6 +4,7 @@ script_opts="{start|stop|reload|restart|force-reload|status|disable}"
 
 usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall suitable for a LAN host."
 
+# For more information, read http://howtos.esperide.org/Networking.html.
 
 ### BEGIN INIT INFO
 # Provides:          iptables.rules-LANBox
@@ -72,7 +73,7 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 #  - check it just for this session: 'iptables -L' (can any changes be found?)
 #
 #  - check that iptables is meant to be started at boot:
-#  'systemctl is-enabled iptables.service'; if not, run:
+# 'systemctl is-enabled iptables.service'; if not, run:
 # 'systemctl enable iptables.service'
 
 
@@ -87,7 +88,7 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 # sh -x /path/to/this/file
 
 # Causes the script to exit on error as soon as a command failed.
-# Disabled, as some commands may fail (e.g. modprobe)
+# Disabled, as some commands may fail (e.g. modprobe).
 #set -e
 
 
@@ -117,16 +118,20 @@ fi
 
 
 
-# Useful with iptables --list|grep '\[v' or iptables -L -n |grep '\[v' to check
+# Useful with iptables --list|grep '\[v' or iptables -nL |grep '\[v' to check
 # whether rules are up-to-date.
+#
+# Very useful as well: 'iptables -S'.
 #
 # One may also use: 'journalctl -kf' to monitor live the corresponding kernel
 # logs.
 #
 # 'c' is for client (log prefix must be shorter than 29 characters):
 #
-version="c-13"
+version="c-14"
 
+# Logic of toggle variables: they are to be compared to "true" or "false"
+# (clearer than, respectively, 0 or 1).
 
 # Now the settings are not embedded anymore in this script, but in the next
 # file, meant to be sourced:
@@ -144,9 +149,6 @@ fi
 
 . "${setting_file}"
 
-
-# Logic of toggle variables: they are to be compared to "true" or "false"
-# (clearer than, respectively, 0 or 1).
 
 
 # UPnp/DLNA section.
@@ -171,7 +173,7 @@ allow_epmd="true"
 #allow_epmd="false"
 
 
-
+# Defined in settings file:
 if [ -z "${log_file}" ]; then
 
 	${echo} " Error, log_file not defined." 1>&2
@@ -208,7 +210,7 @@ allow_rtsp="false"
 
 if [ -z "${lan_if}" ]; then
 
-	${echo} "No LAN interface set, trying to auto-detect it." >> "${log_file}"
+	${echo} "No LAN interface (lan_if) set, trying to auto-detect it." >> "${log_file}"
 
 	detected_if="$(ip link | grep ': <' | sed 's|: <.*$||' | cut -d ' ' -f 2 | grep -v '^lo$')"
 
@@ -254,28 +256,46 @@ fi
 
 # Not all settings tested.
 
-
+# Not a setting, just for checking:
+erlang_default_epmd_port=4369
 
 
 start_it_up()
 {
 
-	${echo} "Setting LAN box firewall rules, version $version."
+	${echo} "Setting LAN box firewall rules, version ${version}."
 
 	${echo} >> "${log_file}"
-	${echo} "# ---- Setting LAN firewall rules, version $version, on $(date)." >> "${log_file}"
+	${echo} "# ---- Setting LAN firewall rules, version ${version}, on $(date)." >> "${log_file}"
 	${echo} >> "${log_file}"
 
 
 	${echo} "Interface: LAN is ${lan_if}." >> "${log_file}"
-	${echo} "Services: EPMD is '${allow_epmd}' (base port: ${epmd_port}; US-Main port: ${us_main_epmd_port}; US-Web port: ${us_web_epmd_port}), TCP filter range is '${enable_unfiltered_tcp_range}' (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port}), RTSP is '${allow_rtsp}', SSH port is '${ssh_port}', ban rules is '${use_ban_rules}' (file: ${ban_file})." >> "${log_file}"
+	${echo} >> "${log_file}"
+	${echo} "Summary of services:" >> "${log_file}"
+	${echo} " - ban rules enabled? ${use_ban_rules} (ban file: '${ban_file}')" >> "${log_file}"
+	${echo} " - Universal servers enabled? ${enable_universal_server}" >> "${log_file}"
+	${echo} " - Orge enabled? ${enable_orge}" >> "${log_file}"
+	${echo} " - usage of EPMD ports generally allowed? ${allow_epmd}" >> "${log_file}"
+	${echo} "   * Erlang default EPMD port: ${erlang_default_epmd_port}" >> "${log_file}"
+	${echo} "   * Myriad default EPMD port: ${myriad_default_epmd_port}" >> "${log_file}"
+	${echo} "   * US EPMD port range: ${us_lowest_epmd_port}:${us_highest_epmd_port}" >> "${log_file}"
+	${echo} "   * Orge EPMD port: ${orge_epmd_port}" >> "${log_file}"
+	${echo} " - TCP filter range set? ${enable_unfiltered_tcp_range} (range: ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port})" >> "${log_file}"
+	${echo} " - SSH port: ${ssh_port}" >> "${log_file}"
+	${echo} " - RTSP enabled? ${allow_rtsp}" >> "${log_file}"
+	${echo} >> "${log_file}"
+
+	${echo} "Applying settings now:" >> "${log_file}"
 
 	# Only needed for older distros that do load ipchains by default, just
 	# unload it:
 	#
-	#if $lsmod  2>/dev/null | grep -q ipchains; then
+	#if $lsmod 2>/dev/null | grep -q ipchains; then
 	#   $rmmod ipchains
 	#fi
+
+	# Note: see modprobe notes above.
 
 	# Load appropriate modules:
 	#
@@ -290,8 +310,8 @@ start_it_up()
 	# Not necessary to be able to use continuous port range:
 	#${modprobe} xt_multiport 2>/dev/null
 
-	# These lines are here in case rules are already in place and the script is
-	# ever rerun on the fly.
+	# These lines are here should rules be already in place and the script be
+	# run on the fly.
 	#
 	# We want to remove all rules and pre-existing user defined chains, and to
 	# zero the counters before we implement new rules:
@@ -300,10 +320,11 @@ start_it_up()
 	${iptables} -X
 	${iptables} -Z
 
-	${iptables} -F -t nat
-	${iptables} -X -t nat
-	${iptables} -Z -t nat
-
+	for table in nat mangle raw security; do
+		${iptables} -F -t ${table}
+		${iptables} -X -t ${table}
+		${iptables} -Z -t ${table}
+	done
 
 	# Set up a default DROP policy for the built-in chains.
 	#
@@ -311,7 +332,7 @@ start_it_up()
 	# default DROP policy), what happens is that there is a small time period
 	# when packets are denied until the new rules are back in place.
 	#
-	# There is no period, however small, when packets we do not want are
+	# There is no period, however small, when packets that we do not want are
 	# allowed.
 	#
 	${iptables} -P INPUT DROP
@@ -326,10 +347,12 @@ start_it_up()
 
 	# Enable response to ping in the kernel, but we will only answer if the rule
 	# at the bottom of the file let us:
+	#
 	${echo} "0" > /proc/sys/net/ipv4/icmp_echo_ignore_all
 
 	# Disable response to broadcasts.
 	# You do not want yourself becoming a Smurf amplifier:
+	#
 	${echo} "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 
 	# Do not accept source routed packets.
@@ -338,10 +361,12 @@ start_it_up()
 	# inside your network, but which is routed back along the path from which it
 	# came, namely outside, so attackers can compromise your network. Source
 	# routing is rarely used for legitimate purposes:
+	#
 	${echo} "0" > /proc/sys/net/ipv4/conf/all/accept_source_route
 
 	# Disable ICMP redirect acceptance. ICMP redirects can be used to alter your
 	# routing tables, possibly to a bad end:
+	#
 	${echo} "0" > /proc/sys/net/ipv4/conf/all/accept_redirects
 
 	# Enable bad error message protection:
@@ -358,13 +383,19 @@ start_it_up()
 	# or if you operate a non-routing host which has several IP addresses on
 	# different interfaces.
 	#
-	# Note: if you turn on IP forwarding, you will also get this:
+	# Note: if you turn on IP forwarding, you will also get this.
+	#
 	for interface in /proc/sys/net/ipv4/conf/*/rp_filter; do
-		${echo} "1" > ${interface}
+		${echo} "1" > "${interface}"
 	done
 
+
 	# Log spoofed packets, source routed packets, redirect packets:
-	${echo} "1" > /proc/sys/net/ipv4/conf/all/log_martians
+	#
+	# (note: adding a specific rejection rule for a martian source will not
+	# prevent it to be logged in the journal)
+	#
+	#${echo} "0" > /proc/sys/net/ipv4/conf/all/log_martians
 
 	# Make sure that IP forwarding is turned off.
 	#
@@ -425,7 +456,7 @@ start_it_up()
 
 	# Log some invalid connections:
 	# (disabled, as uselessly verbose)
-	#${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.$version: invalid input] "
+	#${iptables} -A INPUT -m state --state INVALID -m limit --limit 2/s -j LOG --log-prefix "[v.${version}: invalid input] "
 
 	${iptables} -A INPUT -m state --state INVALID -j DROP
 
@@ -474,36 +505,47 @@ start_it_up()
 
 	if [ "${allow_epmd}" = "true" ]; then
 
-		if [ -n "${epmd_port}" ]; then
+		# For all Erlang developments based on the default Myriad EPMD port, we
+		# enable it (as being on the LAN):
+		#
+		if [ -n "${myriad_default_epmd_port}" ]; then
 
-			${echo} " - enabling EPMD at TCP port ${epmd_port}" >> "${log_file}"
-			${iptables} -A INPUT -p tcp --dport ${epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+			${echo} " - enabling the Myriad default EPMD port (${myriad_default_epmd_port})" >> "${log_file}"
 
-		fi
+			${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${myriad_default_epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
-
-		if [ -n "${us_main_epmd_port}" ]; then
-
-			${echo} " - enabling US-Main EPMD at TCP port ${us_main_epmd_port}" >> "${log_file}"
-			${iptables} -A INPUT -p tcp --dport ${us_main_epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+			# Not specifically filtering out the erlang_default_epmd_port (implicit).
 
 		fi
 
+		# Universal server section:
 
-		if [ -n "${us_web_epmd_port}" ]; then
+		# Now we allow for a larger US EPMD port range:
+		if [ "${enable_universal_server}" = "true" ]; then
 
-			${echo} " - enabling US-Web EPMD at TCP port ${us_web_epmd_port}" >> "${log_file}"
-			${iptables} -A INPUT -p tcp --dport ${us_web_epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+			if [ -z "${us_lowest_epmd_port}" ] || [ -z "${us_highest_epmd_port}" ]; then
+
+				${echo} " Error, Universal Server enabled but EPMD port bounds not properly defined." 1>&2
+				exit 54
+
+		fi
+
+			${echo} " - enabling the Universal Server default EPMD port range (from ${us_lowest_epmd_port} to ${us_highest_epmd_port}) on the LAN" >> "${log_file}"
+
+			${iptables} -A INPUT -i ${lan_if} -p tcp --match multiport --dports ${us_lowest_epmd_port}:${us_highest_epmd_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 		fi
 
 	fi
 
 
+	# If an (optional) TCP port range is specified, accepts corresponding
+	# LAN-originating packets addressed to this host
+	#
 	if [ "${enable_unfiltered_tcp_range}" = "true" ]; then
 
 		${echo} " - enabling TCP port range from ${tcp_unfiltered_low_port} to ${tcp_unfiltered_high_port}" >> "${log_file}"
-		${iptables} -A INPUT -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+		${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${tcp_unfiltered_low_port}:${tcp_unfiltered_high_port} -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
 
 	fi
 
@@ -519,7 +561,7 @@ start_it_up()
 	#
 	# We are not going to trust any fragments.
 	# Log fragments just to see if we get any, and deny them too.
-	${iptables} -A INPUT -f -j LOG --log-prefix "[v.$version: iptables fragments] "
+	${iptables} -A INPUT -f -j LOG --log-prefix "[v.${version}: iptables fragments] "
 	${iptables} -A INPUT -f -j DROP
 
 
@@ -550,7 +592,7 @@ start_it_up()
 	# frequency of attempts coming from the LAN if compromised:
 
 	# Logs too frequent attempts tagged with 'SSH' and drops them if requested:
-	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.$version: SSH brute-force] "
+	${iptables} -A INPUT -i ${lan_if} -p tcp --dport ${ssh_port} -m recent --update --seconds 60 --hitcount 4 --name SSH -j LOG --log-prefix "[v.${version}: SSH brute-force] "
 
 	if [ "${limit_ssh_connection_rate}" = "true" ]; then
 
@@ -598,7 +640,8 @@ start_it_up()
 
 	${echo} "Set rules are:" >> "${log_file}"
 	${iptables} -nvL --line-numbers >> "${log_file}"
-	${echo} "# ---- End of LAN rules, on $(date)." >> "${log_file}"
+	${echo} >> "${log_file}"
+	${echo} "# ---- End of LAN rules version ${version}, on $(date)." >> "${log_file}"
 
 }
 
@@ -607,17 +650,18 @@ shut_it_down()
 {
 
 	# Not only one may end up not being protected, but one may also be locked
-	# out of the gateway if this command is issued remotely, e.g. through SSH,
+	# out of the host if this command is issued remotely, e.g. through SSH,
 	# whose connection will be lost after this call, preventing from restarting
-	# the service again...
+	# the service again... So such disabling may not be a good idea.
 
-	${echo} "Disabling LAN box firewall rules, version ${version}."
+	${echo} "Disabling LAN box firewall rules, version ${version} (DANGER!)."
 
 	# Load appropriate modules:
 	${modprobe} ip_tables 2>/dev/null
 
-	# We remove all rules and pre-exisiting user defined chains and zero the
-	# counters:
+	# We remove all rules and pre-existing user-defined chains, and zero the
+	# counters before we implement new rules:
+	#
 	${iptables} -F
 	${iptables} -X
 	${iptables} -Z
@@ -629,16 +673,25 @@ shut_it_down()
 }
 
 
+
 script_name=$(basename $0)
 
 
 case "$1" in
+
   start)
 	start_it_up
 	;;
 
   stop)
-	shut_it_down
+	${echo} "Warning: if this script is executed remotely (e.g. through a SSH connection), stopping will isolate that host; maybe updating this script and restarting (e.g. 'systemctl restart iptables.rules-LAN.service') would be then a better solution."
+	${echo} "Proceed anyway? [y/n] (default: n)"
+	read answer
+	if [ "${answer}" = "y" ]; then
+		shut_it_down
+	else
+		${echo} "(stop aborted)"
+	fi
 	;;
 
   reload|force-reload)
@@ -678,12 +731,14 @@ case "$1" in
 	${echo} " Error, no appropriate action specified." >&2
 
 	if [ -z "${NAME}" ]; then
+
 		# Launched from the command-line:
 		${echo} "${usage}" >&2
 
 	else
 
-		${echo} "${usage}" >&2
+		# Obsolete:
+		${echo} "Usage: /etc/init.d/${NAME} ${script_opts}" >&2
 
 	fi
 
