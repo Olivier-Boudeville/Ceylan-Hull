@@ -199,7 +199,13 @@ if [ "$(id -u)" = "0" ]; then
 
 
 	# Erases the previous log as well, to avoid accumulation:
-	echo "Updating the distribution now, at $(date)..." 1>>"${log_file}"
+	if [ -e "${log_file}" ]; then
+
+		/bin/mv -v "${log_file}" "${log_file}.previous"
+
+	fi
+
+	echo "Updating the distribution now, at $(date)..." 1>"${log_file}"
 
 	case "${distro_type}" in
 
