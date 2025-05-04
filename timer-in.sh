@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: '$(basename $0) [-h|--help] [-s|--silent] DURATION [MESSAGE | [TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) in DURATION, which is expressed as:
+usage="Usage: '$(basename $0) [-h|--help] [-s|--silent] DURATION [MESSAGE | [TITLE | MESSAGE]]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) in DURATION, which is expressed as:
  MINUTES (e.g. 17) or MINUTES:SECONDS (e.g. 17:11) or HOURS:MINUTES:SECONDS (e.g. 1:15:45); note that timestamps of the form HOURShMINUTES (e.g. 17h02) and HOURShMINUTESmSECONDS (e.g. 17h02m31) are supported as well.
 
 Will issue such a notification when the specified duration is elapsed; useful for example for cooking.
@@ -12,7 +12,7 @@ For example: '$(basename $0) 15' will notify noisily once 15 minutes have elapse
 See also:
    - timer-at.sh for a timer that is to trigger at an absolute timestamp (rather than after a duration from now)
    - timer-every.sh for a periodical timer
-   "
+"
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -93,7 +93,8 @@ if [ $be_silent -eq 1 ]; then
 	# record-speech.sh --voice-id 33 --speech-prefix "timer-end" --message 'The timer says: time is up!!!!'
 	time_out_sound="${LOANI_REPOSITORY}/OSDL-data/timer-end.wav"
 
-	bong_count=1
+	# Otherwise a bit too noisy:
+	bong_count=0
 
 fi
 
@@ -258,7 +259,6 @@ actual_stop_time="$(date '+%H:%M:%S')"
 if [ $be_silent -eq 1 ]; then
 
 	count=1
-
 
 	while [ "${count}" -le "${bong_count}" ]; do
 
