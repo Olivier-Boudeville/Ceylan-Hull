@@ -18,15 +18,26 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
+pacman="$(which pacman 2>&1)"
+
+if [ ! -x "${pacman}" ]; then
+
+	echo "  Error, no 'pacman' executable found." 1>&2
+
+	exit 10
+
+fi
+
+
 # A single one supported (easier than $*):
 package_name="$1"
 
 echo "  Looking up package '${package_name}'..."
 
-if pacman -Ss "^${package_name}$" 1>/dev/null 2>&1; then
+if ${pacman} -Ss "^${package_name}$" 1>/dev/null 2>&1; then
 
 	echo "Found as an Arch Linux official package, installing it if needed."
-	sudo pacman -S "${package_name}" --needed --noconfirm
+	sudo ${pacman} -S "${package_name}" --needed --noconfirm
 
 else
 
@@ -40,8 +51,8 @@ else
 
 		aur_updater_name="update-aur-installer.sh"
 
-		# Expected to be found as well in Ceylan-Hull:
-		aur_updater="(which  2>/dev/null)"
+		# Expected to be found as well in Ceylan-Hull, or at least in the PATH:
+		aur_updater="$(which ${aur_updater_name} 2>/dev/null)"
 
 		if [ ! -x "${aur_updater}" ]; then
 
@@ -51,10 +62,20 @@ else
 
 		fi
 
-		if ! sudo "${aur_updater}"; then
+		# Not to be run as root:
+		if ! "${aur_updater}"; then
 
 			echo "  Error, AUR update (done by '${aur_updater_name}') failed." 1>&2
 			exit 45
+
+		fi
+
+		yay="$(which yay 2>/dev/null)"
+
+		if [ ! -x "${yay}" ]; then
+
+			echo "  Error, no post-install yay found." 1>&2
+			exit 35
 
 		fi
 
@@ -63,7 +84,7 @@ else
 		# Installer found, but is it functional? (often broken by a
 		# pacman-related update)
 
-		if ! ${yay} -h 1>/dev/null 2>&1; then
+		if ! "${yay}" -h 1>/dev/null 2>&1; then
 
 			echo "  AUR installer ('yay') found, yet not operational, updating it first."
 
@@ -78,7 +99,8 @@ else
 
 			fi
 
-			if ! sudo "${aur_updater}"; then
+			# Not to be run as root:
+			if ! "${aur_updater}"; then
 
 				echo "  Error, AUR update (done by '${aur_updater_name}') failed." 1>&2
 				exit 55
