@@ -17,6 +17,10 @@ usage="Usage: $(basename $0) [-v] [[TARGET_AUDIO_SINK] NEW_PERCENTAGE_VOLUME]
   Assumes that PulseAudio is used. Volume could be best set on a per-application basis, rather than globally.
 "
 
+# In this last case, 'pacmd list-sink-inputs' would be used, application.name or
+# application.process.binary would be searched, the corresponding previous index
+# obtained, and the 'pacmd set-sink-input-volume INDEX VOLUME' would be run.
+
 
 # Otherwise just get the current volume:
 do_set=0
