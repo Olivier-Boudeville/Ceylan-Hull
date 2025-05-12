@@ -38,7 +38,7 @@ xinput="$(which xinput 2>/dev/null)"
 
 if [ ! -x "${xinput}" ]; then
 
-	echo "  Error, no 'xinput' executable found." 1>&2
+	echo "  Error, no 'xinput' executable found (Arch package is 'xorg-xinput')." 1>&2
 	exit 15
 
 fi
