@@ -1,13 +1,19 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-q|--quiet] [-c|--clean-system-caches] [-e|--even-ignored]: updates the current distribution, and traces it.
+usage="Usage: $(basename $0) [-h|--help] [-l|--low-profile] [-c|--clean-system-caches] [-e|--even-ignored]: updates the current distribution, and traces it.
 
  Options (order must be respected):
-   - '-q' / '--quiet': quiet mode, no output if no error (suitable for crontab)
+   - '-l' / '--low-profile': low-profile mode, no output if no error, and, in case of error, returning only a low-profile error message (suitable for a crontab, whose output is sent through an aggressively spam-filtering email system)
    - '-c' / '--clean-system-caches': cleans all system caches systematically, typically to try to save some space from /var/cache or to provide a workaround to some errors
    - '-e' / '--even-ignored': updates all packages, even the ones that were declared to be ignored (in /etc/pacman.conf); useful for pre-shutdown updates of kernels, graphical drivers, etc.; note however that using this option is not recommended, as this could synchronise for the worst the stable and LTS versions of the kernel (then they may suffer from any ongoing issue)
 
- Supported distributions: Arch, previously Debian."
+
+ Example of crontab lines:
+# Each day at 2:17 AM, update the distro:
+17  02   *   *  * /usr/local/bin/update-distro.sh --low-profile --clean-system-caches
+
+ Supported distributions: Arch, previously Debian.
+"
 
 
 # Many problems with Haskell:
@@ -36,7 +42,7 @@ clean_caches()
 
 	clean_opt=""
 
-	if [ $quiet -eq 0 ]; then
+	if [ $low_profile -eq 0 ]; then
 		clean_opt="-q"
 	fi
 
@@ -48,14 +54,14 @@ clean_caches()
 pacman_update()
 {
 
-	if [ $quiet -eq 0 ]; then
+	if [ $low_profile -eq 0 ]; then
 
 		if ! pacman ${base_update_opt} 1>>"${log_file}" 2>&1; then
 
 			echo "Warning: update failed, trying to clean caches first." >> "${log_file}"
 			clean_caches
 
-			if ! pacman ${base_update_opt} 1>>"${log_file}"; then #2>&1
+			if ! pacman ${base_update_opt} 1>>"${log_file}" 2>&1; then
 
 				echo "  Error, pacman-based update failed." 1>&2
 				exit 7
@@ -120,14 +126,14 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
-quiet=1
+low_profile=1
 clean_caches=1
 even_ignored=1
 
 
-if [ "$1" = "-q" ] || [ "$1" = "--quiet" ]; then
+if [ "$1" = "-l" ] || [ "$1" = "--low-profile" ]; then
 
-	quiet=0
+	low_profile=0
 	shift
 
 fi
@@ -172,7 +178,7 @@ if [ "$(id -u)" = "0" ]; then
 
 	if [ -e "${lock_file}" ]; then
 
-		if [ $quiet -eq 1 ]; then
+		if [ $low_profile -eq 1 ]; then
 
 			echo "Pacman lock file (${lock_file}) found; shall it be deleted first? [y/N]"
 
@@ -211,7 +217,7 @@ if [ "$(id -u)" = "0" ]; then
 
 
 		"Debian")
-			if [ $quiet -eq 1 ]; then
+			if [ $low_profile -eq 1 ]; then
 
 				(apt-get update && apt-get -y upgrade) 2>&1 | tee -a "${log_file}"
 
@@ -245,10 +251,10 @@ if [ "$(id -u)" = "0" ]; then
 			#
 			set -o pipefail
 
-			if [ $quiet -eq 1 ]; then
+			if [ $low_profile -eq 1 ]; then
 
 				# To be run from the command-line:
-				# (problem: tee hides the error return code)
+				# (problem: tee hid the error return code)
 
 				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
 
@@ -284,7 +290,11 @@ if [ "$(id -u)" = "0" ]; then
 
 				if [ -n "${forced_packages}" ]; then
 
-					pacman -Sy --noconfirm ${forced_packages} 1>>"${log_file}" #2>&1
+					# Could cause the output once emailed to be detected as a
+					# spam:
+					#
+					#pacman -Sy --noconfirm ${forced_packages} 1>>"${log_file}" #2>&1
+					pacman -Sy --noconfirm ${forced_packages} 1>"${log_file}" 2>&1
 
 				fi
 
@@ -298,13 +308,13 @@ if [ "$(id -u)" = "0" ]; then
 
 			if [ -x "${paccache}" ]; then
 
-				if [ $quiet -eq 1 ]; then
+				if [ $low_profile -eq 1 ]; then
 
 					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 2>&1 | tee -a "${log_file}"
 
 				else
 
-					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 1>>"${log_file}" #2>&1
+					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 1>>"${log_file}" 2>&1
 
 				fi
 
@@ -326,7 +336,7 @@ if [ "$(id -u)" = "0" ]; then
 
 	if [ ${res} -eq 0 ]; then
 
-		if [ $quiet -eq 1 ]; then
+		if [ $low_profile -eq 1 ]; then
 			echo "... update done successfully"
 		fi
 
