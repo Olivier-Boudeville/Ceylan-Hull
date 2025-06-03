@@ -63,7 +63,9 @@ pacman_update()
 
 			if ! pacman ${base_update_opt} 1>>"${log_file}" 2>&1; then
 
-				echo "  Error, pacman-based update failed." 1>&2
+				# Still sufficient to be flagged as spam:
+				#echo "  Error, pacman-based update failed." 1>&2
+				echo "Hi, the base update of your distribution failed, please proceed to a manual inspection. Best regards, your devoted server."
 				exit 7
 
 			fi
@@ -281,7 +283,9 @@ if [ "$(id -u)" = "0" ]; then
 				#
 				if ! pacman ${keyring_opt} 1>>"${log_file}" 2>&1; then
 
-					echo "  Error, pacman-based Arch key update failed." 1>&2
+					# Still sufficient to be flagged as spam:
+					#echo "  Error, pacman-based Arch key update failed." 1>&2
+					echo "Hi, the update of your distribution failed (regarding keyring), please proceed to a manual inspection. Best regards, your devoted server."
 					exit 25
 
 				fi
