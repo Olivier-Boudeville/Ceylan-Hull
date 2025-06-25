@@ -1029,7 +1029,7 @@ view_selected_element()
 		applyViewer
 
 	# Audio file:
-	elif [ "${extension}" = "ogg" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ]; then
+	elif [ "${extension}" = "ogg" ] || [ "${extension}" = "m4a" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ]; then
 
 		chooseAudioPlayer
 

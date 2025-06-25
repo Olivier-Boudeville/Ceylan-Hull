@@ -961,6 +961,24 @@ extension="$(echo ${parameters}| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 #echo "C: extension = '${extension}'"
 
 
+if [ "${extension}" = "beam" ]; then
+
+	echo "Warning: 'beam' extension detected, translating it as 'erl'." 1>&2
+
+	new_params=""
+	for f in ${parameters}; do
+
+		new_f="$(echo $f | sed 's|\.beam$|.erl|1')"
+
+		new_params="${new_params} ${new_f}"
+
+	done
+
+	parameters="${new_params}"
+
+fi
+
+
 if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 
 	if [ "${extension}" = "pdf" ] || [ "${extension}" = "djvu" ] || [ "${extension}" = "epub" ]; then
