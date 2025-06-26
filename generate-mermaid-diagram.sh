@@ -9,6 +9,18 @@ More information: https://mermaid-js.github.io/mermaid/"
 #  - then, as user: mkcd ~/${mermaid_cli_root} && yarn add mermaid.cli
 mermaid_cli_root="${HOME}/Software/mermaid/"
 
+# Can otherwise be obtained with: 'npm install @mermaid-js/mermaid-cli',
+# supposing a properly-configured/updated npm install, or thanks to, for
+# example, 'npx -p @mermaid-js/mermaid-cli mmdc -h'.
+#
+# However, at least in some restricted contexts, all installation attempts
+# failed.
+#
+# All things considered, a graph-generation tool should not involve so many
+# weakly-related, risky dependencies (npm, a browser, pupeeter, etc.), so we
+# know recommend using dot / graphviz instead.
+
+
 # Use '~/Software/mermaid/node_modules/.bin/mmdc --version' to obtain version.
 
 # If your local mmdc is stuck at a given, older version (e.g. 0.5.1), you may
@@ -16,7 +28,16 @@ mermaid_cli_root="${HOME}/Software/mermaid/"
 # 'Download PNG').
 
 
-img_generator="${mermaid_cli_root}/node_modules/.bin/mmdc"
+
+first_mermaid_path="${HOME}/Software/npm/node-current-install/bin"
+
+second_mermaid_path="${mermaid_cli_root}/node_modules/.bin"
+
+
+export PATH="${first_mermaid_path}:${second_mermaid_path}:${PATH}"
+
+img_generator="$(which mmdc 2>/dev/null)"
+
 
 if [ ! -x "${img_generator}" ]; then
 
@@ -69,9 +90,8 @@ if [ "${target_file}" = "${source_file}" ]; then
 
 fi
 
-${img_generator} ${mermaid_opts} -i "${source_file}" -o "${target_file}"
 
-if [ $? -eq 0 ]; then
+if "${img_generator}" ${mermaid_opts} -i "${source_file}" -o "${target_file}"; then
 
 	echo "
   Success, '${target_file}' generated."
