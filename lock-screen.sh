@@ -4,7 +4,7 @@ usage="Usage: $(basename $0) [-h|--help]: locks immediately the screen."
 
 # Logging to a console and executing 'killall xscreensaver' as your normal user
 # might be your best friend, as at least sometimes correct logins are rejected
-# and will lead to have one's account blocked for 10 minutes repeatedly...
+# and will lead to have one's account being blocked for 10 minutes repeatedly...
 
 # Consider also 'xfce4-session-logout --suspend' or 'systemctl suspend'.
 
@@ -52,23 +52,35 @@ fi
 
 ## If using xlock (install the 'xlockmore' Arch package):
 
-# No activation needed for xlock:
-
+# No activation needed for xlock or xdg-screensaver:
 locker_activate_needed=1
-locker_activate_name="xlock"
+
+#locker_activate_name="xlock"
+
+# Nowadays quite often the best (most general) option:
+locker_activate_name="xdg-screensaver"
+
+
 locker_activate_opts=""
 
 locker_cmd_name="${locker_activate_name}"
 
-locker_cmd_lock_opts="-mode blank"
+
+# For xlock:
+#locker_cmd_lock_opts="-mode blank"
 #locker_cmd_lock_opts="-mode marquee"
 #locker_cmd_lock_opts="-mode flag"
 #locker_cmd_lock_opts="-mode nose"
 
+# For xdg-screensaver:
+locker_cmd_lock_opts="lock"
+
 
 if [ $locker_activate_needed -eq 0 ]; then
 
-	# First launching the screensaver daemon, if needed (possibly optional step):
+	# First launching the screensaver daemon, if needed (possibly optional
+	# step):
+	#
 	if [ -n "${locker_activate_name}" ]; then
 
 		locker_activate_exec="$(which ${locker_activate_name})"
@@ -107,8 +119,8 @@ echo "Locking the screen immediately on $(date)..."
 # script (e.g. leaving-home.sh) can itself be synchronised on locking/unlocking;
 # however with xscreensaver it is never blocking actually...
 #
-# xlock is blocking:
-${locker_cmd_exec} ${locker_cmd_lock_opts} 2>/dev/null
+# At least most blockers are, unsurprisingly, blocking:
+"${locker_cmd_exec}" ${locker_cmd_lock_opts} 2>/dev/null
 # 1>/dev/null 2>&1
 
 echo "... unlocked on $(date)"
