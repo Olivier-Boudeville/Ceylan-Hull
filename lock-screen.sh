@@ -3,8 +3,9 @@
 usage="Usage: $(basename $0) [-h|--help]: locks immediately the screen."
 
 # Logging to a console and executing 'killall xscreensaver' as your normal user
-# might be your best friend, as at least sometimes correct logins are rejected
-# and will lead to have one's account being blocked for 10 minutes repeatedly...
+# might be your best friend, as at least sometimes with this tool correct logins
+# are rejected and will lead to have one's account being blocked for 10 minutes
+# repeatedly...
 
 # Consider also 'xfce4-session-logout --suspend' or 'systemctl suspend'.
 
@@ -28,57 +29,92 @@ ${usage}" 1>&2
 fi
 
 
-## If using xscreensaver:
+# If using xscreensaver-command:
+use_xscreensaver()
+{
 
-# Non-blocking locking (script not stopped):
-#locker_activate_name="xscreensaver"
-#locker_activate_opts="-no-splash"
+	# Non-blocking locking (script not stopped):
+	#locker_activate_name="xscreensaver"
+	#locker_activate_opts="-no-splash"
 
-# Locking is done asynchronously, the command returns immediately.
+	# Locking is done asynchronously, the command returns immediately.
+	#
+	# To detect the unlocking, the following approaches did not work for us:
+	# - gdbus monitor -y -d org.freedesktop.login1 | grep LockedHint
+	#
+	# - dbus-monitor --session "type='signal',interface='org.gnome.ScreenSaver'"
+	# (of course, as not using Gnome)
+	#
+	locker_cmd_name="xscreensaver-command"
+
+	locker_cmd_lock_opts="-lock"
+	locker_activate_needed=0
+
+}
+
+
+# If using gnome-screensaver-command:
+use_gnome_screensaver()
+{
+
+	# Never did anything on our Arch (no daemon launched?):
+	locker_activate_name="gnome-screensaver-command"
+	locker_activate_needed=0
+
+	locker_cmd_name="${locker_activate_name}"
+
+}
+
+
+# If using xlock (install the 'xlockmore' Arch package):
+
+use_xlock()
+{
+
+	locker_activate_name="xlock"
+	locker_activate_needed=1
+
+	locker_cmd_name="${locker_activate_name}"
+
+	locker_cmd_lock_opts="-mode blank"
+	#locker_cmd_lock_opts="-mode marquee"
+	#locker_cmd_lock_opts="-mode flag"
+	#locker_cmd_lock_opts="-mode nose"
+
+}
+
+
+# If using xdg-screensaver; nowadays quite often the best (most general) option,
+# yet not wanting, at least on my Arch:
 #
-# To detect the unlocking, the following approaches did not work for us:
-# - gdbus monitor -y -d org.freedesktop.login1 | grep LockedHint
+# $ xdg-screensaver lock
+# ERROR: Unknown command 'lock'
 #
-# - dbus-monitor --session "type='signal',interface='org.gnome.ScreenSaver'"
-# (of course, as not using Gnome)
-#
-#locker_cmd_name="xscreensaver-command"
-#locker_cmd_lock_opts="-lock"
+use_xdg_screensaver()
+{
+
+	locker_activate_name="xdg-screensaver"
+	locker_activate_needed=1
+
+	locker_cmd_name="${locker_activate_name}"
+	locker_cmd_lock_opts="lock"
+
+}
 
 
-# Never did anything on our Arch (no daemon launched?):
-#locker_cmd_name="gnome-screensaver-command"
+distro="$(grep '^ID' /etc/os-release | sed 's|^ID=||')"
 
+if [ "${distro}" = "arch" ]; then
+	use_xlock
+else
+	use_xdg_screensaver
+fi
 
-## If using xlock (install the 'xlockmore' Arch package):
-
-# No activation needed for xlock or xdg-screensaver:
-locker_activate_needed=1
-
-#locker_activate_name="xlock"
-
-# Nowadays quite often the best (most general) option:
-locker_activate_name="xdg-screensaver"
-
-
-locker_activate_opts=""
-
-locker_cmd_name="${locker_activate_name}"
-
-
-# For xlock:
-#locker_cmd_lock_opts="-mode blank"
-#locker_cmd_lock_opts="-mode marquee"
-#locker_cmd_lock_opts="-mode flag"
-#locker_cmd_lock_opts="-mode nose"
-
-# For xdg-screensaver:
-locker_cmd_lock_opts="lock"
 
 
 if [ $locker_activate_needed -eq 0 ]; then
 
-	# First launching the screensaver daemon, if needed (possibly optional
+	# First launching any screensaver daemon, if needed (possibly optional
 	# step):
 	#
 	if [ -n "${locker_activate_name}" ]; then
@@ -94,7 +130,13 @@ if [ $locker_activate_needed -eq 0 ]; then
 
 		echo "Activating first the screensaver"
 
-	"${locker_activate_exec}" ${locker_activate_opts} 1>/dev/null &
+		"${locker_activate_exec}" ${locker_activate_opts} 1>/dev/null &
+
+	else
+
+		echo "Error, locker activation needed when no name specified for it." 1>&2
+
+		exit 50
 
 	fi
 
@@ -113,7 +155,7 @@ fi
 
 # Then activate the locker itself:
 
-echo "Locking the screen immediately on $(date)..."
+echo "Locking the screen immediately (with ${locker_cmd_name}) on $(date)..."
 
 # Not run in the background anymore (no trailing '&)', so that any wrapping
 # script (e.g. leaving-home.sh) can itself be synchronised on locking/unlocking;
