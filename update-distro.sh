@@ -312,13 +312,21 @@ if [ "$(id -u)" = "0" ]; then
 
 			if [ -x "${paccache}" ]; then
 
+				# 0 would repeatedly download the same package at each attempt
+				# until any current issue is fixed:
+				#
+				uninstalled_ver_count=1
+
+				# Quite sufficient:
+				installed_ver_count=2
+
 				if [ $low_profile -eq 1 ]; then
 
-					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 2>&1 | tee -a "${log_file}"
+					("${paccache}" -rvuk${uninstalled_ver_count} && "${paccache}" -rvk${installed_ver_count}) 2>&1 | tee -a "${log_file}"
 
 				else
 
-					("${paccache}" -rvuk0 && "${paccache}" -rvk3) 1>>"${log_file}" 2>&1
+					("${paccache}" -rvuk${uninstalled_ver_count} && "${paccache}" -rvk${installed_ver_count}) 1>>"${log_file}" 2>&1
 
 				fi
 
