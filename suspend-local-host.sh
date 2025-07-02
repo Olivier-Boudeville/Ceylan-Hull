@@ -38,7 +38,7 @@ fi
 
 
 # If it had to be triggered explicitly:
-# (not needed at least if using Arch+xfce4-screensaver)
+# (not needed, at least if using Arch + xfce4-screensaver)
 #
 trigger_locker=1
 
@@ -118,6 +118,10 @@ if [ $trigger_locker -eq 0 ]; then
 
 	"${locker_exec}" ${locker_cmd_lock_opts} 1>/dev/null &
 
+else
+
+	echo "Suspending on $(date)..."
+
 fi
 
 
@@ -125,6 +129,7 @@ actual_suspend
 
 
 # Timestamp may not be updated yet (time jump) hence is likely faulty:
-#echo "... awoken from locked suspend on $(date)"
+sleep 1
+echo "... awoken from locked suspend on $(date)"
 
-echo "... awoken from locked suspend"
+#echo "... awoken from locked suspend"
