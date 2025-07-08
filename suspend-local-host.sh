@@ -73,6 +73,16 @@ actual_suspend()
 }
 
 
+# To avoid any disabling of the locker:
+if ! gsettings set org.gnome.desktop.screensaver lock-enabled true; then
+
+	echo "  Error, the locker could not be enabled." 1>&2
+	exit 15
+
+fi
+
+
+
 if [ $trigger_locker -eq 0 ]; then
 
 	if [ $locker_activate_needed -eq 0 ]; then
