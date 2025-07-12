@@ -32,8 +32,8 @@ GITHUB_PAGES_BASE := $(shell basename "$(HULL_WEB_MIRROR_BRANCH)")
 
 
 .PHONY: all doc html pdf create-links clone-mirror                     \
-		export-doc export-doc-to-official export-doc-to-mirror         \
-		info info-web
+		export-doc pre-doc export-doc-to-official export-doc-to-mirror \
+		info-doc info-hull info-web
 
 
 
@@ -64,7 +64,14 @@ clone-mirror:
 	@echo "Please remove all initial content in that selected 'gh-pages' branch."
 
 
-export-doc: clean-doc doc export-doc-to-official export-doc-to-mirror
+export-doc: clean-doc pre-doc doc export-doc-to-official export-doc-to-mirror
+
+
+# Force regeneration, to avoid that the overview information displays an ancient
+# last update:
+#
+pre-doc:
+	@touch Ceylan-Hull-top-level-*.rst.template
 
 
 # Drawback: scp will not preserve symlinks, it will duplicate files instead.
@@ -83,7 +90,14 @@ export-doc-to-mirror: clean-doc create-links doc
 	@/bin/cp -rf $(WEB_CONTENT) $(HULL_WEB_MIRROR_BRANCH) && cd $(HULL_WEB_MIRROR_BRANCH) && git add . && git merge -s ours && git commit -m "Hull doc updated." && git push && git pull --ff-only
 
 
-info: info-doc info-web
+info-doc: info-hull info-web
+
+
+info-hull:
+	@echo "HULL_ACTUAL_TEMPLATES = $(HULL_ACTUAL_TEMPLATES)"
+	@echo "HULL_RST_FILES = $(HULL_RST_FILES)"
+	@echo "HULL_HTML_FILES = $(HULL_HTML_FILES)"
+	@echo "DOC_GENERATED_FILES = $(DOC_GENERATED_FILES)"
 
 
 info-web:
