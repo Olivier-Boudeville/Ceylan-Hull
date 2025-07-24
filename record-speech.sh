@@ -1,9 +1,8 @@
 #!/bin/sh
 
-
 usage="Usage: $(basename $0) --voice-id <voice identifier> --speech-prefix <speech identifier> --message <message> [--no-play-back] [--ogg-encoding] [--verbose]
 
-  Records the specified speech with specified voice in specified prefixed filename (default: WAV format), removes leading and ending silences, and plays it back to check it.
+  Records the specified speech with the specified voice in specified prefixed filename (default: WAV format), removes leading and ending silences, and plays it back to check it.
 	  --voice-id <voice identifier>: the ID of the voice to be used (see Asset-Indexing/audio/speech-synthesis/Voice-index.rst)
 	  --speech-prefix <speech prefix>: the prefix to be used for the speech filename record
 	  --message <message>: the message to speech
@@ -16,7 +15,7 @@ usage="Usage: $(basename $0) --voice-id <voice identifier> --speech-prefix <spee
 
 # We could/should use http://www.speex.org/ instead of OggVorbis, for voices.
 
-# All sound produced as WAV have the following format:
+# All sounds produced as WAV have the following format:
 # RIFF (little-endian) data, WAVE audio, Microsoft PCM, 16 bit, mono 22050 Hz
 
 
@@ -29,16 +28,17 @@ resample=0
 # Some voices are naturally generated with 10 or 16 kHz instead of the preferred
 # 22.05 kHz, hence must be resampled (knowing that back-ends such as SDL_mixer
 # are not able to resample arbitrary frequencies):
+#
 target_frequency=22050
 
 trim_silences=0
 verbose=1
 
 playback_tool="play-sounds.sh"
-playback_tool_exec=$(which $playback_tool 2>/dev/null)
+playback_tool_exec="$(which ${playback_tool} 2>/dev/null)"
 
 encoder_tool="oggenc"
-encoder_tool_exec=$(which $encoder_tool 2>/dev/null)
+encoder_tool_exec="$(which ${encoder_tool} 2>/dev/null)"
 
 
 voice_id=0
@@ -90,8 +90,8 @@ while [ $# -gt 0 ]; do
 	fi
 
 	if [ $token_eaten -eq 1 ]; then
-		echo "Error, unknown argument ($1)." 1>&2
-		echo "${usage}" 1>&2
+		echo "  Error, unknown argument ('$1').
+${usage}" 1>&2
 		exit 5
 	fi
 	shift
@@ -105,26 +105,29 @@ done
 
 if [ $voice_id -eq 0 ]; then
 
-	echo "Error, no voice identifier specified." 1>&2
-	echo "${usage}" 1>&2
+	echo "  Error, no voice identifier specified.
+${usage}" 1>&2
+
 	exit 6
 
 fi
 
 
-if [ "$speech_prefix" = "" ]; then
+if [ "${speech_prefix}" = "" ]; then
 
-	echo "Error, no speech prefix specified." 1>&2
-	echo "${usage}" 1>&2
+	echo "  Error, no speech prefix specified.
+${usage}" 1>&2
+
 	exit 7
 
 fi
 
 
-if [ -z "$message" ]; then
+if [ -z "${message}" ]; then
 
-	echo "Error, no message specified." 1>&2
-	echo "${usage}" 1>&2
+	echo "  Error, no message specified.
+${usage}" 1>&2
+
 	exit 8
 
 fi
@@ -134,14 +137,15 @@ fi
 
 # Almost always interesting, as sox is used, thus correcting any malformed
 # input sound file:
+#
 if [ $trim_silences -eq 0 ]; then
 
 	trimmer_tool="trimSilence.sh"
-	trimmer=$(which ${trimmer_tool} 2>/dev/null)
+	trimmer="$(which ${trimmer_tool} 2>/dev/null)"
 
 	if [ ! -x "${trimmer}" ]; then
 
-		echo "Error, no trimming tool found (${trimmer_tool})." 1>&2
+		echo "  Error, no trimming tool found (${trimmer_tool})." 1>&2
 		exit 13
 
 	fi
@@ -153,11 +157,11 @@ fi
 if [ $resample -eq 0 ]; then
 
 	resample_tool="resample.sh"
-	resampler=$(which ${resample_tool} 2>/dev/null)
+	resampler="$(which ${resample_tool} 2>/dev/null)"
 
 	if [ ! -x "${resampler}" ]; then
 
-		echo "Error, no resampling tool found (${resample_tool})." 1>&2
+		echo "  Error, no resampling tool found (${resample_tool})." 1>&2
 		exit 14
 
 	fi
@@ -169,7 +173,7 @@ if [ $ogg_encoding -eq 0 ]; then
 
 	if [ ! -x "${encoder_tool_exec}" ]; then
 
-		echo "Error, no OggVorbis encoding tool found (${encoder_tool}). Use: 'pacman -S vorbis-tools' for example." 1>&2
+		echo "  Error, no OggVorbis encoding tool found (${encoder_tool}). Use: 'pacman -S vorbis-tools' for example." 1>&2
 		exit 15
 
 	fi
@@ -181,7 +185,7 @@ if [ $play_back -eq 0 ]; then
 
 	if [ ! -x "${playback_tool_exec}" ]; then
 
-		echo "Error, playback tool not found (${playback_tool})." 1>&2
+		echo "  Error, playback tool not found (${playback_tool})." 1>&2
 		exit 16
 
 	fi
@@ -239,6 +243,7 @@ case $voice_id in
 		voice="french"
 		;;
 
+	# female* voices do not seem to exist anymore:
 	10)
 		tool="espeak"
 		voice="female1"
@@ -385,7 +390,7 @@ case $voice_id in
 		;;
 
 	*)
-		echo "Error, voice identifier #$voice_id not known." 1>&2
+		echo "  Error, voice identifier #$voice_id not known." 1>&2
 		exit 10
 		;;
 
@@ -427,7 +432,7 @@ if [ $verbose -eq 0 ]; then
 
 	echo " - speech prefix: $speech_prefix"
 
-	echo " - message: $message"
+	echo " - message: ${message}"
 
 fi
 
@@ -437,30 +442,47 @@ fi
 # Actual operations:
 
 
-if [ "$tool" = "espeak" ]; then
+if [ "${tool}" = "espeak" ]; then
+
+	espeak="$(which espeak 2>/dev/null)"
+
+	if [ ! -x "${espeak}" ]; then
+
+		echo "  Error, no espeak executable found." 1>&2
+
+		exit 50
+
+	fi
+
 
 	# Default amplitude, pitch and speed left as default:
-	espeak -v $voice -w "$target_wav" "$message"
-
-	if [ ! $? -eq 0 ]; then
-		echo "Error, generation of $target_wav with $tool failed." 1>&2
+	if ! "${espeak}" -v $voice -w "${target_wav}" "${message}"; then
+		echo "  Error, generation of ${target_wav} with ${tool} failed." 1>&2
 		exit 20
 	fi
 
 else
 
-	if [ "$tool" = "festival" ]; then
+	if [ "${tool}" = "festival" ]; then
 
-		echo "$message" | text2wave -otype riff -o "$target_wav" -eval "(voice_$voice)"
+		text2wave="$(which text2wave 2>/dev/null)"
 
-		if [ ! $? -eq 0 ]; then
-			echo "Error, generation of $target_wav with $tool failed." 1>&2
+		if [ ! -x "${text2wave}" ]; then
+
+			echo "  Error, no text2wave executable found." 1>&2
+
+			exit 55
+
+		fi
+
+		if ! echo "${message}" | "${text2wave}" -otype riff -o "${target_wav}" -eval "(voice_$voice)"; then
+			echo "  Error, generation of ${target_wav} with ${tool} failed." 1>&2
 			exit 21
 		fi
 
 	else
 
-		echo "Error, tool '$tool' not known." 1>&2
+		echo "  Error, tool '${tool}' not known." 1>&2
 		exit 11
 
 	fi
@@ -468,25 +490,25 @@ else
 fi
 
 
-if [ ! -f "$target_wav" ]; then
+if [ ! -f "${target_wav}" ]; then
 
-	echo "Error, produced WAV not found ($target_wav)." 1>&2
+	echo "  Error, produced WAV not found ('${target_wav}')." 1>&2
 	exit 12
 
 fi
 
-echo "$target_wav successfully generated by $tool."
+echo "${target_wav} successfully generated by ${tool}."
 
-effective_target="$target_wav"
+effective_target="${target_wav}"
 
 
 if [ $trim_silences -eq 0 ]; then
 
-	${trimmer} "$target_wav"
+	if ! "${trimmer}" "${target_wav}"; then
 
-	if [ ! $? -eq 0 ]; then
-		echo "Error, trimming of ${target_wav} failed." 1>&2
+		echo "  Error, trimming of '${target_wav}' failed." 1>&2
 		exit 13
+
 	fi
 
 fi
@@ -494,11 +516,11 @@ fi
 
 if [ $resample -eq 0 ]; then
 
-	${resample_tool} --target-sample-rate ${target_frequency} ${target_wav}
+	if ! "${resample_tool}" --target-sample-rate ${target_frequency} "${target_wav}"; then
 
-	if [ ! $? -eq 0 ]; then
-		echo "Error, resampling of ${target_wav} failed." 1>&2
+		echo "  Error, resampling of '${target_wav}' failed." 1>&2
 		exit 14
+
 	fi
 
 fi
@@ -509,27 +531,30 @@ if [ $ogg_encoding -eq 0 ]; then
 
 	echo "Encoding with ${encoder_tool}"
 
-	target_ogg="$speech_prefix.ogg"
+	target_ogg="${speech_prefix.ogg}"
 
 	# Quality ranges between -1 (very low) and 10 (very high), 3 is the encoder
 	# default (we suppose it is VBR indeed, must be the case):
-	${encoder_tool} "$target_wav" --discard-comments --quality=3 --output="$target_ogg" 1>/dev/null 2>&1
 
-	if [ ! $? -eq 0 ]; then
-		echo "Error, encoding of ${target_wav} failed." 1>&2
+	if ! "${encoder_tool}" "${target_wav}" --discard-comments --quality=3 --output="${target_ogg}" 1>/dev/null 2>&1; then
+
+		echo "  Error, the encoding of ${target_wav} failed." 1>&2
+		exit 40
+
 	fi
 
-	effective_target="$target_ogg"
+	effective_target="${target_ogg}"
 
 fi
 
 
 if [ $play_back -eq 0 ]; then
 
-	${playback_tool} "$effective_target"
+	if ! "${playback_tool}" "${effective_target}"; then
 
-	if [ ! $? -eq 0 ]; then
-		echo "Error, playback failed." 1>&2
+		echo "  Error, the playback of '${effective_target}' failed." 1>&2
+		exit 41
+
 	fi
 
 fi
