@@ -49,7 +49,10 @@ notify()
 	echo "${message}"
 
 	if [ -x "${espeak}" ]; then
-		${espeak} -v female1 "${message}" 1>/dev/null 2>&1
+		# -v female1 not available anymore:
+		"${espeak}" "${message}" 1>/dev/null 2>&1
+	else
+		echo "(no espeak available)"
 	fi
 
 }
