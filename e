@@ -914,7 +914,11 @@ if [ $do_locate -eq 0 ]; then
 	target_file="$(echo "${parameters}" | sed 's|^ ||1' | sed 's|:.*$||1')"
 	#echo "target_file = ${target_file}"
 
-	target_path="$(/bin/locate --existing ${target_file} | grep -v .emacs.d/myriad-backups)"
+	if [ -n "${TRASH}" ]; then
+		target_path="$(/bin/locate --existing ${target_file} | grep -v .emacs.d/myriad-backup | grep -v ${TRASH})"
+	else
+		target_path="$(/bin/locate --existing ${target_file} | grep -v .emacs.d/myriad-backups)"
+	fi
 
 	#echo "target_path = ${target_path}"
 
