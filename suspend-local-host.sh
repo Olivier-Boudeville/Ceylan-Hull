@@ -138,8 +138,8 @@ fi
 actual_suspend
 
 
-# Timestamp may not be updated yet (time jump) hence is likely faulty:
-sleep 1
-echo "... awoken from locked suspend on $(date)"
+# Timestamp would not be updated yet (time jump):
+#sleep 2
+#echo "... awoken from locked suspend on $(date)"
 
-#echo "... awoken from locked suspend"
+echo "... awoken from locked suspend"
