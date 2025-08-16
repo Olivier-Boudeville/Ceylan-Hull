@@ -1,15 +1,19 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): [-r|--recent] [-nf|--no-fetch] [-na|--no-autoplay]: allows to (possibly) fetch from server and review conveniently any set of CCTV recordings dating back from yesterday and the three days before, from the current directory.
+usage="Usage: $(basename $0): [-r|--recent] [-a|--all] [-nf|--no-fetch] [-na|--no-autoplay]: allows to (possibly) fetch from server and review conveniently any set of CCTV recordings dating back (based on the default selection mode) from yesterday and the three days before, from the current directory.
 
 Options:
   -r or --recent: selects only recent recordings, from yesterday's evening, and until now
-  -nf or --no-fetch: without fetching, CCTV recordings are expected to be already available in the current directory (see the fetch-cctv-monitorings.sh script for that, possibly installed in a crontab)
-  -na or --no-autoplay: without autoplay, recordings are displayed one by one, the user being asked what to do with each of them in turn; with autoplay, recordings are displayed in a row, and offered to be deleted as a whole afterwards (locally and/or on the server)
+  -a or --all: selects all available recordings
+  -nf or --no-fetch: displays all CCTV recordings that are already available locally, in the current directory; so no specific fetching will be done (see the fetch-cctv-monitorings.sh script for that, possibly installed in a crontab)
+  -na or --no-autoplay: without autoplay, recordings are displayed one by one, the user being asked what to do with each of them in turn; with autoplay, recordings are displayed in a row, and offered to be deleted as a whole afterwards (locally and/or on the server, still based on the requested selection)
 "
 
-
-select_recent=1
+# Selection modes:
+#  - all:    1
+#  - recent: 2
+#  - 3 days: 3 (the default)
+select_mode=3
 
 
 # Enabled by default:
@@ -61,7 +65,14 @@ while [ $token_eaten -eq 0 ]; do
 	if [ "$1" = "-r" ] || [ "$1" = "--recent" ]; then
 		echo "(recent selection mode enabled)"
 		shift
-		select_recent=0
+		select_mode=2
+		token_eaten=0
+	fi
+
+	if [ "$1" = "-a" ] || [ "$1" = "--all" ]; then
+		echo "(full selection mode enabled)"
+		shift
+		select_mode=1
 		token_eaten=0
 	fi
 
@@ -157,7 +168,23 @@ if [ $do_fetch -eq 0 ]; then
 
 	cd "${review_dir}"
 
-	if [ $select_recent -eq 1 ]; then
+	if [ $select_mode -eq 1 ]; then
+
+		echo "Fetching as user ${USER} CCTV all recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}:"
+
+		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*.mkv . 2>/dev/null
+
+	elif [ $select_mode -eq 2 ]; then
+
+		yesterday="$(date -d '-1 day' '+%Y%m%d')"
+		today="$(date '+%Y%m%d')"
+
+		echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and today (i.e. ${today}):"
+
+		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${today}*.mkv . 2>/dev/null
+
+
+	elif [ $select_mode -eq 3 ]; then
 
 		yesterday="$(date -d '-1 day' '+%Y%m%d')"
 		day_minus_two="$(date -d '-2 day' '+%Y%m%d')"
@@ -167,15 +194,6 @@ if [ $do_fetch -eq 0 ]; then
 		echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the three days before (i.e. ${day_minus_two}, ${day_minus_three} and ${day_minus_four}):"
 
 		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_four}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv . 2>/dev/null
-
-	else
-
-		yesterday="$(date -d '-1 day' '+%Y%m%d')"
-		today="$(date '+%Y%m%d')"
-
-		echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and today (i.e. ${today}):"
-
-		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${today}*.mkv . 2>/dev/null
 
 	fi
 
@@ -422,17 +440,25 @@ if [ $do_fetch -eq 0 ] && [ ${auto_play} -eq 1 ] && [ -n "${recordings}" ]; then
 
 		ssh="$(which ssh)"
 
-		if [ $select_recent -eq 1 ]; then
+		if [ $select_mode -eq 1 ]; then
 
-			if ${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv; then
+			if ${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*.mkv; then
 
 				echo "Deleted!"
 
 			fi
 
-		else
+		elif [ $select_mode -eq 2 ]; then
 
-			if ${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${today}*.mkv;  then
+			if ${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${today}*.mkv; then
+
+				echo "Deleted!"
+
+			fi
+
+		elif [ $select_mode -eq 3 ]; then
+
+			if ${ssh} ${ssh_opt} ${CCTV_USER}@${CCTV_SERVER} /bin/rm -f ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv; then
 
 				echo "Deleted!"
 
