@@ -175,3 +175,15 @@ echo "Locking the screen immediately (with ${locker_cmd_name}) on $(date)..."
 # 1>/dev/null 2>&1
 
 echo "... unlocked on $(date)"
+
+
+# Typically to reset the screens/windows:
+if [ -n "${POST_UNLOCK_SCRIPT}" ]; then
+
+	post_script="$(which ${POST_UNLOCK_SCRIPT} 2>/dev/null)"
+
+	if [ -x "${post_script}" ]; then
+		"${post_script}"
+	fi
+
+fi

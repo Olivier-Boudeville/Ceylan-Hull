@@ -1,6 +1,9 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0): adapts the displays so that, whether or not an external screen is connected, there is exactly one screen enabled (hence: either the native/internal/main one or an external one; neither both nor none)."
+usage="Usage: $(basename $0) [--silent]: adapts the displays so that, whether or not an external screen is connected, there is exactly one screen enabled (hence: either the native/internal/main one or an external one; neither both nor none).
+
+Returns (as echo), possibly for a caller script, either 'on_internal_screen' or 'on_external_screen'.
+"
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
@@ -8,6 +11,17 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit
 
 fi
+
+
+is_verbose=0
+
+if [ "$1" = "--silent" ]; then
+
+	is_verbose=1
+	shift
+
+fi
+
 
 if [ -n "$1" ]; then
 
@@ -50,6 +64,9 @@ if [ ! -x "${xrandr}" ]; then
 fi
 
 
+res="on_internal_screen"
+
+
 # Grepping with a space is necessary, otherwise "DP-6.2" would match "DP-6":
 external_screen_status=$("${xrandr}" -q | grep "${external_screen} " | awk '{print $2}')
 
@@ -65,8 +82,9 @@ if [ "${external_screen_status}" = "disconnected" ]; then
 
 	if [ "${external_screen_status}" = "disconnected" ]; then
 
-		echo "The external screen is not connected; thus: ensuring that the native screen is enabled."
-		if ! ${xrandr} --output ${native_screen} --auto; then
+		[ $is_verbose -eq 0 ] && echo "The external screen is not connected; thus: ensuring that the native screen is enabled."
+
+		if ! "${xrandr}" --output ${native_screen} --auto; then
 			echo "  Error, failed to enable native screen." 1>&2
 			exit 15
 		fi
@@ -78,23 +96,28 @@ fi
 
 if [ "${external_screen_status}" = "connected" ]; then
 
-	echo "The external screen is connected; thus: ensuring it is enabled, and disabling the native screen."
+	[ $is_verbose -eq 0 ] && echo "The external screen is connected; thus: ensuring it is enabled, and disabling the native screen."
+	res="on_external_screen"
 
 	# Order matters:
 
-	if ! ${xrandr} --output ${external_screen} --auto; then
+	if ! "${xrandr}" --output "${external_screen}" --auto; then
 		echo "  Error, failed to enable external screen." 1>&2
 		exit 30
 	fi
 
-	if ! ${xrandr} --output ${native_screen} --off; then
+	if ! "${xrandr}" --output "${native_screen}" --off; then
 		echo "  Error, failed to disable native screen." 1>&2
 		exit 35
 	fi
 
 else
 
-	echo "  Error, unable to detect the status of external screen (got '${external_screen_status}'). Is a dock powered and the cable correctly plugged-in?" 1>&2
-	exit 50
+	[ $is_verbose -eq 0 ] && echo "Unable to detect the status of external screen (got '${external_screen_status}'). Is a dock powered and the cable correctly plugged-in? Supposing no." #1>&2
+
+	# Not an error anymore:
+	#exit 50
 
 fi
+
+echo "${res}"
