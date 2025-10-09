@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename 0) [-h|--help] SOURCE_FILE TARGET_FILE: moves the specified source file to the specified target one, with Git if appropriate, otherwise with a simple mv."
+usage="Usage: $(basename $0) [-h|--help] SOURCE_FILE TARGET_FILE: moves the specified source file to the specified target one, with Git if appropriate, otherwise with a simple mv."
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -18,6 +18,18 @@ if [ ! $# -eq 2 ]; then
 ${usage}" 1>&2
 
 	exit 1
+
+fi
+
+
+
+git="$(which git 2>/dev/null)"
+
+if [ ! -x "${git}" ]; then
+
+	echo "  Error, no 'git' executable found." 1>&2
+
+	exit 3
 
 fi
 
@@ -55,7 +67,7 @@ ${usage}" 1>&2
 
 fi
 
-if ! git mv "${src_file}" "${target_file}" 2>/dev/null; then
+if ! "${git}" mv "${src_file}" "${target_file}" 2>/dev/null; then
 
 	echo "  (basic move of '${src_file}' to '${target_file}')"
 	/bin/mv "${src_file}" "${target_file}"
