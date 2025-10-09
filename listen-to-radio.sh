@@ -485,7 +485,7 @@ if [ $display_notification -eq 0 ]; then
 
 		echo " Using mpv for player now, hence one may hit:"
 		echo "  - <space> to pause/unpause the current playback"
-		echo "  - '/' to decrease the volume, '*' to increase it"
+		echo "  - '/' to decrease the volume, '*' to increase it, 'm' to toggle mute"
 		echo "  - left and right arrow keys to go backward/forward in the current playback"
 		#echo "  - <Enter> or <Escape> to jump to next playback"
 		echo "  - 'q' to jump to next playback"
