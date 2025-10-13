@@ -112,7 +112,7 @@ if [ ! -f "${init_el}" ]; then
 fi
 
 # Unfortunately does not seem to work anymore (at least not in all contexts):
-${emacs} "${target_file}" --batch --eval="(load-file \"${init_el}\")" --eval='(whitespace-cleanup)' --eval='(save-buffer 0)' #1>/dev/null 2>&1
+${emacs} "${target_file}" --batch --eval="(load-file \"${init_el}\")" --eval='(whitespace-cleanup)' --eval='(untabify-buffer)' --eval='(save-buffer 0)' #1>/dev/null 2>&1
 
 if [ ! $? -eq 0 ]; then
 
