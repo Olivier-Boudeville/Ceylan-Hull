@@ -160,6 +160,7 @@ blp_label="BLP Radio (la radio de la MJC Boby Lapointe de Villebon-sur-Yvette)"
 
 default_url="${france_info_url}"
 default_label="${france_info_label}"
+default_stream_type="talk"
 
 fallback_url="${france_culture_url}"
 fallback_label="${france_culture_label}"
@@ -167,9 +168,11 @@ fallback_label="${france_culture_label}"
 
 keep_vol_opt="--keep-volume"
 
-# Default percentage of maximum volume:
+# Default percentage of maximum volume (reference type of audio:
+# 'ambient_music'):
+#
 target_volume=30
-#target_volume=70
+#target_volume=35
 
 # To set a custom target volume:
 settings_file="${HOME}/.ceylan-settings.etf"
@@ -250,6 +253,8 @@ fi
 
 display_notification=0
 
+# Default (notably for the setting of the volume):
+stream_type="ambient_music"
 
 
 while [ ! $# -eq 0 ]; do
@@ -262,6 +267,7 @@ while [ ! $# -eq 0 ]; do
 
 		stream_url="${france_culture_url}"
 		stream_label="${france_culture_label}"
+		stream_type="talk"
 
 	fi
 
@@ -271,6 +277,7 @@ while [ ! $# -eq 0 ]; do
 
 		stream_url="${france_musique_url}"
 		stream_label="${france_musique_label}"
+		#stream_type="talk"
 
 	fi
 
@@ -280,6 +287,7 @@ while [ ! $# -eq 0 ]; do
 
 		stream_url="${france_info_url}"
 		stream_label="${france_info_label}"
+		stream_type="talk"
 
 	fi
 
@@ -290,6 +298,7 @@ while [ ! $# -eq 0 ]; do
 
 		stream_url="${france_inter_url}"
 		stream_label="${france_inter_label}"
+		stream_type="talk"
 
 	fi
 
@@ -418,9 +427,11 @@ if [ -z "${stream_url}" ]; then
 
 	stream_url="${default_url}"
 	stream_label="default ${default_label} stream"
+	stream_type="${default_stream_type}"
 
 fi
 
+#echo "(stream type: ${stream_type})"
 
 if [ "${set_volume}" -eq 1 ]; then
 
@@ -440,6 +451,15 @@ else
 			target_volume="${config_volume}"
 		fi
 
+	fi
+
+	# As the volume is calibrated by default for background/ambient music,
+	# whereas talk may be listened further from the speakers, hence must be loud
+	# enough:
+	#
+	if [ "${stream_type}" = "talk" ]; then
+		target_volume=$(expr ${target_volume} + 10)
+		#echo "(setting an increased volume of ${target_volume}% for talk content)"
 	fi
 
 	set_volume_script_name="set-audio-volume.sh"
