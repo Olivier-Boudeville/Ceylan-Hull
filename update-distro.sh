@@ -232,6 +232,10 @@ if [ "$(id -u)" = "0" ]; then
 
 
 		"Arch")
+
+			# When in doubt, just execute:
+			# pacman -S archlinux-keyring; pacman -Su
+
 			# Consider as well a 'yaourt -Sy' or alike?
 
 			if [ $clean_caches -eq 0 ]; then
