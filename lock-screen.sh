@@ -12,19 +12,19 @@ usage="Usage: $(basename $0) [-h|--help]: locks immediately the screen."
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-	echo "${usage}"
+    echo "${usage}"
 
-	exit 0
+    exit 0
 
 fi
 
 
 if [ -n "$1" ]; then
 
-	echo "Error, no parameter expected.
+    echo "Error, no parameter expected.
 ${usage}" 1>&2
 
-	exit 10
+    exit 10
 
 fi
 
@@ -33,22 +33,22 @@ fi
 use_xscreensaver()
 {
 
-	# Non-blocking locking (script not stopped):
-	#locker_activate_name="xscreensaver"
-	#locker_activate_opts="-no-splash"
+    # Non-blocking locking (script not stopped):
+    #locker_activate_name="xscreensaver"
+    #locker_activate_opts="-no-splash"
 
-	# Locking is done asynchronously, the command returns immediately.
-	#
-	# To detect the unlocking, the following approaches did not work for us:
-	# - gdbus monitor -y -d org.freedesktop.login1 | grep LockedHint
-	#
-	# - dbus-monitor --session "type='signal',interface='org.gnome.ScreenSaver'"
-	# (of course, as not using Gnome)
-	#
-	locker_cmd_name="xscreensaver-command"
+    # Locking is done asynchronously, the command returns immediately.
+    #
+    # To detect the unlocking, the following approaches did not work for us:
+    # - gdbus monitor -y -d org.freedesktop.login1 | grep LockedHint
+    #
+    # - dbus-monitor --session "type='signal',interface='org.gnome.ScreenSaver'"
+    # (of course, as not using Gnome)
+    #
+    locker_cmd_name="xscreensaver-command"
 
-	locker_cmd_lock_opts="-lock"
-	locker_activate_needed=0
+    locker_cmd_lock_opts="-lock"
+    locker_activate_needed=0
 
 }
 
@@ -57,11 +57,11 @@ use_xscreensaver()
 use_gnome_screensaver()
 {
 
-	# Never did anything on our Arch (no daemon launched?):
-	locker_activate_name="gnome-screensaver-command"
-	locker_activate_needed=0
+    # Never did anything on our Arch (no daemon launched?):
+    locker_activate_name="gnome-screensaver-command"
+    locker_activate_needed=0
 
-	locker_cmd_name="${locker_activate_name}"
+    locker_cmd_name="${locker_activate_name}"
 
 }
 
@@ -71,15 +71,15 @@ use_gnome_screensaver()
 use_xlock()
 {
 
-	locker_activate_name="xlock"
-	locker_activate_needed=1
+    locker_activate_name="xlock"
+    locker_activate_needed=1
 
-	locker_cmd_name="${locker_activate_name}"
+    locker_cmd_name="${locker_activate_name}"
 
-	locker_cmd_lock_opts="-mode blank"
-	#locker_cmd_lock_opts="-mode marquee"
-	#locker_cmd_lock_opts="-mode flag"
-	#locker_cmd_lock_opts="-mode nose"
+    locker_cmd_lock_opts="-mode blank"
+    #locker_cmd_lock_opts="-mode marquee"
+    #locker_cmd_lock_opts="-mode flag"
+    #locker_cmd_lock_opts="-mode nose"
 
 }
 
@@ -93,11 +93,11 @@ use_xlock()
 use_xdg_screensaver()
 {
 
-	locker_activate_name="xdg-screensaver"
-	locker_activate_needed=1
+    locker_activate_name="xdg-screensaver"
+    locker_activate_needed=1
 
-	locker_cmd_name="${locker_activate_name}"
-	locker_cmd_lock_opts="lock"
+    locker_cmd_name="${locker_activate_name}"
+    locker_cmd_lock_opts="lock"
 
 }
 
@@ -105,8 +105,8 @@ use_xdg_screensaver()
 # To avoid any disabling of the locker:
 if ! gsettings set org.gnome.desktop.screensaver lock-enabled true; then
 
-	echo "  Error, the locker could not be enabled." 1>&2
-	exit 15
+    echo "  Error, the locker could not be enabled." 1>&2
+    exit 15
 
 fi
 
@@ -114,40 +114,40 @@ fi
 distro="$(grep '^ID' /etc/os-release | sed 's|^ID=||')"
 
 if [ "${distro}" = "arch" ]; then
-	use_xlock
+    use_xlock
 else
-	use_xdg_screensaver
+    use_xdg_screensaver
 fi
 
 
 
 if [ $locker_activate_needed -eq 0 ]; then
 
-	# First launching any screensaver daemon, if needed (possibly optional
-	# step):
-	#
-	if [ -n "${locker_activate_name}" ]; then
+    # First launching any screensaver daemon, if needed (possibly optional
+    # step):
+    #
+    if [ -n "${locker_activate_name}" ]; then
 
-		locker_activate_exec="$(which ${locker_activate_name})"
+        locker_activate_exec="$(which ${locker_activate_name})"
 
-		if [ ! -x "${locker_activate_exec}" ]; then
+        if [ ! -x "${locker_activate_exec}" ]; then
 
-			echo "  Error, no locker daemon found ('${locker_activate_name}')." 1>&2
-			exit 5
+            echo "  Error, no locker daemon found ('${locker_activate_name}')." 1>&2
+            exit 5
 
-		fi
+        fi
 
-		echo "Activating first the screensaver"
+        echo "Activating first the screensaver"
 
-		"${locker_activate_exec}" ${locker_activate_opts} 1>/dev/null &
+        "${locker_activate_exec}" ${locker_activate_opts} 1>/dev/null &
 
-	else
+    else
 
-		echo "Error, locker activation needed when no name specified for it." 1>&2
+        echo "Error, locker activation needed when no name specified for it." 1>&2
 
-		exit 50
+        exit 50
 
-	fi
+    fi
 
 fi
 
@@ -156,8 +156,8 @@ locker_cmd_exec="$(which ${locker_cmd_name})"
 
 if [ ! -x "${locker_cmd_exec}" ]; then
 
-	echo "  Error, no locker command found ('${locker_activate_name}')." 1>&2
-	exit 15
+    echo "  Error, no locker command found ('${locker_activate_name}')." 1>&2
+    exit 15
 
 fi
 
@@ -168,7 +168,8 @@ echo "Locking the screen immediately (with ${locker_cmd_name}) on $(date)..."
 
 # Not run in the background anymore (no trailing '&)', so that any wrapping
 # script (e.g. leaving-home.sh) can itself be synchronised on locking/unlocking;
-# however with xscreensaver it is never blocking actually...
+# however with xscreensaver it is never blocking actually, therefore executing
+# any script will be executed immediately instead of when unlocking...
 #
 # At least most blockers are, unsurprisingly, blocking:
 "${locker_cmd_exec}" ${locker_cmd_lock_opts} 2>/dev/null
@@ -180,10 +181,21 @@ echo "... unlocked on $(date)"
 # Typically to reset the screens/windows:
 if [ -n "${POST_UNLOCK_SCRIPT}" ]; then
 
-	post_script="$(which ${POST_UNLOCK_SCRIPT} 2>/dev/null)"
+    post_script="$(which ${POST_UNLOCK_SCRIPT} 2>/dev/null)"
 
-	if [ -x "${post_script}" ]; then
-		"${post_script}"
-	fi
+    if [ -x "${post_script}" ]; then
 
+        echo "(executing post-script '${post_script}')"
+        "${post_script}"
+
+    else
+
+        echo "Error, post-script '${post_script}' is not found, or not executable." 1>&2
+
+    fi
+
+#else
+#
+#   echo "(no post-script set)"
+#
 fi
