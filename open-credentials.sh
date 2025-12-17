@@ -281,8 +281,8 @@ if [ "${editor}" = "emacs" ]; then
 	sec_init_dir="${HOME}/.emacs.d/myriad-sensitive"
 	sec_init_file="${sec_init_dir}/init.el"
 
-	#emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
-	emacs_server_opts="--no-site-file --no-splash --daemon=${server_name} --debug-init"
+	emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
+	#emacs_server_opts="--no-site-file --no-splash --daemon=${server_name} --debug-init"
 
 	if [ -f "${sec_init_file}" ]; then
 
@@ -317,22 +317,34 @@ if [ "${editor}" = "emacs" ]; then
 	#
 	# (returning zero to test availability)
 	#
+
+	#echo "Launching/testing daemon"
+
+	#echo "${emacsclient}" -s "${server_name}" --eval 0
+
+    # This call may never output anything (or a very late "Server not
+    # responding; use Ctrl+C to break"); in this case just find that server
+    # process (e.g. ('ps -edf | grep ceylan-hull-credentials-server') and kill
+    # it.
+
 	if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
 
 		#echo "No Emacs daemon '${server_name}' found existing, launching it."
 		#echo "Launching: ${emacs} ${emacs_server_opts}"
 		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
+		#${emacs} ${emacs_server_opts} 1>/dev/null
+		#${emacs} ${emacs_server_opts}
 
 	else
 
-		#echo "Emacs daemon '${server_name}' found already existing, using it."
+		echo "Emacs daemon '${server_name}' found already existing, using it."
 		:
 
 	fi
 
 	#sleep 1
 
-	#echo "Connecting Emacs client to '${server_name}'."
+    #echo "Connecting Emacs client to '${server_name}'."
 
 	# -nw not used anymore; possibly that '--alternate-editor=emacs' is useless
 	# in this context:
