@@ -65,10 +65,18 @@ fi
 # '*.pdf' to '*-pdf').
 #
 # ('--' filtered twice intentionally)
-# (any leading '-' removed - at the path root or below - otherwise seen as an option)
-# (removed, as inappropriate: | sed 's|\-||1')
 #
-corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|'|-|g " | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | sed 's|^-||1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
+# (any leading '-' removed - at the path root or below - otherwise seen as an
+# option)
+#
+# (sed 's|\-||g' removed, as inappropriate)
+#
+
+# (sed "s|'||g" replaced with sed "s|'|-|g", as Réunion was becoming R'eunion
+# and this led to R-eunion)
+
+#
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|\^|-|g' | ${sed} 's|`||g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | sed "s|'||g" | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | sed 's|^-||1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
 
 
 #echo "Corrected name is: <${corrected_name}>"
