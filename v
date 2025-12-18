@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# Copyright (C) 2010-2024 Olivier Boudeville
+# Copyright (C) 2010-2026 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
-# This file is part of the Ceylan-Hull toolbox.
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
 
 
 # This script has for purpose to *view* (hence its name, 'v') files, so it opens
@@ -238,10 +238,24 @@ chooseBlenderImporter()
 chooseBrowser()
 {
 
-	#echo "Firefox selected."
+	# Typically installed with: 'install-arch-package.sh librewolf-bin'.
 
-	viewer="$(which firefox 2>/dev/null)"
-	viewer_short_name="Firefox"
+	viewer="$(which librewolf 2>/dev/null)"
+
+	if [ -x "${viewer}" ]; then
+
+		#echo "LibreWolf selected."
+		viewer_short_name="LibreWolf"
+
+	else
+
+		viewer="$(which firefox 2>/dev/null)"
+
+		#echo "Firefox selected."
+
+		viewer_short_name="Firefox"
+
+	fi
 
 }
 
@@ -1029,7 +1043,7 @@ view_selected_element()
 		applyViewer
 
 	# Audio file:
-	elif [ "${extension}" = "ogg" ] || [ "${extension}" = "m4a" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ]; then
+	elif [ "${extension}" = "ogg" ] || [ "${extension}" = "m4a" ] || [ "${extension}" = "opus" ] || [ "${extension}" = "wav" ] || [ "${extension}" = "mp3" ] || [ "${extension}" = "3gp" ]; then
 
 		chooseAudioPlayer
 

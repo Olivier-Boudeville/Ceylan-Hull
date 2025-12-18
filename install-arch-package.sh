@@ -17,8 +17,13 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
+if [ $(id -u) -eq 0 ]; then
 
-pacman="$(which pacman 2>&1)"
+	echo "Warning: this script should probably not be run as root." 1>&2
+
+fi
+
+pacman="$(which pacman 2>/dev/null)"
 
 if [ ! -x "${pacman}" ]; then
 
@@ -28,16 +33,17 @@ if [ ! -x "${pacman}" ]; then
 
 fi
 
+aur_updater_name="update-aur-installer.sh"
 
 # A single one supported (easier than $*):
 package_name="$1"
 
 echo "  Looking up package '${package_name}'..."
 
-if ${pacman} -Ss "^${package_name}$" 1>/dev/null 2>&1; then
+if "${pacman}" -Ss "^${package_name}$" 1>/dev/null 2>&1; then
 
 	echo "Found as an Arch Linux official package, installing it if needed."
-	sudo ${pacman} -S "${package_name}" --needed --noconfirm
+	sudo "${pacman}" -S "${package_name}" --needed --noconfirm
 
 else
 
@@ -48,8 +54,6 @@ else
 	if [ ! -x "${yay}" ]; then
 
 		echo "No AUR installer ('yay') found, installing it first."
-
-		aur_updater_name="update-aur-installer.sh"
 
 		# Expected to be found as well in Ceylan-Hull, or at least in the PATH:
 		aur_updater="$(which ${aur_updater_name} 2>/dev/null)"
@@ -89,11 +93,11 @@ else
 			echo "  AUR installer ('yay') found, yet not operational, updating it first."
 
 			# Expected to be found as well in Ceylan-Hull:
-			aur_updater="(which ${aur_updater_name} 2>/dev/null)"
+			aur_updater="$(which ${aur_updater_name} 2>/dev/null)"
 
 			if [ ! -x "${aur_updater}" ]; then
 
-				echo "  Error, no AUR updater ('${aur_updater_name}') found." 1>&2
+				echo "  Error, no AUR updater ('${aur_updater_name}') for yay found." 1>&2
 
 				exit 50
 
@@ -102,10 +106,18 @@ else
 			# Not to be run as root:
 			if ! "${aur_updater}"; then
 
-				echo "  Error, AUR update (done by '${aur_updater_name}') failed." 1>&2
+				echo "  Error, AUR update (done by '${aur_updater_name}') for yay failed." 1>&2
 				exit 55
 
 			fi
+
+		fi
+
+		if ! "${yay}" -h 1>/dev/null 2>&1; then
+
+			echo "  AUR installer ('yay') still not operational, failing." 1>&2
+
+			exit 70
 
 		fi
 
@@ -114,6 +126,10 @@ else
 	# yay expected to be available and functional from here.
 
 	# Will request root privileges:
-	"${yay}" -S "${package_name}" --needed --noconfirm
+	if ! "${yay}" -S "${package_name}" --needed --noconfirm; then
+
+		echo "  Installation failed; if the error is in link with gpg/dirmngr, consider executing 'killall gpg-agent dirmngr' or fixing any ~/.gnupg/dirmngr.conf, and retrying this install." 1>&2
+
+	fi
 
 fi

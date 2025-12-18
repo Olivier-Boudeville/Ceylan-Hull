@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2026-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0): updates the local AUR (Arch User Repository) installer; to be run as a non-privileged user (i.e. not as root). The 'base-devel' meta package is expected to be already installed."
 
 # Such installers may break after a pacman update (e.g. 'yay: error while
@@ -55,7 +62,7 @@ fi
 
 
 # Will fail if base-devel is not installed:
-if ! ${git} clone -c init.defaultBranch=master https://aur.archlinux.org/yay.git && cd yay && makepkg ${makepkg_opts} -si && echo && echo "Yay successfully installed/updated!" && cd .. && /bin/rm -rf yay; then
+if ! (${git} clone -c init.defaultBranch=master https://aur.archlinux.org/yay.git && cd yay && makepkg ${makepkg_opts} -si && echo && echo "Yay successfully installed/updated!" && cd .. && /bin/rm -rf yay); then
 
 	echo "  Error, installation of yay failed." 1>&2
 
