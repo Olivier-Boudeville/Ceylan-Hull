@@ -1,17 +1,27 @@
 #!/bin/sh
 
+
+# Copyright (C) 2014-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 quiet_opt="--quiet"
 
-usage="Usage: $(basename $0) [${quiet_opt}] A_FILE: fixes whitespace problems in the specified file.
+usage="Usage: $(basename $0) [-h--help] [${quiet_opt}] A_FILE: fixes whitespace problems (general whitespace clean-up, and untabification) in the specified file.
 
 Useful to properly whitespace-format files that shall be committed (even if not using Emacs as editor of choice)."
 
 
 # Note that unfortunately Emacs still changes a lot and breaks backward
 # compatibility. For example this script worked on older versions of Emacs and
-# on 28.2, but for some reason does nothing on 27.1...  Refer to
-# https://howtos.esperide.org/GNULinux.html#using-emacs for a complete install
-# procedure of Emacs.
+# on 28.2, but for some reason does nothing on 27.1..., then works again with
+# 30.2.
+
+# Refer to https://howtos.esperide.org/GNULinux.html#using-emacs for a complete
+# install procedure of Emacs.
 
 # Refer to http://myriad.esperide.org/#emacs-settings for the prior
 # configuration of Emacs.
@@ -68,19 +78,10 @@ fi
 # (whitespace-cleanup) works, this is still a mystery....
 
 
-
-
 #echo "Fixing '${target_file}'..."
 
 # Error output silenced to avoid for example "Ignoring unknown mode
-# ‘erlang-mode’":
-
-
-# Used to work, does not anymore, no error reported, thanks Emacs for the
-# repeated waste of time.
-#
-# (actually the next different forms may mostly be synonyms; the problem was
-# coming from Emacs 27.1 not behaving as previous ones or as 28.2...).
+# ‘erlang-mode’".
 
 
 #${emacs} "${target_file}" --batch --eval="(whitespace-cleanup)" -f save-buffer #1>/dev/null 2>&1
@@ -111,10 +112,11 @@ if [ ! -f "${init_el}" ]; then
 
 fi
 
-# Unfortunately does not seem to work anymore (at least not in all contexts):
-${emacs} "${target_file}" --batch --eval="(load-file \"${init_el}\")" --eval='(whitespace-cleanup)' --eval='(untabify-buffer)' --eval='(save-buffer 0)' #1>/dev/null 2>&1
 
-if [ ! $? -eq 0 ]; then
+# Unfortunately at a moment did not seem to work anymore (at least not in all
+# contexts):
+
+if ! ${emacs} "${target_file}" --batch --eval="(load-file \"${init_el}\")" --eval='(whitespace-cleanup)' --eval='(untabify-buffer)' --eval='(save-buffer 0)' 1>/dev/null 2>&1; then
 
 	echo "  Error, processing of '${target_file}' failed." 1>&2
 	exit 20
