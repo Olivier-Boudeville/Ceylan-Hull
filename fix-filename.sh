@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 # Absolutely needed, as otherwise sed will fail when using "é" as a parameter,
 # in ${sed} 's|é|e|g...
 #

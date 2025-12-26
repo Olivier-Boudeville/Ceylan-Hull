@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 # Preferring not a blind transformation on any binary file (e.g. .beam, .o, .so,
 # executables, etc.).
 
@@ -9,7 +16,9 @@ target_filenames="Makefile pom.xml rebar.config .gitignore LICENSE"
 
 
 usage="Usage: $(basename $0) [-h|--help] ROOT_DIRECTORY: fixes whitespace problems in all eligible files found from the specified root directory tree.
+
 Useful, when operating on a fork, to properly whitespace-format files once for all and commit the result so that these formatting changes remain cleanly and clearly separated from the upcoming meaningful others.
+
 Target extensions are: '${target_extensions}'.
 Target filenames are: '${target_filenames}'.
 "
