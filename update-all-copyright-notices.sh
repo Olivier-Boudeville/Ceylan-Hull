@@ -1,6 +1,15 @@
 #!/bin/sh
 
-new_year=$(date '+%Y')
+
+# Copyright (C) 2018-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
+
+new_year="$(date '+%Y')"
 
 usage="Usage: $(basename $0) CODE_TYPE ROOT_DIRECTORY STARTING_YEAR NEW_YEAR NOTICE
 
@@ -15,7 +24,9 @@ This will replace '% Copyright (C) x-y Foobar Ltd' by '% Copyright (C) x-2013 Fo
 
 Note that if NOTICE contains characters that are meaningful in terms of Regular Expressions, they must be appropriately escaped.
 
-Example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 ${new_year} \"Foobar R\&D Ltd\"
+Note also that if, for any reason (e.g. one yearly update was forgotten) the second year of a copyright notice in a file predates the expected one (e.g. updating for year Y+1, hence expecting to have currently Y, but having there actually Y-1 or before), then that year will *not* be updated; it must be brought first to Y, then updated.
+
+Usage example for ampersand (&): $(basename $0) Erlang $HOME/My-program-tree 2008 ${new_year} \"Foobar R\&D Ltd\"
 "
 
 # To check whether all (Erlang, here) files have been updated:
