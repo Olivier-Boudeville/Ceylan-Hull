@@ -1,5 +1,14 @@
 #!/bin/sh
 
+
+# Copyright (C) 2011-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
+
 do_debug=1
 
 new_year=$(date '+%Y')
@@ -203,7 +212,7 @@ for f in ${target_files}; do
 			# Do not insist too much on changes already performed:
 			if grep -e "${replacement_pattern}" "$f" 1>/dev/null 2>&1; then
 
-				echo "  (latest copyright notice found in $f)"
+				echo "  (latest previous copyright notice found in $f)"
 
 			else
 
