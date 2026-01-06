@@ -816,8 +816,8 @@ view_selected_element()
 	file_elem="$1"
 
 	[ $verbose -eq 1 ] || echo "(viewing '${file_elem}')"
-	# Tentative name clean-up:
 
+	# Tentative name clean-up:
 	if [ ! -f "${file_elem}" ]; then
 
 		# Sometimes a filename followed by some garbage is specified (e.g. a
@@ -900,7 +900,7 @@ view_selected_element()
 		#echo "(viewing directory '${dir}')"
 
 		#echo ${viewer} ${viewer_opt} "${dir}"
-		${viewer} ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
+		"${viewer}" ${viewer_opt} "${dir}" 1>/dev/null 2>&1 &
 
 		is_applied=0
 
@@ -917,9 +917,6 @@ view_selected_element()
 	#extension="$(echo $@ | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 	#extension="$(echo $1| sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
-	#echo "file_elem = ${file_elem}"
-	#echo "extension = ${extension}"
-
 	# Deactivated for the moment:
 	#
 	#if [ "${extension}" = "erl" ]; then
@@ -930,8 +927,11 @@ view_selected_element()
 	#
 	#fi
 
+	# Blocks: content_type="$(file -b ${file_elem} | sed 's| .*$||1')"
+	content_type="$(file -b '${file_elem}' | sed 's| .*$||1')"
 
-	content_type="$(file -b ${file_elem} | sed 's| .*$||1')"
+	#echo "file_elem = ${file_elem}"
+	#echo "extension = ${extension}"
 	#echo "content_type = ${content_type}"
 
 	# Synonyms for extensions:
@@ -939,9 +939,7 @@ view_selected_element()
 
 		extension="jpeg"
 
-	fi
-
-	if [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
+	elif [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
 
 		# Extension being a dot then 3 or 4 letters:
 		renamed_elem="$(echo ${file_elem} | sed 's|.\{3,4\}[a-zA-Z]$|.webp|1')"
