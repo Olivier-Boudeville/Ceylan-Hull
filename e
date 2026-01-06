@@ -1,11 +1,10 @@
 #!/bin/sh
 
-
-# Copyright (C) 2010-2025 Olivier Boudeville
+# Copyright (C) 2010-2026 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
-# This file is part of the Ceylan-Hull toolbox.
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
 
 
 # This script has for purpose to *edit* (hence its name, 'e') files, so it opens
