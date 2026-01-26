@@ -1,6 +1,8 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] FILE_TO_IMPORT: imports the specified file into a newly-launched instance of Blender that will automatically focus on the loaded content.
+read_only_opt="--read-only"
+
+usage="Usage: $(basename $0) [-h|--help] [${read_only_opt}] FILE_TO_IMPORT: imports the specified file into a newly-launched instance of Blender that will automatically focus on the loaded content.
 
 More precisely, allows to import directly in Blender various file formats from the command-line, rather than doing it interactively. Takes care of checking file availability and extension, launching Blender, disabling the splash screen, removing the default primitives (cube, light, camera, collection), importing specified file without having to access menu with a cumbersome dialog requiring to go through the whole filesystem, and focusing the viewpoint onto the loaded objects.
 
@@ -12,9 +14,10 @@ More precisely, allows to import directly in Blender various file formats from t
 	- IFC (extension: '*.ifc')
 
   Options:
+    ${read_only_opt}: forces read-only mode
 	-h or --help: displays this help
 
-Note that this script depends on the Ceylan-Snake Blender importer (https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support), and that, for an IFC to be imported, the BIM add-on must have already been installed in Blender (see https://blenderbim.org/).
+Note that this script depends on the Ceylan-Snake Blender importer (https://github.com/Olivier-Boudeville/Ceylan-Snake/tree/master/blender-support), and that, for an IFC to be imported, the BIM add-on must have already been installed in Blender (see https://bonsaibim.org/).
 "
 
 
@@ -25,6 +28,24 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit 0
 
 fi
+
+
+read_only=1
+
+if [ "$1" = "${read_only_opt}" ]; then
+
+	#echo "(read-only mode enabled)"
+	echo "(read-only mode enabled, yet ignored as Blender would fail by trying to interpret it)"
+
+	read_only=0
+
+	# Chosen to be the same:
+	#blender_read_only_opt="${read_only_opt}"
+
+	shift
+
+fi
+
 
 if [ ! $# -eq 1 ]; then
 
@@ -93,4 +114,7 @@ export BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/lib
 # Needing to locate for example the blender_snake helper module:
 cd "${blender_support_dir}"
 
-LANG=C ${blender} --python "${import_script}" -- "${file_to_import}"
+
+#echo LANG=C "${blender}" --python "${import_script}" ${blender_read_only_opt} -- "${file_to_import}"
+
+LANG=C "${blender}" --python "${import_script}" ${blender_read_only_opt} -- "${file_to_import}"
