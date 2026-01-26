@@ -103,12 +103,15 @@ use_xdg_screensaver()
 
 
 # To avoid any disabling of the locker:
-if ! gsettings set org.gnome.desktop.screensaver lock-enabled true; then
+# (now made non-fatal and silenced, for closed distros)
+#if ! gsettings set org.gnome.desktop.screensaver lock-enabled true; then
 
-    echo "  Error, the locker could not be enabled." 1>&2
-    exit 15
+    #echo "  Error, the locker could not be enabled." 1>&2
+    #exit 15
 
-fi
+#fi
+
+gsettings set org.gnome.desktop.screensaver lock-enabled true 2>/dev/null
 
 
 distro="$(grep '^ID' /etc/os-release | sed 's|^ID=||')"
