@@ -231,6 +231,7 @@ chooseBlenderImporter()
 
 	viewer="$(which blender-import.sh 2>/dev/null)"
 	viewer_short_name="Blender importer"
+	viewer_opt="--read-only"
 
 }
 
