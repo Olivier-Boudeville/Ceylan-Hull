@@ -101,6 +101,7 @@ if [ "${external_screen_status}" = "connected" ]; then
 
 	# Order matters:
 
+	# May reconduct a lower logical resolution:
 	if ! "${xrandr}" --output "${external_screen}" --auto; then
 		echo "  Error, failed to enable external screen." 1>&2
 		exit 30
