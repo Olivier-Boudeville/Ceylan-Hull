@@ -7,7 +7,7 @@
 # This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
 
 
-# This script fires up a suitable web browser.
+usage="Usage: $(basename $0) ARGS: fires up a suitable web browser, possibly with arguments (like any URLs to start with)."
 
 browser_exec="$(which librewolf 2>/dev/null)"
 
@@ -26,6 +26,6 @@ else
 
 fi
 
-echo "Launching ${browser_exec_short_name}..."
+echo "Launching ${browser_exec_short_name} with arguments: $*..."
 
-"${browser_exec}" &
+"${browser_exec}" $* &
