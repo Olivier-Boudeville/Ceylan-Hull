@@ -47,6 +47,10 @@ fi
 
 echo "Detected native screen: '${native_screen}'."
 
+# First, ensure that the native screen is not off, otherwise the detected
+# resolution for it may be actually the one of any next screen:
+#
+"${xrandr}" --output "${native_screen}" --auto
 
 # Interesting default:
 base_res="1920x1200"
@@ -80,7 +84,7 @@ native_res=$("${xrandr}" --current | grep '*' | head -n1 | awk '{print $1}')
 
 if [ -z "${native_res}" ]; then
 
-	echo "  Error, unable to determine the resolution of the current, primary screen." 1>&2
+	echo "  Error, unable to determine the resolution of the current, primary screen (${native_screen})." 1>&2
 
 	exit 15
 
@@ -88,11 +92,11 @@ fi
 
 if [ "${native_res}" = "(normal" ]; then
 
-	#echo "  Error, unable to determine the resolution of the current, primary screen. Is it active?" 1>&2
+	#echo "  Error, unable to determine the resolution of the current, primary screen (${native_screen}). Is it active?" 1>&2
 
 	#exit 20
 
-	echo "Warning: unable to determine the resolution of the current, primary screen. Assuming ${base_res}." 1>&2
+	echo "Warning: unable to determine the resolution of the current, primary screen (${native_screen}). Assuming ${base_res}." 1>&2
 
 	native_res="${base_res}"
 
@@ -108,6 +112,15 @@ fi
 
 # Maybe that "--current | grep '*' | uniq" would be more relevant:
 external_screen=$(${xrandr} --current | grep ' connected' | grep -v "${native_screen}" | uniq | awk '{print $1}')
+
+if [ -z "${external_screen}" ]; then
+
+	echo "  Error, no external screen detected; typically an HDMI cable would be expected to be connected." 1>&2
+
+	exit 35
+
+fi
+
 
 echo "Detected external screen: '${external_screen}'."
 
@@ -153,8 +166,9 @@ target_res="${native_res}"
 #
 #"${xrandr}" --output ${native_screen} --mode ${native_res} --scale 1x1
 
-echo "Cloning and adjusting the external screen based on the native one"
-"${xrandr}" --output ${external_screen} --scale-from ${native_res} --same-as ${native_screen}
+echo "Cloning and adjusting the external screen (${external_screen}) based on the native one (${native_screen}), i.e. ${native_res}."
+#echo Executing: "${xrandr}" --output ${external_screen} --scale-from ${native_res} --same-as ${native_screen}
+"${xrandr}" --output "${external_screen}" --scale-from "${native_res}" --same-as "${native_screen}"
 
 
 # If preferring to take as a reference the external screen, and scale
