@@ -912,6 +912,7 @@ view_selected_element()
 
 	fi
 
+
 	# Normalising all extensions to lowercase first:
 	extension="$(echo ${file_elem} | sed 's|^.*\.||1' | tr '[:upper:]' '[:lower:]')"
 
@@ -929,18 +930,18 @@ view_selected_element()
 	#fi
 
 	# Blocks: content_type="$(file -b ${file_elem} | sed 's| .*$||1')"
-	content_type="$(file -b '${file_elem}' | sed 's| .*$||1')"
+	content_type="$(file -b "${file_elem}" | sed 's| .*$||1')"
+
+	# If value is "cannot", it comes from "cannot open `${file_elem}' (No such
+	# file or directory)":
+	#
+	#echo "for ${file_elem} from $(pwd): $(file -b "${file_elem}")"
 
 	#echo "file_elem = ${file_elem}"
 	#echo "extension = ${extension}"
 	#echo "content_type = ${content_type}"
 
-	# Synonyms for extensions:
-	if [ "${extension}" = "jpg" ] || [ "${extension}" = "jpeg" ]; then
-
-		extension="jpeg"
-
-	elif [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
+	if [ "${content_type}" = "RIFF" ] && [ "${extension}" = "jpeg" ]; then
 
 		# Extension being a dot then 3 or 4 letters:
 		renamed_elem="$(echo ${file_elem} | sed 's|.\{3,4\}[a-zA-Z]$|.webp|1')"
@@ -960,13 +961,14 @@ view_selected_element()
 		chooseCalibre
 		applyViewer
 
-	elif [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "csv" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
+	elif [ "${extension}" = "odg" ] || [ "${extension}" = "odt" ] || [ "${extension}" = "ods" ] || [ "${extension}" = "rtf" ] || [ "${extension}" = "doc" ] || [ "${extension}" = "docx" ] || [ "${extension}" = "xls" ] || [ "${extension}" = "xlsx" ] || [ "${extension}" = "csv" ] || [ "${extension}" = "ppt" ] || [ "${extension}" = "pptx" ]; then
 
 		chooseLibreOffice
 		applyViewer
 
 	elif [ "${extension}" = "png" ] || [ "${extension}" = "jpeg" ] || [ "${extension}" = "jpg" ] || [ "${extension}" = "svgz" ] || [ "${extension}" = "bmp" ] || [ "${extension}" = "gif" ] || [ "${extension}" = "tif" ] || [ "${extension}" = "webp" ] || [ "${extension}" = "tga" ]; then
 
+		#echo "(image format detected)"
 		chooseGwenview
 		#chooseGeeqie
 		#chooseEog
