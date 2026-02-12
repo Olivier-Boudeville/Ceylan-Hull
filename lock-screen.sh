@@ -193,7 +193,7 @@ if [ -n "${POST_UNLOCK_SCRIPT}" ]; then
 
     else
 
-        echo "Error, post-script '${post_script}' is not found, or not executable." 1>&2
+        echo "Error, post-script '${POST_UNLOCK_SCRIPT}' is not found, or not executable." 1>&2
 
     fi
 
