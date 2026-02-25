@@ -1,6 +1,17 @@
 #!/bin/bash
 
-# (not sh, as we prefer 'read' to support a "no echo" option)
+# (not sh, as we prefer 'read' to support a "no echo" option, and we need arrays
+# for proper quoting)
+
+
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+#verbose=0
+verbose=1
 
 
 env_file="${HOME}/.ceylan-settings.etf"
@@ -29,18 +40,18 @@ usage="Usage: $(basename $0): unlocks (decrypts) the credential file whose path 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
-	echo "${usage}"
-	exit
+    echo "${usage}"
+    exit
 
 fi
 
 
 if [ ! $# -eq 0 ]; then
 
-	echo "  Error, no argument expected.
+    echo "  Error, no argument expected.
 ${usage}" 1>&2
 
-	exit 4
+    exit 4
 
 fi
 
@@ -51,8 +62,8 @@ crypt_tool="$(which ${crypt_tool_name} 2>/dev/null)"
 
 if [ ! -x "${crypt_tool}" ]; then
 
-	echo "  Error, no encryption tool found (no ${crypt_tool_name} found)." 1>&2
-	exit 5
+    echo "  Error, no encryption tool found (no ${crypt_tool_name} found)." 1>&2
+    exit 5
 
 fi
 
@@ -64,8 +75,8 @@ shred_tool="$(which ${shred_tool_name} 2>/dev/null)"
 
 if [ ! -x "${shred_tool}" ]; then
 
-	echo "  Error, no shredding tool found (no $shred_tool_name)." 1>&2
-	exit 10
+    echo "  Error, no shredding tool found (no $shred_tool_name)." 1>&2
+    exit 10
 
 fi
 
@@ -73,8 +84,8 @@ fi
 
 if [ ! -f "${env_file}" ]; then
 
-	echo "  Error, no environment file (${env_file}) found." 1>&2
-	exit 15
+    echo "  Error, no environment file (${env_file}) found." 1>&2
+    exit 15
 
 fi
 
@@ -87,8 +98,8 @@ base_cred_path="$(/bin/cat ${env_file} | grep -v % | grep ${cred_entry_name} | s
 
 if [ -z "${base_cred_path}" ]; then
 
-	echo "  Error, no usable '${cred_entry_name}' key entry found in environment file (${env_file})." 1>&2
-	exit 20
+    echo "  Error, no usable '${cred_entry_name}' key entry found in environment file (${env_file})." 1>&2
+    exit 20
 
 fi
 
@@ -110,9 +121,9 @@ backup_file="${credential_dir}/.tmp.swap.dat~"
 
 if [ -e "${backup_file}" ]; then
 
-	echo "  Error, an UNENCRYPTED backup file '${backup_file}' is already existing. Most probably to be removed first." 1>&2
+    echo "  Error, an UNENCRYPTED backup file '${backup_file}' is already existing. Most probably to be removed first." 1>&2
 
-	exit 55
+    exit 55
 
 fi
 
@@ -132,25 +143,25 @@ has_autosave=0
 
 if [ "${editor}" = "emacs" ]; then
 
-	autosave_file="${credential_dir}/#.tmp.swap.dat#"
+    autosave_file="${credential_dir}/#.tmp.swap.dat#"
 
 elif [ "${editor}" = "gedit" ]; then
 
-	# The "autosave-file" here is the same as the edited file.
-	has_autosave=1
+    # The "autosave-file" here is the same as the edited file.
+    has_autosave=1
 
 fi
 
 
 if [ ${has_autosave} -eq 0 ]; then
 
-	if [ -e "${autosave_file}" ]; then
+    if [ -e "${autosave_file}" ]; then
 
-		echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' is already existing. It shall be integrated or removed first." 1>&2
+        echo "  Error, an UNENCRYPTED autosave file '${autosave_file}' is already existing. It shall be integrated or removed first." 1>&2
 
-		exit 56
+        exit 56
 
-	fi
+    fi
 
 fi
 
@@ -161,34 +172,34 @@ already_unlocked=1
 
 if [ ! -f "${locked_file}" ]; then
 
-	if [ -f "${unlocked_file}" ]; then
+    if [ -f "${unlocked_file}" ]; then
 
-		echo "  Warning: the credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist). As a result, a password (to be chosen identical to the usual one) will be requested (twice) when closing this file." 1>&2
+        echo "  Warning: the credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') was already unlocked (its unlocked version, '${unlocked_file}', already exists, whereas its locked version, '${locked_file}', does not exist). As a result, a password (to be chosen identical to the usual one) will be requested (twice) when closing this file." 1>&2
 
-		# This happens whenever left in a terminal, being forgotten, or closing
-		# the terminal while still opened:
-		#
-		already_unlocked=0
+        # This happens whenever left in a terminal, being forgotten, or closing
+        # the terminal while still opened:
+        #
+        already_unlocked=0
 
-	else
+    else
 
-		echo "  Error, no credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') can be found (neither in a locked version, i.e. as '${locked_file}', nor in an unlocked version, i.e. as '${unlocked_file}')." 1>&2
+        echo "  Error, no credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') can be found (neither in a locked version, i.e. as '${locked_file}', nor in an unlocked version, i.e. as '${unlocked_file}')." 1>&2
 
-		exit 25
+        exit 25
 
-	fi
+    fi
 
 else
 
-	# So here the locked file exists.
+    # So here the locked file exists.
 
-	if [ -f "${unlocked_file}" ]; then
+    if [ -f "${unlocked_file}" ]; then
 
-		echo "  Error, the credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') exists both in its locked version ('${locked_file}') and in its unlocked version ('${unlocked_file}'), this is abnormal." 1>&2
+        echo "  Error, the credentials file (as defined in the '${cred_entry_name}' entry of the environment file '${env_file}') exists both in its locked version ('${locked_file}') and in its unlocked version ('${unlocked_file}'), this is abnormal." 1>&2
 
-		exit 30
+        exit 30
 
-	fi
+    fi
 
 fi
 
@@ -196,54 +207,54 @@ fi
 
 if [ $already_unlocked -eq 1 ]; then
 
-	#echo "Unlocking credentials: from ${locked_file} to ${unlocked_file}."
+    #echo "Unlocking credentials: from ${locked_file} to ${unlocked_file}."
 
-	read -p  "Enter lock password for credentials: " -s passphrase
+    read -p  "Enter lock password for credentials: " -s passphrase
 
-	#echo "passphrase = '${passphrase}'"
+    #echo "passphrase = '${passphrase}'"
 
-	echo
+    echo
 
-	crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
+    crypt_opts="--verbose --cipher-algo=AES256 --batch --passphrase ${passphrase} --pinentry=loopback"
 
-	# Enable read operations on the locked version:
-	if ! chmod 400 "${locked_file}"; then
+    # Enable read operations on the locked version:
+    if ! chmod 400 "${locked_file}"; then
 
-		echo "  Error, unable to relax permission of locked file '${locked_file}'." 1>&2
-		exit 33
+        echo "  Error, unable to relax permission of locked file '${locked_file}'." 1>&2
+        exit 33
 
-	fi
+    fi
 
-	#echo "crypt_opts=$crypt_opts"
+    #echo "crypt_opts=$crypt_opts"
 
-	if ${crypt_tool} -d ${crypt_opts} --output "${unlocked_file}" "${locked_file}" 1>/dev/null 2>&1; then
+    if "${crypt_tool}" -d ${crypt_opts} --output "${unlocked_file}" "${locked_file}" 1>/dev/null 2>&1; then
 
-		#echo "(credentials unlocked in ${unlocked_file})"
-		echo "(credentials unlocked and displayed; when finished, just exit the editor to re-lock automatically)"
+        #echo "(credentials unlocked in ${unlocked_file})"
+        echo "(credentials unlocked and displayed; when finished, just exit the editor to re-lock automatically)"
 
-		${shred_tool} --force --remove --zero "${locked_file}"
-		res="$?"
+        "${shred_tool}" --force --remove --zero "${locked_file}"
+        res="$?"
 
-		if [ ! ${res} -eq 0 ]; then
+        if [ ! ${res} -eq 0 ]; then
 
-			echo "  Error, shredding of '${locked_file}' failed (code: ${res}), removing it." 1>&2
-			/bin/rm -f "${locked_file}"
+            echo "  Error, shredding of '${locked_file}' failed (code: ${res}), removing it." 1>&2
+            /bin/rm -f "${locked_file}"
 
-			exit 35
+            exit 35
 
-		fi
+        fi
 
-	else
+    else
 
-		echo "  Error, unlocking failed (possibly wrong passphrase), stopping, locked file '${locked_file}' left as it is." 1>&2
+        echo "  Error, unlocking failed (possibly wrong passphrase), stopping, locked file '${locked_file}' left as it is." 1>&2
 
-		exit 40
+        exit 40
 
-	fi
+    fi
 
 else
 
-	echo "(opening unlocked credentials)"
+    echo "(opening unlocked credentials)"
 
 fi
 
@@ -252,153 +263,174 @@ fi
 
 if [ "${editor}" = "emacs" ]; then
 
-	# We do not want the requested next Emacs-based credentials opening to
-	# integrate into any prior launched Emacs instance (nor do we want new file
-	# openings to happen in this instance), so we create a separate Emacs
-	# server:
-	#
-	# (otherwise this script will be confused as not detecting the closing of
-	# the credentials buffer, leading to the coexisting of ciphered and
-	# clear-text credentials):
-	#
-	server_name="ceylan-hull-credentials-server"
+    # We do not want the requested next Emacs-based credentials opening to
+    # integrate into any prior launched Emacs instance (nor do we want new file
+    # openings to happen in this instance), so we create a separate Emacs
+    # server:
+    #
+    # (otherwise this script will be confused as not detecting the closing of
+    # the credentials buffer, leading to the coexisting of ciphered and
+    # clear-text credentials):
+    #
+    server_name="ceylan-hull-credentials-server"
 
-	#echo "Securing an Emacs daemon named '${server_name}'"
+    #echo "Securing an Emacs daemon named '${server_name}'"
 
-	# No change in the displayed warning if a '--with-x-toolkit=lucid' option is
-	# added:
-	#
+    # No change in the displayed warning if a '--with-x-toolkit=lucid' option is
+    # added:
+    #
 
-	# Would fail if already running (hence from the second credentials opening):
-	#emacs --daemon="${server_name}"
+    # Would fail if already running (hence from the second credentials opening):
+    #emacs --daemon="${server_name}"
 
-	# Not working, the server-name is not known yet:
-	#emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
+    # Not working, the server-name is not known yet:
+    #emacs -q --eval "(set-variable 'server-name "${server_name}")(unless (server-running-p) (server-start))"
 
-	# We now rely on the secure settings in our init-myriad-security.el, if
-	# available:
-	#
-	sec_init_dir="${HOME}/.emacs.d/myriad-sensitive"
-	sec_init_file="${sec_init_dir}/init.el"
+    # We now rely on the secure settings in our init-myriad-security.el, if
+    # available:
+    #
+    sec_init_dir="${HOME}/.emacs.d/myriad-sensitive"
+    sec_init_file="${sec_init_dir}/init.el"
 
-	emacs_server_opts="--no-init-file --no-site-file --no-splash --daemon=${server_name}"
-	#emacs_server_opts="--no-site-file --no-splash --daemon=${server_name} --debug-init"
+    # --quick: ‘-q’, ‘--no-site-file’, ‘--no-site-lisp’, ‘--no-x-resources’, and ‘--no-splash’ together
+    emacs_server_opts="--quick --daemon=${server_name}"
+    #emacs_server_opts="--quick --daemon=${server_name} --debug-init"
 
-	if [ -f "${sec_init_file}" ]; then
 
-		#echo "(relying on secure setting file '${sec_init_file}')"
-		emacs_server_opts="${emacs_server_opts} --init-directory=${sec_init_dir}"
+    if [ -f "${sec_init_file}" ]; then
 
-	else
+        #echo "(will rely on secure setting file '${sec_init_file}')"
 
-		echo "Warning: no secure setting file ('${sec_init_file}') available, so none used." 1>&2
+        # Directory specification probably useless:
+        emacs_server_opts="${emacs_server_opts} --init-directory=${sec_init_dir}"
 
-	fi
+    else
 
-	emacsclient="$(which emacsclient 2>/dev/null)"
+        #echo "Warning: no secure setting file ('${sec_init_file}') available, so none used." 1>&2
 
-	if [ ! -x "${emacsclient}" ]; then
+        # Stricter now:
+        echo "Error, no secure setting file ('${sec_init_file}') available, stopping." 1>&2
+        exit 54
 
-		echo "  Error, no emacsclient executable found." 1>&2
-		exit 55
+    fi
 
-	fi
+    emacsclient="$(which emacsclient 2>/dev/null)"
 
-	emacs="$(which emacs 2>/dev/null)"
+    if [ ! -x "${emacsclient}" ]; then
 
-	if [ ! -x "${emacs}" ]; then
+        echo "  Error, no emacsclient executable found." 1>&2
+        exit 55
 
-		echo "  Error, no emacs executable found." 1>&2
-		exit 56
+    fi
 
-	fi
+    emacs="$(which emacs 2>/dev/null)"
 
-	# Launch this specific daemon iff needed:
-	#
-	# (returning zero to test availability)
-	#
+    if [ ! -x "${emacs}" ]; then
 
-	#echo "Launching/testing daemon"
+        echo "  Error, no emacs executable found." 1>&2
+        exit 56
 
-	#echo "${emacsclient}" -s "${server_name}" --eval 0
+    fi
+
+    # Launch this specific daemon iff needed, so testing whether it is already
+    # running:
+    #
+    # (returning zero to test availability)
+    #
+    [ $verbose -eq 1 ] || echo "Testing daemon with: ${emacsclient}" -s "${server_name}" --eval 0
 
     # This call may never output anything (or a very late "Server not
     # responding; use Ctrl+C to break"); in this case just find that server
     # process (e.g. ('ps -edf | grep ceylan-hull-credentials-server') and kill
     # it.
+    #
+    if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
 
-	if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
+        [ $verbose -eq 1 ] || echo "No Emacs daemon '${server_name}' found existing, launching it with: "${emacs}" ${emacs_server_opts}"
+        "${emacs}" ${emacs_server_opts} 1>/dev/null 2>&1
+        #"${emacs}" ${emacs_server_opts} 1>/dev/null
+        #"${emacs}" ${emacs_server_opts}
 
-		#echo "No Emacs daemon '${server_name}' found existing, launching it."
-		#echo "Launching: ${emacs} ${emacs_server_opts}"
-		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
-		#${emacs} ${emacs_server_opts} 1>/dev/null
-		#${emacs} ${emacs_server_opts}
+    else
 
-	else
+        # A bit surprising:
+        echo "Warning: Emacs daemon '${server_name}' found already existing, using it."
 
-		echo "Emacs daemon '${server_name}' found already existing, using it."
-		:
+    fi
 
-	fi
+    # Extra safety:
+    sleep 1
 
-	#sleep 1
+    # Now a suitable Emacs daemon is expected to be running in all cases.
 
     #echo "Connecting Emacs client to '${server_name}'."
 
-	# -nw not used anymore; possibly that '--alternate-editor=emacs' is useless
-	# in this context:
-	#
-	emacs_client_opts="--create-frame -s ${server_name}"
+    # -nw not used anymore; possibly that '--alternate-editor=emacs' is useless
+    # in this context:
+    #
+    #emacs_client_opts="--create-frame -s ${server_name} -e \"(progn (load \\"${sec_init_file}\\") (find-file \\"${unlocked_file}\\"))\""
 
-	#echo "Running: emacsclient ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs"
+    # Now using a (bash) array to avoid escaping issues:
+	# (nil returned to avoid displaying a line like: #<buffer xxx>)
+    emacs_client_opts=(
+    --create-frame
+    -s "${server_name}"
+    -e "(progn (load \"${sec_init_file}\") (find-file \"${unlocked_file}\") nil)"
+    )
 
-	# 'emacsclient -s ceylan-hull-credentials-server' may return '*ERROR*: Args
-	# out of range: [], 0', good luck for finding the cause...
-	#
-	if ! ${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1; then
+    [ $verbose -eq 1 ] || echo "Running:" "${emacsclient}" "${emacs_client_opts[@]}"
 
-		echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
+    # 'emacsclient -s ceylan-hull-credentials-server' may return '*ERROR*: Args
+    # out of range: [], 0', good luck for finding the cause...
+    #
+    # (needing also to avoid the display of "Warning: due to a long standing
+    # Gtk+ bug [...]")
+    #
+    # Currently removed: --alternate-editor=emacs
+	# Standard output removed, otherwise displays 'nil' on the terminal:
+    if ! "${emacsclient}" "${emacs_client_opts[@]}" 1>/dev/null; then
 
-		# More reliable than save-buffers-kill-emacs:
-		kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
+        echo "Warning: opening in Emacs apparently failed, trying again after killing credentials-specific Emacs server and restarting it." 1>&2
 
-		echo "Relaunching Emacs daemon '${server_name}'."
-		${emacs} ${emacs_server_opts} 1>/dev/null 2>&1
+        # More reliable than save-buffers-kill-emacs:
+        kill $(ps -ed -o pid,comm,args | grep emacs | grep "${server_name}" | awk '{ print $1 }')
 
-		# Paranoid:
-		sleep 1
+        echo "Relaunching Emacs daemon '${server_name}'."
+        "${emacs}" ${emacs_server_opts} 1>/dev/null 2>&1
 
-		# Retry:
-		#echo "Retrying: ${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs"
-		${emacsclient} ${emacs_client_opts} "${unlocked_file}" --alternate-editor=emacs 1>/dev/null 2>&1
-	fi
+        # Paranoid:
+        sleep 1
 
-	${emacsclient} -s ${server_name} -e "(save-buffers-kill-emacs)"
+        # Retry:
+        #echo "Retrying:" "${emacsclient}" "${emacs_client_opts[@]}"
+        "${emacsclient}" "${emacs_client_opts[@]}" 1>/dev/null
+    fi
+
+    "${emacsclient}" -s ${server_name} -e "(save-buffers-kill-emacs)"
 
 
 elif [ "${editor}" = "gedit" ]; then
 
-	gedit="$(which gedit 2>/dev/null)"
+    gedit="$(which gedit 2>/dev/null)"
 
-	if [ ! -x "${gedit}" ]; then
+    if [ ! -x "${gedit}" ]; then
 
-		echo "  Error, no gedit executable found." 1>&2
-		exit 60
+        echo "  Error, no gedit executable found." 1>&2
+        exit 60
 
-	fi
+    fi
 
-	if ! ${gedit} --standalone "${unlocked_file}" 1>/dev/null 2>&1; then
+    if ! "${gedit}" --standalone "${unlocked_file}" 1>/dev/null 2>&1; then
 
-		echo "  Error, gedit failed to open '${unlocked_file}'." 1>&2
-		exit 70
+        echo "  Error, gedit failed to open '${unlocked_file}'." 1>&2
+        exit 70
 
-	fi
+    fi
 
 else
 
-	echo "  Error, no editor selected (abnormal)." 1>&2
-	exit 17
+    echo "  Error, no editor selected (abnormal)." 1>&2
+    exit 17
 
 fi
 
@@ -408,7 +440,7 @@ echo "(locking now the credentials)"
 # No passphrase wanted to be specified on the command-line:
 #lock-credentials.sh [{passphrase}]
 
-${crypt_tool} -c ${crypt_opts} --output "${locked_file}" "${unlocked_file}" 1>/dev/null 2>/dev/null
+"${crypt_tool}" -c ${crypt_opts} --output "${locked_file}" "${unlocked_file}" 1>/dev/null 2>/dev/null
 
 res="$?"
 
@@ -416,9 +448,9 @@ unset passphrase
 
 if [ ! ${res} -eq 0 ]; then
 
-	echo "  Error, locking failed (code: ${res}), stopping, unlocked file '${unlocked_file}' left as it is, please lock it manually." 1>&2
+    echo "  Error, locking failed (code: ${res}), stopping, unlocked file '${unlocked_file}' left as it is, please lock it manually." 1>&2
 
-	exit 45
+    exit 45
 
 fi
 
@@ -429,9 +461,9 @@ fi
 #chmod 000 "${locked_file}"
 if chmod 400 "${locked_file}"; then
 
-	#echo "(credentials locked in ${locked_file})"
+    #echo "(credentials locked in ${locked_file})"
 	echo "(credentials locked again)"
-	${shred_tool} --force --remove --zero "${unlocked_file}"
+	"${shred_tool}" --force --remove --zero "${unlocked_file}"
 	res="$?"
 
 	if [ ! ${res} -eq 0 ]; then
