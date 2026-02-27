@@ -26,6 +26,6 @@ else
 
 fi
 
-echo "Launching ${browser_exec_short_name} with arguments: $*..."
+#echo "Launching ${browser_exec_short_name} with arguments: $*..."
 
 "${browser_exec}" $* &
