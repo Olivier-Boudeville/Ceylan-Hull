@@ -113,9 +113,17 @@ if [ "${external_screen_status}" = "connected" ]; then
 	#	exit 30
 	#fi
 
-	external_best_res=$("${xrandr}" --query | sed "1,/${external_screen}/d" | grep '*' | head -n 1 | awk '{print $1}' | sed 's|\+.*||1')
+	# Previously was using grep '*', but in some cases this character is not
+	# displayed:
+	#
+	external_best_res=$("${xrandr}" --query | sed "1,/${external_screen}/d" | grep '+' | head -n 1 | awk '{print $1}' | sed 's|\+.*||1')
 
 	[ $is_verbose -eq 0 ] && echo "Detected best resolution for external screen: '${external_best_res}'."
+
+	if [ -z "${external_best_res}" ]; then
+		echo "  Error, failed to detect the best resolution for the external screen." 1>&2
+		exit 34
+	fi
 
 	#echo Executing: "${xrandr}" --output "${external_screen}" --mode "${external_best_res}"
 
