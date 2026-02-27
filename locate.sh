@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Copyright (C) 2024-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
 usage="Usage: $(basename $0) [-h|--help] [-r|--rst] PATTERN: locates the files whose name corresponds to the specified pattern, among the filesystem elements that are routinely scanned; returns only existing files, with the newly-modified ones listed first.
 
 The -r / --rst option allows selecting only RST files (i.e. bearing the '.rst' extension).
