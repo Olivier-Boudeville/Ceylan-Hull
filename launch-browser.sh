@@ -28,4 +28,4 @@ fi
 
 #echo "Launching ${browser_exec_short_name} with arguments: $*..."
 
-"${browser_exec}" $* &
+"${browser_exec}" $* 1>/dev/null &
