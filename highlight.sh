@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
 usage="Usage: $(basename $0) [-i|--ignore-case] [FILENAME] PATTERNS: highlights, in the specified data (either the specified file or the standard input, when used through a pipe), the specified pattern(s), in a case-insensitive manner if requested.
 
 Examples:
@@ -9,7 +15,7 @@ Examples:
 Note that such highlighting should preferably be done last in a series of pipes, as the color coding may interfere for example with the matching performed by any subsequent grep.
 "
 
-if [ $# -eq 0 ] || [ $1 = "-h" ] || [ $1 = "--help" ]; then
+if [ $# -eq 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
 	exit
@@ -19,7 +25,7 @@ fi
 case_opt=""
 
 
-if [ $1 = "-i" ] || [ $1 = "--ignore-case" ]; then
+if [ "$1" = "-i" ] || [ "$1" = "--ignore-case" ]; then
 
 	#echo "(ignoring case)"
 	case_opt="--ignore-case"
