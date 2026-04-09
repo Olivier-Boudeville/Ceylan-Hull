@@ -95,7 +95,7 @@ fi
 #
 if [ $select_only_rst -eq 0 ]; then
 
-	(echo "  Trying to locate '$1' (excluding the '${excluded_pattern}' pattern, selecting only RST files, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep '.rst$' | grep -v ${excluded_pattern} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
+	(echo "  Trying to locate '$1' (excluding the '${excluded_pattern}' pattern, selecting only RST files, and listing newly-modified files first):"; "${locate}" --existing "$1" | grep '\.rst$' | grep -v ${excluded_pattern} | tr '\n' '\0' | xargs --null /bin/ls --directory --sort=time -1 -s --human-readable --color 2>/dev/null) | "${PAGER_NAME}" ${PAGER_PRESERVE_COLORS}
 
 else
 
