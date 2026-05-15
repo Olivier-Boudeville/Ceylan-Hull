@@ -339,12 +339,15 @@ if [ "${editor}" = "emacs" ]; then
     #
     [ $verbose -eq 1 ] || echo "Testing daemon with: ${emacsclient}" -s "${server_name}" --eval 0
 
-    # This call may never output anything (or a very late "Server not
-    # responding; use Ctrl+C to break"); in this case just find that server
-    # process (e.g. ('ps -edf | grep ceylan-hull-credentials-server') and kill
-    # it.
+    # Unfortunately, this call may block, i.e. never output anything (or a very
+    # late "Server not responding; use Ctrl+C to break"); in this case just find
+    # that server process (e.g. ('ps -edf | grep
+    # ceylan-hull-credentials-server') and kill it.
     #
-    if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
+    #if ! "${emacsclient}" -s "${server_name}" --eval 0 1>/dev/null 2>&1; then
+
+	# Testing a new approach, to avoid aforementioned blocking:
+    if ! "${emacsclient}" -s "${server_name}" -a false --eval 0 1>/dev/null 2>&1; then
 
         [ $verbose -eq 1 ] || echo "No Emacs daemon '${server_name}' found existing, launching it with: "${emacs}" ${emacs_server_opts}"
         "${emacs}" ${emacs_server_opts} 1>/dev/null 2>&1
@@ -406,7 +409,7 @@ if [ "${editor}" = "emacs" ]; then
         "${emacsclient}" "${emacs_client_opts[@]}" 1>/dev/null
     fi
 
-    "${emacsclient}" -s ${server_name} -e "(save-buffers-kill-emacs)"
+    "${emacsclient}" -s "${server_name}" -e "(save-buffers-kill-emacs)"
 
 
 elif [ "${editor}" = "gedit" ]; then
