@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2020-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [-h|--help] MESSAGE | TITLE MESSAGE [CATEGORY]: notifies the user about specified message, possibly with a title and a category in 'normal' (the default) | 'process' | 'time' (then with a corresponding icon)."
 
 # Apparently needed on Arch:
@@ -12,7 +19,8 @@ usage="Usage: $(basename $0) [-h|--help] MESSAGE | TITLE MESSAGE [CATEGORY]: not
 # /usr/lib/xfce4/notifyd/xfce4-notifyd &
 
 # Then, for example:
-# notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information
+# notify-send 'Hello world!' 'This is an example notification.'
+# --icon=dialog-information
 
 # Icons described in
 # https://specifications.freedesktop.org/icon-naming-spec/latest/ar01s04.html
@@ -93,12 +101,23 @@ fi
 
 # First the sound, if ever the notify-send happened to block....
 
-if [ -z "${message}" ]; then
-	full_message="${title}"
-else
-	full_message="${title}: ${message}"
-fi
+if [ -z "${title}" ]; then
 
+	if [ -z "${message}" ]; then
+		full_message="(no extra information given)"
+	else
+		full_message="${message}"
+	fi
+
+else
+
+	if [ -z "${message}" ]; then
+		full_message="${title}"
+	else
+		full_message="${title}: ${message}"
+	fi
+
+fi
 
 # To try making a sound (any), as a last-resort option:
 last_resort_notify_script="$(which bong.sh 2>/dev/null)"
@@ -106,6 +125,9 @@ last_resort_notify_script="$(which bong.sh 2>/dev/null)"
 
 if [ -z "${icon}" ]; then
 	echo "[notification] ${message}"
+
+	#echo "${tts_tool}" "${full_message}"
+
 	if ! "${tts_tool}" "${full_message}"; then
 		"${last_resort_notify_script}"
 	fi
