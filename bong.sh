@@ -1,5 +1,13 @@
 #!/bin/sh
 
+
+# Copyright (C) 2010-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [COUNT]: plays COUNT (default: 1) bong sound(s). Useful for example to notify the end of a longer shell operation."
 
 use_sound=0
@@ -9,11 +17,12 @@ bong()
 {
 	if [ $use_sound -eq 0 ]; then
 
+		# Full command, not to be quoted:
 		${audio_player_cmd} "${bong_sound}" 1>/dev/null 2>&1
 
 	else
 
-		espeak "Bong!" 1>/dev/null 2>&1
+		"${espeak}" "Bong!" 1>/dev/null 2>&1
 
 	fi
 
@@ -29,7 +38,7 @@ if [ ! -f "${bong_sound}" ]; then
 
 	if [ ! -f "${bong_sound}" ]; then
 
-		espeak=$(which espeak 2>/dev/null)
+		espeak="$(which espeak 2>/dev/null)"
 
 		if [ -x "${espeak}" ]; then
 
@@ -49,12 +58,19 @@ fi
 
 if [ $use_sound -eq 0 ]; then
 
-	audio_player=$(which cvlc 2>/dev/null)
-	audio_player_cmd="${audio_player} --quiet --novideo --play-and-exit"
+	audio_player="$(which mpv 2>/dev/null)"
+	audio_player_cmd="${audio_player} --msg-level=all=no"
 
 	if [ ! -x "${audio_player}" ]; then
-		audio_player=$(which mplayer 2>/dev/null)
-		audio_player_cmd="${audio_player}"
+
+		audio_player="$(which cvlc 2>/dev/null)"
+		audio_player_cmd="${audio_player} --quiet --novideo --play-and-exit"
+
+		if [ ! -x "${audio_player}" ]; then
+			audio_player="$(which mplayer 2>/dev/null)"
+			audio_player_cmd="${audio_player}"
+		fi
+
 	fi
 
 	if [ ! -x "${audio_player}" ]; then
