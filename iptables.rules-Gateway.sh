@@ -643,10 +643,14 @@ start_it_up()
 
 	# Rejects directly 'auth/ident' (port 113) obsolete requests:
 	#
-	#(if we drop these packets we may need to wait for the timeouts e.g. on ftp
+	# (if we drop these packets we may need to wait for the timeouts e.g. on ftp
 	# servers, so we just reject them)
 	#
-	${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
+	# Not even rejecting them anymore, as nmap sees them as closed
+	# (e.g. "113/tcp closed ident") instead of the usual, less permissive
+	# filtered:
+	#
+	#${iptables} -A INPUT -p tcp --dport auth -j REJECT --reject-with tcp-reset
 
 	# Accept non-new inputs:
 	${iptables} -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
