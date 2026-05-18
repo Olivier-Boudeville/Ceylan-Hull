@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 option_desc="'Settings' -> 'System' -> 'Developer Options' -> 'USB Debugging'"
 
 usage="Usage: $(basename $0) EXPR: downloads in the current directory, from the already connected and authorising (${option_desc} being enabled in the settings, and 'File transfer' being selected on USB connection) Android device (typically a smartphone), files and directories (recursively) based on the specified expression(s) (typically wildcards) - knowing that a mere 'adb pull' does not support that.
@@ -12,6 +19,7 @@ For example:
   $(basename $0) /sdcard/DCIM/Camera/IMG_$(date '+%Y%m%d')*.jpg
   $(basename $0) /storage/emulated/0/Download/foo*bar*.pdf
   $(basename $0) /storage/emulated/0/Documents/*
+  $(basename $0) /storage/emulated/0/DCIM/Tapo/*.mp4
 
 Note that some Android devices (e.g. at least some e-readers) will offer a MTP interface instead; then use our mount-mtp-device.sh script.
 "
@@ -85,7 +93,7 @@ fi
 # Apparently will work now only one at a time:
 for f in $("${adb_exec}" shell ls ${args} | tr -s "\r\n" "\0 "); do
 
-	#echo " - pulling '$f'"
+	echo " - pulling '$f'"
 	${adb_exec} pull "$f"
 	#sleep 1
 
