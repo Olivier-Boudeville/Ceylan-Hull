@@ -3,6 +3,31 @@ Description=Sets this computer as a NAT gateway
 Before=network-pre.target
 Wants=network-pre.target
 
+# If this service does not seem to start at boot:
+
+# Check whether it has been set: iptables-inspect.sh
+#
+# Then check the 'log_file' setting in /etc/iptables.settings-Gateway.sh
+# (typically log_file="/root/.last-gateway-firewall-activation"), and inspect
+# its current version (${log_file}) and its previous one (${log_file}.previous).
+
+# If not sufficient:
+# $ systemctl is-enabled iptables.rules-Gateway.service
+# enabled
+
+# $ systemctl is-active iptables.rules-Gateway.service
+# active
+
+# $ systemctl status iptables.rules-Gateway.service
+# Loaded: loaded (/etc/systemd/system/iptables.rules-Gateway.service; enabled;
+#  preset: disabled)
+# Active: active (exited) since [...]
+
+# $ systemctl status network-pre.target
+# ● network-pre.target - Preparation for Network
+#     Loaded: loaded (/usr/lib/systemd/system/network-pre.target; static)
+#     Active: active since [...]
+
 [Service]
 ExecStart=/usr/local/bin/iptables.rules-Gateway.sh start
 ExecReload=/usr/local/bin/iptables.rules-Gateway.sh reload
