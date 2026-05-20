@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2021-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0): diagnoses whether the various network basic facilities are functional. If not, checks them continuously, until all of them are back to normal."
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -23,16 +30,26 @@ fi
 
 already_failed=1
 
+ping_count=1
+ping_timeout_secs=1
+
+ping_opts="-c${ping_count} -W${ping_timeout_secs}"
+
+
+host_timeout_secs=1
+
+host_opts="-W${host_timeout_secs}"
+
 
 # Checks network connectivity based on IP here:
-check_ip()
+check_reliable_ip()
 {
 
-	if ping -c 2 ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
+	if "${ping}" ${ping_opts} "${reliable_internet_server_ip}" 1>/dev/null 2>&1; then
 
 		echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivity ok"
 
-		if ping -c 2 ${reliable_internet_server_name} 1>/dev/null 2>&1; then
+		if "${ping}" ${ping_opts} "${reliable_internet_server_name}" 1>/dev/null 2>&1; then
 
 			echo " - reliable internet server DNS name (${reliable_internet_server_name}) responding, external DNS ok"
 
@@ -68,9 +85,19 @@ check_ip()
 }
 
 
+ping="$(which ping 2>/dev/null)"
+
+if [ ! -x "${ping}" ]; then
+
+	# Very surprising:
+	echo "  Error, no 'ping' executable available." 1>&2
+	exit 8
+
+fi
+
 
 # Now, if gateway_name is set, gateway_ip shall be set as well:
-
+# (GATEWAY possibly set in the environment)
 gateway_name="${GATEWAY}"
 
 if [ -z "${gateway_name}" ]; then
@@ -88,7 +115,6 @@ if [ -z "${gateway_name}" ]; then
 
 else
 
-	# Risk of longer DNS time-out:
 	host_cmd="$(which host 2>/dev/null)"
 
 	if [ ! -x "${host_cmd}" ]; then
@@ -98,7 +124,10 @@ else
 
 	fi
 
-	gateway_ip="$(host ${gateway_name} 2>/dev/null | sed 's|.*address ||1')"
+	# As risk of longer DNS time-out:
+	echo "Testing the ${gateway_name} gateway..."
+
+	gateway_ip="$(${host_cmd} ${host_opts} ${gateway_name} 2>/dev/null | sed 's|.*address ||1')"
 
 	if [ -z "${gateway_ip}" ]; then
 
@@ -113,7 +142,7 @@ fi
 #reliable_internet_server_ip=72.14.207.99
 #reliable_internet_server_ip=66.249.92.104
 
-# Corresponds to google.com
+# Corresponds to google.com:
 reliable_internet_server_ip=8.8.8.8
 
 reliable_internet_server_name=google.com
@@ -128,13 +157,13 @@ while [ $is_good -eq 1 ]; do
 	if [ -n "${gateway_name}" ]; then
 
 		# Hence gateway_ip is set:
-		if ping -c 2 ${gateway_ip} 1>/dev/null 2>&1; then
+		if "${ping}" ${ping_opts} ${gateway_ip} 1>/dev/null 2>&1; then
 
 			echo " - gateway IP (${gateway_ip}) responding, internal network connectivity ok"
-			if ping -c 2 ${gateway_name} 1>/dev/null 2>&1; then
+			if "${ping}" ${ping_opts} ${gateway_name} 1>/dev/null 2>&1; then
 
 				echo " - gateway DNS name (${gateway_name}) responding, internal DNS ok"
-				check_ip
+				check_reliable_ip
 
 			else
 
@@ -147,14 +176,29 @@ while [ $is_good -eq 1 ]; do
 
 			echo "Gateway IP (${gateway_ip}) not responding, internal network connectivity ko? Possibly no known gateway, continuing checks..." 1>&2
 
-			#echo "Pinging now continuously to know when network is back..."
-			#ping ${gateway_ip}
+			# Possibly set in the environment:
+			if [ -n "${TEST_LAN_HOST_IP}" ]; then
 
-			if ping -c 2 ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
+				if "${ping}" ${ping_opts} "${TEST_LAN_HOST_IP}" 1>/dev/null 2>&1; then
+
+					echo "The IP of the test LAN host (${TEST_LAN_HOST_IP}) is responding, so the LAN seems to be functional, and thus the gateway seems down." 1>&2
+
+				else
+
+					echo "The IP of the test LAN host (${TEST_LAN_HOST_IP}) is not responding either, so the local host may have lost its network connectivity." 1>&2
+
+				fi
+
+			fi
+
+			#echo "Pinging now continuously to know when network is back..."
+			#"${ping}" ${gateway_ip}
+
+			if "${ping}" ${ping_opts} ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
 
 				echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivity ok"
 
-				if ping -c 2 ${reliable_internet_server_name} 1>/dev/null 2>&1; then
+				if "${ping}" ${ping_opts} ${reliable_internet_server_name} 1>/dev/null 2>&1; then
 
 					echo " - reliable internet server DNS name (${reliable_internet_server_name}) responding, external DNS ok"
 
@@ -181,7 +225,7 @@ while [ $is_good -eq 1 ]; do
 
 	else
 
-		check_ip
+		check_reliable_ip
 
 	fi
 
