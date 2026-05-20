@@ -1,5 +1,22 @@
 #!/bin/sh
 
+# Original version written by Robert Penz
+# (robert.penz (at) outertech (dot) com).
+
+# This script is under GPL.
+
+# Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14 (article
+# written by Christophe Grenier, grenier (at) cgsecurity (dot) org).
+
+# For the changes made since then:
+# Copyright (C) 2006-2026 Olivier Boudeville
+#
+# Maintainer: Olivier Boudeville
+# [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 script_opts="{start|stop|reload|restart|force-reload|status|disable}"
 
 usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall suitable for a gateway host with masquerading and various services."
@@ -42,14 +59,6 @@ usage="Usage: $(basename $0) ${script_opts}: manages a well-configured firewall 
 # to whomever it wants on the Internet and receive answers, yet *not* be able to
 # listen to incoming new traffic, as it will receive none (since that inbound
 # new traffic will be blocked).
-
-
-
-# Original version written by Robert Penz (robert.penz@outertech.com).
-# This script is under GPL.
-
-# Adapted from GNU Linux Magazine France, number 83 (may 2006), p.14 (article
-# written by Christophe Grenier, grenier@cgsecurity.org).
 
 
 # For older distributions, this script is meant to be copied in /etc/init.d, to
@@ -163,7 +172,7 @@ fi
 #
 # 's' is for server (log prefix must be shorter than 29 characters):
 #
-version="s-27"
+version="s-28"
 
 # Logic of toggle variables: they are to be compared to "true" or "false"
 # (clearer than, respectively, 0 or 1).
@@ -197,7 +206,7 @@ fi
 
 if [ -f "${log_file}" ]; then
 
-	/bin/rm -f "${log_file}"
+	/bin/mv -f "${log_file}" "${log_file}.previous"
 
 fi
 
