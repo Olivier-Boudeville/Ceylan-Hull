@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0): [-r|--recent] [-a|--all] [-nf|--no-fetch] [-na|--no-autoplay]: allows to (possibly) fetch from server and review conveniently any set of CCTV recordings dating back (based on the default selection mode) from yesterday and the three days before, from the current directory.
 
 Options:
@@ -218,9 +225,10 @@ if [ $do_fetch -eq 0 ]; then
 
 	else
 
-		message="CCTV recordings have been fetched, hit Enter to review them${suffix}."
+		#message="CCTV recordings have been fetched, hit Enter to review them${suffix}."
+		message="Recordings are available, my Lord${suffix}."
 
-		echo "${message}"
+		echo "${message}. Hit Enter to start their review."
 
 		# As the fetch might have been long, notification useful:
 		say.sh "${message}"
