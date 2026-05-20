@@ -92,7 +92,8 @@ base_device_dir="/sys/devices"
 # $ journalctl -u fan-control.service
 
 # To check the corresponding script logs:
-# $ cat /root/.last-fan-control
+# $ cat /root/.last-fan-control.log
+# (also: cat /root/.last-fan-control.log.previous)
 
 # And to request that, from now on, it is always launched:
 # $ systemctl enable fan-control.service
