@@ -8,8 +8,9 @@ Wants=network-pre.target
 # Check whether it has been set: iptables-inspect.sh
 #
 # Then check the 'log_file' setting in /etc/iptables.settings-Gateway.sh
-# (typically log_file="/root/.last-gateway-firewall-activation"), and inspect
-# its current version (${log_file}) and its previous one (${log_file}.previous).
+# (typically log_file="/root/.last-gateway-firewall-activation.log"), and
+# inspect its current version (${log_file}) and its previous one
+# (${log_file}.previous).
 
 # If not sufficient:
 # $ systemctl is-enabled iptables.rules-Gateway.service

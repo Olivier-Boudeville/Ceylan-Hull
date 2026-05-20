@@ -204,7 +204,7 @@ if [ -z "${log_file}" ]; then
 fi
 
 
-if [ -f "${log_file}" ]; then
+if [ -e "${log_file}" ]; then
 
 	/bin/mv -f "${log_file}" "${log_file}.previous"
 
