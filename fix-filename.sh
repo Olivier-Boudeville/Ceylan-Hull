@@ -20,18 +20,29 @@ mv="$(which mv | grep -v ridiculously)"
 #tr="$(which tr | grep -v ridiculously)"
 
 usage="
-Usage: $(basename $0) <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
+Usage: $(basename $0) [-h|--help] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
 
 At least usually running this script once is sufficient.
+
+See also fix-paths-in-tree.sh for a multifile, recursive version thereof.
 "
 
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+
+	echo "${usage}"
+
+	exit
+
+fi
+
+
 if [ $# -eq 0 ]; then
-	echo "
 
-	Error, no argument given. ${usage}
+	echo "  Error, no argument given. ${usage}" 1>&2
 
-	" 1>&2
 	exit 20
+
 fi
 
 
@@ -39,11 +50,7 @@ original_name="$*"
 
 if [ ! -e "${original_name}" ]; then
 
-	echo "
-
-	Error, no entry named <${original_name}> exists. ${usage}
-
-	" 1>&2
+	echo "  Error, no entry named <${original_name}> exists. ${usage}" 1>&2
 
 	exit 25
 
@@ -103,7 +110,7 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 	# '--' to stop parsing options, otherwise an entry starting with a dash
 	# would be interpreted as an option:
 	#
-	${mv} -f -- "${original_name}" "${corrected_name}"
+	"${mv}" -f -- "${original_name}" "${corrected_name}"
 
 #else
 
