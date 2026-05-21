@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2013-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [-h|--help] [-l|--low-profile] [-c|--clean-system-caches] [-e|--even-ignored]: updates the current distribution, and traces it.
 
  Options (order must be respected):
@@ -171,7 +178,7 @@ fi
 
 
 # Only the standard output will be intercepted there, not the error one:
-log_file="/root/.last-distro-update"
+log_file="/root/.last-distro-update.log"
 
 if [ "$(id -u)" = "0" ]; then
 

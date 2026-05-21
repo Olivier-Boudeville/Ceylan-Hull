@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2022-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [-h|--help] [pre|post]: applies relevant settings for the local host.
 This script should be run typically after booting and resuming from suspend, as root.
 
@@ -20,7 +27,13 @@ fi
 # Otherwise no overwriting (e.g. of pwm1_enable) may be allowed:
 set +o noclobber
 
-log_file="${HOME}/.last-fan-control"
+log_file="${HOME}/.last-fan-control.log"
+
+if [ -e "${log_file}" ]; then
+
+	/bin/mv -f "${log_file}" "${log_file}.previous"
+
+fi
 
 echo "Running at $(date) '$0 $*'" > "${log_file}"
 
