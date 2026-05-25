@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2023-2023 Olivier Boudeville
+# Copyright (C) 2023-2026 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 #
@@ -106,7 +106,8 @@ echo "Generation succeeded!"
 
 if [ $do_display -eq 0 ]; then
 
-	viewer_name="eog"
+	#viewer_name="eog"
+    viewer_name="loupe"
 
 	viewer="$(which ${viewer_name} 2>/dev/null)"
 
