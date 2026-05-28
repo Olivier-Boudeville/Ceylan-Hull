@@ -2,6 +2,7 @@
 Description=Sets this computer as a NAT gateway
 Before=network-pre.target
 Wants=network-pre.target
+DefaultDependencies=no
 
 # If this service does not seem to start at boot:
 
@@ -30,10 +31,11 @@ Wants=network-pre.target
 #     Active: active since [...]
 
 [Service]
+Type=oneshot
 ExecStart=/usr/local/bin/iptables.rules-Gateway.sh start
 ExecReload=/usr/local/bin/iptables.rules-Gateway.sh reload
 
-# Disabled as too dangerous:
+# Disabled, as too dangerous:
 # (locked-out from server if accessed from SSH)
 #ExecStop=/usr/local/bin/iptables.rules-Gateway.sh stop
 

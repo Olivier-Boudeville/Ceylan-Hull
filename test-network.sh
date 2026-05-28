@@ -127,11 +127,11 @@ else
 	# As risk of longer DNS time-out:
 	echo "Testing the ${gateway_name} gateway..."
 
-	gateway_ip="$(${host_cmd} ${host_opts} ${gateway_name} 2>/dev/null | sed 's|.*address ||1')"
+	gateway_ip="$(${host_cmd} ${host_opts} ${gateway_name} | sed 's|.*address ||1' 2>/dev/null)"
 
 	if [ -z "${gateway_ip}" ]; then
 
-		echo "  Error, no gateway IP available." 1>&2
+		echo "  Error, no IP found for gateway ${gateway_name}." 1>&2
 		exit 17
 
 	fi
@@ -176,6 +176,8 @@ while [ $is_good -eq 1 ]; do
 
 			echo "Gateway IP (${gateway_ip}) not responding, internal network connectivity ko? Possibly no known gateway, continuing checks..." 1>&2
 
+			other_host_detected=1
+
 			# Possibly set in the environment:
 			if [ -n "${TEST_LAN_HOST_IP}" ]; then
 
@@ -183,43 +185,53 @@ while [ $is_good -eq 1 ]; do
 
 					echo "The IP of the test LAN host (${TEST_LAN_HOST_IP}) is responding, so the LAN seems to be functional, and thus the gateway seems down." 1>&2
 
+					other_host_detected=0
+
 				else
 
 					echo "The IP of the test LAN host (${TEST_LAN_HOST_IP}) is not responding either, so the local host may have lost its network connectivity." 1>&2
 
 				fi
 
+			else
+
+				echo "(no test LAN host defined - no TEST_LAN_HOST_IP environment variable set, hence not tested)"
+
 			fi
 
-			#echo "Pinging now continuously to know when network is back..."
-			#"${ping}" ${gateway_ip}
+			if [ $other_host_detected -eq 1 ]; then
 
-			if "${ping}" ${ping_opts} ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
+				#echo "Pinging now continuously to know when network is back..."
+				#"${ping}" ${gateway_ip}
 
-				echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivity ok"
+				if "${ping}" ${ping_opts} ${reliable_internet_server_ip} 1>/dev/null 2>&1; then
 
-				if "${ping}" ${ping_opts} ${reliable_internet_server_name} 1>/dev/null 2>&1; then
+					echo " - reliable internet server IP (${reliable_internet_server_ip}) responding, external network connectivity ok"
 
-					echo " - reliable internet server DNS name (${reliable_internet_server_name}) responding, external DNS ok"
+					if "${ping}" ${ping_opts} ${reliable_internet_server_name} 1>/dev/null 2>&1; then
 
-					echo "Everything seems to be fine!"
-					is_good=0
+						echo " - reliable internet server DNS name (${reliable_internet_server_name}) responding, external DNS ok"
+
+						echo "Everything seems to be fine!"
+						is_good=0
+
+					else
+
+						echo "Reliable internet server DNS name (${reliable_internet_server_name}) not responding, external DNS ko?" 1>&2
+						#exit 4
+
+					fi
 
 				else
 
-					echo "Reliable internet server DNS name (${reliable_internet_server_name}) not responding, external DNS ko?" 1>&2
-					#exit 4
+					echo "Reliable internet server IP (${reliable_internet_server_ip}) not responding, external network connectivity ko?" 1>&2
+					#exit 3
 
 				fi
 
-			else
-
-				echo "Reliable internet server IP (${reliable_internet_server_ip}) not responding, external network connectivity ko?" 1>&2
-				#exit 3
+				#exit 1
 
 			fi
-
-			#exit 1
 
 		fi
 
