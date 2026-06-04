@@ -179,7 +179,7 @@ if [ $do_fetch -eq 0 ]; then
 
 		echo "Fetching as user ${USER} CCTV all recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}:"
 
-		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*.mkv . 2>/dev/null
+		"${scp}" ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*.mkv . 2>/dev/null
 
 	elif [ $select_mode -eq 2 ]; then
 
@@ -188,7 +188,7 @@ if [ $do_fetch -eq 0 ]; then
 
 		echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and today (i.e. ${today}):"
 
-		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${today}*.mkv . 2>/dev/null
+		"${scp}" ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${today}*.mkv . 2>/dev/null
 
 
 	elif [ $select_mode -eq 3 ]; then
@@ -200,7 +200,7 @@ if [ $do_fetch -eq 0 ]; then
 
 		echo "Fetching as user ${USER} CCTV recordings from ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH} for yesterday (i.e. ${yesterday}) and the three days before (i.e. ${day_minus_two}, ${day_minus_three} and ${day_minus_four}):"
 
-		${scp} ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_four}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv . 2>/dev/null
+		"${scp}" ${scp_opt} ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_four}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_three}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${day_minus_two}*.mkv ${CCTV_USER}@${CCTV_SERVER}:${CCTV_BASE_PATH}/${CCTV_PREFIX}*${yesterday}*.mkv . 2>/dev/null
 
 	fi
 
@@ -217,16 +217,16 @@ if [ $do_fetch -eq 0 ]; then
 
 	if [ -z "$(/bin/ls *.mkv 2>/dev/null)" ]; then
 
-		message="No recording was available, nothing to review${suffix}."
-		echo "${message}"
+		message="No recording was available, nothing to review${suffix}"
+		echo "${message}."
 		say.sh "${message}"
 
 		exit
 
 	else
 
-		#message="CCTV recordings have been fetched, hit Enter to review them${suffix}."
-		message="Recordings are available, my Lord${suffix}."
+		#message="CCTV recordings have been fetched, hit Enter to review them${suffix}"
+		message="Recordings are available, my Lord${suffix}"
 
 		echo "${message}. Hit Enter to start their review."
 
@@ -287,7 +287,7 @@ for f in ${recordings}; do
 			echo " - viewing $f"
 
 			#echo ${viewer} ${viewer_opts} "$f"
-			${viewer} ${viewer_opts} "$f" 1>/dev/null 2>&1
+			"${viewer}" ${viewer_opts} "$f" 1>/dev/null 2>&1
 
 			# For error messages and all:
 			#${viewer} ${viewer_opts} "$f"
