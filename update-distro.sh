@@ -63,12 +63,12 @@ pacman_update()
 
 	if [ $low_profile -eq 0 ]; then
 
-		if ! pacman ${base_update_opt} 1>>"${log_file}" 2>&1; then
+		if ! "${pacman}" ${update_opt} 1>>"${log_file}" 2>&1; then
 
 			echo "Warning: update failed, trying to clean caches first." >> "${log_file}"
 			clean_caches
 
-			if ! pacman ${base_update_opt} 1>>"${log_file}" 2>&1; then
+			if ! "${pacman}" ${update_opt} 1>>"${log_file}" 2>&1; then
 
 				# Still sufficient to be flagged as spam:
 				#echo "  Error, pacman-based update failed." 1>&2
@@ -81,12 +81,12 @@ pacman_update()
 
 	else
 
-		if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+		if ! "${pacman}" ${update_opt} 2>&1 | tee -a "${log_file}"; then
 
 			echo "Warning: update failed, trying to clean caches first." >> "${log_file}"
 			clean_caches
 
-			if ! pacman ${base_update_opt} 2>&1 | tee -a "${log_file}"; then
+			if ! "${pacman}" ${update_opt} 2>&1 | tee -a "${log_file}"; then
 
 				echo "  Error, pacman-based update failed." 1>&2
 				exit 7
@@ -118,6 +118,16 @@ if [ -f "${distro_id_file}" ]; then
 	if [ "${NAME}" = "Arch Linux" ]; then
 
 		distro_type="Arch"
+
+		pacman="$(which pacman 2>/dev/null)"
+
+		if [ ! -x "${pacman}" ]; then
+
+			echo "  Error, no 'pacman' executable found." 1>&2
+
+			exit 55
+
+		fi
 
 	fi
 
@@ -251,10 +261,12 @@ if [ "$(id -u)" = "0" ]; then
 
 			fi
 
-			keyring_opt="-S --needed --noconfirm archlinux-keyring"
+			base_pacman_opts="--needed --noconfirm"
+
+			keyring_opt="-S ${base_pacman_opts} archlinux-keyring"
 
 			# Too many updates blocked by Haskell-related packages:
-			base_update_opt="-Syu --noconfirm --ignore=ghc"
+			update_opt="-Syu ${base_pacman_opts} --ignore=ghc"
 
 			# We start by updating the Arch keyring, as otherwise, updates made
 			# after a longer duration are bound to fail due to expired keys:
@@ -269,7 +281,7 @@ if [ "$(id -u)" = "0" ]; then
 				# To be run from the command-line:
 				# (problem: tee hid the error return code)
 
-				if ! pacman ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
+				if ! "${pacman}" ${keyring_opt} 2>&1 | tee -a "${log_file}"; then
 
 					echo "  Error, pacman-based Arch key update failed." 1>&2
 					exit 5
@@ -280,7 +292,7 @@ if [ "$(id -u)" = "0" ]; then
 
 				if [ -n "${forced_packages}" ]; then
 
-					pacman -Sy --noconfirm ${forced_packages} 2>&1 | tee -a "${log_file}"
+					"${pacman}" -Sy ${base_pacman_opts} ${forced_packages} 2>&1 | tee -a "${log_file}"
 
 				fi
 
@@ -292,7 +304,7 @@ if [ "$(id -u)" = "0" ]; then
 				# (avoiding: 'warning: archlinux-keyring-xxx is up to date --
 				# skipping')
 				#
-				if ! pacman ${keyring_opt} 1>>"${log_file}" 2>&1; then
+				if ! "${pacman}" ${keyring_opt} 1>>"${log_file}" 2>&1; then
 
 					# Still sufficient to be flagged as spam:
 					#echo "  Error, pacman-based Arch key update failed." 1>&2
@@ -308,8 +320,8 @@ if [ "$(id -u)" = "0" ]; then
 					# Could cause the output once emailed to be detected as a
 					# spam:
 					#
-					#pacman -Sy --noconfirm ${forced_packages} 1>>"${log_file}" #2>&1
-					pacman -Sy --noconfirm ${forced_packages} 1>"${log_file}" 2>&1
+					#"${pacman}"pacman -Sy --needed --noconfirm ${forced_packages} 1>>"${log_file}" #2>&1
+					"${pacman}" -Sy --needed --noconfirm ${forced_packages} 1>>"${log_file}" 2>&1
 
 				fi
 
