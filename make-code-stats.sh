@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2010-2025 Olivier Boudeville
+# Copyright (C) 2010-2026 Olivier Boudeville
 #
 # Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
 
@@ -8,7 +8,12 @@
 
 
 usage="Usage: $(basename $0) [-h|--help] [--lang LANGUAGE] [SOURCE_DIRECTORY]: evaluates various very simple/basic metrics regarding the code found from any specified root directory, otherwise from the current one.
-Default language is 'Erlang'. Other supported languages are: 'Java', 'Python'.
+
+Default language is 'Erlang' (*.erl/*.hrl); the other supported languages are: 'Java' (*.java), 'Python' (*.py), 'Javascript' (*.js) and 'React' (*.jsx).
+
+Note that multi-line comments are generally not taken into account (this would require more advanced parsing), resulting in over-estimating the size of the actual code.
+
+Only regular files are selected: symlinks are not taken into account either (not desirable here, not wanting to evade from the target source tree or to take into account some files more than once, typically if some were symlinked in a top-level 'include' directory).
 "
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -39,6 +44,12 @@ case ${lang} in
 		;;
 
 	"Python")
+		;;
+
+	"Javascript")
+		;;
+
+	"React")
 		;;
 
 	*)
@@ -108,12 +119,6 @@ cat="/bin/cat"
 grep="/bin/grep"
 
 
-# We used to use -L to follow symlinks (not desirable here, not wanting to evade
-# from the target source tree).
-#
-# Only regular files are selected, as includes in a tree may be symlinked in a
-# top-level 'include' directory, and we do not want them to be counted more than
-# once.
 
 
 tmp_file=".tmp-code-stats.txt"
@@ -122,6 +127,13 @@ if [ -f "${tmp_file}" ]; then
 	/bin/rm -f "${tmp_file}"
 fi
 
+
+# We used to use -L to follow symlinks (not desirable here, not wanting to evade
+# from the target source tree).
+#
+# Only regular files are selected, as includes in a tree may be symlinked in a
+# top-level 'include' directory, and we do not want them to be counted more than
+# once.
 
 if [ "${lang}" = "Erlang" ]; then
 
@@ -184,8 +196,43 @@ elif [ "${lang}" = "Python" ]; then
 	fi
 
 
-fi
+elif [ "${lang}" = "Javascript" ]; then
 
+	js_files=$(${find} . \( -type f -o -path './_*' -prune \) -a -name '*.js' -print)
+
+	#echo "js_files = ${js_files}"
+
+	js_count="$(echo ${js_files} | ${wc} -w)"
+
+	target_files="${js_files}"
+
+	if [ "${target_files}" = " " ]; then
+
+		echo "  Error, no Javascript source file found from '${root_dir}'." 1>&2
+		exit 28
+
+	fi
+
+
+elif [ "${lang}" = "React" ]; then
+
+	react_files=$(${find} . \( -type f -o -path './_*' -prune \) -a -name '*.jsx' -print)
+
+	#echo "react_files = ${react_files}"
+
+	react_count="$(echo ${react_files} | ${wc} -w)"
+
+	target_files="${react_files}"
+
+	if [ "${target_files}" = " " ]; then
+
+		echo "  Error, no React source file found from '${root_dir}'." 1>&2
+		exit 29
+
+	fi
+
+
+fi
 
 #echo "target_files = ${target_files}"
 
@@ -220,12 +267,18 @@ elif [ "${lang}" = "Java" ]; then
 	comment_line_count=$(${cat} "${tmp_file}" | ${grep} '^[[:space:]]*//' | ${wc} -l)
 elif [ "${lang}" = "Python" ]; then
 	comment_line_count=$(${cat} "${tmp_file}" | ${grep} '^[[:space:]]*#' | ${wc} -l)
+# As the same counting applies:
+elif [ "${lang}" = "Javascript" ] || [ "${lang}" = "React" ]; then
+	# Multi-line '/* ... */' comments should be taken into account as well:
+	comment_line_count=$(${cat} "${tmp_file}" | ${grep} '^[[:space:]]*//' | ${wc} -l)
 fi
 
 code_line_count=$(${expr} ${full_line_count} - ${empty_line_count} - ${comment_line_count})
 
 empty_percentage=$(echo "scale=1; 100 * ${empty_line_count} / ${full_line_count}" | ${bc})
+
 comment_percentage=$(echo "scale=1; 100 * ${comment_line_count} / ${full_line_count}" | ${bc})
+
 code_percentage=$(echo "scale=1 ; 100 * ${code_line_count} / ${full_line_count}" | ${bc})
 
 echo "In the ${lang} source code found from ${root_dir}, we have:"
@@ -242,6 +295,14 @@ elif [ "${lang}" = "Python" ]; then
 
 	echo "  + ${python_count} source files (*.py)"
 
+elif [ "${lang}" = "Javascript" ]; then
+
+	echo "  + ${js_count} source files (*.js)"
+
+elif [ "${lang}" = "React" ]; then
+
+	echo "  + ${react_count} source files (*.jsx)"
+
 fi
 
 echo "  + a grand total of ${full_line_count} lines:"
@@ -251,6 +312,9 @@ echo "    - ${comment_line_count} of which (${comment_percentage}%) are comments
 echo "    - ${code_line_count} of which (${code_percentage}%) are code"
 
 
+# To be commented out in order to be able to check whether some content has been
+# indeed taken into account:
+#
 if [ -f "${tmp_file}" ]; then
 	/bin/rm -f "${tmp_file}"
 fi
