@@ -1,8 +1,15 @@
 #!/bin/sh
 
+# Copyright (C) 2026-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [-h|--help]: displays the status of the local batteries, using the most relevant tool available (including depending on user permissions)."
 
-if [ "$1" = "-h" ] | [ "$1" = "--help" ]; then
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
 	exit
