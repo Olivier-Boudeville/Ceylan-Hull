@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2019-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 # Awful PGP support:
 target_client="thunderbird"
 
@@ -21,14 +28,19 @@ fi
 # May be useful/needed, for example to have proper date/time formats whereas the
 # system uses other settings:
 #
+# (pacman -S thunderbird-i18n-fr seems necessary, at least in some cases)
 export LC_ALL=fr_FR.UTF-8
+export LANG="${LC_ALL}"
 
 
 if [ "${target_client}" = "thunderbird" ]; then
 
 	# We recommend using the "DKIM Verifier" plugin.
 
-	thunderbird 1>/dev/null 2>&1 &
+	# Any locale set in thunderbird's preferences will override all efforts done
+	# here:
+	#
+	thunderbird --UILocale fr 1>/dev/null 2>&1 &
 
 elif [ "${target_client}" = "evolution" ]; then
 
