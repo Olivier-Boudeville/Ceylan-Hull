@@ -1,14 +1,25 @@
 #!/bin/sh
 
+# Copyright (C) 2025-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 help_short_opt="-h"
 help_long_opt="--help"
 
 
 usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] [PERCENTAGE]: sets the screen backlight brightness to the specified percentage level of the maximum brightness.
 
+Warning: a null brightness results in an unusable, black, "blank" screen.
+
 If no argument is specified, returns the current percentage level.
 
 Note: reading the brightness does not require root permissions, but setting it does.
+
+Refer to activate-keyboard-backlighting.sh not for the screen backlighting but for the keyboard one.
 "
 
 if [ "$1" = "${help_short_opt}" ] || [ "$1" = "${help_long_opt}" ]; then
