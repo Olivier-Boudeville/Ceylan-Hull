@@ -127,7 +127,7 @@ else
 	# As risk of longer DNS time-out:
 	echo "Testing the ${gateway_name} gateway..."
 
-	gateway_ip="$(${host_cmd} ${host_opts} ${gateway_name} | sed 's|.*address ||1' 2>/dev/null)"
+	gateway_ip="$(${host_cmd} ${host_opts} ${gateway_name} | head -n1 | sed 's|.*address ||1' 2>/dev/null)"
 
 	if [ -z "${gateway_ip}" ]; then
 
