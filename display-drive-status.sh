@@ -21,11 +21,14 @@ function report()
 
 	message="$1"
 
-	echo "${message}"
+	# No non-error outputs when run by cron:
+	if [ $cron -eq 1 ]; then
+		echo "${message}"
+	fi
 
 	if [ $log -eq 0 ]; then
 
-		echo "${message}" 1> "${log_file}"
+		echo "${message}" 1>> "${log_file}"
 
 	fi
 
@@ -41,11 +44,14 @@ function set_warning()
 
 		full_msg="Warning: $1"
 
-		echo "${full_msg}" 1>&2
+		# No non-error outputs when run by cron:
+		if [ $cron -eq 1 ]; then
+			echo "${full_msg}" 1>&2
+		fi
 
 		if [ $log -eq 0 ]; then
 
-			echo "${full_msg}" 1> "${log_file}"
+			echo "${full_msg}" 1>> "${log_file}"
 
 		fi
 
@@ -73,7 +79,7 @@ function set_error()
 
 		if [ $log -eq 0 ]; then
 
-			echo "${full_msg}" 1> "${log_file}"
+			echo "${full_msg}" 1>> "${log_file}"
 
 		fi
 
@@ -142,8 +148,9 @@ function diagnose_disk()
 	diag="$1"
 
 	temp="$(printf '%s\n' "${diag}" | grep Airflow_Temperature_Cel | awk '{printf $10}')"
+	#echo "Diagnosed airflow temp: '${temp}'."
 	if [ -n "${temp}" ]; then
-		report " - current temperature (airflow): ${temp}°C"
+		report " - current (airflow) temperature: ${temp}°C"
 	fi
 
 	temp="$(printf '%s\n' "${diag}" | grep Temperature_Celsius | awk '{printf $10}')"
@@ -159,9 +166,16 @@ function diagnose_disk()
 
 	power_cycles="$(printf '%s\n' "${diag}" | grep Power_Cycle_Count | awk '{printf $10}')"
 	if [ -n "${power_cycles}" ]; then
-		report " - ${power_cycles} start/stop power cycles done"
+		report " - ${power_cycles} power cycles done"
 	fi
 
+	# Often the same as previous:
+	start_stop_count="$(printf '%s\n' "${diag}" | grep Start_Stop_Count | awk '{printf $10}')"
+	if [ -n "${start_stop_count}" ]; then
+		if [ "${start_stop_count}" != "${power_cycles}" ]; then
+			report " - ${start_stop_count} start/stop operations done"
+		fi
+	fi
 
 	ecc_rate="$(printf '%s\n' "${diag}" | grep ECC_Error_Rate | awk '{printf $10}')"
 
@@ -258,7 +272,7 @@ function diagnose_disk()
 
 		else
 
-			set_warning "${pqr_count} recoveries have been detected, degradation started."
+			set_warning "${pqr_count} PQR recoveries have been detected, degradation started."
 
 		fi
 
@@ -271,11 +285,11 @@ function diagnose_disk()
 
 		if [ ! "${realloc}" = "0" ]; then
 
-			set_warning "reallocated (i.e. faulty) sectors detected (${realloc}), sign of an aging/dying disk."
+			set_warning "${realloc} reallocation events reported (i.e. faulty sectors), sign of an aging/dying disk."
 
 		else
 
-			[ $report_ok -eq 1 ] || report "(no faulty sectors detected)"
+			[ $report_ok -eq 1 ] || report "(no sector reallocation event detected)"
 
 		fi
 
@@ -288,11 +302,11 @@ function diagnose_disk()
 
 		if [ ! "${realloc_sect}" = "0" ]; then
 
-			set_warning "reallocated (i.e. faulty) sectors have been detected (${realloc}), sign of an aging/dying disk."
+			set_warning "${realloc} reallocated (faulty) sectors have been detected, sign of an aging/dying disk."
 
 		else
 
-			[ $report_ok -eq 1 ] || report "(no faulty sectors have been detected)"
+			[ $report_ok -eq 1 ] || report "(no faulty sector detected)"
 
 		fi
 
@@ -341,8 +355,7 @@ function diagnose_disk()
 
 		if [ ! "${wear_count}" = "0" ]; then
 
-			# Average number of erasure cycles ofthe NAND cells:
-			set_warning "${wear_count} wear leveling detected."
+			set_warning "wear leveling detected (average number of erasure cycles of the NAND cells: ${wear_count})."
 
 		else
 
@@ -472,7 +485,8 @@ function diagnose_disk()
 
 	fi
 
-	echo
+	# Blank line:
+	report ""
 
 }
 
@@ -487,14 +501,16 @@ function run_smartctl()
 	opts="$2"
 
 	diag="$("${smartctl_exec}" -A "/dev/$1" ${opts})"
-	res=$?
 
-	echo "${diag}"
+	# Not 'res', otherwise colliding use:
+	res_diag=$?
+
+	#echo "${diag}"
 
 	# Bit 1: Device open failed, device did not return an IDENTIFY DEVICE
 	# structure, or device is in a low-power mode.
 	#
-	bit_1=$((${res} & 1))
+	bit_1=$((${res_diag} & 1))
 
 	if [ $bit_1 -eq 1 ]; then
 
@@ -507,7 +523,8 @@ function run_smartctl()
 
 	fi
 
-	return ${res}
+	# printf 'DEBUG: res_diag="%s"\n' "$res_diag" >&2
+	return ${res_diag}
 
 }
 
@@ -543,7 +560,12 @@ The return codes that are specific to issues of this script are higher or equal 
 
 Requires the 'jq' executable (provided on Arch by the 'jq' package).
 
-Will rely on the 'nvme' command if available (which is provided on Arch by the 'nvme-cli' package)."
+Will rely on the 'nvme' command if available (which is provided on Arch by the 'nvme-cli' package).
+
+Typical usage with cron is, for the root user:
+# Every Monday at 4:13 AM, check and record the status of all local disks:
+13  04   *   *  1 /usr/local/hull/display-drive-status.sh --cron
+"
 
 
 token_eaten=1
@@ -680,7 +702,7 @@ if [ ${log} -eq 0 ]; then
 
 	fi
 
-	echo "Registering logs on $(date)." > "${log_file}"
+	echo "Script $(basename $0) registering disk-related logs on $(date)." > "${log_file}"
 
 fi
 
@@ -758,7 +780,7 @@ if [ $all_disks -eq 0 ]; then
 
 	fi
 
-	echo
+	report ""
 
 fi
 
@@ -848,7 +870,8 @@ for d in ${hdds}; do
 
 	#"${smartctl_exec}" -A "/dev/$d" | grep -E -i "WHEN_FAILED|temp|wear|health|percent|life"
 
-	diag="$(run_smartctl "$d")"
+	# Sets 'diag':
+	run_smartctl "$d"
 
 	[ $detail -eq 1 ] || report "HDD diagnosis: ${diag}
 "
@@ -860,7 +883,8 @@ for d in ${ssd_satas}; do
 
     report "=== For SATA SSD drive $d:"
 
-	diag="$(run_smartctl "$d")"
+	# Sets 'diag':
+	run_smartctl "$d"
 
 	[ $detail -eq 1 ] || report "SATA SSD diagnosis: ${diag}
 "
@@ -1024,7 +1048,7 @@ if [ -n "${ssd_nvmes}" ]; then
 
 			else
 
-				set_error "${error_log_str} ${error_log_problem_hint}."
+				set_warning "${error_log_str} ${error_log_problem_hint}."
 
 			fi
 
@@ -1041,6 +1065,7 @@ if [ -n "${ssd_nvmes}" ]; then
 
 			fi
 
+			# "Temperature Sensor *" are too detailed.
 
 			# Generally verbose, hard to parse and not that useful:
 			#[ $detail -eq 1 ] || "${nvme_exec}" error-log "/dev/$d"
@@ -1198,4 +1223,30 @@ if [ -n "${ssd_nvmes}" ]; then
 
 fi
 
-exit ${exit_code}
+
+# As, with cron, a notication is sent iff a non-zero exit code is returned, or
+# if outputs to normal or error file descriptors are made:
+#
+# (so: report only errors, not warnings or normal messages; and log all messages
+# in all cases)
+#
+if [ $cron -eq 0 ]; then
+
+	if [ $exit_code -eq ${error_code} ]; then
+
+		echo "In cron mode and having reached error level ${error_code}, reporting the diagnoses made:" 1>&2
+		cat "${log_file}" 1>&2
+
+		exit ${error_code}
+
+	fi
+
+	# Never reporting warning_code, as this would trigger cron notification:
+	exit
+
+else
+
+	# Unadultered:
+	exit ${exit_code}
+
+fi
