@@ -82,24 +82,30 @@ fi
 
 
 # Not taken into account:
-#export LC_ALL=fr_FR.UTF-8
+export LC_ALL=fr_FR.UTF-8
 #export LC_ALL=en_US.UTF-8
 
-#export LANG=en_US.UTF-8
-#export LC_MESSAGES=en_US.UTF-8
+export LANG=fr_FR
+
+#export LC_MESSAGES="${LC_ALL}"
 
 
 # Setting in ~/Software/ProjectLibre/projectlibre-x.y.z/projectlibre.sh, in
 # JAVA_OPTS:
 #
-#lang_fr_opts="-Duser.language=fr -Duser.country=FR"
-#lang_en_opts="-Duser.language=en -Duser.country=US"
-#
+lang_fr_opts="-Duser.language=fr -Duser.country=FR"
+lang_en_opts="-Duser.language=en -Duser.country=US"
+
+# Not taken into account:
+lang_opts="${lang_fr_opts}"
+
+
 # (not taken into account either, as .projectlibre/run.conf or
 # ~/.java/.userPrefs/org/projectlibre1/)
 #
-# The right, only location is: ./com/projectlibre1/preference/prefs.xml, whose
-# content could be for example:
+# The right, only location is:
+# ~/.java/.userPrefs/com/projectlibre1/preference/prefs.xml, whose content could
+# be for example:
 #
 #<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 #<!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
@@ -108,8 +114,12 @@ fi
 #  <entry key="locale" value="fr"/>
 #  <entry key="useExternalLocales" value="true"/>
 #</map>
-
+#
+# Sufficient for locale, not for currency. For this one, just edit the
+# auto-generated ~/.projectlibre/run.conf notably with:
+#
+# JAVA_OPTS="-Xms128m -Xmx768m -Duser.language=fr -Duser.country=FR"
 
 #echo "${editor_dir}/projectlibre.sh ${any_project_file}"
 
-"${editor_dir}/projectlibre.sh" "${any_project_file}" 1>/dev/null 2>&1 &
+"${editor_dir}/projectlibre.sh" ${lang_opts} "${any_project_file}" 1>/dev/null 2>&1 &
