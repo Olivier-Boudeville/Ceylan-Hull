@@ -23,8 +23,9 @@ If no argument at all is specified, then ELEM_DIR=\"${default_elem_dir}\" and th
 Examples:
 
  '$(basename $0) ~/Downloads foo.pdf my-documents' will move any latest-modified element in ~/Downloads to my-documents/foo.pdf
- '$(basename $0) -p ~/Downloads' will move any latest-modified element in ~/Downloads ${current_date}-<ITS FIXED NAME>
- '$(basename $0) /tmp' will move any latest-modified element in /tmp in the current directory (with the same name)
+ '$(basename $0) -p ~/Downloads' will move any latest-modified element in ~/Downloads to ./${current_date}-<ITS FIXED FILENAME>
+ '$(basename $0) /tmp' will move any latest-modified element in /tmp in the current directory (with the same filename)
+ '$(basename $0)' will move any latest-modified element in ${default_elem_dir} in the current directory, with a fixed filename
 "
 
 
