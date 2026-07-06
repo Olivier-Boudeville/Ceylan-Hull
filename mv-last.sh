@@ -1,6 +1,10 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) ELEM_DIR [TARGET_ELEM_NAME] [DEST_DIR]: moves the most recent element (file or directory) found in the ELEM_DIR directory in any specified DEST_DIR directory, otherwise in the current directory.
+fix_script_name="fix-filename.sh"
+
+usage="Usage: $(basename $0) [-h|--help] [-f|--fix] ELEM_DIR [TARGET_ELEM_NAME] [DEST_DIR]: moves the most recent element (file or directory) found in the ELEM_DIR directory in any specified DEST_DIR directory, otherwise in the current directory.
+
+The -f / --fix option will lead to the moved element being also \"fixed\", i.e. properly renamed thanks to our ${fix_script_name} script.
 
 If TARGET_ELEM_NAME is specified, the element will be renamed accordingly, otherwise its name will be preserved.
 
@@ -17,6 +21,30 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 	exit
 
 fi
+
+
+fix=1
+
+if [ "$1" = "-f" ] || [ "$1" = "--fix" ]; then
+
+	shift
+
+	fix_script="$(which ${fix_script_name} 2>/dev/null)"
+
+	if [ ! -x "${fix_script}" ]; then
+
+		echo "  Error, the name of the moved element is requested to be fixed, but our '${fix_script_name}' script is not found in the PATH." 1>&2
+
+		exit 2
+
+	fi
+
+	#echo "(the name of the moved element will also be fixed)"
+	fix=0
+
+fi
+
+
 
 
 elem_dir="$1"
@@ -107,5 +135,12 @@ else
 	echo "  Error, failed to move '${source_path}' to '${target_path}'." 1>&2
 
 	exit 35
+
+fi
+
+
+if [ $fix -eq 0 ]; then
+
+	"${fix_script}" "${target_path}"
 
 fi
