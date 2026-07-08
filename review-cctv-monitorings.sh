@@ -239,18 +239,19 @@ if [ $do_fetch -eq 0 ]; then
 
 fi
 
+skip_q=", and 'q' to skip the current video"
 
 if [ "${viewer_name}" = "${mplayer_player_name}" ]; then
 
-	echo "Using mplayer, thus press '}' to fast forward."
+	echo "Using mplayer, thus press '}' to fast forward${skip_q}."
 
 elif [ "${viewer_name}" = "${mpv_player_name}" ]; then
 
-	echo "Using mpv, thus press '}' to fast forward."
+	echo "Using mpv, thus press '}' to fast forward${skip_q}."
 
 elif [ "${viewer_name}" = "${vlc_player_name}" ]; then
 
-	echo "Using VLC, thus press '+' to fast forward."
+	echo "Using VLC, thus press '+' to fast forward${skip_q}."
 
 fi
 
