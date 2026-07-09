@@ -62,10 +62,19 @@ standalone=1
 #
 run_in_background=0
 
-# May not be defined:
+#echo "HULL_NO_GRAPHICAL_OUTPUT = ${HULL_NO_GRAPHICAL_OUTPUT}"
+
+# May not be defined and exported:
 if [ "${HULL_NO_GRAPHICAL_OUTPUT}" = "0" ]; then
+
+	echo "(will run in foreground)"
 	# If in text-only mode, one foreground editor instance per console:
 	run_in_background=1
+
+else
+
+	echo "(will run in background)"
+
 fi
 
 
@@ -191,8 +200,8 @@ chooseNedit()
 	# ...debian...
 	NEDITC_DEBIAN="$(which nedit-nc 2>/dev/null)"
 
-	# ...and others (nc can be netcat too)
-	NC="$(which nc 2>/dev/null)"
+	# ...and others (nc can be netcat too, hence disabled)
+	#NC="$(which nc 2>/dev/null)"
 
 	# Basic nedit, one full process by window:
 	NEDIT="$(which nedit 2>/dev/null)"
@@ -210,17 +219,17 @@ chooseNedit()
 		multi_win=0
 	fi
 
-	if [ -x "${NC}" ]; then
-		if ${NC} -h 2>/dev/null; then
-		 # Not netcat:
-			editor="${NC}"
-			editor_opt="${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
-			editor_short_name="Nc"
-			multi_win=0
-		# else: the nc being detected is netcat, not nedit tool: do nothing
-		# here.
-		fi
-	fi
+	#if [ -x "${NC}" ]; then
+	#	if ${NC} -h 2>/dev/null; then
+	#	 # Not netcat:
+	#		editor="${NC}"
+	#		editor_opt="${NEDIT_FAMILY_OPT} ${NEDIT_NC_OPT}"
+	#		editor_short_name="Nc"
+	#		multi_win=0
+	#	# else: the nc being detected is netcat, not nedit tool: do nothing
+	#	# here.
+	#	fi
+	#fi
 
 	if [ -x "${NEDITC_GENTOO}" ]; then
 		editor="${NEDITC_GENTOO}"
@@ -336,10 +345,11 @@ chooseEmacs()
 		# run_in_background shall remain unchanged, as it is context-dependent
 		# (e.g. whether X is available or not, see HULL_NO_GRAPHICAL_OUTPUT).
 
-	else
-
-		echo " Error, no (standalone) emacs available." 1>&2
-		exit 56
+	# Not an error:
+	#else
+    #
+	#	echo " Error, no (standalone) emacs available." 1>&2
+	#	exit 56
 
 	fi
 
@@ -478,20 +488,23 @@ autoSelectEditor()
 	fi
 
 
-	if [ -x "${NANO}" ]; then
-		chooseNano
+	chooseNano
+
+	if [ -n "${editor}" ]; then
 		return
 	fi
 
 
-	if [ -x "${VIM}" ]; then
-		chooseVim
+	chooseVim
+
+	if [ -n "${editor}" ]; then
 		return
 	fi
 
 
-	if [ -x "${VI}" ]; then
-		chooseVi
+	chooseVi
+
+	if [ -n "${editor}" ]; then
 		return
 	fi
 
