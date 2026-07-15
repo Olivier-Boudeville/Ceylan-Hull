@@ -67,13 +67,14 @@ run_in_background=0
 # May not be defined and exported:
 if [ "${HULL_NO_GRAPHICAL_OUTPUT}" = "0" ]; then
 
-	echo "(will run in foreground)"
+	#echo "(will run in foreground)"
 	# If in text-only mode, one foreground editor instance per console:
 	run_in_background=1
 
 else
 
-	echo "(will run in background)"
+	#echo "(will run in background)"
+	:
 
 fi
 
