@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Copyright (C) 2016-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
 usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering (sometimes denoted as a 'USB modem') enabled shares its Internet connectivity with this local host.
 
 Should multiple relevant network interfaces be found, the last one will be selected."
@@ -71,8 +77,10 @@ if_name="$(${ip} addr | grep ': enp0' | sed 's|^[[:digit:]]\+\.*\: ||1' | sed 's
 
 if [ -z "${if_name}" ]; then
 
-	echo " Error, no relevant network interface found (is USB tethering activated on the smartphone, typically, for Android ones, in: Settings -> Networks and Internet -> Access Point and Connection Sharing -> Via USB)?" 1>&2
-	#ip addr 1>&2
+	printf "  Error, no relevant network interface found.\n\nIs USB tethering activated on the smartphone, typically, for Android ones, in: 'Settings -> Networks and Internet -> Access Point and Connection Sharing -> Via USB?'\n\nAlso, if a new kernel has been installed prior to running this script, consider rebooting, as the current, \"old\" kernel is likely to be unable to load any new module (like rndis_host, cdc_ether or usbnet). We advise copying our for-*.conf files into /etc/modules-load.d/ to prevent that in the future.\n" 1>&2
+
+	printf "\nFound interfaces:\n$("${ip}" -c link)" 1>&2
+
 	exit 18
 
 fi
