@@ -395,7 +395,7 @@ if [ ${auto_play} -eq 0 ] && [ -n "${recordings}" ]; then
 
 	fi
 
-	echo "Deleting all *remote* (on ${CCTV_SERVER}) CCTV recordings just displayed? (y/n) [y]"
+	echo "Deleting all *remote* (on ${CCTV_SERVER}) CCTV recordings just displayed (and only them)? (y/n) [y]"
 
 	read answer
 
