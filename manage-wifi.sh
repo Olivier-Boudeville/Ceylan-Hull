@@ -76,12 +76,12 @@ arg="$1"
 
 if [ -z "${arg}" ] || [ "${arg}" = "status" ]; then
 
-	${rfkill} list
+	"${rfkill}" list
 	echo "Status of wifi interface ${if}: $(${iw} dev ${if} link)"
 
 elif [ "${arg}" = "start" ]; then
 
-	${rfkill} unblock wifi
+	"${rfkill}" unblock wifi
 
 	# Disabled as it resulted in netctl failing, expecting the interface to be
 	# down:
@@ -93,8 +93,8 @@ elif [ "${arg}" = "start" ]; then
 elif [ "${arg}" = "stop" ]; then
 
 	echo "Setting wifi interface ${if} down."
-	${ip} link set "${if}" down
-	${rfkill} block wifi
+	"${ip}" link set "${if}" down
+	"${rfkill}" block wifi
 
 	#${iw} dev ${if} link
 
@@ -105,21 +105,21 @@ elif [ "${arg}" = "scan" ]; then
 
 	# Otherwise an error "command failed: Network is down (-100)" is triggered:
 	echo "Setting wifi interface ${if} up."
-	${ip} link set "${if}" up
+	"${ip}" link set "${if}" up
 
 	echo "Scanning for wifi networks with interface ${if}, found following SSIDs:"
-	${iw} dev "${if}" scan | grep 'SSID: ' | sort | uniq | sed 's|.*SSID: | - |1'
+	"${iw}" dev "${if}" scan | grep 'SSID: ' | sort | uniq | sed 's|.*SSID: | - |1'
 
 	# See also: 'iwlist interface scan'.
 
 	# Expected by netctl:
 	echo "Setting wifi interface ${if} down."
-	${ip} link set "${if}" down
+	"${ip}" link set "${if}" down
 
 elif [ "${arg}" = "isolate" ]; then
 
 	echo "Blocking all wireless accesses now."
-	${rfkill} block all
+	"${rfkill}" block all
 
 else
 
@@ -151,7 +151,6 @@ fi
 # configuration.
 #
 # Otherwise one may take inspiration from the profiles in /etc/netctl/examples
-#
 # - if no encryption: 'iw dev ${if} connect $ESSID'
 # - if WEP is used: 'iw dev ${if} connect $ESSID key 0:$KEY'
 # - if using WPA/WPA2:
