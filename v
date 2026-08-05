@@ -338,7 +338,7 @@ chooseAudioPlayer()
 
 	if [ ! -x "${play_script}" ]; then
 
-		echo "Warning: Ceylan-Hull's '${play_script_name}' not found, defaulting to Mplayer." 1>&2
+		echo "Warning: Ceylan-Hull's '${play_script_name}' not found, defaulting to our chosen video player." 1>&2
 
 		chooseVideoPlayer
 
@@ -346,6 +346,7 @@ chooseAudioPlayer()
 
 		viewer="${play_script}"
 		viewer_short_name="Ceylan-Hull's '${play_script_name}'"
+		viewer_opt="--keep-volume"
 
 		# No simple way to display the usage notification of the player only
 		# once, as each file to view is managed separately of the others (and it
