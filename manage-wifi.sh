@@ -1,11 +1,18 @@
 #!/bin/sh
 
+# Copyright (C) 2014-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [--help|-h] [status|start|scan|stop|isolate]: manages the local Wifi configuration
   - without argument or with 'status': returns status
   - with 'start': put the (guessed) wifi interface up
   - with 'scan': scan for wifi access points (once started)
   - with 'stop': put the (guessed) wifi interface down (and blocks it)
-  - with 'isolate': ensures that no Wifi communication happens"
+  - with 'isolate': ensures that all wireless communications are blocked"
 
 
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
@@ -138,8 +145,9 @@ fi
 #	Soft blocked: no
 #	Hard blocked: no
 #
-# If hard blocked, toggle an hardware button (e.g. Ctrl-F8 on a Thinkpad whose
-# Fn/Ctrl keys have been swapped in the BIOS).
+# If hard blocked, toggle an hardware button (e.g. Fn-F8 on a Thinkpad whose
+# Fn/Ctrl keys have been swapped in the BIOS, actually corresponding to a
+# logical Ctrl-F8).
 #
 # If soft blocked, push once the wireless key (e.g. F8 or F12, or 'rfkill
 # unblock 1', or use this script with its 'start' argument).
@@ -203,3 +211,6 @@ fi
 # Otherwise USB tethering could be considered.
 #
 # or, as a last resort, sacrifice three chickens to the Wifi gods.
+#
+# Finally, the firewall may be checked, preferably with our iptables-inspect.sh
+# script.
