@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2014-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 
 # In most cases it is best to use:
 default_ntp_server="pool.ntp.org"
@@ -15,7 +22,11 @@ help_short_opt="-h"
 help_long_opt="--help"
 
 
-usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] [NTP_SERVER]: sets time and date by NTP thanks to the specified or default (${default_ntp_server}) server."
+usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] [NTP_SERVER]: sets time and date by NTP thanks to the specified or default (${default_ntp_server}) server.
+
+Must be run as root.
+
+For an explicit time setting, refer to our set-time-and-date.sh script."
 
 if [ "$1" = "${help_short_opt}" ] || [ "$1" = "${help_long_opt}" ]; then
 
@@ -61,7 +72,7 @@ if [ $(id -u) = "0" ]; then
 
 else
 
-	echo "  Error, you must be root to do that." 1>&2
+	echo " Error, this script must be run as root." 1>&2
 
 	exit 15
 
