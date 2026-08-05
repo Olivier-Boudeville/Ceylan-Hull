@@ -1,12 +1,19 @@
 #!/bin/sh
 
+# Copyright (C) 2023-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [-h|--help] [TITLE]: sets the title of the current terminal tab.
 
 Useful, as for example Gnome Terminal does not provide any graphical-based means of doing so.
 
 If no title is specified, the uppercased version of the name of the current directory will be used.
 
-Does nothing with xfce4-terminal."
+Does nothing with xfce4-terminal, or with terminals set to update automatically their name based on the current directory of their shells."
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
