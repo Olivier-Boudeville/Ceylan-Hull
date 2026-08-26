@@ -8,7 +8,8 @@
 
 usage="Usage: $(basename $0) [-h|--help] [--stop]: sets (or stops) USB tethering on the local host, typically so that a smartphone connected through USB and with such tethering (sometimes denoted as a 'USB modem') enabled shares its Internet connectivity with this local host.
 
-Should multiple relevant network interfaces be found, the last one will be selected."
+Should multiple relevant network interfaces be found, the last one will be selected.
+This script must be run as root."
 
 
 if [ ! $(id -u) -eq 0 ]; then
@@ -36,6 +37,11 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 
+# For more control:
+systemctl stop dhcpcd.service 1>/dev/null 2>&1
+
+
+# More recent/maintained than dhclient:
 dhcpcd="$(which dhcpcd 2>/dev/null)"
 
 if [ ! -x "${dhcpcd}" ]; then
@@ -109,9 +115,9 @@ if [ "$1" = "--stop" ]; then
 
 	echo "Disabling connection on auto-detected interface ${if_name}..."
 
-	${ip} link set dev "${if_name}" down && echo "...done"
+	"${ip}" link set dev "${if_name}" down && echo "...done"
 
-	${dhcpcd} --dumplease "${if_name}" 1>/dev/null && echo "(lease dumped)"
+	"${dhcpcd}" --dumplease "${if_name}" 1>/dev/null && echo "(lease dumped)"
 
 	exit 0
 
@@ -131,35 +137,72 @@ echo "Enabling connection using auto-detected interface ${if_name}..."
 retries=3
 
 
+on_success()
+{
+
+	net_updater="$(which update-for-network-profile.sh 2>/dev/null)"
+
+	if [ -x "${net_updater}" ]; then
+
+		# To possibly update the network configuration (e.g. regarding the
+		# defaults to apply, IPs of some hostnames):
+		#
+		# (generally no such profile exists)
+		#
+		"${net_updater}" for-usb-tethering
+
+	fi
+
+	notify "Connection up and running. Enjoy!"
+
+	exit 0
+
+}
+
+
 connect()
 {
 
 	# Ensures that the daemon is not already runnning:
-	${dhcpcd} -k "${if_name}" 1>/dev/null 2>&1
+	"${dhcpcd}" -k "${if_name}" 1>/dev/null 2>&1
 
-	# Any past default route could still apply and remain the first, so:
-	${ip} route del default 2>/dev/null
+	# Any past default route could still apply and remain the first, so we flush
+	# them all (not specifying any gateway like "via 192.168.1.1") with:
+	#
+	"${ip}" route del default 2>/dev/null
 
-	if ${dhcpcd} "${if_name}" 1>/dev/null; then
+	#dhcpcd_opts="--ipv4only --waitip -d"
+
+	# Necessary at least for some recent Androids:
+	dhcpcd_opts="-o rapid_commit"
+
+	# Tests can be done with:
+	# dhcpcd -k enp0s20f0u2; dhcpcd -d -o rapid_commit enp0s20f0u2
+
+	# Check single dhcpcd instance with: pgrep -a dhcpcd
+
+	# One may ensure that no firewall is in the way
+	# (e.g. by running iptables.rules-FullDisabling.sh).
+
+	# Possibly decrease the MTU (default being often 1500):
+	# "${ip}" link set dev enp0s20f0u2 mtu 1200
+
+	if "${dhcpcd}" ${dhcpcd_opts} "${if_name}" 1>/dev/null; then
 
 		# Fix routes (only gateway needed, not full network):
-		${ip} route del 192.168.0.0/24 dev "${if_name}"
-		${ip} route add 192.168.0.1 dev "${if_name}"
+		"${ip}" route del 192.168.0.0/24 dev "${if_name}"
+		"${ip}" route add 192.168.0.1 dev "${if_name}"
 
 		if test_link; then
 
-			notify "Connection up and running. Enjoy!"
-
-			exit 0
+			on_success
 
 		else
 
 			# Another chance:
 			if test_link; then
 
-				notify "Connection up and running. Enjoy!"
-
-				exit 0
+				on_success
 
 			fi
 
