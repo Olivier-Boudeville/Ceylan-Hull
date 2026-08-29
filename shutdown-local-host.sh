@@ -1,7 +1,17 @@
 #!/bin/sh
 
+# Copyright (C) 2025-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) [-h|--help] [-r|--reboot]: shutdowns (otherwise, with the option: reboots) the current, local host just after having performed any relevant, automated system update.
-  -r or --reboot: reboots instead of shutting down"
+  -r or --reboot: reboots instead of shutting down.
+
+Requests a confirmation if run through a SSH connection (to prevent shutting down a remote server if using by mistake a wrong terminal).
+"
 
 
 if [ ! "$(id -u)" -eq 0 ]; then
@@ -46,20 +56,25 @@ if [ $halt -eq 0 ]; then
 
 	echo "
 
-System will shutdown now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel, possibly some other drivers)...
+System will shutdown now host **$(hostname -s)**, after a possible update (including notably its kernel, possibly some other drivers)...
 "
 
 else
 
 	echo "
 
-System will reboot now host **$(hostname -s)** (check it is the expected one!), after a possible update (including notably its kernel, possibly some other drivers)...
+System will reboot now host **$(hostname -s)**, after a possible update (including notably its kernel, possibly some other drivers)...
 "
 
 fi
 
-read -p "  Press the Enter key to continue (CTRL-C to abort)" value
 
+if [ -n "$SSH_CONNECTION" ]; then
+
+	echo "As this script is apparently run through a SSH connection on a remote host (i.e. on $(hostname -s)), an explicit confirmation is requested in order to prevent shutting down a server by mistake."
+	read -p "  Press the Enter key to operate on $(hostname -s)) indeed (Ctrl-C to abort)" value
+
+fi
 
 echo " - performing first a general system update"
 

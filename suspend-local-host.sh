@@ -1,6 +1,16 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help]: suspends immediately the local host, and ensures that it will resume in a locked state."
+# Copyright (C) 2022-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
+usage="Usage: $(basename $0) [-h|--help]: suspends immediately the local host, and ensures that it will resume in a locked state.
+
+Requests a confirmation if run through a SSH connection (to prevent suspending a remote server if using by mistake a wrong terminal).
+"
 
 
 # On our Arch desktop that uses xfce4-screensaver, 'systemctl suspend' is
@@ -71,6 +81,14 @@ actual_suspend()
 	systemctl suspend
 
 }
+
+
+if [ -n "$SSH_CONNECTION" ]; then
+
+	echo "As this script is apparently run through a SSH connection on a remote host (i.e. on $(hostname -s)), an explicit confirmation is requested in order to prevent suspending a server by mistake."
+	read -p "  Press the Enter key to operate on $(hostname -s)) indeed (Ctrl-C to abort)" value
+
+fi
 
 
 # To avoid any disabling of the locker:
