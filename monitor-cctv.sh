@@ -18,19 +18,21 @@ client_tool_name="mpv"
 help_short_opt="-h"
 help_long_opt="--help"
 
-full_opt="--full"
+full_short_opt="-f"
+full_long_opt="--full"
 
 guidelines="
 Using ${client_tool_name}, so to:
- - take a snapshot: use Shift-S
- - start/stop recording: Shift-R
- - quit: Ctrl-Q
+ - take a snapshot: type Shift-S
+ - start/stop recording: type Shift-R
+ - enter/leave fullscreen mode: type f
+ - quit: type Ctrl-Q
 "
 
 
-usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] [${full_opt}] [CAMERA_ID]: performs an online, direct monitoring, with an average quality and audio, of the networked security camera (CCTV) designated by any CAMERA_ID specified, otherwise by the default camera identifier,'${camera_id}'.
+usage="Usage: $(basename $0) [${help_short_opt}|${help_long_opt}] [${full_short_opt}|${full_long_opt}] [CAMERA_ID]: performs an online, direct monitoring, with an average quality and audio, of the networked security camera (CCTV) designated by any CAMERA_ID specified, otherwise by the default camera identifier,'${camera_id}'.
 
-Use the ${full_opt} option to access to the higher-resolution stream with audio.
+Use the ${full_short_opt} / ${full_long_opt} option to access to the higher-resolution stream with audio, for cameras that support that.
 ${guidelines}
 Of course the firewall of any gateway should block outbound (RTSP) streams.
 "
@@ -44,17 +46,11 @@ if [ "$1" = "${help_short_opt}" ] || [ "$1" = "${help_long_opt}" ]; then
 fi
 
 
-if [ "$1" = "${full_opt}" ]; then
-	echo "(higher-resolution stream with audio requested)"
-	full_requested=0
-	shift
-
-fi
-
 full_requested=1
 
-if [ "$1" = "${full_opt}" ]; then
+if [ "$1" = "${full_short_opt}" ] || [ "$1" = "${full_long_opt}" ]; then
 	echo "(higher-resolution stream with audio requested)"
+	echo "#### Warning: with the TP-Link TAPO-C320WS, this option may likely result in a stream failure." 1>&2
 	full_requested=0
 	shift
 
@@ -64,7 +60,6 @@ if [ -n "$1" ]; then
 	camera_id="$1"
 	echo "Will monitor the camera of identifier '${camera_id}'."
 	shift
-
 fi
 
 
@@ -112,6 +107,7 @@ if [ -z "${camera_hostname}" ]; then
 
 fi
 
+# Beware that it resolves to the right IP (e.g. not the one of the gateway):
 #echo "  - camera hostname: ${camera_hostname}"
 
 desc_key="camera_${camera_id}_description"
@@ -175,6 +171,9 @@ if [ $full_requested -eq 0 ]; then
 
 	#echo "Full quality mode requested."
 
+	# Note that, at least on our settings, this does not work (anymore?) with
+	# the TP-Link TAPO-C320WS ("Failed reading RTSP data: End of file"):
+	#
 	subtype_key="camera_${camera_id}_subtype_high_quality"
 
 	camera_subtype_high_quality="$(/bin/cat ${env_file} | grep -v '^[[:space:]]*%' | grep "${subtype_key}" | sed 's|.*, ||1' | sed 's| }.$||1')"
@@ -207,7 +206,10 @@ else
 
 	#echo "  - camera subtype_normal_quality: ${camera_subtype_normal_quality}"
 
+	client_opts="${client_opts} --no-audio"
+
 	camera_subtype="${camera_subtype_normal_quality}"
+
 
 fi
 
@@ -217,10 +219,19 @@ fi
 # For former Dahua:
 #rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/cam/realmonitor?channel=${camera_channel}&subtype=${camera_subtype}"
 
+
 # For TP-Link TAPO-C320WS:
-rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}/stream${camera_channel}"
+
+# Even if it works without specifying it:
+camera_port=554
+
+rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}:${camera_port}/stream${camera_subtype}"
+
 
 #echo "rstp_url = ${rstp_url}"
+
+# Could be added: "--fs", for full-screen
+client_opts="${client_opts} --no-cache --rtsp-transport=tcp --profile=low-latency"
 
 #verbose_opt="--verbose 0"
 
@@ -236,6 +247,6 @@ echo "  Monitoring now camera of identifier '${camera_id}', i.e. '${camera_hostn
 
 echo "${guidelines}"
 
-#echo "${client_tool}" ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
+#echo "${client_tool}" ${client_opts} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} # 1>/dev/null 2>&1 &
 
-"${client_tool}" ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} #1>/dev/null 2>&1 &
+"${client_tool}" ${client_opts} ${verbose_opt} ${snapshot_prefix_opt} ${rstp_url} 1>/dev/null 2>&1 &
