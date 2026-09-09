@@ -14,6 +14,8 @@ camera_id=1
 #client_tool_name="mplayer"
 client_tool_name="mpv"
 
+# *.ts is for "MPEG Transport Stream":
+recording_filepath="$(pwd)/$(date '+%Y%m%d-%Hh%Mm%Ss')-cctv-recording.ts"
 
 help_short_opt="-h"
 help_long_opt="--help"
@@ -21,12 +23,13 @@ help_long_opt="--help"
 full_short_opt="-f"
 full_long_opt="--full"
 
+# At least now for mpv:
 guidelines="
-Using ${client_tool_name}, so to:
- - take a snapshot: type Shift-S
- - start/stop recording: type Shift-R
- - enter/leave fullscreen mode: type f
- - quit: type Ctrl-Q
+Using ${client_tool_name}, whose main keyboard shortcuts are:
+ - take a snapshot: s
+ - start/stop recording: r (in ${recording_filepath})
+ - enter/leave fullscreen mode: f
+ - quit: q
 "
 
 
@@ -231,7 +234,7 @@ rstp_url="rtsp://${camera_login}:${camera_password}@${camera_hostname}:${camera_
 #echo "rstp_url = ${rstp_url}"
 
 # Could be added: "--fs", for full-screen
-client_opts="${client_opts} --no-cache --rtsp-transport=tcp --profile=low-latency"
+client_opts="${client_opts} --no-cache --rtsp-transport=tcp --profile=low-latency --stream-record=${recording_filepath}"
 
 #verbose_opt="--verbose 0"
 
