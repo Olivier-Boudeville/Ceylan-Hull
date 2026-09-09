@@ -8,7 +8,7 @@
 
 fail_exit_code=1
 
-usage="Usage: $(basename $0): checks whether the DNS servers declared in the dnsmasq configuration seem usable (i.e. available and functional).
+usage="Usage: $(basename $0)[-h|--help]: checks whether the DNS servers declared in the dnsmasq configuration seem usable (i.e. available and functional).
 
 Returns a failure code (${fail_exit_code}) iff at least one configured DNS server was not found usable.
 
@@ -54,21 +54,29 @@ main_conf_file="/etc/dnsmasq.conf"
 #
 conf_files="${main_conf_file} $(grep -E '^conf-file=' ${main_conf_file} | cut -d= -f2 | tr -d '"' | tr -d "'")"
 
-printf "  Extracting the DNS servers from the following detected dnsmasq configuration files: ${conf_files}\n\n"
+printf "  Extracting the DNS servers from the following detected dnsmasq configuration file(s):\n${conf_files}\n\n"
 
-dns_servers="$(grep -h -E '^[[:space:]]*server=' $conf_files \
-          | sed -E 's/.*server=//' \
-          | sed -E 's|/.*$||' \
-          | sed -E 's/#.*//' \
-          | sed -E 's/[[:space:]]+$//' \
-          | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' \
-          | sort -u)"
+# -h: no filename prefix in matches
+#dns_servers="$(grep -h -E '^[[:space:]]*server=' $conf_files \
+#          | sed -E 's/.*server=//' \
+#          | sed -E 's|/.*$||' \
+#          | sed -E 's/#.*//' \
+#          | sed -E 's/[[:space:]]+$//' \
+#          | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' \
+#          | sort -u)"
+
+# Now supporting not only "server=10.0.0.1" but also
+# "server=/example.com/10.0.0.1":
+#
+# (no more ' | sort -u', as preferring preserving declaration order)
+dns_servers="$(grep -h -E '^[[:space:]]*server=' $conf_files | sed 's|.*[=/]||')"
 
 #printf "  Testing the detected DNS servers:\n${dns_servers}\n"
-printf "  Testing each detected DNS server:\n"
+printf "  Testing each detected DNS server (displaying the duration of the successful result queries):\n"
 
 exit_code=0
 
+# Next step could be to sort servers by increasing response time.
 for s in $dns_servers; do
 
 	# Getting the Reverse DNS for that nameserver:
@@ -76,19 +84,29 @@ for s in $dns_servers; do
 
 	s_desc="name not resolvable"
 
-	res="$("${dig_exec}" -x $s 2>/dev/null)"
+	# Removes the trailing dot in 'foobar.org.':
+	res="$("${dig_exec}" -x $s +short 2>/dev/null | sed 's|\.$||')"
 
 	if [ $? -eq 0 ]; then
 
-		s_name="${res}"
-		s_desc="resolved as ${s_name}"
+		if [ -n "${res}" ]; then
+			s_name="${res}"
+			s_desc="resolved as '${s_name}'"
+		else
+			s_name="(none)"
+			# Yes, a DNS server may not be registered:
+			s_desc="not registered in DNS"
+		fi
 
 	fi
 
 	# Try resolving an example host with this server:
-    if "${dig_exec}" @"$s" example.com +time=2 +tries=1 1>/dev/null 2>&1; then
+	res="$("${dig_exec}" @"$s" example.com +time=2 +tries=1 2>&1)"
 
-		printf " - $s (${s_desc}): functional\n"
+    if [ $? -eq 0 ]; then
+
+		duration="$(echo "${res}" | grep ';; Query time: ' | sed 's|;; Query time: ||')"
+		printf " - $s (${s_desc}): functional (result in ${duration})\n"
 
 	else
 
@@ -100,7 +118,7 @@ for s in $dns_servers; do
 done
 
 if [ ${exit_code} -eq 1 ]; then
-	printf "Error, at least one nameserver found unavailable." 1>&2
+	printf "\nError, at least one nameserver found unavailable." 1>&2
 fi
 
 exit ${exit_code}
