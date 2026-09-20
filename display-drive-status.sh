@@ -145,6 +145,7 @@ function hours_to_str()
 function diagnose_disk()
 {
 
+	# from smartctl:
 	diag="$1"
 
 	temp="$(printf '%s\n' "${diag}" | grep Airflow_Temperature_Cel | awk '{printf $10}')"
@@ -539,17 +540,28 @@ log_file="${HOME}/.$(date '+%Y%m%d')-drive-statuses-of-$(hostname -s).log"
 
 cron=1
 
+ok_short_opt="-ok"
+ok_long_opt="--report-ok"
+
+detail_short_opt="-d"
+detail_long_opt="--detail"
+
+log_short_opt="-l"
+log_long_opt="--log"
+
+cron_short_opt="-c"
+cron_long_opt="--cron"
 
 
-usage="Usage: $(basename $0) [-h|--help] [-ok|--report-ok] [-d|--detail] [-l|--log] [-c|--cron] [DEVICE_NAME]: checks and displays the status of any specified disk-like device (hard drive, SSD SATA or NVME one), otherwise of all local ones.
+usage="Usage: $(basename $0) [-h|--help] [${ok_short_opt}|${ok_long_opt}] [${detail_short_opt}|${detail_long_opt}] [${log_short_opt}|${log_long_opt}] [${cron_short_opt}|${cron_long_opt}] [DEVICE_NAME]: checks and displays the status of any specified disk-like device (hard drive, SSD SATA or NVME one), otherwise of all local ones.
 
 Options:
-  -ok | --report-ok: report also successful tests (not only warning/error conditions)
-  -d  | --detail: display also the raw output collected for each disk
-  -l  | --log: log message in '${log_file}'
-  -c  | --cron: set the 'crontab' mode, in which a per-month full diagnosis log file is recorded (e.g., here, in '${log_file}'), and outputs are made iff at least one warning or error has been detected; implies the --report-ok and --detail options
+  ${ok_short_opt} | ${ok_long_opt}: report also successful tests (not only warning/error conditions)
+  ${detail_short_opt}  | ${detail_long_opt}: display also the raw output collected for each disk
+  ${log_short_opt}  | ${log_long_opt}: log message in '${log_file}'
+  ${cron_short_opt}  | ${cron_long_opt}: set the 'crontab' mode, in which a per-month full diagnosis log file is recorded (e.g., here, in '${log_file}'), and outputs are made iff at least one warning or error has been detected; implies the ${ok_long_opt} and ${detail_long_opt} options
 
-For example: $(basename $0) -ok sdb
+For example: $(basename $0) ${ok_short_opt} sdb
 
 To be run as root.
 
@@ -564,7 +576,7 @@ Will rely on the 'nvme' command if available (which is provided on Arch by the '
 
 Typical usage with cron is, for the root user:
 # Every Monday at 4:13 AM, check and record the status of all local disks:
-13  04   *   *  1 /usr/local/hull/display-drive-status.sh --cron
+13  04   *   *  1 /usr/local/hull/display-drive-status.sh ${cron_long_opt}
 "
 
 
@@ -582,7 +594,7 @@ while [ ! $# -eq 0 ]; do
 	fi
 
 
-	if [ "$1" = "-ok" ] || [ "$1" = "--report-ok" ]; then
+	if [ "$1" = "${ok_short_opt}" ] || [ "$1" = "${ok_long_opt}" ]; then
 
 		report_ok=0
 		shift
@@ -591,7 +603,7 @@ while [ ! $# -eq 0 ]; do
 	fi
 
 
-	if [ "$1" = "-d" ] || [ "$1" = "--detail" ]; then
+	if [ "$1" = "${detail_short_opt}" ] || [ "$1" = "${detail_long_opt}" ]; then
 
 		detail=0
 		shift
@@ -600,7 +612,7 @@ while [ ! $# -eq 0 ]; do
 	fi
 
 
-	if [ "$1" = "-l" ] || [ "$1" = "--log" ]; then
+	if [ "$1" = "${log_short_opt}" ] || [ "$1" = "${log_long_opt}" ]; then
 
 		log=0
 		shift
@@ -609,7 +621,7 @@ while [ ! $# -eq 0 ]; do
 	fi
 
 
-	if [ "$1" = "-c" ] || [ "$1" = "--cron" ]; then
+	if [ "$1" = "${cron_short_opt}" ] || [ "$1" = "${cron_long_opt}" ]; then
 
 		report_ok=0
 		detail=0
@@ -866,7 +878,8 @@ fi
 
 for d in ${hdds}; do
 
-    report "=== For hard drive $d:"
+	eval $(lsblk -dn -o MODEL,SERIAL,SIZE -P /dev/$d)
+    report "=== For hard drive $d, of model '${MODEL}' (serial: ${SERIAL}) and size ${SIZE}:"
 
 	#"${smartctl_exec}" -A "/dev/$d" | grep -E -i "WHEN_FAILED|temp|wear|health|percent|life"
 
@@ -881,7 +894,8 @@ done
 
 for d in ${ssd_satas}; do
 
-    report "=== For SATA SSD drive $d:"
+	eval $(lsblk -dn -o MODEL,SERIAL,SIZE -P /dev/$d)
+    report "=== For SATA SSD drive $d, of model '${MODEL}' (serial: ${SERIAL}) and size ${SIZE}:"
 
 	# Sets 'diag':
 	run_smartctl "$d"
@@ -899,9 +913,11 @@ if [ -n "${ssd_nvmes}" ]; then
 
 		for d in ${ssd_nvmes}; do
 
-			report "=== For NVME SSD drive $d:"
+			eval $(lsblk -dn -o MODEL,SERIAL,SIZE -P /dev/$d)
 
-			diag="$("${nvme_exec}" smart-log -o json "/dev/$d")"
+			report "=== For NVME SSD drive $d, of model '${MODEL}' (serial: ${SERIAL}) and size ${SIZE}:"
+
+			diag="$("${nvme_exec}" log smart -o json "/dev/$d")"
 			res=$?
 
 			if [ ! $res -eq 0 ]; then
@@ -1083,7 +1099,7 @@ if [ -n "${ssd_nvmes}" ]; then
 
 		for d in ${ssd_nvmes}; do
 
-			report "=== For NVME SSD drive $d (fallback):"
+			report "=== For NVME SSD drive $d, of model '${MODEL}' (serial: ${SERIAL}) and size ${SIZE} (fallback):"
 
 			diag="$(run_smartctl $d -j)"
 
