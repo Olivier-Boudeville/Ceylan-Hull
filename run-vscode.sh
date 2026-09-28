@@ -1,10 +1,12 @@
 #!/bin/sh
 
-proxy_opt="--enable-proxy"
+proxy_opt_long="--enable-proxy"
+proxy_opt_short="-e"
 
-usage="Usage: $(basename $0) [-h|--help] [${proxy_opt}] [VS_CODE_ARGS]: runs VS Code (Microsoft Visual Studio Code) or VSCodium (a version of it without branding/telemetry/licensing), a free software (MIT licence) source-code multi-platform editor.
 
-Specify the ${proxy_opt} option in order to enable and activate a proxy for this editor instance (by default its proxy access is disabled).
+usage="Usage: $(basename $0) [-h|--help] [${proxy_opt_short}|${proxy_opt_long}] [VS_CODE_ARGS]: runs VS Code (Microsoft Visual Studio Code) or VSCodium (a version of it without branding/telemetry/licensing), a free software (MIT licence) source-code multi-platform editor.
+
+Specify the ${proxy_opt_long} / ${proxy_opt_short} option in order to enable and activate a proxy for this editor instance (by default its proxy access is disabled).
 "
 
 # Possibly installed on Arch thanks to: 'pacman -Sy code'.
@@ -38,7 +40,7 @@ fi
 
 use_proxy=1
 
-if [ "$1" = "${proxy_opt}" ]; then
+if [ "$1" = "${proxy_opt_long}" ] || [ "$1" = "${proxy_opt_short}" ]; then
 
 	use_proxy=0
 	shift
@@ -86,6 +88,6 @@ fi
 
 args="$* ${proxy_args}"
 
-echo "(running '${vscode_exec} ${args}')"
+echo "(running now '${vscode_exec} ${args}')"
 
 "${vscode_exec}" ${args}
