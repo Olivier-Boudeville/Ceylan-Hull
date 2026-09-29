@@ -1,5 +1,15 @@
 #!/bin/sh
 
+
+skip_trees_short_opt="-s"
+skip_trees_longt_opt="--skip-trees"
+
+# .git is for Git, venv for the Python virtual environments, node_modules from
+# Node.js, _build comes from rebar3, .kilo from kilocode:
+#
+skipped_trees=".git venv node_modules _build .kilo"
+
+
 usage="$(basename $0): recursive grep for the ones that lack it.
 
   Usage: $(basename $0) [-h|--help] [-v|--verbose] [-q|--quiet] [-f|--filenames-only] [-i|--case-insensitive] [-r|--restructured] [-e|--exclude ELEM]* <Expression to be found in files> [<Filter on files>]
@@ -11,6 +21,7 @@ usage="$(basename $0): recursive grep for the ones that lack it.
 	-i or --case-insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
 	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst and *.rst.template files)
 	-e or --exclude ELEM: exclude the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
+	${skip_trees_short_opt} or ${skip_trees_longt_opt}: skip (i.e. filter-out) common trees (namely '${skipped_trees}') that often get in the way of a search
 	-h or --help: display this help
 
   Example: $(basename $0) --exclude ./foo.dat --exclude backup-dir -i 'little red rooster' '*.txt'"
@@ -51,6 +62,7 @@ insensitive_opt=""
 restructured_mode=1
 filenames_only=1
 
+skip_trees=1
 
 # A useless file to ensure grep always has multiple files to scan.
 # Done to force grep to display the filename (otherwise it will not)
@@ -190,9 +202,35 @@ while [ $token_eaten -eq 0 ]; do
 	fi
 
 
+	if [ "${read_parameter}" = "${skip_trees_short_opt}" ] || [ "${read_parameter}" = "${skip_trees_long_opt}" ]; then
+		skip_trees=0
+		#[ $quiet -eq 0 ] || echo "Tree-skipping mode activated."
+
+		# Wanting to prune these directory names wherever they appear in the
+		# paths:
+		#
+		for t in ${skipped_trees}; do
+
+			# Not efficient, yet sufficient:
+			if [ -z "${skips}" ]; then
+				skips="( -type d ( -name $t"
+			else
+				skips="${skips} -o -name $t"
+			fi
+
+		done
+
+		skips="${skips} ) -prune ) -o "
+
+		token_eaten=0
+	fi
+
+
+
 	if [ -n "${read_parameter}" ]; then
 		shift
 	fi
+
 
 done
 
@@ -234,7 +272,11 @@ else
 fi
 
 # '--color' not sufficient in all cases:
-base_grep_opt="--color=always --with-filename"
+#
+# -H replaces --with-filename, as 'soda_test*' would be interpreted as
+# -"soda_tes" following by 0, 1 or more occurrences of 't'
+#
+base_grep_opt="--color=always -H"
 
 searched_expression="${read_parameter}"
 #echo "searched_expression = ${searched_expression}"
@@ -246,10 +288,13 @@ filter_on_file="$1"
 if [ $verbose -eq 0 ]; then
 
 	echo "Will search in following files:"
-	"${find}" . ${find_opt} -exec /bin/ls '{}'  ';' 2>/dev/null
+	"${find}" . ${find_opt} -exec /bin/ls '{}' + 2>/dev/null
 
 fi
 
+
+# The -exec part finishes with "+" rather than "';'" so that a lot less
+# grep processes are created.
 
 if [ -z "${filter_on_file}" ]; then
 
@@ -261,11 +306,11 @@ if [ -z "${filter_on_file}" ]; then
 
 		[ $quiet -eq 0 ] || if [ -z "${to_exclude}" ]; then
 			echo "
-	Recursive grep for expression <${searched_expression}> in all files:
+	Recursive grep for expression <${searched_expression}> in all (non-skipped) files:
 	"
 		else
 			echo "
-	Recursive grep for expression <${searched_expression}> in all (non-excluded) files:
+	Recursive grep for expression <${searched_expression}> in all (non-excluded, non-skipped) files:
 	"
 		fi
 
@@ -275,18 +320,18 @@ if [ -z "${filter_on_file}" ]; then
 
 			# We target a command like:
 
-			# Example: find . \( -path ./dir1 -o -path ./dir2 \) -prune -o \( -type f -a -name '*.txt' \) -exec echo '{}' ';'
+			# Example: find . \( -path ./dir1 -o -path ./dir2 \) -prune -o \( -type f -a -name '*.txt' \) -exec echo '{}' +
 
-			#echo "Executing: ${find}" . ${excludes} ${find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';'
+			#echo "Executing: ${find}" . ${skips} ${excludes} ${find_opt} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' +
 
-			"${find}" . ${excludes} ${find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';'
+			"${find}" . ${skips} ${excludes} ${find_opt} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' +
 
 			exit
 
 		else
 
 			# Found patterns not wanted here:
-			"${find}" . ${excludes} ${find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' | sed 's|:.*$||1' | uniq
+			"${find}" . ${skips} ${excludes} ${find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + | sed 's|:.*$||1' | uniq
 
 		fi
 
@@ -295,11 +340,11 @@ if [ -z "${filter_on_file}" ]; then
 		# RST-specific:
 
 		[ $quiet -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all RST-related (non-excluded) files:
+	Recursive grep for expression <${searched_expression}> in all RST-related (non-excluded, non-skipped) files:
 	"
 
 		# No filter specified, using '*.rst' and '*.rst.template':
-		"${find}" . ${excludes} ${find_opt} -name tmp-rst -prune -o \( ${name_opt} '*.rst' -o ${name_opt} '*.rst.template' \) -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
+		"${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o \( ${name_opt} '*.rst' -o ${name_opt} '*.rst.template' \) -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
 
 	fi
 
@@ -308,32 +353,34 @@ else
 	if [ $restructured_mode -eq 1 ]; then
 
 		[ $quiet -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all files matching <${filter_on_file}>:
+	Recursive grep for expression <${searched_expression}> in all (non-excluded, non-skipped) files matching <${filter_on_file}>:
 	"
 
 		if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
+			"${find}" . ${skips} ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
 
 		else
 
-			"${find}" . ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			"${find}" . ${skips} ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
 	else
 
 		[ $quiet -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all RST-related files matching <${filter_on_file}>:
+	Recursive grep for expression <${searched_expression}> in all (non-excluded, non-skipped) RST-related files matching <${filter_on_file}>:
 	"
 
 		if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null
+			"${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
 
 		else
 
-			"${find}" . ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+			#echo "Listing with filtering: "${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq"
+
+			"${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq
 
 		fi
 
