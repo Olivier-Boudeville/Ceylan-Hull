@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Copyright (C) 2006-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
+
 usage="Usage: $(basename $0) <expression to watch in running processes>.\nExample: $(basename $0) AP2 to track all processes that include "AP2" in their command or arguments."
 
 expr="$1"
@@ -14,7 +21,7 @@ ${usage}" 1>&2
 fi
 
 
-watch_file="watch-result.txt"
+watch_file="watched-processes-result.txt"
 
 #local_user="$USER"
 local_user="$(whoami)"
@@ -36,9 +43,11 @@ else
 
 fi
 
+period_secs=1
+
 echo
 echo "  Starting the watch for '${expr}' (show full command: $show_full_cmd)"
-echo "     (hit CTRL-C to stop)"
+echo "     (period: ${period_secs} seconds; hit CTRL-C to stop)"
 echo
 
 # To display the relevant header once, first:
@@ -53,6 +62,6 @@ while true; do
 	ps -ed ${ps_opt} | grep "${local_user}" | grep -v $(basename $0) | grep -v grep | grep -i "${expr}"
 
 	echo
-	sleep 1
+	sleep ${period_secs}
 
 done 2>&1 | tee "${watch_file}"
