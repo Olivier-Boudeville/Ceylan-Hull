@@ -50,35 +50,36 @@ while true; do
 
 	#node_name_width=0
 
-	pgrep -f beam.smp | while read pid; do
-		read cpu rss cmd <<< "$(ps -p "$pid" -o %cpu= -o rss= -o cmd=)"
-		#echo "PID=$pid CPU=$cpu RSS=$rss CMD=$cmd"
+	ps -C beam.smp -o pid=,%cpu=,rss=,cmd= |
+		while read pid cpu rss cmd; do
 
-		rss_str=$(echo "${rss}" | awk '
+			#echo "pid=$pid cpu=$cpu rss=$rss cmd=$cmd"
+
+			rss_str=$(echo "${rss}" | awk '
 {
     if ($1 < 1024)          printf "%dK\n", $1;
     else if ($1 < 1024^2)   printf "%.1fM\n", $1/1024;
     else                    printf "%.1fG\n", $1/1024/1024;
 }')
 
-		# Extract the second capture, the word after -sname or -name:
-		node_name=$(echo "${cmd}" | sed 's/.*-\(sname\|name\)[[:space:]]\+\([^[:space:]]\+\).*/\2/')
+			# Extract the second capture, the word after -sname or -name:
+			node_name=$(echo "${cmd}" | sed 's/.*-\(sname\|name\)[[:space:]]\+\([^[:space:]]\+\).*/\2/')
 
-		# Auto-sizing not satisfactory:
+			# Auto-sizing not satisfactory:
 
-		#echo "Node name: '${node_name}'."
-		#node_len=$(expr length "${node_name}'")
-		#
-		#if [ ${node_name_width} -lt ${node_len} ]; then
-		#
-		#	node_name_width=${node_len}
-        #
-		#fi
+			#echo "Node name: '${node_name}'."
+			#node_len=$(expr length "${node_name}'")
+			#
+			#if [ ${node_name_width} -lt ${node_len} ]; then
+			#
+			#	node_name_width=${node_len}
+			#
+			#fi
 
-		#echo " VM ${node_name} (PID:${pid}): CPU=${cpu}%, RSS=${rss_str}"
-		(printf "%-${node_name_width}s %${cpu_width}s %6s %8s\n" "$node_name" "$cpu%" "$rss_str" "$pid") | tee -a "${monitor_file}"
+			#echo " VM ${node_name} (PID:${pid}): CPU=${cpu}%, RSS=${rss_str}"
+			(printf "%-${node_name_width}s %${cpu_width}s %6s %8s\n" "$node_name" "$cpu%" "$rss_str" "$pid") | tee -a "${monitor_file}"
 
-	done
+		done
 
 	print_lines "-"
 	(echo) | tee -a "${monitor_file}"
