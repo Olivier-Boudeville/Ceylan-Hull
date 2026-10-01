@@ -50,10 +50,26 @@ while true; do
 
 	#node_name_width=0
 
-	ps -C beam.smp -o pid=,%cpu=,rss=,cmd= |
-		while read pid cpu rss cmd; do
+	# Not wanting to select the /tmp/erlang_serviceXXXX wrappers:
+	#ps -C beam.smp -o pid=,%cpu=,rss=,cmd= |
+	#ps -p $(pgrep -x beam.smp | paste -sd,) -o pid=,%cpu=,rss=,cmd= |
 
-			#echo "pid=$pid cpu=$cpu rss=$rss cmd=$cmd"
+	for pid in $(pgrep -x beam.smp); do
+
+		cmd=$(ps -p $pid -o cmd=)
+		case "$cmd" in
+			/tmp/erlang_service*) continue ;;
+		esac
+
+		cpu=$(ps -p $pid -o %cpu=)
+		rss=$(ps -p $pid -o rss=)
+
+		printf "%s %s %s %s\n" "$pid" "$cpu" "$rss" "$cmd"
+
+	done |
+
+		while read pid cpu rss cmd; do
+			#echo "Read: pid=$pid cpu=$cpu rss=$rss cmd=$cmd"
 
 			rss_str=$(echo "${rss}" | awk '
 {
@@ -61,7 +77,6 @@ while true; do
     else if ($1 < 1024^2)   printf "%.1fM\n", $1/1024;
     else                    printf "%.1fG\n", $1/1024/1024;
 }')
-
 			# Extract the second capture, the word after -sname or -name:
 			node_name=$(echo "${cmd}" | sed 's/.*-\(sname\|name\)[[:space:]]\+\([^[:space:]]\+\).*/\2/')
 
@@ -78,7 +93,6 @@ while true; do
 
 			#echo " VM ${node_name} (PID:${pid}): CPU=${cpu}%, RSS=${rss_str}"
 			(printf "%-${node_name_width}s %${cpu_width}s %6s %8s\n" "$node_name" "$cpu%" "$rss_str" "$pid") | tee -a "${monitor_file}"
-
 		done
 
 	print_lines "-"
