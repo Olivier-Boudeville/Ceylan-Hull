@@ -149,8 +149,21 @@ chooseBlenderImporter()
 
 	#echo "Blender importer selected."
 
+	# From Ceylan-Hull as well:
 	editor="$(which blender-import.sh 2>/dev/null)"
 	editor_short_name="Blender importer"
+
+}
+
+
+chooseBCFEditor()
+{
+
+	#echo "Bonsai BCF importer selected."
+
+	# From Ceylan-Hull as well:
+	editor="$(which edit-bcf.sh 2>/dev/null)"
+	editor_short_name="Bonsai BCF importer"
 
 }
 
@@ -1063,6 +1076,16 @@ if [ ${prefer_emacs} -eq 1 ] && [ ${prefer_nedit} -eq 1 ]; then
 		exit 0
 
 	fi
+
+	# To be managed by Bonsai, the Blender plugin for BIM:
+	if [ "${extension}" = "bcf" ] || [ "${extension}" = "bcfzip" ]; then
+
+		chooseBCFEditor
+		applyEditor
+		exit 0
+
+	fi
+
 
 
 	if [ "${extension}" = "template" ]; then

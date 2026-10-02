@@ -229,9 +229,22 @@ chooseBlenderImporter()
 
 	#echo "Blender importer selected."
 
+	# From Ceylan-Hull as well:
 	viewer="$(which blender-import.sh 2>/dev/null)"
 	viewer_short_name="Blender importer"
 	viewer_opt="--read-only"
+
+}
+
+
+chooseBCFImporter()
+{
+
+	#echo "Bonsai BCF importer selected."
+
+	# From Ceylan-Hull as well:
+	viewer="$(which edit-bcf.sh 2>/dev/null)"
+	viewer_short_name="Bonsai BCF importer"
 
 }
 
@@ -1004,6 +1017,9 @@ view_selected_element()
 
 	elif [ "${extension}" = "xml" ]; then
 
+		# Best approach would be:
+		# xmllint --format foo.xml | pygmentize -l xml
+
 		viewer="$(which xmllint 2>/dev/null)"
 
 		if [ -x "${viewer}" ]; then
@@ -1075,9 +1091,14 @@ view_selected_element()
 		applyViewer
 
 	# Blender will not open them, they must be imported instead:
-	elif [ "${extension}" = "ifc" ]; then
+	elif [ "${extension}" = "gltf" ] || [ "${extension}" = "glb" ] || [ "${extension}" = "dae" ] || [ "${extension}" = "fbx" ] || [ "${extension}" = "ifc" ]; then
 
 		chooseBlenderImporter
+		applyViewer
+
+	elif [ "${extension}" = "bcf" ] || [ "${extension}" = "bcfzip" ]; then
+
+		chooseBCFImporter
 		applyViewer
 
 	elif [ "${extension}" = "gz" ] || [ "${extension}" = "xz" ] || [ "${extension}" = "zip" ]; then

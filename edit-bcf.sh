@@ -3,6 +3,7 @@
 usage="Usage: $(basename $0) BCF_FILE: imports in Bonsai (a BIM plugin of Blender, expected to be already installed) the specified BCF_FILE (whose extension is typically *.bcf or *.bcfzip)."
 
 
+# Stop script on command error and on unset variable:
 set -eu
 
 if [ $# -ne 1 ]; then
@@ -45,10 +46,12 @@ import bpy
 
 bcf_filepath = r"${bcf_file}"
 
-print(f"Loading BCF file {bcf_filepath} in Bonsai; it should be available in the 'Scene' -> 'Quality and Coordination' (the icon with two people) -> Collaboration -> 'BCF Project' panel...")
+print(f"Loading BCF file {bcf_filepath} in Bonsai.")
+print("Its content should be available in the 'Scene' -> 'Quality and Coordination' (the icon with two persons) -> Collaboration -> 'BCF Project' panel (generally on the right side of the screen)...\n")
 
 bpy.ops.bim.load_bcf_project(filepath=bcf_filepath)
 
 EOF
 
-exec "${blender_exec}" --python "${tmp_py}"
+# Not blocking:
+"${blender_exec}" --python "${tmp_py}" &
