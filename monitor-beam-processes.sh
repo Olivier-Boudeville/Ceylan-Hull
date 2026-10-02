@@ -78,7 +78,13 @@ while true; do
     else                    printf "%.1fG\n", $1/1024/1024;
 }')
 			# Extract the second capture, the word after -sname or -name:
-			node_name=$(echo "${cmd}" | sed 's/.*-\(sname\|name\)[[:space:]]\+\([^[:space:]]\+\).*/\2/')
+
+			node_name=$(
+				printf '%s\n' "${cmd}" |
+					sed -n 's/.*-\(sname\|name\)[[:space:]]\+\([^[:space:]]\+\).*/\2/p'
+					 )
+
+			node_name=${node_name:-"(anonymous node)"}
 
 			# Auto-sizing not satisfactory:
 
