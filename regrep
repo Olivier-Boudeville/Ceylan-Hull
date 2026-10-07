@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Copyright (C) 2006-2026 Olivier Boudeville
+#
+# Author: Olivier Boudeville [olivier (dot) boudeville (at) esperide (dot) com]
+#
+# This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
+
 
 skip_trees_short_opt="-s"
 skip_trees_longt_opt="--skip-trees"
@@ -19,12 +25,14 @@ usage="$(basename $0): recursive grep for the ones that lack it.
 	-q or --quiet: be specifically quiet, just listing matches
 	-f or --filenames-only: display only filenames, not also the matched patterns, and if there are multiple matches in the same file, displays its filename only once (implies quiet); typically useful in scripts
 	-i or --case-insensitive: perform case-insensitive searches in the content of files, and also when filtering any filenames
-	-r or --restructured: use ReStructured text mode (skip tmp-rst directories, search only *.rst and *.rst.template files)
 	-e or --exclude ELEM: exclude the specified filesystem element (e.g. file or directory) from the search; as many -e/--exclude options as wanted can be specified
 	${skip_trees_short_opt} or ${skip_trees_longt_opt}: skip (i.e. filter-out) common trees (namely '${skipped_trees}') that often get in the way of a search
 	-h or --help: display this help
 
-  Example: $(basename $0) --exclude ./foo.dat --exclude backup-dir -i 'little red rooster' '*.txt'"
+  Example: $(basename $0) --exclude ./foo.dat --exclude backup-dir -i 'little red rooster' '*.txt'
+
+  See also our more specialised scripts: {c,cpp,j,js,jsx,md,py,rst,tex}grep.
+"
 
 
 # Now automatically fixed: "note that, to exclude a local 'foobar' directory,
@@ -300,91 +308,53 @@ if [ -z "${filter_on_file}" ]; then
 
 	# No filter specified:
 
-	if [ $restructured_mode -eq 1 ]; then
-
-		# Not RST-specific here:
-
-		[ $quiet -eq 0 ] || if [ -z "${to_exclude}" ]; then
-			echo "
+	[ $quiet -eq 0 ] || if [ -z "${to_exclude}" ]; then
+		echo "
 	Recursive grep for expression <${searched_expression}> in all (non-skipped) files:
 	"
-		else
-			echo "
+	else
+		echo "
 	Recursive grep for expression <${searched_expression}> in all (non-excluded, non-skipped) files:
 	"
-		fi
+	fi
 
-		if [ $filenames_only -eq 1 ]; then
+	if [ $filenames_only -eq 1 ]; then
 
-			#echo "(most common case; patterns wanted)"
+		#echo "(most common case; patterns wanted)"
 
-			# We target a command like:
+		# We target a command like:
 
-			# Example: find . \( -path ./dir1 -o -path ./dir2 \) -prune -o \( -type f -a -name '*.txt' \) -exec echo '{}' +
+		# Example: find . \( -path ./dir1 -o -path ./dir2 \) -prune -o \( -type f -a -name '*.txt' \) -exec echo '{}' +
 
-			#echo "Executing: ${find}" . ${skips} ${excludes} ${find_opt} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' +
+		#echo "Executing: ${find}" . ${skips} ${excludes} ${find_opt} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' +
 
-			"${find}" . ${skips} ${excludes} ${find_opt} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' +
+		"${find}" . ${skips} ${excludes} ${find_opt} -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' +
 
-			exit
-
-		else
-
-			# Found patterns not wanted here:
-			"${find}" . ${skips} ${excludes} ${find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + | sed 's|:.*$||1' | uniq
-
-		fi
+		exit
 
 	else
 
-		# RST-specific:
-
-		[ $quiet -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all RST-related (non-excluded, non-skipped) files:
-	"
-
-		# No filter specified, using '*.rst' and '*.rst.template':
-		"${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o \( ${name_opt} '*.rst' -o ${name_opt} '*.rst.template' \) -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
+		# Found patterns not wanted here:
+		"${find}" . ${skips} ${excludes} ${find_opt} -a -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + | sed 's|:.*$||1' | uniq
 
 	fi
 
+
 else
 
-	if [ $restructured_mode -eq 1 ]; then
-
-		[ $quiet -eq 0 ] || echo "
+	[ $quiet -eq 0 ] || echo "
 	Recursive grep for expression <${searched_expression}> in all (non-excluded, non-skipped) files matching <${filter_on_file}>:
 	"
 
-		if [ $filenames_only -eq 1 ]; then
+	if [ $filenames_only -eq 1 ]; then
 
-			"${find}" . ${skips} ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
-
-		else
-
-			"${find}" . ${skips} ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq
-
-		fi
+		"${find}" . ${skips} ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
 
 	else
 
-		[ $quiet -eq 0 ] || echo "
-	Recursive grep for expression <${searched_expression}> in all (non-excluded, non-skipped) RST-related files matching <${filter_on_file}>:
-	"
+		"${find}" . ${skips} ${excludes} ${find_opt} ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq
 
-		if [ $filenames_only -eq 1 ]; then
-
-			"${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null
-
-		else
-
-			#echo "Listing with filtering: "${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq"
-
-			"${find}" . ${skips} ${excludes} ${find_opt} -name tmp-rst -prune -o ${name_opt} "${filter_on_file}" -exec "${grep}" ${base_grep_opt} ${insensitive_opt} "${searched_expression}" '{}' + 2>/dev/null | sed 's|:.*$||1' | uniq
-
-		fi
-
-   fi
+	fi
 
 fi
 
