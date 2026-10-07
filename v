@@ -277,6 +277,9 @@ chooseBrowser()
 chooseVideoPlayer()
 {
 
+	# Control needed:
+	run_in_background=1
+
 	viewer="$(which mpv 2>/dev/null)"
 
 	if [ -x "${viewer}" ]; then
@@ -764,13 +767,13 @@ applyViewer()
 
 		if [ $run_in_background -eq 0 ]; then
 
-			#echo "Running ${viewer} in background..."
+			#echo "Running ${viewer} ${viewer_opt} in the background..."
 			[ $verbose -eq 1 ] || echo "case C: ${viewer} ${viewer_opt} ${file_elem}"
 			"${viewer}" ${viewer_opt} "${file_elem}" 2>/dev/null &
 
 		else
 
-			#echo "Running ${viewer} ${viewer_opt} in foreground..."
+			#echo "Running ${viewer} ${viewer_opt} in the foreground..."
 			[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
 			"${viewer}" ${viewer_opt} "${file_elem}"
 
