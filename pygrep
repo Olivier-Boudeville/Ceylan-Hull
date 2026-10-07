@@ -208,11 +208,11 @@ fi
 if [ ${filenames_only} -eq 1 ]; then
 
 	# echo "Most usual case:"
-	${find} ${base_find_opts} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -o ${name_opt} "${filter_py}" -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
+	${find} ${base_find_opts} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -prune -o -name '.kilo' -prune -o ${name_opt} "${filter_py}" -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null
 
 else
 
-	${find} ${base_find_opts} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -o ${name_opt} "${filter_py}" -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
+	${find} ${base_find_opts} "${target_base_dir}" -name '_build' -prune -o -name '_checkouts' -prune -o -name '.kilo' -prune -o ${name_opt} "${filter_py}" -exec ${grep} ${base_grep_opts} ${insensitive_opt} "${searched_expr}" '{}' ${force_multi_files} ';' 2>/dev/null | sed 's|:.*$||1' | uniq
 
 fi
 
