@@ -20,12 +20,16 @@ mv="$(which mv | grep -v ridiculously)"
 #tr="$(which tr | grep -v ridiculously)"
 
 usage="
-Usage: $(basename $0) [-h|--help] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
+Usage: $(basename $0) [-h|--help][-p|--porcelain] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
 
 At least usually running this script once is sufficient.
 
+The -p / --porcelain option is meant to facilitate the use of this script in others: then, if no error is reported, it outputs only the name of the resulting filesystem entry (whether or not it had to be specifically fixed).
+
 See also fix-paths-in-tree.sh for a multifile, recursive version thereof.
 "
+
+porcelain=1
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -36,6 +40,12 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
+if [ "$1" = "-p" ] || [ "$1" = "--porcelain" ]; then
+
+	porcelain=0
+	shift
+
+fi
 
 if [ $# -eq 0 ]; then
 
@@ -50,7 +60,8 @@ original_name="$*"
 
 if [ ! -e "${original_name}" ]; then
 
-	echo "  Error, no entry named <${original_name}> exists. ${usage}" 1>&2
+	echo "  Error, no entry named '${original_name}' exists.
+${usage}" 1>&2
 
 	exit 25
 
@@ -86,11 +97,11 @@ fi
 # (sed 's|\-||g' removed, as inappropriate)
 #
 
-# (sed "s|'||g" replaced with sed "s|'|-|g", as Réunion was becoming R'eunion
-# and this led to R-eunion; now obtaining Reunion)
+# (sed "s|'||g" replaced with sed "s|'|-|g", as "Réunion" was becoming "R'eunion"
+# and this led to "R-eunion"; now obtaining "Reunion")
 #
 #
-corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|"||g' | ${sed} 's|\^|-|g' | ${sed} 's|`||g' | ${sed} 's|--|-|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | sed "s|'e|e|g" | sed "s|'|-|g" | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | sed 's|^-||1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
+corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|"||g' | ${sed} 's|\^|-|g' | ${sed} 's|`||g' | ${sed} 's|:|-|g' | ${sed} 's|/|-|g' | ${sed} 's|\\|-|g' | ${sed} 's|(|-|g' | ${sed} 's|)|-|g' | ${sed} 's|--|-|g' | ${sed} 's|--|-|g' | ${sed} 's|--|-|g' | ${sed} 's|\.\.|.|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | sed 's|\||-|g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | sed "s|'e|e|g" | sed "s|'|-|g" | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | sed 's|^-||1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
 
 
 #echo "Corrected name is: <${corrected_name}>"
@@ -105,7 +116,12 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 		exit 30
 	fi
 
-	echo "  '${original_name}' renamed to '${corrected_name}'"
+	if [ $porcelain -eq 1 ]; then
+
+		echo "  '${original_name}' renamed to '${corrected_name}'"
+
+	fi
+
 
 	# '--' to stop parsing options, otherwise an entry starting with a dash
 	# would be interpreted as an option:
@@ -114,6 +130,14 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 
 #else
 
-#   echo "  (<${original_name}> left unchanged)"
+	#if [ $porcelain -eq 1 ]; then
+    #   echo "  (<${original_name}> left unchanged)"
+    #fi
+
+fi
+
+if [ $porcelain -eq 0 ]; then
+
+	echo "${corrected_name}"
 
 fi
