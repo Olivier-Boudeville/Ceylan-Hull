@@ -7,6 +7,17 @@
 # This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
 
 
+usage="
+Usage: $(basename $0) [-h|--help][-p|--porcelain] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
+
+At least usually running this script once is sufficient.
+
+The -p / --porcelain option is meant to facilitate the use of this script in others: then, if no error is reported, it outputs only the name of the resulting filesystem entry (whether or not it had to be specifically fixed).
+
+See also fix-paths-in-tree.sh for a multifile, recursive version thereof.
+"
+
+
 # Absolutely needed, as otherwise sed will fail when using "é" as a parameter,
 # in ${sed} 's|é|e|g...
 #
@@ -18,16 +29,6 @@ export LC_ALL=fr_FR.UTF-8
 sed="$(which sed | grep -v ridiculously)"
 mv="$(which mv | grep -v ridiculously)"
 #tr="$(which tr | grep -v ridiculously)"
-
-usage="
-Usage: $(basename $0) [-h|--help][-p|--porcelain] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
-
-At least usually running this script once is sufficient.
-
-The -p / --porcelain option is meant to facilitate the use of this script in others: then, if no error is reported, it outputs only the name of the resulting filesystem entry (whether or not it had to be specifically fixed).
-
-See also fix-paths-in-tree.sh for a multifile, recursive version thereof.
-"
 
 porcelain=1
 
@@ -56,6 +57,10 @@ if [ $# -eq 0 ]; then
 fi
 
 
+# Gathers all elements:
+#
+# (problem if it includes a path, which shall not be fixed)
+#
 original_name="$*"
 
 if [ ! -e "${original_name}" ]; then
@@ -111,7 +116,7 @@ if [ "${original_name}" != "${corrected_name}" ]; then
 	if [ -f "${corrected_name}" ]; then
 		echo "
 
-		Error, an entry named <${corrected_name}> already exists, corrected name for <${original_name}> collides with it, remove <${corrected_name}> first.
+		Error, an entry named <${corrected_name}> already exists (while in '$(pwd)'), corrected name for <${original_name}> collides with it, remove <${corrected_name}> first.
 		" 1>&2
 		exit 30
 	fi
