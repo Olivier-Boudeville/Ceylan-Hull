@@ -41,6 +41,7 @@ if [ $all -eq 0 ]; then
 else
 
 	echo "  Displaying the previous committed version for '$*':"
-	git log ${log_opts} -n 1 $*
+	#git log ${log_opts} -n 1 $*
+	git -c difftool.prompt=false difftool --tool=meld HEAD~1 HEAD -- $*
 
 fi
