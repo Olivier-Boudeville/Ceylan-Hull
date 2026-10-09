@@ -51,9 +51,9 @@ read_audio_sink()
 
 	if [ ! -x "${pacmd}" ]; then
 
-		echo " Error, no 'pacmd' tool found. Is PulseAudio used by this system?" 1>&2
+		   echo " Error, no 'pacmd' tool found. Is PulseAudio used by this system?" 1>&2
 
-		exit 50
+		   exit 50
 
 	fi
 
@@ -134,8 +134,6 @@ read_audio_sink()
 auto_determine_audio_sink()
 {
 
-	sink_type="auto-determined"
-
 	# Number of context lines to return before the current state:
 	line_context_count=4
 
@@ -208,6 +206,8 @@ detect_audio_sink()
 
 
 
+
+
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 	echo "${usage}"
@@ -216,12 +216,42 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
+
 if [ -n "$3" ]; then
 
 	echo "  Error, extra argument specified.
 ${usage}" 1>&2
 
 	exit 5
+
+fi
+
+
+use_pactl=1
+use_wpctl=1
+
+
+pactl="$(which pactl 2>/dev/null)"
+
+if [ -x "${pactl}" ]; then
+
+	use_pactl=0
+
+else
+
+	wpctl="$(which wpctl 2>/dev/null)"
+
+	if [ -x "${wpctl}" ]; then
+
+		use_wpctl=0
+
+	else
+
+		echo " Error, no 'pacmd' or 'wpctl' tool found. Is, respectively, PulseAudio or PipeWire used by this system?" 1>&2
+
+		exit 50
+
+	fi
 
 fi
 
@@ -241,11 +271,21 @@ elif [ -n "$1" ]; then
 
 	target_volume="$1"
 
+	sink_type="auto-determined"
+
 	# So do_set=0
 
 	# Having here to determine the relevant sink:
 
-	detect_audio_sink
+	if [ $use_pactl -eq 0 ]; then
+
+		detect_audio_sink
+
+	elif [ $use_wpctl -eq 0 ]; then
+
+		target_sink="@DEFAULT_AUDIO_SINK@"
+
+	fi
 
 # Neither sink nor volume specified here:
 else
@@ -255,45 +295,68 @@ else
 
 	#exit 55
 
+	# Only the current volume will be returned here.
+
+	sink_type="auto-determined"
+
 	do_set=1
 
-	detect_audio_sink
+	if [ $use_pactl -eq 0 ]; then
+
+		detect_audio_sink
+
+	elif [ $use_wpctl -eq 0 ]; then
+
+		target_sink="@DEFAULT_AUDIO_SINK@"
+
+	fi
 
 fi
 
 
-pactl="$(which pactl 2>/dev/null)"
-if [ ! -x "${pactl}" ]; then
-
-	echo " Error, no 'pactl' tool found. Is PulseAudio used by this system?" 1>&2
-
-	exit 60
-
-fi
 
 
 # Always useful to report:
-echo "  The current volume of the ${sink_type} audio sink #${target_sink} is:"
+echo "  For the ${sink_type} audio sink #${target_sink}, having currently:"
 
-if ! "${pactl}" -- get-sink-volume "${target_sink}" | grep Volume; then
+if [ $use_pactl -eq 0 ]; then
 
-	echo "  Error, failed to read the volume for sink #${target_sink}." 1>&2
+	if ! "${pactl}" -- get-sink-volume "${target_sink}" | grep Volume; then
 
-	exit 45
+		echo "  Error, failed to read the volume for sink #${target_sink}." 1>&2
+
+		exit 45
+
+	fi
+
+elif [ $use_wpctl -eq 0 ]; then
+
+	"${wpctl}" get-volume "${target_sink}" | awk '{ printf "Volume: %.0f%\n", $2 * 100 }'
 
 fi
+
+
 
 
 if [ $do_set -eq 0 ]; then
 
 	echo "  Setting volume to ${target_volume}% for ${sink_type} audio sink #${target_sink}."
 
-	if ! "${pactl}" -- set-sink-volume "${target_sink}" "${target_volume}%"; then
+	if [ $use_pactl -eq 0 ]; then
 
-		echo "  Error, failed to modify the volume for sink #${target_sink}." 1>&2
+		if ! "${pactl}" -- set-sink-volume "${target_sink}" "${target_volume}%"; then
 
-		exit 35
+			echo "  Error, failed to modify the volume for sink #${target_sink}." 1>&2
+
+			exit 35
+
+		fi
+
+	elif [ $use_wpctl -eq 0 ]; then
+
+		"${wpctl}" set-volume "${target_sink}" "${target_volume}%"
 
 	fi
+
 
 fi
