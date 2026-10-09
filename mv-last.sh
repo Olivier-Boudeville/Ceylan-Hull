@@ -97,6 +97,8 @@ ${usage}" 1>&2
 fi
 
 
+#echo "elem_dir = '${elem_dir}'"
+
 
 if [ $fix -eq 0 ]; then
 
@@ -144,21 +146,45 @@ if [ -z "${dest_dir}" ]; then
 
 elif [ ! -d "${dest_dir}" ]; then
 
-	echo "  Error, the specified target source directory, '${dest_dir}', does not exist.
+	echo "  Error, the specified target destination directory, '${dest_dir}', does not exist.
 ${usage}" 1>&2
 
 	exit 20
 
 fi
 
+#echo "dest_dir = ${dest_dir}"
+
+
+abs_dest_dir="$(realpath ${dest_dir})"
+
+if [ ! -d "${abs_dest_dir}" ]; then
+
+	echo "  Error, the specified target destination directory, '${dest_dir}', does not exist.
+${usage}" 1>&2
+
+	exit 21
+
+fi
+
+#echo "abs_dest_dir = ${abs_dest_dir}"
+
 
 
 if [ $fix -eq 0 ]; then
 
-	"${fix_script}" "${source_path}" 1>/dev/null
+	cd "${elem_dir}"
+
+	if ! "${fix_script}" "${last_element}" 1>/dev/null; then
+
+		echo "  Error, unable to fix '${source_path}'." 1>&2
+
+		exit 50
+
+	fi
 
 	# Determined again, by design latest one:
-	last_element="$(/bin/ls -rt ${elem_dir} | tail -n1)"
+	last_element="$(/bin/ls -rt . | tail -n1)"
 
 	#echo "Fixed last element: '${last_element}'."
 
@@ -178,7 +204,7 @@ if [ -z "${target_element}" ]; then
 fi
 
 
-target_path="${dest_dir}/${prefix}${target_element}"
+target_path="${abs_dest_dir}/${prefix}${target_element}"
 
 #echo "Targeting '${target_path}'."
 
@@ -193,7 +219,7 @@ fi
 
 if /bin/mv -f "${source_path}" "${target_path}"; then
 
-	echo "  Moved '${initial_source_path}' to '$(realpath ${target_path})'."
+	echo "  Moved '${initial_source_path}' to '${target_path}'."
 
 else
 
