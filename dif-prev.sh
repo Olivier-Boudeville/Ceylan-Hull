@@ -42,6 +42,7 @@ else
 
 	echo "  Displaying the previous committed version for '$*':"
 	#git log ${log_opts} -n 1 $*
+	echo "(previous version on the left, current one on the right)"
 	git -c difftool.prompt=false difftool --tool=meld HEAD~1 HEAD -- $*
 
 fi
