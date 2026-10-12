@@ -101,10 +101,11 @@ fi
 # and this led to "R-eunion"; now obtaining "Reunion")
 #
 #
-corrected_name=$(echo "${original_name}" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} 's| |-|g' | ${sed} 's|"||g' | ${sed} 's|\^|-|g' | ${sed} 's|`||g' | ${sed} 's|:|-|g' | ${sed} 's|/|-|g' | ${sed} 's|\\|-|g' | ${sed} 's|(|-|g' | ${sed} 's|)|-|g' | ${sed} 's|--|-|g' | ${sed} 's|--|-|g' | ${sed} 's|--|-|g' | ${sed} 's|\.\.|.|g' | ${sed} 's|\[|-|g' | ${sed} 's|\]|-|g' | ${sed} 's|(||g'| ${sed} 's|)||g' | sed 's|\||-|g' | ${sed} 's|\.\.|.|g'| ${sed} 's|\,|.|g' | sed "s|'e|e|g" | sed "s|'|-|g" | ${sed} 's|\.-|.|g' | ${sed} 's|!|-|g' | ${sed} 's|?|-|g' | ${sed} "s|&|-|g " | ${sed} 's|--|-|g' | ${sed} 's|--|-|g'| ${sed} 's|-\.|.|1' | sed 's|^-||1' | ${sed} 's|-$||1' | ${sed} 's|.PNG$|.png|1' | ${sed} 's|-$||1' | ${sed} 's|.JPG$|.jpeg|1')
+corrected_name=$(printf '%s\n' "$original_name" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} -e 's| |-|g' -e 's|"||g' -e 's|\^|-|g' -e 's|`||g' -e 's|:|-|g' -e 's|/|-|g' -e 's|\\|-|g' -e 's|\.\.|.|g' -e 's|\[|-|g' -e 's|\]|-|g' -e 's|(||g' -e 's|)||g' -e 's|\||-|g' -e 's|\.\.|.|g' -e 's|\,|.|g' -e "s|'e|e|g" -e "s|'|-|g" -e 's|\.-|.|g' -e 's|!|-|g' -e 's|?|-|g' -e "s|&|-|g" -e 's|-+|-|g' -e 's|-\.|.|1' -e 's|^-||1' -e 's|-$||' -e 's|\.PNG$|.png|' -e 's|-$||' -e 's|\.JPEG$|.jpeg|' -e 's|\.JPG$|.jpeg|' -e 's|--*|-|g')
 
 
 #echo "Corrected name is: <${corrected_name}>"
+
 
 if [ "${original_name}" != "${corrected_name}" ]; then
 
