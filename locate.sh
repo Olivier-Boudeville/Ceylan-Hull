@@ -6,14 +6,16 @@
 #
 # This file is part of the Ceylan-Hull toolbox (see http://hull.esperide.org).
 
-usage="Usage: $(basename $0) [-h|--help] [-r|--rst] PATTERN: locates the files whose name corresponds to the specified pattern, among the filesystem elements that are routinely scanned; returns only existing files, with the newly-modified ones listed first.
+usage="Usage: $(basename $0) [-h|--help] [-r|--rst] [-i|--ignore-case] PATTERN: locates the files whose name corresponds to the specified pattern, among the filesystem elements that are routinely scanned; returns only existing files, with the newly-modified ones listed first.
 
-The -r / --rst option allows selecting only RST files (i.e. bearing the '.rst' extension).
+Options:
+ -r / --rst: allows selecting only RST files (i.e. bearing the '.rst' extension)
+ -i / --ignore-case: locates with no regard for case
 
 We recommend defining an alias in one's shell initialisation, like: \"alias lo='locate.sh'\".
 "
 
-# Our version of locate; used to be a shell function.
+# Our version of locate; used to be a mere shell function.
 
 
 if [ $# -eq 0 ]; then
@@ -45,6 +47,10 @@ if [ "$1" = "-r" ] || [ "$1" = "--rst" ]; then
 	shift
 
 fi
+
+
+ignore_case=1
+
 
 
 if [ ! $# -eq 1 ]; then
