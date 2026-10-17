@@ -8,11 +8,13 @@
 
 
 usage="
-Usage: $(basename $0) [-h|--help][-p|--porcelain] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
+Usage: $(basename $0) [-h|--help] [-p|--porcelain] [-f|--force] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among (many) other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
 
-At least usually running this script once is sufficient.
+Options:
 
-The -p / --porcelain option is meant to facilitate the use of this script in others: then, if no error is reported, it outputs only the name of the resulting filesystem entry (whether or not it had to be specifically fixed).
+ -p / --porcelain: meant to facilitate the use of this script in other scripts; then, if no error is reported, it outputs only the name of the resulting filesystem entry (whether or not it had to be specifically fixed)
+
+ -f / --force: removes any prior file that would match the resulting fixed filename
 
 See also fix-paths-in-tree.sh for a multifile, recursive version thereof.
 "
@@ -31,6 +33,7 @@ mv="$(which mv | grep -v ridiculously)"
 #tr="$(which tr | grep -v ridiculously)"
 
 porcelain=1
+force=1
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
@@ -41,12 +44,22 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 
 fi
 
+
 if [ "$1" = "-p" ] || [ "$1" = "--porcelain" ]; then
 
 	porcelain=0
 	shift
 
 fi
+
+
+if [ "$1" = "-f" ] || [ "$1" = "--force" ]; then
+
+	force=0
+	shift
+
+fi
+
 
 if [ $# -eq 0 ]; then
 
@@ -114,12 +127,25 @@ corrected_name=$(printf '%s\n' "$original_name" | iconv -f UTF-8 -t ASCII//TRANS
 
 if [ "${original_name}" != "${corrected_name}" ]; then
 
-	if [ -f "${corrected_name}" ]; then
-		echo "
+	if  [ -f "${corrected_name}" ]; then
+
+		if [ $force -eq 0 ]; then
+
+			[ $porcelain -eq 0 ] || echo "(auto-removing a prior '${corrected_name}')"
+
+			/bin/rm -f "${corrected_name}"
+
+		else
+
+			echo "
 
 		Error, an entry named <${corrected_name}> already exists (while in '$(pwd)'), corrected name for <${original_name}> collides with it, remove <${corrected_name}> first.
 		" 1>&2
-		exit 30
+
+			exit 30
+
+		fi
+
 	fi
 
 	if [ $porcelain -eq 1 ]; then
