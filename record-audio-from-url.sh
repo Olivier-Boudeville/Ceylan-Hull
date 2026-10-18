@@ -6,6 +6,8 @@ The -a / --autoplay options triggers an automatic playback (if possible with our
 
 Note that any target URL that contains at least one character that is interpreted by the shell must be specified in a quoted manner.
 For example: $(basename $0) \"https://www.youtube.com/watch?v=xxx&list=yyy&start_radio=1\".
+
+See also our record-video-from-url.sh script.
 "
 
 
@@ -78,20 +80,22 @@ echo "  Downloading from '${url}'..."
 
 # As Opus:
 
-# Or 'channel' instead of 'artist'.
-#
-# Options of interest are:
-#  -qs: quiet/"simulate"
+# Options of interest with yt-dlp are:
+#  -q: quiet
+#  (-s: "simulate" not used anymore)
 #  (--no-warnings can be added)
-#  --cookies-from-browser may allow to validate restrictions
-#  -f 'ba[acodec=opus]' may be replaced by -f 'bestaudio' 'or 'ba'
+#  -f 'ba[acodec=opus]' has been replaced by -f 'bestaudio' / 'ba'
 #  --extractor-args "youtube:player_client=android" or
 #    "youtube:player_client=web" may help
 #
 # (kept '%(artist)s' instead of '%(artist|uploader)s': if artist is not set, the
-# resulting "NA-*" (for N/A) will be removed next)
-#
-webm_path=$(${downloader_exec} -q -f 'ba' --print after_move:filepath -o '%(artist)s-%(title)s.%(ext)s' "${url}")
+# resulting "NA-*" (for N/A) will be removed next; 'channel' exists also)
+
+# --cookies-from-browser may allow to validate restrictions:
+#ownload_extra_opts="--cookies-from-browser firefox"
+download_extra_opts=""
+
+webm_path=$(${downloader_exec} -q -f 'bestaudio' ${download_extra_opts} --print after_move:filepath -o '%(artist)s-%(title)s.%(ext)s' "${url}")
 
 res=$?
 
@@ -134,7 +138,7 @@ fi
 
 
 # Remove any leading "N/A" in artist not found, and any trailing useless suffix:
-ogg_file="$(echo ${fixed_webm_file%.*}.ogg | sed -e 's|^NA-||' -e 's|-Official-Lyric-Video||' -e 's|-Lyrics-Video||' -e 's|-Lyric-Video||' -e 's|-Official-Video||' -e 's|-Original-Video||' -e 's|-Music-Video||' -e 's|-Exclusive-Video||' -e 's|-Official-Audio||' -e 's|-Audio-Officiel||')"
+ogg_file="$(echo ${fixed_webm_file%.*}.ogg | sed -e 's|^NA-||' -e 's|-Official-Lyric-Video||' -e 's|-Lyrics-Video||' -e 's|-Lyric-Video||' -e 's|-Official-Video||' -e 's|-Original-Video||' -e 's|-Music-Video||' -e 's|-Exclusive-Video||' -e 's|-Official-Audio||' -e 's|-Official||' -e 's|-Audio-Officiel||')"
 
 #echo "ogg_file: ${ogg_file}"
 
