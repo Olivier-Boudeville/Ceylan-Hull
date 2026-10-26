@@ -46,7 +46,7 @@ tree_root="$1"
 
 if [ ! -d "${tree_root}" ]; then
 
-	echo "Error, no directory named <${tree_root}> exists.
+	echo "Error, no directory named '${tree_root}' exists.
 ${usage}" 1>&2
 
 	exit 15
@@ -76,11 +76,12 @@ fi
 # Instead a "depth-first" traversal is done; it is not sufficient yet so we
 # perform multiple traversals:
 #
-# (yes, same expression thrice)
+# (yes, same expression thrice, for directories)
 "${find}" "${tree_root}" -depth -type d -exec "${correcter_script}" '{}' ';'
 "${find}" "${tree_root}" -depth -type d -exec "${correcter_script}" '{}' ';'
 "${find}" "${tree_root}" -depth -type d -exec "${correcter_script}" '{}' ';'
 
+# Then for files:
 "${find}" "${tree_root}" -type f -exec "${correcter_script}" '{}' ';'
 
 echo "Tree fixed."
