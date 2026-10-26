@@ -40,6 +40,10 @@ Usage: $(basename $0) [${no_x_opt}] [${show_opt}] [-h|--help] [-e|--emacs] [-n|-
 
 viewer=""
 
+# By default, check whether the viewer is available:
+viewer_check=0
+
+
 # Not to be directly included in the viewer variable, so that it can be still
 # tested with -x for example.
 #
@@ -270,6 +274,59 @@ chooseBrowser()
 		viewer_short_name="Firefox"
 
 	fi
+
+}
+
+
+chooseXMLViewer()
+{
+
+	# Best approach:
+	# xmllint --format foo.xml | pygmentize -l xml
+
+	#xmllint="$(which xmllint 2>/dev/null)"
+
+
+	# if [ -x "${xmllint}" ]; then
+
+	#	run_in_background=1
+
+	#	pygmentize="$(which pygmentize 2>/dev/null)"
+
+	#	if [ -x "${pygmentize}" ]; then
+
+	#		# Not a simple, standalone executable:
+	#		viewer_check=1
+
+	#		viewer='sh -c '\''xmllint "$1" | pygmentize -l xml'\'' _'
+	#		viewer_short_name="pygmentized xmllint"
+
+	#	else
+
+	#		viewer='sh -c '\''xmllint "$1" _'
+	#		viewer_short_name="non-pygmentized xmllint"
+
+
+	#	fi
+
+
+	view_xml="$(which view-xml.sh 2>/dev/null)"
+
+
+	 if [ -x "${view_xml}" ]; then
+
+		viewer="${view_xml}"
+		viewer_short_name="view-xml.sh"
+
+	 else
+
+		# Could be a browser:
+		echo "Warning: no 'xmllint' tool available, defaulting to Emacs." 1>&2
+		chooseEmacs
+		applyViewer
+
+	 fi
+
 
 }
 
@@ -690,6 +747,8 @@ applyViewer()
 
 	#echo "Applying viewer on ${file_elem}..."
 
+	#verbose=0 # To debug
+
 	[ $verbose -eq 1 ] || (
 		echo "multi_win = ${multi_win}";
 		echo "viewer_short_name = ${viewer_short_name}";
@@ -704,7 +763,7 @@ applyViewer()
 
 	#echo "file_elem = ${file_elem}"
 
-	if [ ! -x "${viewer}" ]; then
+	if [ $viewer_check -eq 0 ] && [ ! -x "${viewer}" ]; then
 
 		echo "  Error, the '${viewer_short_name}' tool (searched as '${viewer}') is not available." 1>&2
 		exit 10
@@ -771,15 +830,28 @@ applyViewer()
 			[ $verbose -eq 1 ] || echo "case C: ${viewer} ${viewer_opt} ${file_elem}"
 			"${viewer}" ${viewer_opt} "${file_elem}" 2>/dev/null &
 
+			# No error code can be collected here.
+
 		else
 
 			#echo "Running ${viewer} ${viewer_opt} in the foreground..."
 			[ $verbose -eq 1 ] || echo "case D: ${viewer} ${viewer_opt} ${file_elem}"
 			"${viewer}" ${viewer_opt} "${file_elem}"
 
+			res=$?
+
+			if [ ! $res -eq 0 ]; then
+
+				echo "  Error, viewing failed (code: ${res}); the command was: '"${viewer}" ${viewer_opt} "${file_elem}"'." 1>&2
+
+				exit $res
+
+			fi
+
 		fi
 
 	fi
+
 
 	if [ -n "${viewer_comment}" ]; then
 		echo "${viewer_comment}"
@@ -1020,25 +1092,8 @@ view_selected_element()
 
 	elif [ "${extension}" = "xml" ]; then
 
-		# Best approach would be:
-		# xmllint --format foo.xml | pygmentize -l xml
-
-		viewer="$(which xmllint 2>/dev/null)"
-
-		if [ -x "${viewer}" ]; then
-
-			viewer_short_name="xmllint"
-			run_in_background=1
-
-			applyViewer
-
-		else
-
-			echo "Warning: no 'xmllint' tool available, defaulting to Emacs." 1>&2
-			chooseEmacs
-			applyViewer
-
-		fi
+		chooseXMLViewer
+		applyViewer
 
 	elif [ "${extension}" = "json" ]; then
 
@@ -1048,6 +1103,7 @@ view_selected_element()
 
 			viewer_opt="."
 			viewer_short_name="jq"
+			run_in_background=1
 			applyViewer
 
 		else
@@ -1099,7 +1155,12 @@ view_selected_element()
 		chooseBlenderImporter
 		applyViewer
 
-	elif [ "${extension}" = "bcf" ] || [ "${extension}" = "bcfzip" ]; then
+	elif [ "${extension}" = "bcf" ]; then
+
+		chooseXMLViewer
+		applyViewer
+
+	elif [ "${extension}" = "bcfzip" ]; then
 
 		chooseBCFImporter
 		applyViewer

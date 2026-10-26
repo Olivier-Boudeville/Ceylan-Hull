@@ -634,7 +634,9 @@ applyEditor()
 				# multiple times"
 				#
 				[ $verbose -eq 1 ] || echo "Running (multiwin) '${editor} ${editor_opt} $f'..."
-				${editor} ${editor_opt} "$f" 1>/dev/null 2>&1 &
+				"${editor}" ${editor_opt} "$f" 1>/dev/null 2>&1 &
+
+				# No error code can be collected here.
 
 				# Small delay added, otherwise specifying multiple files
 				# apparently may freeze emacs to death, losing all pending
@@ -653,11 +655,24 @@ applyEditor()
 
 					# Ever happens?
 					[ $verbose -eq 1 ] || echo "Running (monowin, in background) '${editor} ${editor_opt} $f'..."
-					${editor} ${editor_opt} "$f" 1>/dev/null 2>&1 &
+					"${editor}" ${editor_opt} "$f" 1>/dev/null 2>&1 &
+
+					# No error code can be collected here.
 
 				else
 					[ $verbose -eq 1 ] || echo "Running (monowin, in foreground) '${editor} ${editor_opt} $f'..."
-					${editor} ${editor_opt} "$f" 1>/dev/null 2>&1
+
+					"${editor}" ${editor_opt} "$f" 1>/dev/null 2>&1
+
+					res=$?
+
+					if [ ! $res -eq 0 ]; then
+
+						echo "  Error, editing failed (code: ${res}); the command was: '"${editor}" ${editor_opt} "$f"'." 1>&2
+
+						exit $res
+
+					fi
 
 				fi
 
@@ -670,12 +685,24 @@ applyEditor()
 			if [ $run_in_background -eq 0 ]; then
 
 				[ $verbose -eq 1 ] || echo "Running '${editor} ${editor_opt} $f' in background..."
-				${editor} ${editor_opt} "$f" 2>/dev/null &
+				"${editor}" ${editor_opt} "$f" 2>/dev/null &
+
+				# No error code can be collected here.
 
 			else
 
 				[ $verbose -eq 1 ] || echo "Running '${editor} ${editor_opt} $f' in foreground..."
-				${editor} ${editor_opt} "$f" 2>/dev/null
+				"${editor}" ${editor_opt} "$f" 2>/dev/null
+
+				res=$?
+
+				if [ ! $res -eq 0 ]; then
+
+					echo "  Error, editing failed (code: ${res}); the command was: '"${editor}" ${editor_opt} "$f"'." 1>&2
+
+					exit $res
+
+				fi
 
 			fi
 
