@@ -8,7 +8,7 @@
 
 
 usage="
-Usage: $(basename $0) [-h|--help] [-p|--porcelain] [-f|--force] <a directory entry name>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among (many) other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
+Usage: $(basename $0) [-h|--help] [-p|--porcelain] [-f|--force] <an entry path>: renames the specified file or directory to a 'corrected' filesystem entry name, i.e., among (many) other fixes: without spaces or quotes, replaced by '-', with no accentuated characters in it.
 
 Options:
 
@@ -19,6 +19,8 @@ Options:
 See also fix-paths-in-tree.sh for a multifile, recursive version thereof.
 "
 
+# Stops in case of command failure:
+set -e
 
 # Absolutely needed, as otherwise sed will fail when using "י" as a parameter,
 # in ${sed} 's|י|e|g...
@@ -71,21 +73,27 @@ fi
 
 
 # Gathers all elements:
-#
-# (problem if it includes a path, which shall not be fixed)
-#
-original_name="$*"
+original_path="$*"
 
-if [ ! -e "${original_name}" ]; then
+if [ ! -e "${original_path}" ]; then
 
-	echo "  Error, no entry named '${original_name}' exists.
+	echo "  Error, no entry named '${original_path}' exists.
 ${usage}" 1>&2
 
 	exit 25
 
 fi
 
-#echo "Original name is: <${original_name}>"
+#echo "Original path is: <${original_path}>"
+
+# To remove any leading path such as "./" or "../foo/bar/":
+cd "$(dirname "${original_path}")"
+
+original_name="$(basename "${original_path}")"
+
+#echo "Original name is: <${original_name}>, in $(pwd)."
+
+
 
 # More efficient:
 # sed -e 's|[טיךכ]|e|' -e 's|[אבגדהו]|a|'
