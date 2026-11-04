@@ -127,7 +127,7 @@ original_name="$(basename "${original_path}")"
 # and this led to "R-eunion"; now obtaining "Reunion")
 #
 #
-corrected_name=$(printf '%s\n' "$original_name" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} -e 's| |-|g' -e 's|"||g' -e 's|\^|-|g' -e 's|`||g' -e 's|:|-|g' -e 's|/|-|g' -e 's|\\|-|g' -e 's|\.\.|.|g' -e 's|\[|-|g' -e 's|\]|-|g' -e 's|(||g' -e 's|)||g' -e 's|\||-|g' -e 's|\.\.|.|g' -e 's|\,|.|g' -e "s|'e|e|g" -e "s|'|-|g" -e 's|\.-|.|g' -e 's|!|-|g' -e 's|?|-|g' -e "s|&|-|g" -e 's|-+|-|g' -e 's|-\.|.|1' -e 's|^-||1' -e 's|-$||' -e 's|\.PNG$|.png|' -e 's|-$||' -e 's|\.JPEG$|.jpeg|' -e 's|\.JPG$|.jpeg|' -e 's|--*|-|g')
+corrected_name=$(printf '%s\n' "$original_name" | iconv -f UTF-8 -t ASCII//TRANSLIT | ${sed} -e 's| |-|g' -e 's|"||g' -e 's|\^|-|g' -e 's|<|-|g' -e 's|>|-|g' -e 's|`||g' -e 's|:|-|g' -e 's|/|-|g' -e 's|\\|-|g' -e 's|\.\.|.|g' -e 's|\[|-|g' -e 's|\]|-|g' -e 's|(||g' -e 's|)||g' -e 's|\||-|g' -e 's|\.\.*|.|g' -e 's|\,|.|g' -e "s|'e|e|g" -e "s|'|-|g" -e 's|\.-|.|g' -e 's|!|-|g' -e 's|?|-|g' -e "s|&|-|g" -e 's|-+|-|g' -e 's|-\.|.|1' -e 's|^-||1' -e 's|-$||' -e 's|\.PNG$|.png|' -e 's|-$||' -e 's|\.JPEG$|.jpeg|' -e 's|\.JPG$|.jpeg|' -e 's|--*|-|g')
 
 
 #echo "Corrected name is: <${corrected_name}>"
