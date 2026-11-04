@@ -1,6 +1,6 @@
 #!/bin/sh
 
-usage="Usage: $(basename $0) [-h|--help] [-s|--silent] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ]', i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES (e.g. 17:02) or HOURS:MINUTES:SECONDS (e.g. 17:02:31); note that timestamps of the form HOURShMINUTES (e.g. 17h02) and HOURShMINUTESmSECONDS (e.g. 17h02m31) are supported as well.
+usage="Usage: $(basename $0) [-h|--help] [-s|--silent] TIMESTAMP [ MESSAGE | [ TITLE | MESSAGE ] ], i.e. requests to trigger a timer notification (based on MESSAGE, if specified; possibly with a TITLE) at specified TIMESTAMP, which is expressed as HOURS:MINUTES (e.g. 17:02) or HOURS:MINUTES:SECONDS (e.g. 17:02:31); note that timestamps of the form HOURShMINUTES (e.g. 17h02) and HOURShMINUTESmSECONDS (e.g. 17h02m31) are supported as well.
 
 Will issue such a notification when the specified time is reached; useful typically to respect fixed schedules.
 
